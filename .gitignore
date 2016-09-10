@@ -1,0 +1,7 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/HC-05 (Bluetooth)/BT/obj/Debug
+/HC-05 (Bluetooth)/BT/bin/Debug
+/HC-05 (Bluetooth)/BT/BT.csproj.user
