@@ -44,6 +44,9 @@ http://vip-cxema.org/index.php/home/mikrokontrollery/357-prostoj-kopirovshchik-r
          |  |  |   |   |   |  |
         D0 D1 D2 D3 D4 D5 D6 D7
 
+Vpp завязан на OE
+OE = L, Vpp = 5v
+OE = H, Vpp = 25v		
 ------------------------------------------------------------------------
 Входы                      Выходы     Режим работы
 ------------------------------------------------------------------------
@@ -114,54 +117,8 @@ uint8_t dataRow[BUFFER_SIZE];
 char text[textLen];
 
 
-void SetDisableMode()
+void setup()
 {
-  digitalWrite(OE, LOW);
-  digitalWrite(CE, HIGH);
-}
-
-
-void SetReadMode()
-{
-  digitalWrite(OE, LOW);
-  digitalWrite(CE, LOW);
-}
-
-
-void SetWriteMode()
-{
-  digitalWrite(OE, HIGH);
-  digitalWrite(CE, HIGH);
-}
-
-
-void InitReadMode()
-{
-  pinMode(D0, INPUT_PULLUP);
-  pinMode(D1, INPUT_PULLUP);
-  pinMode(D2, INPUT_PULLUP);
-  pinMode(D3, INPUT_PULLUP);
-  pinMode(D4, INPUT_PULLUP);
-  pinMode(D5, INPUT_PULLUP);
-  pinMode(D6, INPUT_PULLUP);
-  pinMode(D7, INPUT_PULLUP);
-}
-
-
-void InitWriteMode()
-{
-  pinMode(D0, OUTPUT);
-  pinMode(D1, OUTPUT);
-  pinMode(D2, OUTPUT);
-  pinMode(D3, OUTPUT);
-  pinMode(D4, OUTPUT);
-  pinMode(D5, OUTPUT);
-  pinMode(D6, OUTPUT);
-  pinMode(D7, OUTPUT);
-}
-
-
-void setup() {
   // К573РФ2
   pinMode(CE, OUTPUT);
   pinMode(OE, OUTPUT);
@@ -181,7 +138,7 @@ void setup() {
   Wire.write(B11111111);    //Конфигурация всех порты PCF8574A как вход
   Wire.endTransmission();
   Wire.beginTransmission(ADDRESS_LEDBOARD);
-  Wire.write(B00000000);    //Конфигурация всех порты PCF8574A как выход
+  Wire.write(B00000000);    //Конфигурация всех порты PCF8574A как выход (не совсем корректно, можно вообще ничего не писать, но так мы сбрасываем индикацию)
   Wire.endTransmission();
 
   // Serial
@@ -208,7 +165,8 @@ void setup() {
 }
 
 
-void loop() {
+void loop()
+{
   switch (GetCommnad())
   {
     case 1:
@@ -227,6 +185,68 @@ void loop() {
       break;
   }
   delay(100);
+}
+
+
+//////////////////////////////////////////
+// Хранение(пониженная мощность) К573РФ2
+//////////////////////////////////////////
+void SetDisableMode()
+{
+  digitalWrite(OE, LOW);
+  digitalWrite(CE, HIGH);
+}
+
+
+//////////////////////////////////////////
+// Считывание К573РФ2
+//////////////////////////////////////////
+void SetReadMode()
+{
+  digitalWrite(OE, LOW);
+  digitalWrite(CE, LOW);
+}
+
+
+//////////////////////////////////////////
+// Запись К573РФ2
+//////////////////////////////////////////
+void SetWriteMode()
+{
+  digitalWrite(OE, HIGH);
+  digitalWrite(CE, HIGH);
+}
+
+
+//////////////////////////////////////////
+// Данные на считывание
+//////////////////////////////////////////
+void InitReadMode()
+{
+  pinMode(D0, INPUT_PULLUP);
+  pinMode(D1, INPUT_PULLUP);
+  pinMode(D2, INPUT_PULLUP);
+  pinMode(D3, INPUT_PULLUP);
+  pinMode(D4, INPUT_PULLUP);
+  pinMode(D5, INPUT_PULLUP);
+  pinMode(D6, INPUT_PULLUP);
+  pinMode(D7, INPUT_PULLUP);
+}
+
+
+//////////////////////////////////////////
+// Данные для записи
+//////////////////////////////////////////
+void InitWriteMode()
+{
+  pinMode(D0, OUTPUT);
+  pinMode(D1, OUTPUT);
+  pinMode(D2, OUTPUT);
+  pinMode(D3, OUTPUT);
+  pinMode(D4, OUTPUT);
+  pinMode(D5, OUTPUT);
+  pinMode(D6, OUTPUT);
+  pinMode(D7, OUTPUT);
 }
 
 
