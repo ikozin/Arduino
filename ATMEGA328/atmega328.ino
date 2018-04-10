@@ -66,6 +66,7 @@ void setup()
   dht.begin();
   MsTimer2::set(4, updateLedDisplay); // 5ms period
   MsTimer2::start();  
+  Serial.println("Start");
 }
 
 void loop()
