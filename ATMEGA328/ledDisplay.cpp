@@ -7,7 +7,7 @@ byte LED_DISPLAY::_dataValue[LED_DISPLAY_LENGTH];
 void LED_DISPLAY::begin()
 {
   _curIndex = 0;
-  for (int i = 0; i < LED_DISPLAY_LENGTH; i++) _dataValue[i] = 0;
+  for (int i = 0; i < LED_DISPLAY_LENGTH; i++) _dataValue[i] = DISPLAY_SPACE;
 
 	DDRB = B11111111;
 	for (int i = 0; i < LED_DISPLAY_LENGTH; i++)
@@ -34,5 +34,5 @@ void LED_DISPLAY::_refresh()
     digitalWrite(_digitPin[i], HIGH); // для S8550 HIGH = выключено, при прямом подключении LOW = выключено
   PORTB = ~_digits[value];
   digitalWrite(_digitPin[_curIndex], LOW); // для S8550 LOW = включено, при прямом подключении HIGH = включено
-  _curIndex = _curIndex++ & B00000011;
+  _curIndex = ++_curIndex & B00000011;
 }

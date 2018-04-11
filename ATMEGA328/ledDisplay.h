@@ -2,23 +2,31 @@
 #define LED_DISPLAY_H
 
 #include <Arduino.h>
-#define LED_DISPLAY_LENGTH 4
+#define LED_DISPLAY_LENGTH  4
+#define DISPLAY_SPACE       10
+#define DISPLAY_CELCIUS     11
+#define DISPLAY_HUMIDITY    12
+#define DISPLAY_MINUS       13
 
 namespace LED_DISPLAY
 {
-    const byte _digits[11] =
+    //dp G F E D C B A
+    const byte _digits[14] =
     {
-      B00111111,    //dp G F E D C B A
-      B00000110,    //dp G F E D C B A
-      B01011011,    //dp G F E D C B A
-      B01001111,    //dp G F E D C B A
-      B01100110,    //dp G F E D C B A
-      B01101101,    //dp G F E D C B A
-      B01111101,    //dp G F E D C B A
-      B00000111,    //dp G F E D C B A
-      B01111111,    //dp G F E D C B A
-      B01101111,    //dp G F E D C B A
-      B00000000     //dp G F E D C B A
+      B00111111,    // 0
+      B00000110,    // 1
+      B01011011,    // 2
+      B01001111,    // 3
+      B01100110,    // 4
+      B01101101,    // 5
+      B01111101,    // 6
+      B00000111,    // 7
+      B01111111,    // 8
+      B01101111,    // 9
+      B00000000,    // SPACE
+      B01100011,    // Celcius
+      B01110110,    // Humidity
+      B01000000     // Minus
     };
     const byte _digitPin[LED_DISPLAY_LENGTH] = { A0, A1, A2, A3 };
     
