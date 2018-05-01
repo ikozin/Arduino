@@ -27,6 +27,32 @@ void LED_DISPLAY::print(byte v1, byte v2, byte v3, byte v4)
   _dataValue[3] = v4;
 }
 
+void LED_DISPLAY::setTemperature(long value)
+{
+  _dataValue[0] = (value >= 0)? DISPLAY_SPACE: DISPLAY_MINUS;
+  value = (value < 0)? -value: value;
+  _dataValue[1] = value / 10;
+  _dataValue[2] = value % 10;
+  _dataValue[3] = DISPLAY_CELCIUS;
+}
+
+void LED_DISPLAY::setHumidity(long value)
+{
+  value = (value < 100)? value: 99;
+  _dataValue[0] = DISPLAY_SPACE;
+  _dataValue[1] = value / 10;
+  _dataValue[2] = value % 10;
+  _dataValue[3] = DISPLAY_HUMIDITY;
+}
+
+void LED_DISPLAY::setTime(byte hour, byte minute)
+{
+  _dataValue[0] = hour / 10;
+  _dataValue[1] = hour % 10;
+  _dataValue[2] = minute / 10;
+  _dataValue[3] = minute % 10;
+}
+
 void LED_DISPLAY::_refresh()
 {
   byte value = _dataValue[_curIndex];

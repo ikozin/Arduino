@@ -8,6 +8,7 @@
 #define DISPLAY_HUMIDITY    12
 #define DISPLAY_MINUS       13
 
+
 namespace LED_DISPLAY
 {
     //dp G F E D C B A
@@ -35,6 +36,9 @@ namespace LED_DISPLAY
 
     void begin();
     void print(byte v1, byte v2, byte v3, byte v4);
+    void setTemperature(long value);
+    void setHumidity(long value);
+    void setTime(byte h, byte m);
 		void _refresh();
 };
 

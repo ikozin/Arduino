@@ -50,12 +50,18 @@ void setup()
   Serial.println("Start");
 }
 
+int minute = 0;
+int hour = 0;
 void loop()
 {
+  LED_DISPLAY::setTime(23, minute);
+  if (minute == 60) hour = ++hour % 24;
+  minute = ++minute % 60;  
+  Serial.println(minute);
   delay(2000);
-  LED_DISPLAY::print(0, 1, 2, 3);
-  delay(2000);
-  LED_DISPLAY::print(1, 2, 3, 4);
+  //LED_DISPLAY::print(0, 1, 2, 3);
+  //delay(2000);
+  //LED_DISPLAY::print(1, 2, 3, 4);
 /*
   delay(2000);
   LED_DISPLAY::print(2, 3, 4, 5);
@@ -77,13 +83,14 @@ void loop()
   float t = dht.readTemperature();
   if (!isnan(h) && !isnan(t))
   {
+    long value;
     Serial.print("Humidity: ");
-    Serial.print(h);
-    Serial.print(" %\t");
-    Serial.print("Temperature: ");
-    Serial.print(t);
-    Serial.print(" *C ");
-    Serial.println();
+    value = lrint(h);
+    //LED_DISPLAY::setTemperature(value);
+    Serial.println(value);
+    value = lrint(t);
+    //LED_DISPLAY::setHumidity(value);
+    Serial.println(value);
   }
 }
 
