@@ -15,7 +15,7 @@ void LED_DISPLAY::begin()
 		pinMode(_digitPin[i], OUTPUT);
 		digitalWrite(_digitPin[i], HIGH); // для S8550 HIGH = выключено, при прямом подключении LOW = выключено
 	}
-	MsTimer2::set(5, LED_DISPLAY::_refresh); // 5ms period
+	MsTimer2::set(4, LED_DISPLAY::_refresh); // 4ms period
 	MsTimer2::start();  
 }
 
@@ -27,40 +27,32 @@ void LED_DISPLAY::print(byte v1, byte v2, byte v3, byte v4)
   _dataValue[3] = v4;
 }
 
-void LED_DISPLAY::setTemperature(long value)
+void LED_DISPLAY::setTemperature(uint16_t value)
 {
-  _dataValue[0] = (value >= 0)? DISPLAY_SPACE: DISPLAY_MINUS;
+  _dataValue[0] = _digits[(value >= 0)? DISPLAY_SPACE: DISPLAY_MINUS];
   value = (value < 0)? -value: value;
-  _dataValue[1] = value / 10;
-  _dataValue[2] = value % 10;
-  _dataValue[3] = DISPLAY_CELCIUS;
+  _dataValue[1] = _digits[value / 10];
+  _dataValue[2] = _digits[value % 10];
+  _dataValue[3] = _digits[DISPLAY_CELCIUS];
 }
 
-void LED_DISPLAY::setHumidity(long value)
+void LED_DISPLAY::setHumidity(uint16_t value)
 {
   value = (value < 100)? value: 99;
-  _dataValue[0] = DISPLAY_SPACE;
-  _dataValue[1] = value / 10;
-  _dataValue[2] = value % 10;
-  _dataValue[3] = DISPLAY_HUMIDITY;
-}
-
-void LED_DISPLAY::setTime(byte hour, byte minute)
-{
-  _dataValue[0] = hour / 10;
-  _dataValue[1] = hour % 10;
-  _dataValue[2] = minute / 10;
-  _dataValue[3] = minute % 10;
+  _dataValue[0] = _digits[DISPLAY_SPACE];
+  _dataValue[1] = _digits[value / 10];
+  _dataValue[2] = _digits[value % 10];
+  _dataValue[3] = _digits[DISPLAY_HUMIDITY];
 }
 
 void LED_DISPLAY::setTime(uint16_t value)
 {
   uint8_t hour = highByte(value);
   uint8_t minute = lowByte(value);
-  _dataValue[0] = hour >> 4;
-  _dataValue[1] = hour & 0x0F;
-  _dataValue[2] = minute >> 4;
-  _dataValue[3] = minute & 0x0F;  
+  _dataValue[0] = _digits[hour >> 4];
+  _dataValue[1] = _digits[hour & 0x0F] | B10000000;
+  _dataValue[2] = _digits[minute >> 4];
+  _dataValue[3] = _digits[minute & 0x0F];  
 }
 
 void LED_DISPLAY::_refresh()
@@ -68,7 +60,7 @@ void LED_DISPLAY::_refresh()
   byte value = _dataValue[_curIndex];
   for (int i = 0; i < LED_DISPLAY_LENGTH; i++)
     digitalWrite(_digitPin[i], HIGH); // для S8550 HIGH = выключено, при прямом подключении LOW = выключено
-  PORTB = ~_digits[value];
+  PORTB = ~value;
   digitalWrite(_digitPin[_curIndex], LOW); // для S8550 LOW = включено, при прямом подключении HIGH = включено
   _curIndex = ++_curIndex & B00000011;
 }
