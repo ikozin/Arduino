@@ -39,7 +39,8 @@ namespace LED_DISPLAY
     void setTemperature(long value);
     void setHumidity(long value);
     void setTime(byte h, byte m);
-		void _refresh();
+    void setTime(uint16_t value);
+    void _refresh();
 };
 
 #endif

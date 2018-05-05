@@ -228,7 +228,7 @@ char* bin2hex(char* pText, uint16_t value)
 
 uint8_t dec2bcd(uint8_t n)
 {
- byte b = (n * 103) >> 10;
- return (b * 16 + n-(b*10));  
+  byte b = (n * 103) >> 10;
+  return (b * 16 + n-(b*10));  
 }
 

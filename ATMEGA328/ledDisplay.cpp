@@ -53,6 +53,16 @@ void LED_DISPLAY::setTime(byte hour, byte minute)
   _dataValue[3] = minute % 10;
 }
 
+void LED_DISPLAY::setTime(uint16_t value)
+{
+  uint8_t hour = highByte(value);
+  uint8_t minute = lowByte(value);
+  _dataValue[0] = hour >> 4;
+  _dataValue[1] = hour & 0x0F;
+  _dataValue[2] = minute >> 4;
+  _dataValue[3] = minute & 0x0F;  
+}
+
 void LED_DISPLAY::_refresh()
 {
   byte value = _dataValue[_curIndex];

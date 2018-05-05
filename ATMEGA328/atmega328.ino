@@ -1,6 +1,7 @@
 #include <MsTimer2.h>
 #include "ledDisplay.h"
 #include "DHT.h"
+#include "DS3231.h"
 
 /*
 http://codius.ru/articles/Arduino_UNO_4%D1%80%D0%B0%D0%B7%D1%80%D1%8F%D0%B4%D0%BD%D1%8B%D0%B9_7%D1%81%D0%B5%D0%B3%D0%BC%D0%B5%D0%BD%D1%82%D0%BD%D1%8B%D0%B9_%D0%B8%D0%B4%D0%B8%D0%BA%D0%B0%D1%82%D0%BE%D1%80_12_pin_3641BS_red
@@ -40,6 +41,7 @@ https://ecs7.tokopedia.net/img/product-1/2016/11/17/2550072/2550072_fa6ef4d0-76c
 */
 
 DHT dht(7, AM2301);
+DS3231 ds3231;
 
 char text[128];
 void setup()
@@ -47,6 +49,7 @@ void setup()
   Serial.begin(9600);
   LED_DISPLAY::begin();
   dht.begin();
+  ds3231.begin();
   Serial.println("Start");
 }
 
@@ -54,31 +57,12 @@ int minute = 0;
 int hour = 0;
 void loop()
 {
-  LED_DISPLAY::setTime(23, minute);
-  if (minute == 60) hour = ++hour % 24;
-  minute = ++minute % 60;  
-  Serial.println(minute);
+  uint16_t value = ds3231.getTime();
+  LED_DISPLAY::setTime(value);
+  Serial.println(value, HEX);
+
   delay(2000);
-  //LED_DISPLAY::print(0, 1, 2, 3);
-  //delay(2000);
-  //LED_DISPLAY::print(1, 2, 3, 4);
 /*
-  delay(2000);
-  LED_DISPLAY::print(2, 3, 4, 5);
-  delay(2000);
-  LED_DISPLAY::print(3, 4, 5, 6);
-  delay(2000);
-  LED_DISPLAY::print(4, 5, 6, 7);
-  delay(2000);
-  LED_DISPLAY::print(5, 6, 7, 8);
-  delay(2000);
-  LED_DISPLAY::print(6, 7, 8, 9);
-  delay(2000);
-  LED_DISPLAY::print(DISPLAY_SPACE, DISPLAY_SPACE, DISPLAY_SPACE, DISPLAY_SPACE);
-  delay(2000);
-  LED_DISPLAY::print(DISPLAY_SPACE, DISPLAY_MINUS, DISPLAY_CELCIUS, DISPLAY_HUMIDITY);
-  delay(2000);
-*/
   float h = dht.readHumidity();
   float t = dht.readTemperature();
   if (!isnan(h) && !isnan(t))
@@ -92,17 +76,6 @@ void loop()
     //LED_DISPLAY::setHumidity(value);
     Serial.println(value);
   }
+*/
 }
-
-uint8_t bcd2dec(uint8_t n)
-{
-  return n - 6 * (n/16); 
-}
-
-uint8_t dec2bcd(uint8_t n)
-{
-  byte b = (n * 103) >> 10;
-  return (b * 16 + n-(b*10));  
-}
-
 
