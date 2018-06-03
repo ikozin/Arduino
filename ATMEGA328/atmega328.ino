@@ -43,39 +43,51 @@ https://ecs7.tokopedia.net/img/product-1/2016/11/17/2550072/2550072_fa6ef4d0-76c
 DHT dht(7, AM2301);
 DS3231 ds3231;
 
-char text[128];
+//char text[128];
+long time = 0;
+long temp = 0;
+long hum = 0;
+
 void setup()
 {
-  Serial.begin(9600);
+  Serial.begin(57600);
   LED_DISPLAY::begin();
   dht.begin();
   ds3231.begin();
   Serial.println("Start");
 }
 
-int minute = 0;
-int hour = 0;
+byte cnt = 0;
+void displayInfo()
+{
+  if (cnt & 0x08)
+  {
+    if (cnt & 0x04)
+      LED_DISPLAY::setHumidity(hum);
+    else
+      LED_DISPLAY::setTemperature(temp);
+  }
+  else LED_DISPLAY::setTime(time);
+}
+
 void loop()
 {
-  uint16_t value = ds3231.getTime();
-  LED_DISPLAY::setTime(value);
-  Serial.println(value, HEX);
-
-  delay(2000);
-/*
-  float h = dht.readHumidity();
-  float t = dht.readTemperature();
-  if (!isnan(h) && !isnan(t))
+  time = ds3231.getTime();
+  if (cnt & 0x04)
   {
-    long value;
-    Serial.print("Humidity: ");
-    value = lrint(h);
-    //LED_DISPLAY::setTemperature(value);
-    Serial.println(value);
-    value = lrint(t);
-    //LED_DISPLAY::setHumidity(value);
-    Serial.println(value);
+    float h = dht.readHumidity();
+    float t = dht.readTemperature();
+    if (!isnan(h) && !isnan(t))
+    {
+      temp = lrint(t);
+      hum = lrint(h);
+    }
   }
-*/
+  Serial.println(time, HEX);
+  Serial.println(temp);
+  Serial.println(hum);
+  displayInfo();
+  delay(500);
+  cnt++;
 }
 
