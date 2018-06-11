@@ -155,10 +155,15 @@ void setup()
   }
   Serial.println(F("SD card initialized."));
 
-  Serial.println(F("Check"));
-  Serial.println(F("Read"));
-  Serial.println(F("Write"));
-  Serial.println(F("Comapre"));
+  setLed(LED_READY | LED_READ | LED_WRITE | LED_ERROR);
+  delay(2000);
+  Serial.println(F("LED initialized."));
+  setLed(0);
+  
+  Serial.println(F("Check   [CHECK.TXT] (EEPROM value compare with 0xFF, if not equal then write address in CHECK.TXT)"));
+  Serial.println(F("Read    [DUMP.TXT]  (Read EEPROM value into DUMP.TXT)"));
+  Serial.println(F("Write   [DUMP.TXT]  (Write from DUMP.TXT into EEPROM)"));
+  Serial.println(F("Comapre [DUMP.TXT[  (Comparing EEPROM value with DUMP.TXT)"));
   Serial.println();
   
   setLed(LED_READY);
