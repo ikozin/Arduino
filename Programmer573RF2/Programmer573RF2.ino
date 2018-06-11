@@ -116,6 +116,14 @@ uint8_t dataRow[BUFFER_SIZE];
 #define textLen       64
 char text[textLen];
 
+void showMenu()
+{
+  Serial.println(F("Check   [CHECK.TXT] (EEPROM value compare with 0xFF, if not equal then write address in CHECK.TXT)"));
+  Serial.println(F("Read    [DUMP.TXT]  (Read EEPROM value into DUMP.TXT)"));
+  Serial.println(F("Write   [DUMP.TXT]  (Write from DUMP.TXT into EEPROM)"));
+  Serial.println(F("Comapre [DUMP.TXT[  (Comparing EEPROM value with DUMP.TXT)"));
+  Serial.println();
+}
 
 void setup()
 {
@@ -159,13 +167,8 @@ void setup()
   delay(2000);
   Serial.println(F("LED initialized."));
   setLed(0);
-  
-  Serial.println(F("Check   [CHECK.TXT] (EEPROM value compare with 0xFF, if not equal then write address in CHECK.TXT)"));
-  Serial.println(F("Read    [DUMP.TXT]  (Read EEPROM value into DUMP.TXT)"));
-  Serial.println(F("Write   [DUMP.TXT]  (Write from DUMP.TXT into EEPROM)"));
-  Serial.println(F("Comapre [DUMP.TXT[  (Comparing EEPROM value with DUMP.TXT)"));
-  Serial.println();
-  
+
+  showMenu();  
   setLed(LED_READY);
 }
 
@@ -176,15 +179,19 @@ void loop()
   {
     case 1:
       CheckMemoryMode();
+      showMenu();  
       break;
     case 2:
       ReadMemoryMode();
+      showMenu();  
       break;
     case 3:
       WriteMemoryMode();
+      showMenu();  
       break;
     case 4:
       ComapreMemoryMode();
+      showMenu();  
       break;
     default:
       break;
