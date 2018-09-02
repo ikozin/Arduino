@@ -2,17 +2,9 @@
 AT28C256
 https://docs-europe.electrocomponents.com/webdocs/1596/0900766b815963c9.pdf
 
-------------------------------------------------------------------------
-Входы                      Выходы     Режим работы
-------------------------------------------------------------------------
-A0...A14  -CE  -OE  -WE    D0...D7   
-------------------------------------------------------------------------
-  L/H      L    L    H       Out      Считывание
-  L/H      H    H    L       L/H      Запись
-------------------------------------------------------------------------
-                                  Подключение к Arduino MEGA
+Подключение к Arduino MEGA
          -------                                                          -------
-        } POWER |                                                        |  USB  |
+        | POWER |                                                        |  USB  |
       -------------------------------------------------------------------------------
      |                                                                               |---
      |                                                                          AREF |   |
@@ -46,10 +38,30 @@ A0...A14  -CE  -OE  -WE    D0...D7
   ---|
      | 52 | 50 | 48 | 46 | 44 | 42 | 40 | 38 | 36 | 34 | 32 | 30 | 28 | 26 | 24 | 22 |
       -------------------------------------------------------------------------------
-     |    |    |    |    |    |    |    |    | XX | XX | XX | XX | XX | XX | XX | XX | 
-     |    |    |    |    |    |    |    |    |    | XX | XX | XX | XX | XX | XX | XX |
+     |    |    |    |    |    |    |    |    | XX | XX | XX | XX | XX | XX | XX | XX |  A14  A12  A10  A8  A6  A4  A2  A0
+     |    |    |    |    |    |    |    |    |    | XX | XX | XX | XX | XX | XX | XX |       A13  A11  A9  A7  A5  A3  A1
       -------------------------------------------------------------------------------
      | 53 | 51 | 49 | 47 | 45 | 43 | 41 | 39 | 37 | 35 | 33 | 31 | 29 | 27 | 25 | 23 |
+
+	 
+
+Распиновка AT28C256
+      -------------
+  1 -| A14     +5V |- 28
+  2 -| A12     ~WE |- 27
+  3 -| A7      A13 |- 26
+  4 -| A6       A8 |- 25
+  5 -| A5       A9 |- 24
+  6 -| A4      A11 |- 23
+  7 -| A3      ~OE |- 22
+  8 -| A2      A10 |- 21
+  9 -| A1      ~CE |- 20
+ 10 -| A0       D7 |- 19
+ 11 -| D0       D6 |- 18
+ 12 -| D1       D5 |- 17
+ 13 -| D2       D4 |- 16
+ 14 -| GND      D3 |- 15
+	    -------------
 
 */
 
@@ -57,38 +69,34 @@ A0...A14  -CE  -OE  -WE    D0...D7
 #error "Select board ATMEG2560"
 #endif
 
-//#define PORT_ADDRES
+#define ADDR0   (22)
+#define ADDR1   (23)
+#define ADDR2   (24)
+#define ADDR3   (25)
+#define ADDR4   (26)
+#define ADDR5   (27)
+#define ADDR6   (28)
+#define ADDR7   (29)
+#define ADDR8   (30)
+#define ADDR9   (31)
+#define ADDR10  (32)
+#define ADDR11  (33)
+#define ADDR12  (34)
+#define ADDR13  (35)
+#define ADDR14  (36)
 
-#if !defined(PORT_ADDRES)
-#define ADDR0   (22)  // PA 0 ** 22 ** D22
-#define ADDR1   (23)  // PA 1 ** 23 ** D23
-#define ADDR2   (24)  // PA 2 ** 24 ** D24
-#define ADDR3   (25)  // PA 3 ** 25 ** D25
-#define ADDR4   (26)  // PA 4 ** 26 ** D26
-#define ADDR5   (27)  // PA 5 ** 27 ** D27
-#define ADDR6   (28)  // PA 6 ** 28 ** D28
-#define ADDR7   (29)  // PA 7 ** 29 ** D29
-#define ADDR8   (30)  // PC 7 ** 30 ** D30
-#define ADDR9   (31)  // PC 6 ** 31 ** D31
-#define ADDR10  (32)  // PC 5 ** 32 ** D32
-#define ADDR11  (33)  // PC 4 ** 33 ** D33
-#define ADDR12  (34)  // PC 3 ** 34 ** D34
-#define ADDR13  (35)  // PC 2 ** 35 ** D35
-#define ADDR14  (36)  // PC 1 ** 36 ** D36
-#endif
+#define D0      (14)
+#define D1      (15)
+#define D2      (16)
+#define D3      (17)
+#define D4      (18)
+#define D5      (19)
+#define D6      (20)
+#define D7      (21)
 
-#define D0  14
-#define D1  15
-#define D2  16
-#define D3  17
-#define D4  18
-#define D5  19
-#define D6  20
-#define D7  21
-
-#define WE   7
-#define CE   6
-#define OE   5
+#define WE      (7)
+#define CE      (6)
+#define OE      (5)
 
 byte buffer[] = { 0xC3, 0x00, 0xF8 };
 
@@ -128,19 +136,12 @@ void setDataOutMode()
 void  setup ( )
 {
   Serial.begin(9600);     // Status message will be sent to PC at 9600 baud
-
   pinMode(WE,  OUTPUT);
   pinMode(CE,  OUTPUT);
   pinMode(OE,  OUTPUT);
-
   disableWE();
   disableOE();
   disableCE();
-
-#if defined(PORT_ADDRES)
-  DDRA = B11111111;
-  DDRC = B11111111;
-#else
   pinMode(ADDR0,  OUTPUT);
   pinMode(ADDR1,  OUTPUT);
   pinMode(ADDR2,  OUTPUT);
@@ -156,9 +157,7 @@ void  setup ( )
   pinMode(ADDR12, OUTPUT);
   pinMode(ADDR13, OUTPUT);
   pinMode(ADDR14, OUTPUT);
-#endif
   setDataInMode();
-
   displayHelp();
 }
 
@@ -178,10 +177,8 @@ void readMemory(uint16_t size)
   
   char text[32];
   Serial.println(size);
-
   enableCE();
   enableOE();
-    
   size /= 16;
   uint16_t addr = 0;
   // Максимум читаем 32кБ (32768), 2048 x 16 = 32768
@@ -191,10 +188,6 @@ void readMemory(uint16_t size)
     Serial.print(text);
     for (int i = 0; i < 16; i++)
     {
-#if defined(PORT_ADDRES)
-      PORTA = lowByte(addr);
-      PORTC = highByte(addr);      
-#else
       digitalWrite(ADDR14, bitRead(addr, 14));
       digitalWrite(ADDR13, bitRead(addr, 13));
       digitalWrite(ADDR12, bitRead(addr, 12));
@@ -210,7 +203,6 @@ void readMemory(uint16_t size)
       digitalWrite(ADDR2,  bitRead(addr, 2));
       digitalWrite(ADDR1,  bitRead(addr, 1));
       digitalWrite(ADDR0,  bitRead(addr, 0));
-#endif
       delayMicroseconds(1);
       byte data = 0;
       if (digitalRead(D0) == HIGH) bitSet(data, 0);
@@ -238,17 +230,11 @@ void writeMemory()
 
   uint16_t size = sizeof(buffer);
   Serial.println(size);
-
   enableCE();
   disableOE();
-    
   uint16_t addr = 0;
   for (int i = 0; i < size; i++)
   {
-#if defined(PORT_ADDRES)
-    PORTA = lowByte(addr);
-    PORTC = highByte(addr);      
-#else
     digitalWrite(ADDR14, bitRead(addr, 14));
     digitalWrite(ADDR13, bitRead(addr, 13));
     digitalWrite(ADDR12, bitRead(addr, 12));
@@ -264,7 +250,6 @@ void writeMemory()
     digitalWrite(ADDR2,  bitRead(addr, 2));
     digitalWrite(ADDR1,  bitRead(addr, 1));
     digitalWrite(ADDR0,  bitRead(addr, 0));
-#endif
     delayMicroseconds(1);
     byte data = buffer[i];
     digitalWrite(D0, bitRead(data, 0));
@@ -275,13 +260,11 @@ void writeMemory()
     digitalWrite(D5, bitRead(data, 5));
     digitalWrite(D6, bitRead(data, 6));
     digitalWrite(D7, bitRead(data, 7));
-
     delayMicroseconds(1);
     enableWE();
     delayMicroseconds(1);
     disableWE();
     delayMicroseconds(1);
-
     addr++;
   }
   disableOE();

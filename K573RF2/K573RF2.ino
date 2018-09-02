@@ -4,6 +4,7 @@ http://www.inp.nsk.su/~kozak/mem/mem18.htm
 http://www.eandc.ru/pdf/mikroskhema/k573rf2.pdf
 http://vip-cxema.org/index.php/home/mikrokontrollery/357-prostoj-kopirovshchik-rpzu-k573rf2-5
 
+Распиновка платы
             CE OE
              |  |
         ------------------------
@@ -35,7 +36,23 @@ A0...A10  -CE  -OE  Vpp    D0...D7
   L/H      L    L   24v      Out      Проверка записи
 ------------------------------------------------------------------------
 
-*/
+Распиновка К573РФ2
+      -------------
+  1 -| A7      +5V |- 24
+  2 -| A6       A8 |- 23
+  3 -| A5       A9 |- 22
+  4 -| A4      Vpp |- 21
+  5 -| A3      ~OE |- 20
+  6 -| A2      A10 |- 19
+  7 -| A1      ~CE |- 18
+  8 -| A0       D7 |- 17
+  9 -| D0       D6 |- 16
+ 10 -| D1       D5 |- 15
+ 11 -| D2       D4 |- 14
+ 12 -| GND      D3 |- 13
+	  -------------
+
+ */
 #define ADDR0   2
 #define ADDR1   3
 #define ADDR2   4
