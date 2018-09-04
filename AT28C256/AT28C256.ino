@@ -3,47 +3,55 @@ AT28C256
 https://docs-europe.electrocomponents.com/webdocs/1596/0900766b815963c9.pdf
 
 Подключение к Arduino MEGA
+
+https://arduinka.pro/blog/wp-content/uploads/2017/09/mega2560-pinout-1024x724.png
          -------                                                          -------
         | POWER |                                                        |  USB  |
-      -------------------------------------------------------------------------------
-     |                                                                               |---
-     |                                                                          AREF |   |
-     |                                                                           GND |   |
-     |                                                                            13 |   |
-  ---|                                                                            12 |   |
- |   | RST                                                                        11 |   |
- |   | 3V                                                                         10 |   |
- | X | 5V                                                                          9 |   |
- | X | GND                                                                         8 |   |
- |   |                                                                               |---
- |   | VIN                                                                         7 | X | - !WE
-  ---|                                                                             6 | X | - !CE
- |   | A0                                                                          5 | X | - !OE
- |   | A1                                                                          4 |   |
- |   | A2                                                                          3 |   |
- |   | A3                                                                          2 |   |
- |   | A4                                                                          1 |   |
- |   | A5                                                                          0 |   |
- |   | A6                                                                            |---
- |   | A7                                                                         14 | X | - D0
-  ---|                                                                            15 | X | - D1
- |   | A8                                                                         16 | X | - D2
- |   | A9                                                                         17 | X | - D3
- |   | A10                                                                        18 | X | - D4
- |   | A11                                                                        19 | X | - D5
- |   | A12                                                                        20 | X | - D6
- |   | A13                                                                        21 | X | - D7
- |   | A14                                                                           |---
- |   | A15                                                                           |
-  ---|
-     | 52 | 50 | 48 | 46 | 44 | 42 | 40 | 38 | 36 | 34 | 32 | 30 | 28 | 26 | 24 | 22 |
-      -------------------------------------------------------------------------------
-     |    |    |    |    |    |    |    |    | XX | XX | XX | XX | XX | XX | XX | XX |  A14  A12  A10  A8  A6  A4  A2  A0
-     |    |    |    |    |    |    |    |    |    | XX | XX | XX | XX | XX | XX | XX |       A13  A11  A9  A7  A5  A3  A1
-      -------------------------------------------------------------------------------
-     | 53 | 51 | 49 | 47 | 45 | 43 | 41 | 39 | 37 | 35 | 33 | 31 | 29 | 27 | 25 | 23 |
+      -----------------------------------------------------------------------------------------
+     |                                                                                         |---
+     |                                                                                    AREF |   |
+     |                                                                                     GND |   |
+     |                                                                                      13 |   |
+  ---|                                                                                      12 |   |
+ |   | RST                                                                                  11 |   |
+ |   | 3V                                                                                   10 |   |
+ | X | 5V                                                                                    9 |   |
+ | X | GND                                                                                   8 |   |
+ |   |                                                                                         |---
+ |   | VIN                                                                                   7 | X | - !WE
+  ---|                                                                                       6 | X | - !CE
+ |   | A0                                                                                    5 | X | - !OE
+ |   | A1                                                                                    4 |   |
+ |   | A2                                                                                    3 |   |
+ |   | A3                                                                                    2 |   |
+ |   | A4                                                                                    1 |   |
+ |   | A5                                                                                    0 |   |
+ |   | A6                                                                                      |---
+ |   | A7                                                                                   14 |   |
+  ---|                                                                                      15 |   |
+ |   | A8                                                                                   16 |   |
+ |   | A9                                                                                   17 |   |
+ |   | A10                                                                                  18 |   |
+ |   | A11                                                                                  19 |   |
+ |   | A12                                                                                  20 |   |
+ |   | A13                                                                                  21 |   |
+ |   | A14                                                                                     |---
+ |   | A15                                                                                     |
+  ---|                                                                                         |
+     | GND| 52 | 50 | 48 | 46 | 44 | 42 | 40 | 38 | 36 | 34 | 32 | 30 | 28 | 26 | 24 | 22 | +5V|
+      -----------------------------------------------------------------------------------------
+     |    |    |    |    |    | D6 | D4 | D2 | D0 | A13| A12| A10| A8 | A6 | A4 | A2 | A0 |    |  A14  A12  A10  A8  A6  A4  A2  A0
+     |    |    |    |    |    | D7 | D5 | D3 | D1 |    | A13| A11| A9 | A7 | A5 | A3 | A1 |    |  A15  A13  A11  A9  A7  A5  A3  A1
+      -----------------------------------------------------------------------------------------
+     | GND| 53 | 51 | 49 | 47 | 45 | 43 | 41 | 39 | 37 | 35 | 33 | 31 | 29 | 27 | 25 | 23 | +5V|
+                                                ^                   ^                   ^
+                                              ключ                ключ                ключ
+                                               4x2                 4x2                 4x2
+                                               3+5             2+1+1+1+1+1+             8
+                                            ключ D0+D3           ключ A8             ключ A0
 
-	 
+                                            
+
 
 Распиновка AT28C256
       -------------
@@ -84,15 +92,16 @@ https://docs-europe.electrocomponents.com/webdocs/1596/0900766b815963c9.pdf
 #define ADDR12  (34)
 #define ADDR13  (35)
 #define ADDR14  (36)
+#define ADDR15  (37)
 
-#define D0      (14)
-#define D1      (15)
-#define D2      (16)
-#define D3      (17)
-#define D4      (18)
-#define D5      (19)
-#define D6      (20)
-#define D7      (21)
+#define D0      (38)
+#define D1      (39)
+#define D2      (40)
+#define D3      (41)
+#define D4      (42)
+#define D5      (43)
+#define D6      (44)
+#define D7      (45)
 
 #define WE      (7)
 #define CE      (6)
@@ -171,6 +180,25 @@ void displayHelp()
   Serial.println();
 }
 
+void setAddres(uint16_t addr)
+{
+  digitalWrite(ADDR14, bitRead(addr, 14));
+  digitalWrite(ADDR13, bitRead(addr, 13));
+  digitalWrite(ADDR12, bitRead(addr, 12));
+  digitalWrite(ADDR11, bitRead(addr, 11));
+  digitalWrite(ADDR10, bitRead(addr, 10));
+  digitalWrite(ADDR9,  bitRead(addr, 9));
+  digitalWrite(ADDR8,  bitRead(addr, 8));
+  digitalWrite(ADDR7,  bitRead(addr, 7));
+  digitalWrite(ADDR6,  bitRead(addr, 6));
+  digitalWrite(ADDR5,  bitRead(addr, 5));
+  digitalWrite(ADDR4,  bitRead(addr, 4));
+  digitalWrite(ADDR3,  bitRead(addr, 3));
+  digitalWrite(ADDR2,  bitRead(addr, 2));
+  digitalWrite(ADDR1,  bitRead(addr, 1));
+  digitalWrite(ADDR0,  bitRead(addr, 0));
+}
+
 void readMemory(uint16_t size)
 {
   setDataInMode();
@@ -188,21 +216,7 @@ void readMemory(uint16_t size)
     Serial.print(text);
     for (int i = 0; i < 16; i++)
     {
-      digitalWrite(ADDR14, bitRead(addr, 14));
-      digitalWrite(ADDR13, bitRead(addr, 13));
-      digitalWrite(ADDR12, bitRead(addr, 12));
-      digitalWrite(ADDR11, bitRead(addr, 11));
-      digitalWrite(ADDR10, bitRead(addr, 10));
-      digitalWrite(ADDR9,  bitRead(addr, 9));
-      digitalWrite(ADDR8,  bitRead(addr, 8));
-      digitalWrite(ADDR7,  bitRead(addr, 7));
-      digitalWrite(ADDR6,  bitRead(addr, 6));
-      digitalWrite(ADDR5,  bitRead(addr, 5));
-      digitalWrite(ADDR4,  bitRead(addr, 4));
-      digitalWrite(ADDR3,  bitRead(addr, 3));
-      digitalWrite(ADDR2,  bitRead(addr, 2));
-      digitalWrite(ADDR1,  bitRead(addr, 1));
-      digitalWrite(ADDR0,  bitRead(addr, 0));
+      setAddres(addr);
       delayMicroseconds(1);
       byte data = 0;
       if (digitalRead(D0) == HIGH) bitSet(data, 0);
@@ -235,21 +249,7 @@ void writeMemory()
   uint16_t addr = 0;
   for (int i = 0; i < size; i++)
   {
-    digitalWrite(ADDR14, bitRead(addr, 14));
-    digitalWrite(ADDR13, bitRead(addr, 13));
-    digitalWrite(ADDR12, bitRead(addr, 12));
-    digitalWrite(ADDR11, bitRead(addr, 11));
-    digitalWrite(ADDR10, bitRead(addr, 10));
-    digitalWrite(ADDR9,  bitRead(addr, 9));
-    digitalWrite(ADDR8,  bitRead(addr, 8));
-    digitalWrite(ADDR7,  bitRead(addr, 7));
-    digitalWrite(ADDR6,  bitRead(addr, 6));
-    digitalWrite(ADDR5,  bitRead(addr, 5));
-    digitalWrite(ADDR4,  bitRead(addr, 4));
-    digitalWrite(ADDR3,  bitRead(addr, 3));
-    digitalWrite(ADDR2,  bitRead(addr, 2));
-    digitalWrite(ADDR1,  bitRead(addr, 1));
-    digitalWrite(ADDR0,  bitRead(addr, 0));
+    setAddres(addr);
     delayMicroseconds(1);
     byte data = buffer[i];
     digitalWrite(D0, bitRead(data, 0));
