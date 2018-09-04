@@ -6,7 +6,15 @@ I2C EEPROM 24LC32 - 24LC512
 24LC256  https://static.chipdip.ru/lib/204/DOC000204529.pdf
 24LC512  https://static.chipdip.ru/lib/238/DOC000238406.pdf
 
-  Плата
+Распиновка 24LC32 - 24LC512
+	-----------
+ 1-| A0     +5V|-8
+ 2-| A1      WP|-7
+ 3-| A2     SCL|-6
+ 4-| GND    SDA|-5
+	-----------
+
+Распиновка платы
   -------------------
  |                   |
  |    A0 A1 A2       |
@@ -14,14 +22,6 @@ I2C EEPROM 24LC32 - 24LC512
   -------------------
     |   |     |   |
    VCC GND   SCL SDA
-
-
-       ---
-  A0 -|*  |- VCC
-  A1 -|   |- WP
-  A2 -|   |- SCL
- GND -|   |- SDA
-       ---
 
 A0   адрес устройства на шине I2C
 A1   адрес устройства на шине I2C
