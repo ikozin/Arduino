@@ -9,13 +9,13 @@ https://arduinka.pro/blog/wp-content/uploads/2017/09/mega2560-pinout-1024x724.pn
 2) Макетная плата
 3) Micro SD
 
-4) Провод 4x2->8x1, контакт папа -> папа, для подключения линни адреса A0-A7
-5) Провод 4x2->2x1 + 1x1 + 1x1 + 1x1 + 1x1 + 1x1 + 1x1, контакт папа ->папа + папа(6 шт), для подключения линни адреса A8-A9, A10, A11, A12, A13, A14, A15
-6) Провод 4x2->2x1 + 3x1 + 5x1, контакт папа -> папа + папа, для подключения линни данных D0-D2, D3-D7
-7) Провод 2x2->4x1, контакт папа -> мама, для подключения Micro SD
+4) Провод 4x2->8x1, контакт папа -> папа, для подключения Arduino MEGA к Макетной плате линни адреса A0-A7
+5) Провод 4x2->2x1 + 1x1 + 1x1 + 1x1 + 1x1 + 1x1 + 1x1, контакт папа ->папа + папа(6 шт), для подключения Arduino MEGA к Макетной плате линни адреса A8-A9, A10, A11, A12, A13, A14, A15
+6) Провод 4x2->2x1 + 3x1 + 5x1, контакт папа -> папа + папа, для подключения Arduino MEGA к Макетной плате линни данных D0-D2, D3-D7
+7) Провод 2x2->4x1, контакт папа -> мама, для подключения Arduino MEGA к Micro SD
 
 8) Провод 2x1->2x1, контакт папа -> папа, для подключения питания Arduino MEGA к Макетной плате
-9) Провод 2x1->2x1, контакт папа -> папа, для подключения питания Micro SD к Макетной плате
+9) Провод 2x1->2x1, контакт мама -> папа, для подключения питания Micro SD к Макетной плате
 
 
 Распиновка подключения к ATMEG2560
@@ -118,7 +118,7 @@ https://arduinka.pro/blog/wp-content/uploads/2017/09/mega2560-pinout-1024x724.pn
 #define D6         (44)
 #define D7         (45)
 
-#define SD_CS      (10)
+#define SD_CS      (53)
 
 #define WE          (7)
 #define CE          (6)
@@ -193,28 +193,28 @@ void  loop()
 		dumpMemory(32768);
 		displayHelp();
 		break;
-	case '2':					// 2 - Dump  65536 KB [AT28C512]
-		dumpMemory(65536);
-		displayHelp();
-		break;
+//	case '2':					// 2 - Dump  65536 KB [AT28C512]
+//		dumpMemory(65536);
+//		displayHelp();
+//		break;
 
 	case '3':					// 3 - Read  32768 KB [AT28C256]
 		readMemory(32768);
 		displayHelp();
 		break;
-	case '4':					// 4 - Read  65536 KB [AT28C512]
-		readMemory(65536);
-		displayHelp();
-		break;
+//	case '4':					// 4 - Read  65536 KB [AT28C512]
+//		readMemory(65536);
+//		displayHelp();
+//		break;
 
 	case '8':					// 8 - Write 32768 KB[AT28C256]
 		writeMemory(32768);
 		displayHelp();
 		break;
-	case '9':					// 9 - Write 65536 KB [AT28C512]
-		writeMemory(65536);
-		displayHelp();
-		break;
+//	case '9':					// 9 - Write 65536 KB [AT28C512]
+//		writeMemory(65536);
+//		displayHelp();
+//		break;
 	}
 }
 
@@ -226,13 +226,13 @@ void displayHelp()
 	Serial.println(F("Enter commnad:"));
 	Serial.println();
 	Serial.println(F("1 - Dump  32768 KB [AT28C256]"));
-	Serial.println(F("2 - Dump  65536 KB [AT28C512]"));
+//	Serial.println(F("2 - Dump  65536 KB [AT28C512]"));
 	Serial.println();
 	Serial.println(F("3 - Read  32768 KB [AT28C256] (DUMP.TXT)"));
-	Serial.println(F("4 - Read  65536 KB [AT28C512] (DUMP.TXT)"));
+//	Serial.println(F("4 - Read  65536 KB [AT28C512] (DUMP.TXT)"));
 	Serial.println();
 	Serial.println(F("8 - Write 32768 KB [AT28C256] (DUMP.TXT)"));
-	Serial.println(F("9 - Write 65536 KB [AT28C512] (DUMP.TXT)"));
+//	Serial.println(F("9 - Write 65536 KB [AT28C512] (DUMP.TXT)"));
 	Serial.println();
 }
 
