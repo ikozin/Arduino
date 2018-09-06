@@ -6,7 +6,7 @@ https://docs-europe.electrocomponents.com/webdocs/1596/0900766b815963c9.pdf
 https://arduinka.pro/blog/wp-content/uploads/2017/09/mega2560-pinout-1024x724.png
 
 Распиновка AT28C256
-	  -------------
+  	  -------------
   1 -| A14     +5V |- 28
   2 -| A12     ~WE |- 27
   3 -| A7      A13 |- 26
@@ -21,10 +21,10 @@ https://arduinka.pro/blog/wp-content/uploads/2017/09/mega2560-pinout-1024x724.pn
  12 -| D1       D5 |- 17
  13 -| D2       D4 |- 16
  14 -| GND      D3 |- 15
-	  -------------
+      -------------
 
 Распиновка подключения к ATMEG2560
-		 -------                                                          -------
+		     -------                                                          -------
         | POWER |                                                        |  USB  |
       -----------------------------------------------------------------------------------------
      |                                                                                         |---
@@ -63,12 +63,14 @@ https://arduinka.pro/blog/wp-content/uploads/2017/09/mega2560-pinout-1024x724.pn
      |    |    |    |    |    | D7 | D5 | D3 | D1 |    | A13| A11| A9 | A7 | A5 | A3 | A1 |    |
       -----------------------------------------------------------------------------------------
      | GND| 53 | 51 | 49 | 47 | 45 | 43 | 41 | 39 | 37 | 35 | 33 | 31 | 29 | 27 | 25 | 23 | +5V|
+	                
+                               ------------------- ------------------- -------------------
                               |                 ^ |                 ^ |                 ^ |
                               |               ключ|               ключ|               ключ|
                               |                4x2|                4x2|                4x2|
                               |                3+5|      2+1+1+1+1+1+1|                  8|
                               |         ключ D0,D3|    ключ A8,A10-A14|            ключ A0|
-
+		                       ------------------- ------------------- -------------------
 
 */
 
@@ -91,7 +93,6 @@ https://arduinka.pro/blog/wp-content/uploads/2017/09/mega2560-pinout-1024x724.pn
 #define ADDR12  (34)
 #define ADDR13  (35)
 #define ADDR14  (36)
-#define ADDR15  (37)
 
 #define D0      (38)
 #define D1      (39)
@@ -105,8 +106,6 @@ https://arduinka.pro/blog/wp-content/uploads/2017/09/mega2560-pinout-1024x724.pn
 #define WE      (7)
 #define CE      (6)
 #define OE      (5)
-
-byte buffer[] = { 0xC3, 0x00, 0xF8 };
 
 void enableWE() { digitalWrite(WE, LOW); }
 void disableWE(){ digitalWrite(WE, HIGH);}
@@ -143,7 +142,7 @@ void setDataOutMode()
 
 void  setup ( )
 {
-  Serial.begin(9600);     // Status message will be sent to PC at 9600 baud
+  Serial.begin(9600);
   pinMode(WE,  OUTPUT);
   pinMode(CE,  OUTPUT);
   pinMode(OE,  OUTPUT);
@@ -172,10 +171,9 @@ void  setup ( )
 void displayHelp()
 {
   Serial.println();
-  Serial.println("Enter commnad:");
-  Serial.println("0 - Read  2048 KB");
-  Serial.println("1 - Read 32768 KB");
-  Serial.println("2 - Write");
+  Serial.println(F("Enter commnad:"));
+  Serial.println(F("0 - Read  2048 KB"));
+  Serial.println(F("1 - Read 32768 KB"));
   Serial.println();
 }
 
@@ -208,7 +206,7 @@ void readMemory(uint16_t size)
   enableOE();
   size /= 16;
   uint16_t addr = 0;
-  // Максимум читаем 32кБ (32768), 2048 x 16 = 32768
+  // Читаем блоками по 16 байт
   for (uint16_t n = 0; n < size; n++)
   {
     sprintf(text, "%04X ", addr);
@@ -237,41 +235,6 @@ void readMemory(uint16_t size)
   disableCE();
 }
 
-void writeMemory()
-{
-  setDataOutMode();
-
-  uint16_t size = sizeof(buffer);
-  Serial.println(size);
-  enableCE();
-  disableOE();
-  uint16_t addr = 0;
-  for (int i = 0; i < size; i++)
-  {
-    setAddres(addr);
-    delayMicroseconds(1);
-    byte data = buffer[i];
-    digitalWrite(D0, bitRead(data, 0));
-    digitalWrite(D1, bitRead(data, 1));
-    digitalWrite(D2, bitRead(data, 2));
-    digitalWrite(D3, bitRead(data, 3));
-    digitalWrite(D4, bitRead(data, 4));
-    digitalWrite(D5, bitRead(data, 5));
-    digitalWrite(D6, bitRead(data, 6));
-    digitalWrite(D7, bitRead(data, 7));
-    delayMicroseconds(1);
-    enableWE();
-    delayMicroseconds(1);
-    disableWE();
-    delayMicroseconds(1);
-    addr++;
-  }
-  disableOE();
-  disableCE();
-}
-
-
-
 void  loop ( )
 {
   int cmd = Serial.read();
@@ -283,10 +246,6 @@ void  loop ( )
       break;
     case '1':
       readMemory(32768);
-      displayHelp();
-      break;
-    case '2':
-      writeMemory();
       displayHelp();
       break;
   }
