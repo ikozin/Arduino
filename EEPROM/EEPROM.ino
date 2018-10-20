@@ -201,6 +201,7 @@ void  setup()
     Serial.println(F("SD card initialized."));
 
     displayHelp();
+    //debugAddr();
 }
 
 
@@ -299,7 +300,7 @@ void setAddres(uint16_t addr)
 byte readData(uint16_t addr)
 {
     setAddres(addr);
-    delayMicroseconds(1);
+    delayMicroseconds(2);
     byte data = 0;
     if (digitalRead(D0) == HIGH) bitSet(data, 0);
     if (digitalRead(D1) == HIGH) bitSet(data, 1);
@@ -435,11 +436,11 @@ void writeMemory(uint16_t size)
                 digitalWrite(D6, bitRead(data, 6));
                 digitalWrite(D7, bitRead(data, 7));
 
-                delayMicroseconds(1);
+                delayMicroseconds(3);
                 enableWE();
-                delayMicroseconds(1);
+                delayMicroseconds(2);
                 disableWE();
-                delayMicroseconds(1);
+                delayMicroseconds(3);
             }
         }
 
@@ -498,4 +499,18 @@ char* bin2hex(char* pText, uint16_t value)
     pText = bin2hex(pText, highByte(value));
     pText = bin2hex(pText, lowByte(value));
     return pText;
+}
+
+void debugAddr()
+{
+  while(true)
+  {
+    uint16_t addr = 1;
+    for (int i = 0; i < 16; i++)
+    {
+      setAddres(addr);
+      delay(1000);
+      addr <<= 1;
+    }
+  }
 }
