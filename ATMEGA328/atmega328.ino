@@ -54,7 +54,7 @@ RST -|                                                                          
 RST -|                          RXD TXD                                           |
      |____________________________________________________________________________|
       |   |   |   |   |   |      |   |   |   |   |   |   |   |      |   |   |   |
-     RST TXI RXO VCC     GND     0   1   2   3   4   5   6   7     SCL SDA VCC GND
+     RST TXD RXD VCC     GND     0   1   2   3   4   5   6   7     SCL SDA VCC GND
 
      DTR TXO RXI VCC     GND                                 |     SCL SDA VCC GND
     __|___|___|___|___|___|__                                |    __|___|___|___|__
