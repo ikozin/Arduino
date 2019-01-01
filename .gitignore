@@ -6,5 +6,6 @@
 /HC-05 (Bluetooth)/BT/bin/Debug
 /HC-05 (Bluetooth)/BT/BT.csproj.user
 /.vs
+/HC-05 (Bluetooth)/BT/.vs/
 /HC-05 (Bluetooth)/BT/obj/Release/BT.csproj.CoreCompileInputs.cache
 /libraries
