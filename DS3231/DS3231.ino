@@ -50,7 +50,8 @@ void setup()
   //setTime(0, 9, 14);
 }
 
-void loop() {
+void loop()
+{
   //dump();
   Serial.println(getDate());
   Serial.println(getTime());
@@ -231,4 +232,3 @@ uint8_t dec2bcd(uint8_t n)
   byte b = (n * 103) >> 10;
   return (b * 16 + n-(b*10));  
 }
-
