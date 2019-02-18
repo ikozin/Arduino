@@ -1,11 +1,21 @@
 #include "DateTimeModuleHelper.h"
 
+
+DateTimeModuleHelper::DateTimeModuleHelper(Func init, FuncGettter getDateTime, FuncSetter setDate, FuncSetter setTime, Func dump)
+{
+  _handlerInit = init;
+  _handlerDump = dump;
+  _handlerGetDateTime = getDateTime;
+  _handlerSetDate = setDate;
+  _handlerSetTime = setTime;
+}
+
 void DateTimeModuleHelper::setup()
 {
-  init();
   Serial.begin(9600);
   Serial.println(F("Start"));
   help();
+  if (_handlerInit != NULL) _handlerInit();
 }
 
 void DateTimeModuleHelper::loop()
@@ -39,7 +49,7 @@ void DateTimeModuleHelper::loop()
           if (month < 0 || month > 12) break;
           if (year < 2000) break;
 #endif
-          setDate(year, month, day);
+          if (_handlerSetDate != NULL) _handlerSetDate(year, month, day);
         }
         break;
       case 't':
@@ -60,11 +70,11 @@ void DateTimeModuleHelper::loop()
           if (minute < 0 || minute > 59) break;
           if (second < 0 || second > 59) break;
 #endif
-          setTime(hour, minute, second);
+          if (_handlerSetTime != NULL) _handlerSetTime(hour, minute, second);
         }
         break;
       case 'i':
-        dump();
+        if (_handlerDump != NULL) _handlerDump();
         break;
       default:
         Serial.println(text);
@@ -76,13 +86,8 @@ void DateTimeModuleHelper::loop()
     Serial.println(time);
 #endif
   }
-  Serial.println(getDateTime());
+  if (_handlerGetDateTime != NULL) Serial.println(_handlerGetDateTime());
   delay(1000);
-}
-
-void DateTimeModuleHelper::dump()
-{
-  
 }
 
 void DateTimeModuleHelper::help()
