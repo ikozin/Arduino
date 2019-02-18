@@ -8,11 +8,10 @@
 | ATMEGA328 | Время/Температура/Влажность, используется ATMEGA328 (8MHz internal clock), HS410561K-32, DS3231, AM2301AM |
 | BCD | Функции конвертировния BCD |
 | BLUNO | Bluno v1.6 от DFRobot - все время пытается подключиться как USB диск |
-| DateTimeModuleHelper | Вспомогательный класс для унифкаци работы с модулем часов (DS1302, DS3231) |
 | ![DS1302](Images/ds1302.jpg "DS1302") DS1302 | DS1302 |
 | ![DS3231](Images/ds3231.jpg "DS3231") DS3231 | DS3231 |
 | EEPROM | Программатор для Paraller EEPROM AT28C256, используется Arduino MEGA 2560 + набор шлейфов + Micro SD |
-| HC-05 (Bluetooth) | работа с модулем Bluetooth HC-05 |
+| ![HC-05](Images/hc05.jpg "HC-05") HC-05 (Bluetooth) | работа с модулем Bluetooth HC-05 |
 | ![HS410561K-32](Images/hs410561k-32.jpg "HS410561K-32") HS410561K-32 | 4-разрядный 7-сегментный индикатор с общим анодом |
 | ![Joystick](Images/joystick.jpg "Joystick") Joystick | Аналоговый джойстик |
 | K573RF2 | Плата расширения для ППЗУ К573РФ2, содержит логику управления напряжением прошивки, для работы необходим повышающий DC-DC |
