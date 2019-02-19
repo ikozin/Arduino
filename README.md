@@ -20,7 +20,7 @@
 | ![KR1533IR24x2](Images/1533ir24x2_board.png "KR1533IR24x2") KR1533IR24x2 | Плата расширения для регистра сдвига К1533ИР24, содержит 2 регистра (16 бит), с подтягивающими резисторами на входах управления |
 | ![1588AS](Images/1588as.jpg "1588AS") LED8x8 - 1588AS | Светодиодная матрица 8x8 красная (LED8x8) |
 | Matrix |  |
-| ![PCF8574](Images/pcf8574_board.png "PCF8574") ![PCF8574](Images\pcf8574_io_expanion_board_iic.jpg "PCF8574") PCF8574 | Плата расширения для 8-bit I/O expander (I2C) PCF8574 |
+| ![PCF8574](Images/pcf8574_board.png "PCF8574") ![PCF8574](Images/pcf8574_io_expanion_board_iic.jpg "PCF8574") PCF8574 | Плата расширения для 8-bit I/O expander (I2C) PCF8574 |
 | ![PCF8574_Button](Images/pcf8574_button_board.png "PCF8574_Button") PCF8574_Button | Плата расширения для 8-bit I/O expander (I2C) PCF8574, расширитель клавиатуры - 8 кнопок |
 | Programmer573RF2 | Программатор для ППЗУ К573РФ2, использует платы расширения: "KR1533IR24x2", "K573RF2", "PCF8574", "PCF8574_Button", SD Card |
 | Radio |  |
