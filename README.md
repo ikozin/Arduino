@@ -13,7 +13,7 @@
 | EEPROM | Программатор для Paraller EEPROM AT28C256, используется Arduino MEGA 2560 + набор шлейфов + Micro SD |
 | ![HC-05](Images/hc05.jpg "HC-05") HC-05 (Bluetooth) | работа с модулем Bluetooth HC-05 |
 | ![HS410561K-32](Images/hs410561k-32.jpg "HS410561K-32") HS410561K-32 | 4-разрядный 7-сегментный индикатор с общим анодом |
-| ![Joystick](Images/joystick.jpg "Joystick") Joystick | Аналоговый джойстик |
+| ![Joystick](Images/_joystick.jpg "Joystick") Joystick | Аналоговый джойстик |
 | K573RF2 | Плата расширения для ППЗУ К573РФ2, содержит логику управления напряжением прошивки, для работы необходим повышающий DC-DC |
 | ![Keyboard4x4](Images/keyboard4x4.jpg "Keyboard4x4") Keyboard4x4 | Клавиатура 4 x 4 |
 | KitchenStation |  |
