@@ -1,3 +1,4 @@
+#define INSIDE_IRQ
 #include <MsTimer2.h>
 #include <DHT.h>
 #include "ledDisplay.h"

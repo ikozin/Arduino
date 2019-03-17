@@ -57,10 +57,16 @@ void LED_DISPLAY::setTime(uint16_t value)
 
 void LED_DISPLAY::_refresh()
 {
+#ifdef INSIDE_IRQ
+  noInterrupts();
+#endif
   byte value = _dataValue[_curIndex];
   for (int i = 0; i < LED_DISPLAY_LENGTH; i++)
     digitalWrite(_digitPin[i], HIGH); // для S8550 HIGH = выключено, при прямом подключении LOW = выключено
   PORTB = ~value;
   digitalWrite(_digitPin[_curIndex], LOW); // для S8550 LOW = включено, при прямом подключении HIGH = включено
   _curIndex = ++_curIndex & B00000011;
+#ifdef INSIDE_IRQ
+  interrupts();
+#endif
 }

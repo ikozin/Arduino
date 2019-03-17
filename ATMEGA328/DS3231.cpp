@@ -8,6 +8,9 @@ void DS3231::begin()
  
 void DS3231::setDate(uint8_t day, uint8_t month, uint16_t year)
 {
+#ifdef INSIDE_IRQ
+  noInterrupts();
+#endif
   int a = (14 - month) / 12;
   int y = year - a;
   int m = month + 12 * a - 2;
@@ -22,10 +25,16 @@ void DS3231::setDate(uint8_t day, uint8_t month, uint16_t year)
   Wire.write(month);
   Wire.write(year);
   Wire.endTransmission();
+#ifdef INSIDE_IRQ
+  interrupts();
+#endif
 }
 
 void DS3231::setTime(uint8_t second, uint8_t minute, uint8_t hour)
 {
+#ifdef INSIDE_IRQ
+  noInterrupts();
+#endif
   second = dec2bcd(second);
   minute = dec2bcd(minute);
   hour = dec2bcd(hour);
@@ -35,10 +44,16 @@ void DS3231::setTime(uint8_t second, uint8_t minute, uint8_t hour)
   Wire.write(minute);
   Wire.write(hour);
   Wire.endTransmission();
+#ifdef INSIDE_IRQ
+  interrupts();
+#endif
 }
 
 char* DS3231::getTextDate()
 {
+#ifdef INSIDE_IRQ
+  noInterrupts();
+#endif
   Wire.beginTransmission(DS3231_RTC);
   Wire.write(3);
   Wire.endTransmission();
@@ -57,11 +72,17 @@ char* DS3231::getTextDate()
   pText += strlen(_months[month]);
   *pText++ = ' ';
   pText = bin2hex(pText, year);
+#ifdef INSIDE_IRQ
+  interrupts();
+#endif
   return data;
 }
 
 char* DS3231::getTextTime()
 {
+#ifdef INSIDE_IRQ
+  noInterrupts();
+#endif
   Wire.beginTransmission(DS3231_RTC);
   Wire.write(0);
   Wire.endTransmission();
@@ -75,17 +96,26 @@ char* DS3231::getTextTime()
   pText = bin2hex(pText, minute);
   *pText++ = ':';
   pText = bin2hex(pText, second);
+#ifdef INSIDE_IRQ
+  interrupts();
+#endif
   return data;
 }
 
 uint16_t DS3231::getTime()
 {
+#ifdef INSIDE_IRQ
+  noInterrupts();
+#endif
   Wire.beginTransmission(DS3231_RTC);
   Wire.write(1);
   Wire.endTransmission();
   Wire.requestFrom(DS3231_RTC, 2);
   uint8_t minute = Wire.read();
   uint8_t hour = Wire.read();
+#ifdef INSIDE_IRQ
+  interrupts();
+#endif
   return makeWord(hour, minute);
 }
 
@@ -114,5 +144,3 @@ uint8_t DS3231::dec2bcd(uint8_t value)
   byte b = (value * 103) >> 10;
   return (b * 16 + value - (b * 10));  
 }
-
-
