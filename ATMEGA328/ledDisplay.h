@@ -1,16 +1,12 @@
 #ifndef LED_DISPLAY_H
 #define LED_DISPLAY_H
 
-#define INSIDE_IRQ
-
 #include <Arduino.h>
 #define LED_DISPLAY_LENGTH  4
 #define DISPLAY_SPACE       10
 #define DISPLAY_CELCIUS     11
 #define DISPLAY_HUMIDITY    12
 #define DISPLAY_MINUS       13
-
-
 
 namespace LED_DISPLAY
 {

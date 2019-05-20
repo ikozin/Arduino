@@ -1,8 +1,6 @@
 #ifndef DS3231_H
 #define DS3231_H
 
-#define INSIDE_IRQ
-
 #include <Arduino.h>
 
 //Адрес устройства

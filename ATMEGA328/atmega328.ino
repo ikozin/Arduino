@@ -1,4 +1,4 @@
-#define INSIDE_IRQ
+//#define INSIDE_IRQ
 #include <MsTimer2.h>
 #include <DHT.h>
 #include "ledDisplay.h"
@@ -81,7 +81,6 @@ RST -|                          RXD TXD                                         
 DHT dht(7, AM2301);
 DS3231 ds3231;
 
-//char text[128];
 long time = 0;
 long temp = 0;
 long hum = 0;
