@@ -112,31 +112,31 @@ https://arduinka.pro/blog/wp-content/uploads/2017/09/mega2560-pinout-1024x724.pn
 #include <SPI.h>
 #include <SD.h>
 
-#define ADDR0      (22)
-#define ADDR1      (23)
-#define ADDR2      (24)
-#define ADDR3      (25)
-#define ADDR4      (26)
-#define ADDR5      (27)
-#define ADDR6      (28)
-#define ADDR7      (29)
-#define ADDR8      (30)
-#define ADDR9      (31)
-#define ADDR10     (32)
-#define ADDR11     (33)
-#define ADDR12     (34)
-#define ADDR13     (35)
-#define ADDR14     (36)
-#define ADDR15     (37)
+#define ADDR0      (22)		//PA0
+#define ADDR1      (23)		//PA1
+#define ADDR2      (24)		//PA2
+#define ADDR3      (25)		//PA3
+#define ADDR4      (26)		//PA4
+#define ADDR5      (27)		//PA5
+#define ADDR6      (28)		//PA6
+#define ADDR7      (29)		//PA7
+#define ADDR8      (37)     //PC0
+#define ADDR9      (36)     //PC1
+#define ADDR10     (35)     //PC2
+#define ADDR11     (34)     //PC3
+#define ADDR12     (33)     //PC4
+#define ADDR13     (33)     //PC5
+#define ADDR14     (31)     //PC6
+#define ADDR15     (30)     //PC7
 
-#define D0         (38)
-#define D1         (39)
-#define D2         (40)
-#define D3         (41)
-#define D4         (42)
-#define D5         (43)
-#define D6         (44)
-#define D7         (45)
+#define D0         (49)     //PL0
+#define D1         (48)     //PL1
+#define D2         (47)     //PL2
+#define D3         (46)     //PL3
+#define D4         (45)     //PL4
+#define D5         (44)     //PL5
+#define D6         (43)     //PL6
+#define D7         (42)     //PL7
 
 #define SD_CS      (53)
 

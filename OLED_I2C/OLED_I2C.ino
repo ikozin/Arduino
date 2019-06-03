@@ -114,14 +114,14 @@ const uint8_t i2[8] PROGMEM={0x18, 0x3C, 0x66, 0xC3, 0xC3, 0x66, 0x3C, 0x18};
 
 uint8_t* screen[8][16] =
 {
-  { borUpLt, borRowU, borRowU, borRowU, borRowU, borRowU, borRowU, borRowU, borRowU, borRowU, borRowU, borRowU, borRowU, borRowU, borRowU, borUpRt }, //╔═════════════╗
-  { borColL, borEmpt, borEmpt, borEmpt, borEmpt, borEmpt, borEmpt, borEmpt, borEmpt, borEmpt, borEmpt, borEmpt, borEmpt, borEmpt, borEmpt, borColR }, //║                     ║
-  { borColL, borEmpt, borEmpt, borEmpt, borEmpt, borEmpt, borEmpt, borEmpt, borEmpt, borEmpt, borEmpt, borEmpt, borEmpt, borEmpt, borEmpt, borColR }, //║                     ║
-  { borColL, borEmpt, borEmpt, borEmpt, borEmpt, borEmpt, borEmpt, borEmpt, borEmpt, borEmpt, borEmpt, borEmpt, borEmpt, borEmpt, borEmpt, borColR }, //║                     ║
-  { borColL, borEmpt, borEmpt, borEmpt, borEmpt, borEmpt, borEmpt, borEmpt, borEmpt, borEmpt, borEmpt, borEmpt, borEmpt, borEmpt, borEmpt, borColR }, //║                     ║
-  { borColL, borEmpt, borEmpt, borEmpt, borEmpt, borEmpt, borEmpt, borEmpt, borEmpt, borEmpt, borEmpt, borEmpt, borEmpt, borEmpt, borEmpt, borColR }, //║                     ║
-  { borColL, borEmpt, borEmpt, borEmpt, borEmpt, borEmpt, borEmpt, borEmpt, borEmpt, borEmpt, borEmpt, borEmpt, borEmpt, borEmpt, borEmpt, borColR }, //║                     ║
-  { borDnLt, borRowD, borRowD, borRowD, borRowD, borRowD, borRowD, borRowD, borRowD, borRowD, borRowD, borRowD, borRowD, borRowD, borRowD, borDnRt }, //╚═════════════╝
+  { borUpLt, borRowU, borRowU, borRowU, borRowU, borRowU, borRowU, borRowU, borRowU, borRowU, borRowU, borRowU, borRowU, borRowU, borRowU, borUpRt }, //╔══════════════╗
+  { borColL, borEmpt, borEmpt, borEmpt, borEmpt, borEmpt, borEmpt, borEmpt, borEmpt, borEmpt, borEmpt, borEmpt, borEmpt, borEmpt, borEmpt, borColR }, //║                       ║
+  { borColL, borEmpt, borEmpt, borEmpt, borEmpt, borEmpt, borEmpt, borEmpt, borEmpt, borEmpt, borEmpt, borEmpt, borEmpt, borEmpt, borEmpt, borColR }, //║                       ║
+  { borColL, borEmpt, borEmpt, borEmpt, borEmpt, borEmpt, borEmpt, borEmpt, borEmpt, borEmpt, borEmpt, borEmpt, borEmpt, borEmpt, borEmpt, borColR }, //║                       ║
+  { borColL, borEmpt, borEmpt, borEmpt, borEmpt, borEmpt, borEmpt, borEmpt, borEmpt, borEmpt, borEmpt, borEmpt, borEmpt, borEmpt, borEmpt, borColR }, //║                       ║
+  { borColL, borEmpt, borEmpt, borEmpt, borEmpt, borEmpt, borEmpt, borEmpt, borEmpt, borEmpt, borEmpt, borEmpt, borEmpt, borEmpt, borEmpt, borColR }, //║                       ║
+  { borColL, borEmpt, borEmpt, borEmpt, borEmpt, borEmpt, borEmpt, borEmpt, borEmpt, borEmpt, borEmpt, borEmpt, borEmpt, borEmpt, borEmpt, borColR }, //║                       ║
+  { borDnLt, borRowD, borRowD, borRowD, borRowD, borRowD, borRowD, borRowD, borRowD, borRowD, borRowD, borRowD, borRowD, borRowD, borRowD, borDnRt }, //╚══════════════╝
 };
 
 

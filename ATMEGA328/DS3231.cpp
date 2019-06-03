@@ -46,7 +46,7 @@ char* DS3231::getTextDate()
   uint8_t dayOfWeek = Wire.read() - 1;
   uint8_t day = Wire.read();
   uint8_t month = Wire.read() - 1;
-  uint8_t year = Wire.read();
+  uint16_t year = 0x2000U + Wire.read();
   char* pText = data;
   strcpy(pText, _daysOfWeek[dayOfWeek]);
   pText += strlen(_daysOfWeek[dayOfWeek]);  

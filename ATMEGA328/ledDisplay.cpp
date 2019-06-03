@@ -32,7 +32,7 @@ void LED_DISPLAY::setTemperature(uint16_t value)
   _dataValue[0] = _digits[(value >= 0)? DISPLAY_SPACE: DISPLAY_MINUS];
   value = (value < 0)? -value: value;
   _dataValue[1] = _digits[value / 10];
-  _dataValue[2] = _digits[value % 10];
+  _dataValue[2] = _digits[value % 10] | B10000000;
   _dataValue[3] = _digits[DISPLAY_CELCIUS];
 }
 
@@ -41,7 +41,7 @@ void LED_DISPLAY::setHumidity(uint16_t value)
   value = (value < 100)? value: 99;
   _dataValue[0] = _digits[DISPLAY_SPACE];
   _dataValue[1] = _digits[value / 10];
-  _dataValue[2] = _digits[value % 10];
+  _dataValue[2] = _digits[value % 10] | B10000000;
   _dataValue[3] = _digits[DISPLAY_HUMIDITY];
 }
 

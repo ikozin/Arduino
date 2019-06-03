@@ -1,4 +1,5 @@
 //#define INSIDE_IRQ
+#define LOG_CONSOLE
 #include <MsTimer2.h>
 #include <DHT.h>
 #include "ledDisplay.h"
@@ -87,11 +88,15 @@ long hum = 0;
 
 void setup()
 {
-  Serial.begin(57600);
   LED_DISPLAY::begin();
   dht.begin();
   ds3231.begin();
+#ifdef LOG_CONSOLE
+  Serial.begin(57600);
   Serial.println("Start");
+#endif
+  //ds3231.setDate(3, 6, 2019);
+  //ds3231.setTime(0, 23, 16);
 }
 
 byte cnt = 0;
@@ -120,9 +125,19 @@ void loop()
       hum = lrint(h);
     }
   }
-  Serial.println(time, HEX);
-  Serial.println(temp);
-  Serial.println(hum);
+#ifdef LOG_CONSOLE
+  //Serial.println(time, HEX);
+  Serial.print(ds3231.getTextDate());
+  Serial.print(", ");
+  Serial.print(ds3231.getTextTime());
+  Serial.println();
+
+  Serial.print(temp);
+  Serial.println(" C");
+  
+   Serial.print(hum);
+  Serial.println(" H");
+#endif
   displayInfo();
   delay(500);
   cnt++;
