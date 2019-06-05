@@ -1,5 +1,20 @@
 #include <OLED_I2C.h>
 
+/*
+http://cxem.net/arduino/arduino227.php
+
+    GND VIN SCL SDA
+   __|___|___|___|__
+  |   ___________   |
+  |  |           |  |
+  |  |           |  |
+  |  |  128X64   |  |
+  |  |           |  |
+  |  |___________|  |
+  |_________________|
+
+*/
+
 OLED  myOLED(SDA, SCL); // Remember to add the RESET pin if your display requires it...
 
 /*
