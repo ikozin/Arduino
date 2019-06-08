@@ -113,7 +113,7 @@ char* getDateTime()
   uint8_t dayOfWeek = Wire.read() - 1;
   uint8_t day = Wire.read();
   uint8_t month = Wire.read() - 1;
-  uint8_t year = Wire.read();
+  uint16_t year = 0x2000 | Wire.read();
   strcpy(pText, daysOfWeek[dayOfWeek]);
   pText += strlen(daysOfWeek[dayOfWeek]);  
   *pText++ = ' ';
