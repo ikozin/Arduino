@@ -8,8 +8,7 @@
 | ATMEGA328 | Время/Температура/Влажность, используется ATMEGA328 (8MHz internal clock), HS410561K-32, DS3231, AM2301AM |
 | BCD | Функции конвертировния BCD |
 | ![BLUNO](Images/bluno.jpg "BLUNO") BLUNO | Bluno v1.6 от DFRobot - все время пытается подключиться как USB диск |
-| BME280 | I2C - BME280_I2C, SPI - BME280_SPI |
-
+| ![BME280](Images/bme280_iic.jpg "BME280 I2C") ![BME280](Images/bme280_spi.jpg "BME280 SPI") BME280 | I2C - BME280_I2C, SPI - BME280_SPI |
 | ![DS1302](Images/ds1302.jpg "DS1302") DS1302 | DS1302 |
 | ![DS3231](Images/ds3231.jpg "DS3231") DS3231 | DS3231 |
 | EEPROM | Программатор для Paraller EEPROM AT28C256, используется Arduino MEGA 2560 + набор шлейфов + Micro SD |
@@ -22,9 +21,9 @@
 | ![1533ИР24x2](Images/1533ir24x2_board.png "1533ИР24x2") 1533ИР24x2 | Плата расширения для регистра сдвига К1533ИР24, содержит 2 регистра (16 бит), с подтягивающими резисторами на входах управления |
 | ![1588AS](Images/1588as.jpg "1588AS") LED8x8 - 1588AS | Светодиодная матрица 8x8 красная (LED8x8) |
 | Matrix |  |
-| ![SSD1306](Images/oled_128x64_iic.jpg "") SSD1306 | I2C - OLED_I2C, SPI - Adafruit_SPI |
 | ![PCF8574](Images/pcf8574_board.png "PCF8574") ![PCF8574](Images/pcf8574_io_expanion_board_iic.jpg "PCF8574") PCF8574 | Плата расширения для 8-bit I/O expander (I2C) PCF8574 |
 | ![PCF8574_Button](Images/pcf8574_button_board.png "PCF8574_Button") PCF8574_Button | Плата расширения для 8-bit I/O expander (I2C) PCF8574, расширитель клавиатуры - 8 кнопок |
 | Programmer573RF2 | Программатор для ППЗУ К573РФ2, использует платы расширения: "1533ИР24x2", "573РФ2", "PCF8574", "PCF8574_Button", SD Card |
-| Radio |  |
+| Radio | FM Radio (MP1090S) |
+| ![SSD1306](Images/oled_128x64_iic.jpg "SSD1306") ![SSD1306](Images/oled_128x64_spi.jpg "SSD1306") SSD1306 | I2C - OLED_I2C, SPI - Adafruit_SPI |
 | УМС | Плата расширения для УМС-7, УМС-8 |
