@@ -26,4 +26,5 @@
 | Programmer573RF2 | Программатор для ППЗУ К573РФ2, использует платы расширения: "1533ИР24x2", "573РФ2", "PCF8574", "PCF8574_Button", SD Card |
 | Radio | FM Radio (MP1090S) |
 | ![SSD1306](Images/oled_128x64_iic.jpg "SSD1306") ![SSD1306](Images/oled_128x64_spi.jpg "SSD1306") SSD1306 | I2C - OLED_I2C, SPI - Adafruit_SPI |
+| ![TM1990A](Images/TM1990A.jpg "TM1990A") TM1990A | i-Button reader |
 | УМС | Плата расширения для УМС-7, УМС-8 |
