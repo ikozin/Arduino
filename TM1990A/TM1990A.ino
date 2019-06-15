@@ -1,5 +1,8 @@
 //https://www.pjrc.com/teensy/td_libs_OneWire.html
 //https://soltau.ru/index.php/arduino/item/394-kak-sdelat-kopiyu
+//https://usamodelkina.ru/14759-kak-sdelat-svoimi-rukami-kopirovalschik-kontaktnyh-i-beskontaktnyh-kljuchej-domofona.html
+//https://drive.google.com/file/d/1vGYt09DGuwuMr2_qt5IiN-aCOp-YOQBE/view
+
 
 #include <OneWire.h>
 
