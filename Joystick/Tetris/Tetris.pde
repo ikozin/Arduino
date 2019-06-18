@@ -203,22 +203,30 @@ void drawCell(int row, int col, int cellColor)
 
 boolean proceedAction()
 {
+  boolean result = true;
   switch (actionCode)
   {
     case 27:  // ESC
-      return false;
+      result = false; 
+      break;
     case 38:  // UP
-      return rotateBlockToLeft();
+      result = rotateBlockToLeft();
+      break;
     case 40:  // DOWN
-      return rotateBlockToRight();
+      result = rotateBlockToRight();
+      break;
     case 37:  // LEFT
-      return moveBlockToLeft();
+      result = moveBlockToLeft();
+      break;
     case 39:  // RIGHT
-      return moveBlockToRight();
+      result = moveBlockToRight();
+      break;
     case 32:  // SPACE
-      return dropBlock();
+      result = dropBlock();
+      break;
   }
-  return true;
+  actionCode = -1;
+  return result;
 }
 
 void keyPressed()
