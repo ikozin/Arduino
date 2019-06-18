@@ -7,7 +7,7 @@ int _cellW;
 int _cellH;
 
 boolean _isRunning = true;
-int _interval = 100;
+int _interval = 200;
 int _lastRecordedTime = 0;
 
 int _block = 0;
@@ -34,15 +34,7 @@ void setup()
 void draw()
 {
   displayScreen();
-  if (_isRunning)
-  {
-    if (millis() - _lastRecordedTime > _interval)
-    {
-      _lastRecordedTime = millis();
-      if (Interact()) return;
-    }
-    else return;
-  }
+  if (_isRunning && Interact()) return;
   stroke(0);
   text("GAME OVER!", width/2, height/2 );
   noLoop();    
@@ -50,9 +42,31 @@ void draw()
 
 boolean Interact()
 {
+  delay(100);
   if (!clearBlock(_block, _slide, _x, _y)) return false;
+  if (!nextLine()) return false;
   if (!proceedAction()) return false;
   if (!showBlock(_block, _slide, _x, _y)) return false;
+  return true;
+}
+
+
+boolean nextLine()
+{
+  if (millis() - _lastRecordedTime > _interval)
+  {
+    _lastRecordedTime = millis();
+    int posY = _y + 1;
+    if (checkBlock(_block, _slide, _x, posY))
+    {
+      _y = posY;
+    }
+    else
+    {
+      showBlock(_block, _slide, _x, _y);
+      newBlock();
+    }
+  }
   return true;
 }
 
@@ -138,21 +152,21 @@ boolean moveBlockToRight()
 
 boolean rotateBlockToLeft()
 {
-  int nextSlide = (_slide + 1) % 4;
+  int nextSlide = abs((_slide + 1) % 4);
   if (checkBlock(_block, nextSlide, _x, _y)) _slide = nextSlide;
   return true;
 }
 
 boolean rotateBlockToRight()
 {
-  int nextSlide = (_slide - 1) % 4;
+  int nextSlide = abs((_slide - 1) % 4);
   if (checkBlock(_block, nextSlide, _x, _y)) _slide = nextSlide;
   return true;
 }
 
 boolean dropBlock()
 {
-  for (; ; )
+  for ( ; ; )
   {
     int posY = _y + 1;
     if (!checkBlock(_block, _slide, _x, posY)) break;
