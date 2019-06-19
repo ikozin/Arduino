@@ -42,7 +42,6 @@ void draw()
 
 boolean Interact()
 {
-  delay(100);
   if (!clearBlock(_block, _slide, _x, _y)) return false;
   if (!nextLine()) return false;
   if (!proceedAction()) return false;
