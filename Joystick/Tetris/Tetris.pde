@@ -1,3 +1,7 @@
+import processing.serial.*;
+
+Serial port;
+
 int _maxY = 24;
 int _maxX = 10;
 
@@ -18,7 +22,10 @@ int actionCode = -1;
 
 void setup()
 {
-  println("Hello World!");
+  println(Serial.list());
+  port = new Serial(this, "COM3", 9600);
+  port.bufferUntil('\r');  
+  port.clear();
   
   for (int row = 0; row < _maxY; row++)
   for (int col = 0; col < _maxX; col++)
@@ -226,6 +233,26 @@ boolean proceedAction()
   }
   actionCode = -1;
   return result;
+}
+
+
+// Получаем значения с ардуино
+void serialEvent (Serial port)
+{
+  String data = port.readStringUntil('\r');  
+  print(data);
+  String values[] = split(data, ',');
+  if (values.length == 3)
+  {
+    int x = int(trim(values[0]).substring(2));
+    int y = int(trim(values[1]).substring(2));
+    int btn = int(trim(values[2]).substring(4));
+    if (x < 100) actionCode = 37;
+    if (x > 150) actionCode = 39;
+    if (y < 100) actionCode = 38;
+    if (y > 150) actionCode = 40;
+    if (btn == 1) actionCode = 32;
+  }
 }
 
 void keyPressed()

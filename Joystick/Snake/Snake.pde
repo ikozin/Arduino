@@ -1,6 +1,5 @@
 import processing.serial.*;
 
-
 Serial port;
 
 int rowCount = 24;
