@@ -23,9 +23,9 @@ int actionCode = -1;
 void setup()
 {
   println(Serial.list());
-  port = new Serial(this, "COM3", 9600);
-  port.bufferUntil('\r');  
-  port.clear();
+  //port = new Serial(this, "COM3", 9600);
+  //port.bufferUntil('\r');  
+  //port.clear();
   
   for (int row = 0; row < _maxY; row++)
   for (int col = 0; col < _maxX; col++)
@@ -43,6 +43,8 @@ void draw()
   displayScreen();
   if (_isRunning && Interact()) return;
   stroke(0);
+  fill(200, 0, 0);
+  textSize(16);
   text("GAME OVER!", width/2, height/2 );
   noLoop();    
 }

@@ -56,66 +56,54 @@ int _snakeLength = 1;
 TPoint _pos = new TPoint(rowCount/2, colCount/2);
 TPoint _move = new TPoint(1, 0);
 
-int _step = 0;
 boolean _IsWinner = false;
 boolean _IsGameRunning = true;
 
-int interval = 500;
-int lastRecordedTime = 0;
+int moveInterval = 500;
+int lastMoveTime = 0;
+
+int eventInterval = 2000;
+int lastEventTime = 0;
 
 void setup() {
   println(Serial.list());
-  port = new Serial(this, "COM3", 9600);
-  port.bufferUntil('\r');  
-  port.clear();
+  //port = new Serial(this, "COM3", 9600);
+  //port.bufferUntil('\r');  
+  //port.clear();
   
   for (int row = 0; row < rowCount; row++)
   for (int col = 0; col < colCount; col++)
     data[row][col] = ' ';
   
-  size(768, 768);
+  size(241, 241);
   cellW = width / colCount;
   cellH = height / rowCount;
   textAlign(CENTER);
-  stroke(204, 102, 0);    
+  ellipseMode(CORNER);
 }
 
 void draw()
 {
-  if (_IsGameRunning)
-  {
-    if (millis() - lastRecordedTime > interval)
-    {
-      lastRecordedTime = millis();
-      if (Interact()) return;
-    }
-    else return;
-  }
-  _IsGameRunning = false;
+  displayScreen();
+  if (_IsGameRunning && Interact()) return;
+  stroke(0);
+  fill(200, 0, 0);
+  textSize(32);
   text(_IsWinner ? "YOU WIN!": "GAME OVER!", width/2, height/2 );
   noLoop();    
 }
 
 boolean Interact()
 {
-  if (NextMove())
-  {
-    if (Action())
-    {
-      doEvent();
-      displayBody();
-      displayScreen();
-      return true;
-    }
-  }
-  return false;
+  if (!NextMove()) return false;
+  return doEvent();
 }
 
-void doEvent()
+boolean doEvent()
 {
-  _step += 1;
-  if (_step % 4 == 0)
+  if (millis() - lastEventTime > eventInterval)
   {
+    lastEventTime = millis();
     int count = int(random(10)) % 2;
     for (int i = 0; i < count; i++)
     {
@@ -124,6 +112,7 @@ void doEvent()
       data[x][y] = '$';
     }
   }
+  return true;
 }
 
 void displayBody()
@@ -139,20 +128,42 @@ void displayBody()
 
 void displayScreen()
 {
-  background(0);
+  background(255);
   for (int row = 0; row < rowCount; row++)
   {
     for (int col = 0; col < colCount; col++)
     {
       int x = col * cellW;
       int y = row * cellH;
-      fill(255);
+      stroke(0);
+      noFill();
       rect (x, y, cellW, cellH);
-      fill(0);
-      text(data[row][col], x + cellW/2, y + cellH/2 );
+      if (data[row][col] == '$')
+        drawEllipsa(row, col, 0);
+      else 
+        drawCell(row, col, data[row][col] == ' ' ? 255: 0);
     }
   }
 }
+
+void drawCell(int row, int col, int cellColor)
+{
+  int x = col * cellW;
+  int y = row * cellH;
+  stroke(cellColor);
+  fill(cellColor);
+  rect (x + 2, y + 2, cellW - 4, cellH - 4);
+}
+
+void drawEllipsa(int row, int col, int cellColor)
+{
+  int x = col * cellW;
+  int y = row * cellH;
+  stroke(cellColor);
+  fill(cellColor);
+  ellipse(x + 2, y + 2, cellW - 4, cellH - 4);
+}
+
 
 boolean CheckBound(TPoint p)
 {
@@ -161,8 +172,15 @@ boolean CheckBound(TPoint p)
 
 boolean NextMove()
 {
-  _pos = _pos.plus(_move);
-  return CheckBound(_pos);
+  if (millis() - lastMoveTime > moveInterval)
+  {
+    lastMoveTime = millis();
+    _pos = _pos.plus(_move);
+    if (!CheckBound(_pos)) return false;
+    if (!Action()) return false;
+    displayBody();    
+  }
+  return true;  
 }
 
 boolean Action()
@@ -190,8 +208,8 @@ boolean ActionIncLength()
   for (int i = _snakeLength - 1; i > 0 ; i--)
     _snake[i] = _snake[i - 1];
   _snake[0] = _move;
-  if (_snakeLength == 3) interval -= 150;
-  if (_snakeLength == 10) interval -= 200;
+  if (_snakeLength == 3) moveInterval -= 150;
+  if (_snakeLength == 10) moveInterval -= 200;
   return true;
 }
 
