@@ -1,33 +1,28 @@
-import processing.serial.*;
-import controlP5.*;
+//import processing.serial.*;
+//import controlP5.*;
 
-PortSelector selector = new PortSelector();
-Snake game = new Snake();
-Demo demo;
+//PortSelector selector = new PortSelector();
+//Snake game;
+Tetris game;
 
 void setup()
 {
-  size(320, 240);
-  game.setup();
-  selector.setup(this, game);
-  demo = new Demo(this);
+  //size(241, 241);
+  //game = new Snake(this);
+  //game.start();
+
+  size(101, 241);
+  game = new Tetris(this);
+  game.start();
 }
 
 void draw()
 {
-  //println("draw");
-  if (selector.draw()) return;
-  if (game.draw()) return;
-  noLoop();
 }
 
-void keyPressed()
-{
-  if (selector.keyPressed()) return;
-  if (game.keyPressed()) return;
-}
-
+/*
 void serialEvent (Serial port)
 {
   selector.serialEvent(port);
 }
+*/
