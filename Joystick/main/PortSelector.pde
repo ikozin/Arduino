@@ -11,17 +11,17 @@ public class PortSelector
   boolean _isComplete;
   IKeyPressedAction _action;
 
-  public PortSelector(PApplet parent, IKeyPressedAction action)
+  public PortSelector()
+  {
+    _margin = 10;
+    _textHeight = 16;
+  }
+
+  public void setup(final PApplet parent, final IKeyPressedAction action)
   {
     _isComplete = false;
     _parent = parent;
-    _margin = 10;
-    _textHeight = 16;
     _action = action;
-  }
-
-  public void setup()
-  {
     _portList = Serial.list();
   }
 
@@ -84,7 +84,7 @@ public class PortSelector
     return true;
   }
 
-  public void serialEvent (Serial port)
+  public void serialEvent (final Serial port)
   {
     String data = port.readStringUntil('\r');  
     print(data);
@@ -94,7 +94,7 @@ public class PortSelector
       int x = int(trim(values[0]).substring(2));
       int y = int(trim(values[1]).substring(2));
       int btn = int(trim(values[2]).substring(4));
-      if (_action != null) _action.handle (x, y, btn);
+      if (_action != null) _action.SerialEventHandle(x, y, btn);
     }
   }  
 }
