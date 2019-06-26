@@ -265,7 +265,7 @@ public class Tetris implements IGameEngine
     }
   }
   
-  public void mouseEvent(MouseEvent theMouseEvent)
+  public void mouseEvent(MouseEvent mouseEvent)
   {
   }
 

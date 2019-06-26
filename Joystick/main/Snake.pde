@@ -234,11 +234,9 @@ public class Snake implements IGameEngine
     }
   }
   
-/*
-  public void mouseEvent(MouseEvent theMouseEvent)
+  public void mouseEvent(MouseEvent mouseEvent)
   {
   }
-*/
 }
 
 public class TPoint

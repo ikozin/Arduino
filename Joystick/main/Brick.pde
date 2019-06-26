@@ -15,9 +15,29 @@ public class Brick implements IGameEngine
   public Brick(PApplet papplet)
   {
     _papplet = papplet;
+
     _data = new char[_rowCount][_colCount];
+    for (int row = 0; row < _rowCount; row++)
+    for (int col = 0; col < _colCount; col++)
+      _data[row][col] = ' ';
+
+    int brickLine = (int)random(_rowCount >> 2, _rowCount >> 1);
+    
+    for (int row = 0; row < brickLine; row++)
+    {
+      int brickCount = (int)random(_colCount >> 1, _colCount);
+      int shiftX = (_colCount - brickCount) >> 1; 
+      for (int col = 0; col < brickCount; col++)
+      {
+        _data[row][col + shiftX] = '*';
+      }
+    }
+
 
     _isRunning = false;
+
+    _cellW = width / _colCount;
+    _cellH = height / _rowCount;
   }
   
   public void start()
@@ -38,6 +58,29 @@ public class Brick implements IGameEngine
 
   public void draw()
   {
+     displayScreen();
+  }
+
+  void displayScreen()
+  {
+    background(255);
+    for (int row = 0; row < _rowCount; row++)
+    for (int col = 0; col < _colCount; col++)
+    {
+      if (_data[row][col] == ' ') continue;
+      int x = col * _cellW;
+      int y = row * _cellH;
+      drawCell(row, col, 0);
+    }
+  }
+  
+  void drawCell(int row, int col, int cellColor)
+  {
+    int x = col * _cellW;
+    int y = row * _cellH;
+    stroke(cellColor);
+    fill(cellColor);
+    rect (x + 2, y + 2, _cellW - 4, _cellH - 4);
   }
 
   public void keyEvent(KeyEvent keyEvent)
