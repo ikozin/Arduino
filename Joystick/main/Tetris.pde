@@ -20,6 +20,7 @@ public class Tetris implements IGameEngine
   private int _x;
   private int _y;
   private int _actionCode;
+  private int _dropedLines;
 
   public Tetris(PApplet papplet)
   {
@@ -38,6 +39,7 @@ public class Tetris implements IGameEngine
     _x = 0;
     _y = 0;
     _actionCode = -1;
+    _dropedLines = 0;
     _isRunning = false;
   }
   
@@ -81,9 +83,15 @@ public class Tetris implements IGameEngine
 
   boolean nextLine()
   {
+    while (_dropedLines > 5)
+    {
+      if (_interval > 0) _interval -= 20;
+      _dropedLines --;
+    }
     if (millis() - _lastRecordedTime > _interval)
     {
       _lastRecordedTime = millis();
+      println(_interval);
       int posY = _y + 1;
       if (checkBlock(_block, _slide, _x, posY))
       {
@@ -116,6 +124,7 @@ public class Tetris implements IGameEngine
         counter += _data[y][x] == '*' ? 1 : 0;
       if (counter == _colCount)
       {
+        _dropedLines ++;
         for (int x = 0; x < _colCount; x++) _data[y][x] = ' ';
         for (int n = y - 1; n > 0; n--)
           for (int x = 0; x < _colCount; x++) _data[n + 1][x] = _data[n][x];

@@ -68,6 +68,7 @@ public class Snake implements IGameEngine
   {
     displayScreen();
     if (_isRunning && interact()) return;
+    _isRunning = false;
     stroke(0);
     fill(200, 0, 0);
     textSize(32);
