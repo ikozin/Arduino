@@ -1,4 +1,4 @@
-public class Snake //implements IKeyPressedAction
+public class Snake implements IGameEngine
 {
   private PApplet _papplet;
 
@@ -10,14 +10,13 @@ public class Snake //implements IKeyPressedAction
 
   private char[][] _data;
 
+  private boolean _isRunning;
+
   private TPoint[] _snake;
-  
   private int _snakeLength = 1;
 
   private TPoint _pos;
   private TPoint _move;
-
-  private boolean _isRunning;
   private boolean _isWinner;
   private int _moveInterval;
   private int _lastMoveTime;
@@ -27,8 +26,15 @@ public class Snake //implements IKeyPressedAction
   public Snake(PApplet papplet)
   {
     _papplet = papplet;
+
     _data = new char[_rowCount][_colCount];
-    _snake = new TPoint[48];
+    for (int row = 0; row < _rowCount; row++)
+    for (int col = 0; col < _colCount; col++)
+      _data[row][col] = ' ';
+    _snake = new TPoint[_rowCount + _colCount];
+    for (int i = 1; i < _snake.length; i++)
+      _snake[i] = new TPoint(0, 0);
+     _snake[0] = new TPoint(0, 1);
     _snakeLength = 1;
     _pos = new TPoint(_rowCount >> 1, _colCount >> 1);
     _move = new TPoint(1, 0);
@@ -40,13 +46,6 @@ public class Snake //implements IKeyPressedAction
     _lastEventTime = 0;
     _cellW = width / _colCount;
     _cellH = height / _rowCount;
-
-    for (int row = 0; row < _rowCount; row++)
-    for (int col = 0; col < _colCount; col++)
-      _data[row][col] = ' ';
-    for (int i = 1; i < _snake.length; i++)
-      _snake[i] = new TPoint(0, 0);
-     _snake[0] = new TPoint(0, 1);
   }
 
   public void start()
@@ -211,26 +210,24 @@ public class Snake //implements IKeyPressedAction
   
   public void keyEvent(KeyEvent keyEvent)
   {
-    if (keyEvent.getAction( ) == KeyEvent.PRESS)
+    if (keyEvent.getAction() == KeyEvent.PRESS)
     {
-      //char _key = keyEvent.getKey( );
-      int _keyCode = keyEvent.getKeyCode( );
-      //println(_keyCode);      
+      int _keyCode = keyEvent.getKeyCode();
       switch (_keyCode)
       {
-        case 27:
+        case 27:  // ESC
           _isRunning = false;
           return;
-        case 38:
+        case 38:  // UP
           _move = new TPoint(-1, 0);
           return;
-        case 40:
+        case 40:  // DOWN
           _move = new TPoint(1, 0);
            return;
-        case 37:
+        case 37:  // LEFT
           _move = new TPoint(0, -1);
           return;
-        case 39:
+        case 39:  // RIGHT
           _move = new TPoint(0, 1);
           return;
       }

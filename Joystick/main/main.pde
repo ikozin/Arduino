@@ -1,18 +1,17 @@
 //import processing.serial.*;
-//import controlP5.*;
 
 //PortSelector selector = new PortSelector();
-//Snake game;
-Tetris game;
+
+IGameEngine game;
 
 void setup()
 {
-  //size(241, 241);
-  //game = new Snake(this);
-  //game.start();
+  size(241, 241);
+  game = new Snake(this);
 
-  size(101, 241);
-  game = new Tetris(this);
+  //size(101, 241);
+  //game = new Tetris(this);
+
   game.start();
 }
 

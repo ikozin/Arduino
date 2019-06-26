@@ -1,35 +1,44 @@
-public class Tetris
+public class Tetris implements IGameEngine
 {
   private PApplet _papplet;
 
-  private int _maxY = 24;
-  private int _maxX = 10;
-
-  private char[][] _data = new char[_maxY][_maxX];
+  private int _rowCount = 24;
+  private int _colCount = 10;
 
   private int _cellW;
   private int _cellH;
 
-  private boolean _isRunning = true;
-  private int _interval = 200;
-  private int _lastRecordedTime = 0;
+  private char[][] _data;
 
-  private int _block = 0;
-  private int _slide = 0;
-  private int _x = 0;
-  private int _y = 0;
-  private int _actionCode = -1;
+  private boolean _isRunning;
+
+  private int _interval;
+  private int _lastRecordedTime;
+
+  private int _block;
+  private int _slide;
+  private int _x;
+  private int _y;
+  private int _actionCode;
 
   public Tetris(PApplet papplet)
   {
     _papplet = papplet;
-    _data = new char[_maxY][_maxX];
-    for (int row = 0; row < _maxY; row++)
-    for (int col = 0; col < _maxX; col++)
+
+    _data = new char[_rowCount][_colCount];
+    for (int row = 0; row < _rowCount; row++)
+    for (int col = 0; col < _colCount; col++)
       _data[row][col] = ' ';
-  
-    _cellW = width / _maxX;
-    _cellH = height / _maxY;
+    _cellW = width / _colCount;
+    _cellH = height / _rowCount;
+    _interval = 200;
+    _lastRecordedTime = 0;
+    _block = 0;
+    _slide = 0;
+    _x = 0;
+    _y = 0;
+    _actionCode = -1;
+    _isRunning = false;
   }
   
   public void start()
@@ -92,7 +101,7 @@ public class Tetris
   void newBlock()
   {
     dropLines();
-    _x = (byte)((_maxX >> 1) - 1);
+    _x = (byte)((_colCount >> 1) - 1);
     _y = 0;
     _block = (int)random(0, 7);
     _slide = (int)random(0, 4);
@@ -100,16 +109,16 @@ public class Tetris
   
   boolean dropLines()
   {
-    for (int y = 0; y < _maxY; y++)
+    for (int y = 0; y < _rowCount; y++)
     {
       int counter = 0;
-      for (int x = 0; x < _maxX; x++)
+      for (int x = 0; x < _colCount; x++)
         counter += _data[y][x] == '*' ? 1 : 0;
-      if (counter == _maxX)
+      if (counter == _colCount)
       {
-        for (int x = 0; x < _maxX; x++) _data[y][x] = ' ';
+        for (int x = 0; x < _colCount; x++) _data[y][x] = ' ';
         for (int n = y - 1; n > 0; n--)
-          for (int x = 0; x < _maxX; x++) _data[n + 1][x] = _data[n][x];
+          for (int x = 0; x < _colCount; x++) _data[n + 1][x] = _data[n][x];
       }
     }
     return true;
@@ -143,7 +152,7 @@ public class Tetris
         if ((unbinary(_blocks[index]) & mask) > 0)
         {
           if (posX < 0 || posY < 0) return false;
-          if (posX >= _maxX || posY >= _maxY) return false;
+          if (posX >= _colCount || posY >= _rowCount) return false;
           if (show && _data[posY][posX] != ' ') return false;
           if (!check) _data[posY][posX] = show ? '*' : ' ';
         }
@@ -199,8 +208,8 @@ public class Tetris
   void displayScreen()
   {
     background(255);
-    for (int row = 0; row < _maxY; row++)
-    for (int col = 0; col < _maxX; col++)
+    for (int row = 0; row < _rowCount; row++)
+    for (int col = 0; col < _colCount; col++)
     {
       int x = col * _cellW;
       int y = row * _cellH;
@@ -250,17 +259,16 @@ public class Tetris
   
   public void keyEvent(KeyEvent keyEvent)
   {
-    if (keyEvent.getAction( ) == KeyEvent.PRESS)
+    if (keyEvent.getAction() == KeyEvent.PRESS)
     {
-      _actionCode = keyEvent.getKeyCode( );
+      _actionCode = keyEvent.getKeyCode();
     }
   }
   
-/*
   public void mouseEvent(MouseEvent theMouseEvent)
   {
   }
-*/
+
   private String[] _blocks =
   {
       /////////////////////////////////////////
