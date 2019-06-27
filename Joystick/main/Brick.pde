@@ -1,69 +1,33 @@
-public class Brick implements IGameEngine
+public class Brick extends GameEngine
 {
-  private PApplet _papplet;
-
-  private int _rowCount = 24;
-  private int _colCount = 48;
-
-  private int _cellW;
-  private int _cellH;
-
-  private char[][] _data;
-
-  private boolean _isRunning;
+  private boolean _isWinner;
 
   public Brick(PApplet papplet)
   {
-    _papplet = papplet;
-
+    super(papplet, 24, 48);
     _data = new char[_rowCount][_colCount];
     for (int row = 0; row < _rowCount; row++)
     for (int col = 0; col < _colCount; col++)
       _data[row][col] = ' ';
 
     int brickLine = (int)random(_rowCount >> 2, _rowCount >> 1);
-    
     for (int row = 0; row < brickLine; row++)
     {
       int brickCount = (int)random(_colCount >> 1, _colCount);
       int shiftX = (_colCount - brickCount) >> 1; 
       for (int col = 0; col < brickCount; col++)
-      {
         _data[row][col + shiftX] = '*';
-      }
     }
-
-
-    _isRunning = false;
-
-    _cellW = width / _colCount;
-    _cellH = height / _rowCount;
-  }
-  
-  public void start()
-  {
-    _isRunning = true;
-    _papplet.registerMethod("draw" , this);
-    _papplet.registerMethod("keyEvent" , this);
-    //_papplet.registerMethod("mouseEvent" , this);
-  }
-  
-  public void stop()
-  {
-    _isRunning = false;
-    //_papplet.unregisterMethod("mouseEvent" , this);
-    _papplet.unregisterMethod("keyEvent" , this);
-    _papplet.unregisterMethod("draw" , this);
+    _isWinner = false;
   }
 
-  public void draw()
-  {
-     displayScreen();
-  }
-
-  void displayScreen()
+  @Override
+  protected void displayScreen()
   {
     background(255);
+    stroke(0);
+    noFill();
+    rect(1, 1, width - 2, height - 2);
     for (int row = 0; row < _rowCount; row++)
     for (int col = 0; col < _colCount; col++)
     {
@@ -73,8 +37,24 @@ public class Brick implements IGameEngine
       drawCell(row, col, 0);
     }
   }
+
+  @Override
+  protected boolean interact()
+  {
+    return true;
+  }
   
-  void drawCell(int row, int col, int cellColor)
+  @Override
+  protected void displayFinal()
+  {
+    textAlign(CENTER);
+    stroke(0);
+    fill(200, 0, 0);
+    textSize(32);
+    text(_isWinner ? "YOU WIN!": "GAME OVER!", width >> 1, height >> 1);
+  }
+  
+  protected void drawCell(int row, int col, int cellColor)
   {
     int x = col * _cellW;
     int y = row * _cellH;
@@ -83,6 +63,7 @@ public class Brick implements IGameEngine
     rect (x + 2, y + 2, _cellW - 4, _cellH - 4);
   }
 
+  @Override
   public void keyEvent(KeyEvent keyEvent)
   {
     if (keyEvent.getAction() == KeyEvent.PRESS)
@@ -108,11 +89,4 @@ public class Brick implements IGameEngine
       }
     }
   }
-
-  public void mouseEvent(MouseEvent mouseEvent)
-  {
-  }
-  
-  
-  
 }

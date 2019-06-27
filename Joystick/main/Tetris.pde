@@ -1,17 +1,5 @@
-public class Tetris implements IGameEngine
+public class Tetris extends GameEngine
 {
-  private PApplet _papplet;
-
-  private int _rowCount = 24;
-  private int _colCount = 10;
-
-  private int _cellW;
-  private int _cellH;
-
-  private char[][] _data;
-
-  private boolean _isRunning;
-
   private int _interval;
   private int _lastRecordedTime;
 
@@ -24,14 +12,11 @@ public class Tetris implements IGameEngine
 
   public Tetris(PApplet papplet)
   {
-    _papplet = papplet;
-
+    super(papplet, 24, 10);
     _data = new char[_rowCount][_colCount];
     for (int row = 0; row < _rowCount; row++)
     for (int col = 0; col < _colCount; col++)
       _data[row][col] = ' ';
-    _cellW = width / _colCount;
-    _cellH = height / _rowCount;
     _interval = 200;
     _lastRecordedTime = 0;
     _block = 0;
@@ -40,39 +25,33 @@ public class Tetris implements IGameEngine
     _y = 0;
     _actionCode = -1;
     _dropedLines = 0;
-    _isRunning = false;
   }
   
+  @Override
   public void start()
   {
-    _isRunning = true;
-    _papplet.registerMethod("draw" , this);
-    _papplet.registerMethod("keyEvent" , this);  
-    //_papplet.registerMethod("mouseEvent" , this);
+    super.start();
     newBlock();
   }
   
-  public void stop()
+  @Override
+  protected void displayScreen()
   {
-    _isRunning = false;
-    //_papplet.unregisterMethod("mouseEvent" , this);
-    _papplet.unregisterMethod("keyEvent" , this);
-    _papplet.unregisterMethod("draw" , this);
-  }
-
-  public void draw()
-  {
-    displayScreen();
-    if (_isRunning && interact()) return;
-    _isRunning = false;
-    textAlign(CENTER);
-    stroke(0);
-    fill(200, 0, 0);
-    textSize(16);
-    text("GAME OVER!", width >> 1, height >> 1);
+    background(255);
+    for (int row = 0; row < _rowCount; row++)
+    for (int col = 0; col < _colCount; col++)
+    {
+      int x = col * _cellW;
+      int y = row * _cellH;
+      stroke(0);
+      noFill();
+      rect (x, y, _cellW, _cellH);
+      drawCell(row, col, _data[row][col] == ' ' ? 255: 0);
+    }
   }
   
-  boolean interact()
+  @Override
+  protected boolean interact()
   {
     if (!clearBlock(_block, _slide, _x, _y)) return false;
     if (!nextLine()) return false;
@@ -80,8 +59,18 @@ public class Tetris implements IGameEngine
     if (!showBlock(_block, _slide, _x, _y)) return false;
     return true;
   }
+  
+  @Override
+  protected void displayFinal()
+  {
+    textAlign(CENTER);
+    stroke(0);
+    fill(200, 0, 0);
+    textSize(16);
+    text("GAME OVER!", width >> 1, height >> 1);
+  }
 
-  boolean nextLine()
+  protected boolean nextLine()
   {
     while (_dropedLines > 5)
     {
@@ -106,7 +95,7 @@ public class Tetris implements IGameEngine
     return true;
   }
   
-  void newBlock()
+  protected void newBlock()
   {
     dropLines();
     _x = (byte)((_colCount >> 1) - 1);
@@ -115,7 +104,7 @@ public class Tetris implements IGameEngine
     _slide = (int)random(0, 4);
   }
   
-  boolean dropLines()
+  protected boolean dropLines()
   {
     for (int y = 0; y < _rowCount; y++)
     {
@@ -133,22 +122,22 @@ public class Tetris implements IGameEngine
     return true;
   }
   
-  boolean clearBlock(int blockIndex, int slideIndex, int x, int y)
+  protected boolean clearBlock(int blockIndex, int slideIndex, int x, int y)
   {
     return actionBlock(blockIndex, slideIndex, x, y, false, false);
   }
   
-  boolean showBlock(int blockIndex, int slideIndex, int x, int y)
+  protected boolean showBlock(int blockIndex, int slideIndex, int x, int y)
   {
     return actionBlock(blockIndex, slideIndex, x, y, true, false);
   }
   
-  boolean checkBlock(int blockIndex, int slideIndex, int x, int y)
+  protected boolean checkBlock(int blockIndex, int slideIndex, int x, int y)
   {
     return actionBlock(blockIndex, slideIndex, x, y, true, true);
   }
   
-  boolean actionBlock(int blockIndex, int slideIndex, int x, int y, boolean show, boolean check)
+  protected boolean actionBlock(int blockIndex, int slideIndex, int x, int y, boolean show, boolean check)
   {
     int index = (blockIndex << 4) + (slideIndex << 2);
     int posY = y;
@@ -173,35 +162,35 @@ public class Tetris implements IGameEngine
     return true;
   }
   
-  boolean moveBlockToLeft()
+  protected boolean moveBlockToLeft()
   {
     int posX = _x - 1;
     if (checkBlock(_block, _slide, posX, _y)) _x = posX;
     return true;
   }
   
-  boolean moveBlockToRight()
+  protected boolean moveBlockToRight()
   {
     int posX = _x + 1;
     if (checkBlock(_block, _slide, posX, _y)) _x = posX;
     return true;
   }
   
-  boolean rotateBlockToLeft()
+  protected boolean rotateBlockToLeft()
   {
     int nextSlide = abs((_slide + 1) % 4);
     if (checkBlock(_block, nextSlide, _x, _y)) _slide = nextSlide;
     return true;
   }
   
-  boolean rotateBlockToRight()
+  protected boolean rotateBlockToRight()
   {
     int nextSlide = abs((_slide - 1) % 4);
     if (checkBlock(_block, nextSlide, _x, _y)) _slide = nextSlide;
     return true;
   }
   
-  boolean dropBlock()
+  protected boolean dropBlock()
   {
     for ( ; ; )
     {
@@ -214,22 +203,7 @@ public class Tetris implements IGameEngine
     return true;
   }
   
-  void displayScreen()
-  {
-    background(255);
-    for (int row = 0; row < _rowCount; row++)
-    for (int col = 0; col < _colCount; col++)
-    {
-      int x = col * _cellW;
-      int y = row * _cellH;
-      stroke(0);
-      noFill();
-      rect (x, y, _cellW, _cellH);
-      drawCell(row, col, _data[row][col] == ' ' ? 255: 0);
-    }
-  }
-  
-  void drawCell(int row, int col, int cellColor)
+  protected void drawCell(int row, int col, int cellColor)
   {
     int x = col * _cellW;
     int y = row * _cellH;
@@ -238,7 +212,7 @@ public class Tetris implements IGameEngine
     rect (x + 2, y + 2, _cellW - 4, _cellH - 4);
   }
   
-  boolean proceedAction()
+  protected boolean proceedAction()
   {
     boolean result = true;
     switch (_actionCode)
@@ -266,16 +240,13 @@ public class Tetris implements IGameEngine
     return result;
   }
   
+  @Override
   public void keyEvent(KeyEvent keyEvent)
   {
     if (keyEvent.getAction() == KeyEvent.PRESS)
     {
       _actionCode = keyEvent.getKeyCode();
     }
-  }
-  
-  public void mouseEvent(MouseEvent mouseEvent)
-  {
   }
 
   private String[] _blocks =

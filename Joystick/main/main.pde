@@ -4,9 +4,6 @@
 
 IGameEngine game;
 
-private int _rowCount = 24;
-private int _colCount = 48;
-
 void setup()
 {
   //size(241, 241);

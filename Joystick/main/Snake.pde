@@ -1,17 +1,5 @@
-public class Snake implements IGameEngine
+public class Snake extends GameEngine
 {
-  private PApplet _papplet;
-
-  private int _rowCount = 24;
-  private int _colCount = 24;
-
-  private int _cellW;
-  private int _cellH;
-
-  private char[][] _data;
-
-  private boolean _isRunning;
-
   private TPoint[] _snake;
   private int _snakeLength = 1;
 
@@ -25,8 +13,7 @@ public class Snake implements IGameEngine
   
   public Snake(PApplet papplet)
   {
-    _papplet = papplet;
-
+    super(papplet, 24, 24);
     _data = new char[_rowCount][_colCount];
     for (int row = 0; row < _rowCount; row++)
     for (int col = 0; col < _colCount; col++)
@@ -38,77 +25,15 @@ public class Snake implements IGameEngine
     _snakeLength = 1;
     _pos = new TPoint(_rowCount >> 1, _colCount >> 1);
     _move = new TPoint(1, 0);
-    _isRunning = false;
     _isWinner = false;
     _moveInterval = 500;
     _lastMoveTime = 0;
     _eventInterval = 2000;
     _lastEventTime = 0;
-    _cellW = width / _colCount;
-    _cellH = height / _rowCount;
-  }
-
-  public void start()
-  {
-    _isRunning = true;
-    _papplet.registerMethod("draw" , this);
-    _papplet.registerMethod("keyEvent" , this);  
-    //_papplet.registerMethod("mouseEvent" , this);
   }
   
-  public void stop()
-  {
-    _isRunning = false;
-    //_papplet.unregisterMethod("mouseEvent" , this);
-    _papplet.unregisterMethod("keyEvent" , this);
-    _papplet.unregisterMethod("draw" , this);
-  }
-
-  public void draw()
-  {
-    displayScreen();
-    if (_isRunning && interact()) return;
-    _isRunning = false;
-    stroke(0);
-    fill(200, 0, 0);
-    textSize(32);
-    text(_isWinner ? "YOU WIN!": "GAME OVER!", width >> 1, height >> 1);
-  }
-
-  private boolean interact()
-  {
-    if (!nextMove()) return false;
-    return doEvent();
-  }
-  
-  private boolean doEvent()
-  {
-    if (millis() - _lastEventTime > _eventInterval)
-    {
-      _lastEventTime = millis();
-      int count = int(random(10)) % 2;
-      for (int i = 0; i < count; i++)
-      {
-        int x = int(random(_rowCount));
-        int y = int(random(_colCount));
-        _data[x][y] = '$';
-      }
-    }
-    return true;
-  }
-  
-  private void displayBody()
-  {
-    TPoint curPos = _pos;
-    for (int i = 0; i < _snake.length; i++)
-    {
-      _data[curPos.X][curPos.Y] = '*';
-      curPos = curPos.minus(_snake[i]);
-    }
-    _data[curPos.X][curPos.Y] = ' ';
-  }
-  
-  private void displayScreen()
+  @Override
+  protected void displayScreen()
   {
     textAlign(CENTER);
     ellipseMode(CORNER);
@@ -129,8 +54,51 @@ public class Snake implements IGameEngine
       }
     }
   }
+
+  @Override
+  protected boolean interact()
+  {
+    if (!nextMove()) return false;
+    return doEvent();
+  }
+
+  @Override
+  protected void displayFinal()
+  {
+    stroke(0);
+    fill(200, 0, 0);
+    textSize(32);
+    text(_isWinner ? "YOU WIN!": "GAME OVER!", width >> 1, height >> 1);
+  }
   
-  private void drawCell(int row, int col, int cellColor)
+  protected boolean doEvent()
+  {
+    if (millis() - _lastEventTime > _eventInterval)
+    {
+      _lastEventTime = millis();
+      int count = int(random(10)) % 2;
+      for (int i = 0; i < count; i++)
+      {
+        int x = int(random(_rowCount));
+        int y = int(random(_colCount));
+        _data[x][y] = '$';
+      }
+    }
+    return true;
+  }
+  
+  protected void displayBody()
+  {
+    TPoint curPos = _pos;
+    for (int i = 0; i < _snake.length; i++)
+    {
+      _data[curPos.X][curPos.Y] = '*';
+      curPos = curPos.minus(_snake[i]);
+    }
+    _data[curPos.X][curPos.Y] = ' ';
+  }
+  
+  protected void drawCell(int row, int col, int cellColor)
   {
     int x = col * _cellW;
     int y = row * _cellH;
@@ -139,7 +107,7 @@ public class Snake implements IGameEngine
     rect (x + 2, y + 2, _cellW - 4, _cellH - 4);
   }
   
-  private void drawEllipsa(int row, int col, int cellColor)
+  protected void drawEllipsa(int row, int col, int cellColor)
   {
     int x = col * _cellW;
     int y = row * _cellH;
@@ -148,12 +116,12 @@ public class Snake implements IGameEngine
     ellipse(x + 2, y + 2, _cellW - 4, _cellH - 4);
   }
   
-  private boolean checkBound(TPoint p)
+  protected boolean checkBound(TPoint p)
   {
     return !(p.X < 0 || p.Y < 0 || p.X >= _rowCount || p.Y >= _colCount);
   }
   
-  private boolean nextMove()
+  protected boolean nextMove()
   {
     if (millis() - _lastMoveTime > _moveInterval)
     {
@@ -166,7 +134,7 @@ public class Snake implements IGameEngine
     return true;  
   }
   
-  private boolean action()
+  protected boolean action()
   {
     switch (_data[_pos.X][_pos.Y])
     {
@@ -180,7 +148,7 @@ public class Snake implements IGameEngine
     return actionContinue();
   }
   
-  private boolean actionIncLength()
+  protected boolean actionIncLength()
   {
     _snakeLength += 1;
     if (_snakeLength == _snake.length)
@@ -196,12 +164,12 @@ public class Snake implements IGameEngine
     return true;
   }
   
-  private boolean actionFail()
+  protected boolean actionFail()
   {
     return false;
   }
   
-  private boolean actionContinue()
+  protected boolean actionContinue()
   {
     for (int i = _snakeLength - 1; i > 0 ; i--)
       _snake[i] = _snake[i - 1];
@@ -209,6 +177,7 @@ public class Snake implements IGameEngine
     return true;
   }
   
+  @Override
   public void keyEvent(KeyEvent keyEvent)
   {
     if (keyEvent.getAction() == KeyEvent.PRESS)
@@ -233,10 +202,6 @@ public class Snake implements IGameEngine
           return;
       }
     }
-  }
-  
-  public void mouseEvent(MouseEvent mouseEvent)
-  {
   }
 }
 
