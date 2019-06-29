@@ -1,29 +1,3 @@
-/*
-
-
-bx
-by
-br
-
-rx
-ry
-rw
-rh
-
-
-              ---
-            /     \
-            \     /
-              ---
-	 rw
-    -------------
-rh |             |
-    -------------
-
-*/
-
-
-
 public class Brick extends GameEngine
 {
   private boolean _isWinner;
@@ -45,37 +19,37 @@ public class Brick extends GameEngine
   private int _racketY;
   private int _racketWidth;
   private int _racketHeight;
-  
+
+  private int _actionCode;
 
   public Brick(PApplet papplet)
   {
-    super(papplet, 4, 9);
+    super(papplet, 11, 11);
     _data = new char[_rowCount][_colCount];
     for (int row = 0; row < _rowCount; row++)
     for (int col = 0; col < _colCount; col++)
       _data[row][col] = ' ';
+    newBricks();
 
-    int brickLine = (int)random(_rowCount >> 2, _rowCount >> 1);
-    for (int row = 0; row < brickLine; row++)
-    {
-      int brickCount = (int)random(_colCount >> 1, _colCount);
-      int shiftX = (_colCount - brickCount) >> 1; 
-      for (int col = 0; col < brickCount; col++)
-        _data[row][col + shiftX] = '*';
-    }
     _racketInterval = 100;
     _ballInterval = 100;
 
-    _ballRadius = (min(_cellW, _cellH) >> 1) + 1;    
-    _racketHeight = (_ballRadius >> 1) + 1;
-    _racketWidth = _racketHeight << 3;
+    _ballRadius = _cellH >> 2;    
+    _racketHeight = _ballRadius;
+    _racketWidth = (_racketHeight << 3)  + (_racketHeight << 2);
     _racketX = (width - _racketWidth) >> 1;
     _racketY = height - _racketHeight - 1;
-
     _ballX = width >> 1;
     _ballY = _racketY - _ballRadius - 1;
-    
+
+    _actionCode = -1;
     _isWinner = false;
+
+    println(_cellW);
+    println(_cellH);
+    println(_ballRadius);
+    println(_racketWidth);
+    println(_racketHeight);
   }
 
   @Override
@@ -89,8 +63,6 @@ public class Brick extends GameEngine
     for (int col = 0; col < _colCount; col++)
     {
       if (_data[row][col] == ' ') continue;
-      int x = col * _cellW;
-      int y = row * _cellH;
       drawCell(row, col, 0);
     }
   }
@@ -98,6 +70,7 @@ public class Brick extends GameEngine
   @Override
   protected boolean interact()
   {
+    if (!proceedAction()) return false;
     drawBall();
     drawRacket();
 
@@ -113,6 +86,18 @@ public class Brick extends GameEngine
     textSize(32);
     text(_isWinner ? "YOU WIN!": "GAME OVER!", width >> 1, height >> 1);
   }
+
+  protected void newBricks()
+  {
+    int brickLine = (int)random(_rowCount >> 2, _rowCount >> 1);
+    for (int row = 0; row < brickLine; row++)
+    {
+      int brickCount = (int)random(_colCount >> 1, _colCount);
+      int shiftX = (_colCount - brickCount) >> 1; 
+      for (int col = 0; col <= brickCount; col++)
+        _data[row][col + shiftX] = '*';
+    }
+  }
   
   protected void drawCell(int row, int col, int cellColor)
   {
@@ -120,7 +105,7 @@ public class Brick extends GameEngine
     int y = row * _cellH;
     stroke(cellColor);
     fill(cellColor);
-    rect (x + 1, y + 1, _cellW - 2, _cellH - 2);
+    rect (x + 1, y + 1, _cellW - 2, _cellH - 2, 5, 5, 5, 5);
   }
 
   protected void drawRacket()
@@ -136,29 +121,70 @@ public class Brick extends GameEngine
     fill(#000000);
     circle(_ballX, _ballY, _ballRadius << 1);
   }
-  
-  @Override
-  public void keyEvent(KeyEvent keyEvent)
+
+  protected boolean proceedAction()
   {
-    if (keyEvent.getAction() == KeyEvent.PRESS)
+    boolean result = true;
+    switch (_actionCode)
     {
-      int _keyCode = keyEvent.getKeyCode();
+      case 27:  // ESC
+      {
+        result = false; 
+        break;
+      }
+      case 32:  // SPACE
+      {
+        newBricks();
+        _actionCode = -1;
+        break;
+      }
+      case 37:  // LEFT
+      {
+        int x = _racketX - 3;
+        if (checkRocketBounds(x))
+          _racketX = x;
+        break;
+      }
+      case 38:  // UP
+        break;
+      case 39:  // RIGHT
+      {
+        int x = _racketX + 3;
+        if (checkRocketBounds(x))
+          _racketX = x;
+        break;
+      }
+      case 40:  // DOWN
+        break;
+    }
+    return result;
+  }
+
+  protected boolean checkRocketBounds(int x)
+  {
+    return (x > 0) && ((x + _racketWidth < width));
+  }
+
+  @Override
+  public void keyEvent(KeyEvent event)
+  {
+    if (event.getAction() == KeyEvent.RELEASE && event.getKeyCode() == _actionCode)
+    {
+      _actionCode = -1;
+      return;
+    }
+    if (event.getAction() == KeyEvent.PRESS)
+    {
+      int _keyCode = event.getKeyCode();
       switch (_keyCode)
       {
         case 27:  // ESC
-          _isRunning = false;
-          return;
-        case 38:  // UP
-          //_move = new TPoint(-1, 0);
-          return;
-        case 40:  // DOWN
-          //_move = new TPoint(1, 0);
-           return;
+        case 32:  // SPACE
         case 37:  // LEFT
-          //_move = new TPoint(0, -1);
-          return;
+        case 38:  // UP
         case 39:  // RIGHT
-          //_move = new TPoint(0, 1);
+        case 40:  // DOWN
+          _actionCode = _keyCode;
           return;
       }
     }
