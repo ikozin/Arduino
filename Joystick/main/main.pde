@@ -16,6 +16,11 @@ void setup()
   game = new Brick(this);
 
   game.start();
+  
+  //for (int i = 0; i < 100; i++)
+  //  println((int)random(1, 10));
+
+  
 }
 
 void draw()
