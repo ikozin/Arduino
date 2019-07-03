@@ -21,6 +21,7 @@ public class Brick extends GameEngine
   private float _racketHeight;
   private float _racketStep;
 
+  private boolean _isSticked;
   private int _actionCode;
 
   public Brick(PApplet papplet)
@@ -49,13 +50,14 @@ public class Brick extends GameEngine
     _isWinner = false;
     
     actionRacketStop();
+    actionBallStop();
     actionNewBricks();
 
-    println(_cellW);
-    println(_cellH);
-    println(_ballRadius);
-    println(_racketWidth);
-    println(_racketHeight);
+    //println(_cellW);
+    //println(_cellH);
+    //println(_ballRadius);
+    //println(_racketWidth);
+    //println(_racketHeight);
   }
 
   @Override
@@ -146,6 +148,8 @@ public class Brick extends GameEngine
         return actionBallStart();
       case 39:  // RIGHT
         return actionRacketMoveRight();
+      case 40:  // DOWN
+        return actionBallStop();
     }
     return false;
   }
@@ -183,12 +187,25 @@ public class Brick extends GameEngine
   {
     if (_vectorX == 0 && _vectorX == _vectorY)
     {
+      _isSticked = false;
       _vectorX = random(1, 5);
       _vectorY = - random(1, 5);
       if (random(1, 100) > 50)
       {
         _vectorX = -_vectorX;
       }
+    }
+    return true;
+  }
+
+  protected boolean actionBallStop()
+  {
+    float centerY = _racketY - _racketHeight - 1; 
+    if (centerY + _ballRadius > _ballY && centerY - _ballRadius < _ballY)
+    {
+      _isSticked = true;
+      _vectorX = _vectorY = 0;
+      _ballY = centerY;
     }
     return true;
   }
@@ -201,7 +218,10 @@ public class Brick extends GameEngine
       _lastRacketTime = millis();
       float x = _racketX + _racketStep;
       if (checkRocketBounds(x))
+      {
         _racketX = x;
+        if (_isSticked) _ballX += _racketStep;
+      }
     }
     return true;
   }
@@ -243,7 +263,7 @@ public class Brick extends GameEngine
         case 37:  // LEFT
         case 38:  // UP
         case 39:  // RIGHT
-        //case 40:  // DOWN
+        case 40:  // DOWN
           _actionCode = _keyCode;
           return;
       }
