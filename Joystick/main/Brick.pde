@@ -32,8 +32,8 @@ public class Brick extends GameEngine
     for (int col = 0; col < _colCount; col++)
       _data[row][col] = ' ';
 
-    _ballInterval = 10;
-    _racketInterval = 10;
+    _ballInterval = 0;
+    _racketInterval = 0;
 
     _ballRadius = _cellH / 2;    
     _racketHeight = _ballRadius;
@@ -239,6 +239,11 @@ public class Brick extends GameEngine
       float x = _ballX + _vectorX;
       if (x <= _ballRadius || x >= width - _ballRadius)
         _vectorX = -_vectorX;
+
+      float y = _ballY + _vectorY;
+      if (y <= _ballRadius || y >= height - _ballRadius)
+        _vectorY = -_vectorY;
+
       _ballX += _vectorX;
       _ballY += _vectorY;
     }
