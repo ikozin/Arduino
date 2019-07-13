@@ -262,7 +262,7 @@ public class Brick extends GameEngine
       if (y >= height - _ballRadius)
       {
         _vectorY = -_vectorY;
-        return true;
+        // return false;
       }
       
       if (y <= _ballRadius)

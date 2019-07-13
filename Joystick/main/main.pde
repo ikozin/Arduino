@@ -12,7 +12,7 @@ void setup()
   //size(101, 241);
   //game = new Tetris(this);
 
-  size(420, 420);
+  size(420, 210);
   game = new Brick(this);
 
   game.start();
