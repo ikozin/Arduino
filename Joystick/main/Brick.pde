@@ -1,6 +1,7 @@
 public class Brick extends GameEngine
 {
   private boolean _isWinner;
+  private int _bricks;
 
   private int _ballInterval;
   private int _lastBallTime;
@@ -37,15 +38,16 @@ public class Brick extends GameEngine
 
     _ballRadius = _cellH / 2;    
     _racketHeight = _ballRadius;
-    _racketWidth = _racketHeight * 6;
+    _racketWidth = _cellH * 4;//_racketHeight * 6;
     _racketX = (width - _racketWidth) / 2;
     _racketY = height - _racketHeight;
     _ballX = width / 2;
     _ballY = _racketY - _racketHeight - 1;
 
-	  _vectorX = 0;
-	  _vectorY = 0;
+	_vectorX = 0;
+	_vectorY = 0;
 
+    _bricks = 0;
     _actionCode = -1;
     _isWinner = false;
     
@@ -58,6 +60,13 @@ public class Brick extends GameEngine
     //println(_ballRadius);
     //println(_racketWidth);
     //println(_racketHeight);
+  }
+  
+  @Override
+  public void start()
+  {
+	super.start();
+	_bricks = 0;
   }
 
   @Override
@@ -83,8 +92,7 @@ public class Brick extends GameEngine
     if (!proceedBall()) return false;
     drawBall();
     drawRacket();
-
-    return true;
+    return !checkIsWin();
   }
   
   @Override
@@ -107,6 +115,15 @@ public class Brick extends GameEngine
       for (int col = 0; col <= brickCount; col++)
         _data[row][col + shiftX] = '*';
     }
+  }
+  
+  protected boolean checkIsWin()
+  {
+    for (int row = 0; row < _rowCount; row++)
+    for (int col = 0; col < _colCount; col++)
+		if (_data[row][col] == '*') return false;
+	_isWinner = true;
+	return true;
   }
   
   protected void drawCell(int row, int col, int cellColor)
@@ -203,13 +220,15 @@ public class Brick extends GameEngine
     float centerY = _racketY - _racketHeight - 1; 
     if (centerY + _ballRadius > _ballY && centerY - _ballRadius < _ballY)
     {
-      _isSticked = true;
-      _vectorX = _vectorY = 0;
-      _ballY = centerY;
+      if (_ballX > _racketX && _ballX < _racketX + _racketWidth)
+      {
+        _isSticked = true;
+        _vectorX = _vectorY = 0;
+        _ballY = centerY;
+      }
     }
     return true;
   }
-  
   
   protected boolean proceedRacket()
   {
@@ -236,18 +255,51 @@ public class Brick extends GameEngine
     if (millis() - _lastBallTime > _ballInterval)
     {
       _lastBallTime = millis();
+
       float x = _ballX + _vectorX;
+      float y = _ballY + _vectorY;
+
+      if (y >= height - _ballRadius)
+      {
+        _vectorY = -_vectorY;
+        return true;
+      }
+      
+      if (y <= _ballRadius)
+        _vectorY = -_vectorY;
       if (x <= _ballRadius || x >= width - _ballRadius)
         _vectorX = -_vectorX;
-
-      float y = _ballY + _vectorY;
-      if (y <= _ballRadius || y >= height - _ballRadius)
-        _vectorY = -_vectorY;
+      
+      if (checkCollision(x, y)) return true;
 
       _ballX += _vectorX;
       _ballY += _vectorY;
     }
     return true;
+  }
+
+  private boolean checkCollision(float x, float y)
+  {
+    for (int row = 0; row < _rowCount; row++)
+    {
+      int brickY = row * _cellH;
+      if (y >= brickY && y <= brickY + _cellH)
+      {
+        for (int col = 0; col < _colCount; col++)
+        {
+          if (_data[row][col] != '*') continue;
+          int brickX = col * _cellW;
+          if (x > brickX && x < brickX + _cellW)
+          {
+            _data[row][col] = ' ';
+            _bricks ++;
+            _vectorY = -_vectorY;
+            return true;            
+          }
+        }
+      }
+    }
+    return false;
   }
 
   @Override
