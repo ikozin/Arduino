@@ -9,6 +9,7 @@ public class Brick extends GameEngine
   private int _racketInterval;
   private int _lastRacketTime;
 
+  private float _ballSpeed;
   private float _ballX;
   private float _ballY;
   private float _ballRadius;
@@ -36,6 +37,8 @@ public class Brick extends GameEngine
     _ballInterval = 0;
     _racketInterval = 0;
 
+    _ballSpeed = 1.0;
+
     _ballRadius = _cellH / 2;    
     _racketHeight = _ballRadius;
     _racketWidth = _cellH * 4;//_racketHeight * 6;
@@ -44,8 +47,8 @@ public class Brick extends GameEngine
     _ballX = width / 2;
     _ballY = _racketY - _racketHeight - 1;
 
-	_vectorX = 0;
-	_vectorY = 0;
+	  _vectorX = 0;
+	  _vectorY = 0;
 
     _bricks = 0;
     _actionCode = -1;
@@ -54,19 +57,14 @@ public class Brick extends GameEngine
     actionRacketStop();
     actionBallStop();
     actionNewBricks();
-
-    //println(_cellW);
-    //println(_cellH);
-    //println(_ballRadius);
-    //println(_racketWidth);
-    //println(_racketHeight);
   }
   
   @Override
   public void start()
   {
-	super.start();
-	_bricks = 0;
+  	super.start();
+	  _bricks = 0;
+    _ballSpeed = 1.0;
   }
 
   @Override
@@ -122,8 +120,8 @@ public class Brick extends GameEngine
     for (int row = 0; row < _rowCount; row++)
     for (int col = 0; col < _colCount; col++)
 		if (_data[row][col] == '*') return false;
-	_isWinner = true;
-	return true;
+	  _isWinner = true;
+	  return true;
   }
   
   protected void drawCell(int row, int col, int cellColor)
@@ -205,8 +203,8 @@ public class Brick extends GameEngine
     if (_vectorX == 0 && _vectorX == _vectorY)
     {
       _isSticked = false;
-      _vectorX = random(1, 5);
-      _vectorY = - random(1, 5);
+      _vectorX = random(_ballSpeed, _ballSpeed + 1);
+      _vectorY = - random(_ballSpeed, _ballSpeed + 1);
       if (random(1, 100) > 50)
       {
         _vectorX = -_vectorX;
@@ -256,13 +254,23 @@ public class Brick extends GameEngine
     {
       _lastBallTime = millis();
 
+      if (_bricks > 5)
+      {
+        _bricks -= 5;
+        _ballSpeed *= 1.25;
+        _vectorX *= 1.25;
+        _vectorY *= 1.25;
+      }
+      
       float x = _ballX + _vectorX;
       float y = _ballY + _vectorY;
 
       if (y >= height - _ballRadius)
       {
+        if (x < _racketX || x > _racketX + _racketWidth)
+          return false;
         _vectorY = -_vectorY;
-        // return false;
+        return true;
       }
       
       if (y <= _ballRadius)
