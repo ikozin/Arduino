@@ -1,24 +1,24 @@
 /*
 
-Ğàñïèíîâêà ïëàòû
-       -----------------
- 16 --|                 |
- 15 --|   X    X    X   |-- GND
- 14 --|   X    X    X   |-- VCC  (+5V)
- 13 --|   DL   SL   E   |
- 12 --|                 |
- 11 --|                 |
- 10 --|                 |-- PR
- 9  --|                 |-- PL
- 8  --|                 |-- C
- 7  --|                 |-- E   (pullup)
- 6  --|                 |-- R   (pullup)
- 5  --|                 |-- SR  (pullup)
- 4  --|                 |-- SL  (pullup)
- 3  --|  DR    R    SR  |-- DL  (pullup)
- 2  --|   X    X    X   |-- DR  (pullup)
- 1  --|   X    X    X   |
-       -----------------
+Ğ Ğ°ÑĞ¿Ğ¸Ğ½Ğ¾Ğ²ĞºĞ° Ğ¿Ğ»Ğ°Ñ‚Ñ‹
+       ----------------------
+ 16 --|                      |
+ 15 --|   X     |X|    |X|   |-- GND
+ 14 --|   X     |X|    |X|   |-- VCC  (+5V)
+ 13 --|   DL     SL     E    |
+ 12 --|                      |
+ 11 --|                      |
+ 10 --|                      |-- PR
+ 9  --|                      |-- PL
+ 8  --|                      |-- C            - 4
+ 7  --|                      |-- E   (pullup)
+ 6  --|                      |-- R   (pullup) - 6
+ 5  --|                      |-- SR  (pullup)
+ 4  --|                      |-- SL  (pullup)
+ 3  --|   DR     R      SR   |-- DL  (pullup)
+ 2  --|   X      X      X    |-- DR  (pullup) - 10
+ 1  --|   X      X      X    |
+       ----------------------
 
 */
 #define PR  2
@@ -54,30 +54,46 @@ void setup()
   Serial.begin(9600);
 }
 
+void reset()
+{
+  digitalWrite(R,  LOW);
+  digitalWrite(R,  HIGH);
+}
+
+void blink()
+{
+  writeData(makeWord(0xFF, 0xFF));
+  delay(500);
+  writeData(makeWord(0x00, 0x00));
+  delay(500);
+}
+
+
 void loop()
 {
-  writeData(B00000000);
-  writeData(B00000001);
-  writeData(B00000011);
-  writeData(B00000111);
-  writeData(B00001111);
-  writeData(B00011111);
-  writeData(B00111111);
-  writeData(B01111111);
-  writeData(B11111111);
-  writeData(B11111110);
-  writeData(B11111100);
-  writeData(B11111000);
-  writeData(B11110000);
-  writeData(B11100000);
-  writeData(B11000000);
-  writeData(B10000000);
+  reset();
+  blink();
+  for (uint16_t data = 0x0001; data > 0; data <<= 1)
+  {
+    writeData(data);
+    delay(200);
+  }
+
+  reset();
+  blink();
+  writeData(makeWord(0x00, 0x01));
+  delay(200);
+  for (uint16_t data = 0x0003; data > 0; data <<= 1)
+  {
+    writeData(data);
+    delay(200);
+  }
 }
-void writeData(uint8_t data)
+void writeData(uint16_t data)
 {
   digitalWrite(C,  LOW);
-  shiftOut(DR, C, MSBFIRST, data);
-  delay(200);
+  shiftOut(DR, C, MSBFIRST, highByte(data));
+  shiftOut(DR, C, MSBFIRST, lowByte(data));
 }
 
 /*
