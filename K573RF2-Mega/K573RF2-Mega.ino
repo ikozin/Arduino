@@ -85,17 +85,18 @@ A0...A10  -CE  -OE  Vpp    D0...D7
 #define D6         (43)     //PL6
 #define D7         (42)     //PL7
 
-#define CE         (40)     //PL0
-#define OE         (41)     //PL1
+#define CE         (40)     //PG1
+#define OE         (41)     //PG0
 
 
-void  setup ( )
+void setup ( )
 {
-  Serial.begin(9600);
 
+  // Адрес,  контакты 22-30, порты A и C
   DDRA  = B11111111;
   DDRC  = B11111111;
 
+  // Данные, контакты 42-49, порт L
   DDRL  = B00000000;
 
   // К573РФ2
@@ -103,9 +104,11 @@ void  setup ( )
   pinMode(OE, OUTPUT);
   SetDisableMode();
   InitReadMode();
+
+  Serial.begin(9600);
 }
 
-void  loop ( )
+void loop ( )
 {
 }
 

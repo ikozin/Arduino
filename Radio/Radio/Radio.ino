@@ -188,7 +188,7 @@ int volume = 10;  // громкость
 int index = 32;   //
 
 byte      alertWeek = 1 | 2 | 4 | 8 | 16;// | 32 | 64;
-DateTime  alertTime = DateTime(2000, 1, 1, 11, 0, 0);
+DateTime  alertTime = DateTime(2000, 1, 1, 7 , 20, 0);
 
 const int TONE_PIN = 10;
 

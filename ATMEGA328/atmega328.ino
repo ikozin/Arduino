@@ -95,8 +95,8 @@ void setup()
   Serial.begin(57600);
   Serial.println("Start");
 #endif
-  //ds3231.setDate(3, 6, 2019);
-  //ds3231.setTime(0, 23, 16);
+  //ds3231.setDate(25, 8, 2019);  //day, month, year
+  //ds3231.setTime(0, 27, 12);    //second, minute, hour
 }
 
 byte cnt = 0;

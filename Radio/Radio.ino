@@ -1,7 +1,14 @@
+/*
+Arduino Pro Mini
+ -----------------------
+| *   *   *   *   *   * |
+|GND CTS VCC RXI TXD DTR|
+ -----------------------
+*/
 #include <Wire.h>
-#include <Adafruit_LiquidCrystal.h>
-#include <MP1090S.h>
-#include <RTClib.h>
+#include <Adafruit_LiquidCrystal.h> //https://github.com/adafruit/Adafruit_LiquidCrystal
+#include <MP1090S.h>                //Добавить zip библиотеку
+#include <RTClib.h>                 //https://github.com/adafruit/RTClib
 #include <EEPROM.h>
 
 unsigned long lasttime = 0; // время последнего срабатывания прерывания, для исключения дребезга и мнгновенного срабатывания несколько раз.
@@ -594,7 +601,7 @@ void loopAlarm()
 bool checkAlarm()
 {
   DateTime now = rtc.now();
-  int dayOfWeek = now.dayOfWeek();
+  int dayOfWeek = now.dayOfTheWeek();
   dayOfWeek = (dayOfWeek == 0) ? 6 : dayOfWeek - 1;
 
   if (now.hour() == alertTime.hour() && now.minute() == alertTime.minute() && now.second() == alertTime.second())
@@ -1295,4 +1302,3 @@ void play_rtttl(const char *song)
     }
   }
 }
-
