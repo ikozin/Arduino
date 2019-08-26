@@ -1,20 +1,21 @@
-// i2c expander library - slow I/O!
+#ifndef _MCP23008_H
+#define _MCP23008_H
 
-// also works with the MCP23009
-
-// Don't forget the Wire library
-class MCP23008 {
+class MCP23008
+{
 public:
   void begin(uint8_t addr);
-  void begin(void);
-
   void pinMode(uint8_t p, uint8_t d);
   void digitalWrite(uint8_t p, uint8_t d);
   void pullUp(uint8_t p, uint8_t d);
   uint8_t digitalRead(uint8_t p);
+  uint8_t readGPIO(void);
+  void writeGPIO(uint8_t);
 
- private:
+private:
   uint8_t i2caddr;
+  uint8_t read8(uint8_t addr);
+  void write8(uint8_t addr, uint8_t data);
 };
 
 #define MCP23008_ADDRESS 0x20
@@ -32,3 +33,4 @@ public:
 #define MCP23008_GPIO 0x09
 #define MCP23008_OLAT 0x0A
 
+#endif

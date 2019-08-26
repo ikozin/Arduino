@@ -322,7 +322,6 @@ bool corrApplied = 0;
 
 void setup()
 {
-  Wire.begin();
   Serial.begin(115200);
   Serial.println(F("Initialize variables from EEPROM"));
   index       = EEPROM.read(EEPROM_ADDR_RADIO_INDEX);
@@ -342,7 +341,7 @@ void setup()
   pinMode(buttonPin3, INPUT_PULLUP);
   pinMode(buttonPin4, INPUT_PULLUP);
   Serial.println(F("Initialize Video"));
-  lcd.begin(lcdRows, lcdLines);
+  lcd.begin(lcdLines);
   lcd.clear();
   // для того чтобы использовать print, кодируем ситмволы с 1, а не с 0, так как 0 признак конца строки
   lcd.createChar(1, _L1);
