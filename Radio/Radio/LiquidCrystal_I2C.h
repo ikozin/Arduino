@@ -83,7 +83,6 @@ private:
   uint8_t _enable_pin; // activated by a HIGH pulse.
   uint8_t _data_pins[4];
 
-  uint8_t _displayfunction;
   uint8_t _displaycontrol;
   uint8_t _displaymode;
 

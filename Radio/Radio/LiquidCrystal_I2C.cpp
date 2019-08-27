@@ -28,8 +28,6 @@ LiquidCrystal_I2C::LiquidCrystal_I2C(uint8_t i2caddr)
 {
   _i2cAddr = i2caddr;
 
-  _displayfunction = LCD_4BITMODE | LCD_2LINE | LCD_5x8DOTS;
-  
   // the I/O expander pinout
   _rs_pin = 7;
   _enable_pin = 6;
@@ -79,7 +77,7 @@ void LiquidCrystal_I2C::begin(uint8_t lines)
   write4bits(0x02); 
 
   // finally, set # lines, font size, etc.
-  command(LCD_FUNCTIONSET | _displayfunction);  
+  command(LCD_FUNCTIONSET | LCD_4BITMODE | LCD_2LINE | LCD_5x8DOTS);
 
   // turn the display on with no cursor or blinking default
   _displaycontrol = LCD_DISPLAYON | LCD_CURSOROFF | LCD_BLINKOFF;  

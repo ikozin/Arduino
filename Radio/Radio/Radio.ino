@@ -1,3 +1,16 @@
+/*
+Arduino Pro Mini
+ -----------------------
+| *   *   *   *   *   * |
+|GND CTS VCC RXI TXD DTR|
+ -----------------------
+
+I2C
+MP1090S_ADDRESS     0x10
+MCP23008_ADDRESS    0x20
+DS1307_ADDRESS      0x68
+
+*/
 #include <Wire.h>
 #include "LiquidCrystal_I2C.h"
 #include "MP1090S.h"
