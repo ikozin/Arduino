@@ -144,61 +144,86 @@ typedef struct _radioItem
 // Важно: русские буквы, видимо в unicode, так как массив с ними переполнен, да и вывод их не совпадает (кодировка)
 const RadioItem radioList[] PROGMEM =
 {
-  { 87500, "Business FM     87,5"},
-  { 87900, "C\xB8\xBF\xB8-FM         87,9"},
-  { 88300, "Pe\xBFpo FM        88,3"},
-  { 88700, "\xB0\xBCop FM         88,7"},
-  { 89100, "Pa\xE3\xB8o Jazz      89,1"},
-  { 89500, "Megapolis FM    89,5"},
-  { 89900, "Ke\xBA""c FM         89,9"},
-  { 90300, "A\xB3\xBFopa\xE3\xB8o       90,3"},
-  { 90800, "Relax FM        90,8"},
-  { 91200, "\xAFxo Moc\xBA\xB3\xC3      91,2"},
-  { 91600, "Pa\xE3\xB8o Ky\xBB\xC4\xBFypa  91,6"},
-  { 92000, "Moc\xBA\xB3""a FM       92,0"},
-  { 92400, "Pa\xE3\xB8o \xE0""a\xC0""a      92,4"},
-  { 92800, "Pa\xE3\xB8o Kap\xBD""a\xB3""a\xBB  92,8"},
-  { 93200, "C\xBEop\xBF FM        93,2"},
-  { 93600, "Ko\xBC\xBC""epca\xBD\xBF\xC2 FM  93,6"},
-  { 94000, "Boc\xBFo\xBA FM       94,0"},
-  { 94400, "Bec\xBD""a FM        94,4"},
-  { 94800, "\xA1o\xB3op\xB8\xBF Moc\xBA\xB3""a  94,8"},
-  { 95200, "Rock FM         95,2"},
-  { 95600, "Pa\xE3\xB8o \xA4\xB3""e\xB7\xE3""a    95,6"},
-  { 96000, "\xE0opo\xB6\xBDoe pa\xE3\xB8o  96,0"},
-  { 96400, "Ta\xBA""c\xB8 FM        96,4"},
-  { 96800, "\xE0""e\xBF""c\xBAoe pa\xE3\xB8o   96,8"},
-  { 97200, "Pa\xE3\xB8o K\xA8        97,2"},
-  { 97600, "Bec\xBF\xB8 FM        97,6"},
-  { 98000, "Pa\xE3\xB8o \xACo\xBAo\xBB""a\xE3   98,0"},
-  { 98400, "Pa\xE3\xB8o Pe\xBAop\xE3    98,4"},
-  { 98800, "Pa\xE3\xB8o Romantika 98,8"},
-  { 99200, "Pa\xE3\xB8o Op\xAA""e\xB9     99,2"},
-  { 99600, "C\xBFo\xBB\xB8\xE5""a FM      99,6"},
-  {100100, "Cepe\xB2p\xC7\xBD\xC3\xB9 \xE3o\xB6\xE3\xC4    "},
-  {100500, "Best FM        100,5"},
-  {100900, "Pa\xE3\xB8o Classic  100,9"},
-  {101200, "DFM            101,2"},
-  {101700, "Ha\xC1""e pa\xE3\xB8o     101,7"},
-  {102100, "Mo\xBD\xBF""e-Kap\xBBo    102,1"},
-  {102500, "Comedy Radio   102,5"},
-  {103000, "\xAC""a\xBD""co\xBD         103,0"},
-  {103400, "Ma\xC7\xBA           103,4"},
-  {103700, "Maximum        103,7"},
-  {104200, "NRJ            104,2"},
-  {104700, "Pa\xE3\xB8o 7        104,7"},
-  {105200, "Moscow FM      105,2"},
-  {105700, "Pycc\xBAoe pa\xE3\xB8o  105,7"},
-  {106200, "E\xB3po\xBE""a \xA8\xBB\xC6""c    106,2"},
-  {106600, "Love Radio     106,6"},
-  {107000, "PCH            107,0"},
-  {107400, "X\xB8\xBF FM         107,4"},
-  {107800, "M\xB8\xBB\xB8\xE5""e\xB9""c\xBA""a\xC7 \xB3o\xBB\xBD""a   "},
+  { 87500, "Business FM     87,5"},                                       // 0 - Business FM
+  { 87900, "C\xB8\xBF\xB8-FM         87,9"},                              // 1 - 
+  { 88300, "Pe\xBFpo FM        88,3"},                                    // 2 - Ретро FM
+  { 88700, "\xB0\xBCop FM         88,7"},                                 // 3 - Юмор FM
+  { 89100, "Pa\xE3\xB8o Jazz      89,1"},                                 // 4 - Радио Jazz
+  { 89500, "Megapolis FM    89,5"},                                       // 5 - Megapolis FM
+  { 89900, "Ke\xBA""c FM         89,9"},                                  // 6 - 
+  { 90300, "A\xB3\xBFopa\xE3\xB8o       90,3"},                           // 7 - Авторадио
+  { 90800, "Relax FM        90,8"},                                       // 8 - Relax FM
+  { 91200, "\xAFxo Moc\xBA\xB3\xC3      91,2"},                           // 9 - Эхо Москвы
+  { 91600, "Pa\xE3\xB8o Ky\xBB\xC4\xBFypa  91,6"},                        //10 - Радио Культура
+  { 92000, "Moc\xBA\xB3""a FM       92,0"},                               //11 - Москва FM
+  { 92400, "Pa\xE3\xB8o \xE0""a\xC0""a      92,4"},                       //12 - Радио Дача
+  { 92800, "Pa\xE3\xB8o Kap\xBD""a\xB3""a\xBB  92,8"},                    //13 - Радио Карнавал
+  { 93200, "C\xBEop\xBF FM        93,2"},                                 //14 - 
+  { 93600, "Ko\xBC\xBC""epca\xBD\xBF\xC2 FM  93,6"},                      //15 - Коммерсант FM
+  { 94000, "Boc\xBFo\xBA FM       94,0"},                                 //16 - Восток FM
+  { 94400, "Bec\xBD""a FM        94,4"},                                  //17 - Весна FM
+  { 94800, "\xA1o\xB3op\xB8\xBF Moc\xBA\xB3""a  94,8"},                   //18 - Говорит Москва
+  { 95200, "Rock FM         95,2"},                                       //19 - Rock FM
+  { 95600, "Pa\xE3\xB8o \xA4\xB3""e\xB7\xE3""a    95,6"},                 //20 - Радио Звезда
+  { 96000, "\xE0opo\xB6\xBDoe pa\xE3\xB8o  96,0"},                        //21 - Дорожное радио
+  { 96400, "Ta\xBA""c\xB8 FM        96,4"},                               //22 - Такси FM
+  { 96800, "\xE0""e\xBF""c\xBAoe pa\xE3\xB8o   96,8"},                    //23 - Детское радио
+  { 97200, "Pa\xE3\xB8o K\xA8        97,2"},                              //24 - 
+  { 97600, "Bec\xBF\xB8 FM        97,6"},                                 //25 - Вести FM
+  { 98000, "Pa\xE3\xB8o \xACo\xBAo\xBB""a\xE3   98,0"},                   //26 - Радио Шоколад
+  { 98400, "Pa\xE3\xB8o Pe\xBAop\xE3    98,4"},                           //27 - 
+  { 98800, "Pa\xE3\xB8o Romantika 98,8"},                                 //28 - Радио Romantika
+  { 99200, "Pa\xE3\xB8o Op\xAA""e\xB9     99,2"},                         //29 - 
+  { 99600, "C\xBFo\xBB\xB8\xE5""a FM      99,6"},                         //30 - 
+  {100100, "Cepe\xB2p\xC7\xBD\xC3\xB9 \xE3o\xB6\xE3\xC4    "},            //31 - 
+  {100500, "Best FM        100,5"},                                       //32 - Best FM
+  {100900, "Pa\xE3\xB8o Classic  100,9"},                                 //33 - Радио Classic
+  {101200, "DFM            101,2"},                                       //34 - DFM
+  {101700, "Ha\xC1""e pa\xE3\xB8o     101,7"},                            //35 - Наше Радио
+  {102100, "Mo\xBD\xBF""e-Kap\xBBo    102,1"},                            //36 - 
+  {102500, "Comedy Radio   102,5"},                                       //37 - Comedy Radio
+  {103000, "\xAC""a\xBD""co\xBD         103,0"},                          //38 - 
+  {103400, "Ma\xC7\xBA           103,4"},                                 //39 - 
+  {103700, "Maximum        103,7"},                                       //40 - Maximum
+  {104200, "NRJ            104,2"},                                       //41 - NRJ
+  {104700, "Pa\xE3\xB8o 7        104,7"},                                 //42 - 
+  {105200, "Moscow FM      105,2"},                                       //43 - Moscow FM
+  {105700, "Pycc\xBAoe pa\xE3\xB8o  105,7"},                              //44 - 
+  {106200, "E\xB3po\xBE""a \xA8\xBB\xC6""c    106,2"},                    //45 - 
+  {106600, "Love Radio     106,6"},                                       //46 - Love Radio
+  {107000, "PCH            107,0"},                                       //47 - PCH
+  {107400, "X\xB8\xBF FM         107,4"},                                 //48 - 
+  {107800, "M\xB8\xBB\xB8\xE5""e\xB9""c\xBA""a\xC7 \xB3o\xBB\xBD""a   "}, //49 - 
 };
 const int listSize = sizeof(radioList) / sizeof(RadioItem);
 
 int volume = 10;  // громкость
-int index = 32;   //
+int index = 32;   // индекс радиостанции
+
+typedef struct _alarmItem
+{
+  byte alertWeek;
+  byte hour;
+  byte minute;
+  byte second;
+} AlarmItem;
+
+#define FLAG_MONDAY		1
+#define FLAG_TUESDAY		2
+#define FLAG_WEDNESDAY		4
+#define FLAG_THURSDAY		8
+#define FLAG_FRIDAY		16
+#define FLAG_SATURDAY		32
+#define FLAG_SUNDAY		64
+#define FLAG_WORK_WEEK	(FLAG_MONDAY | FLAG_TUESDAY | FLAG_WEDNESDAY | FLAG_THURSDAY | FLAG_FRIDAY)
+
+AlarmItem alarmData =
+{
+  .alertWeek = FLAG_WORK_WEEK,
+  .hour = 7,
+  .minute = 10,
+  .second = 0
+};
 
 byte      alertWeek = 1 | 2 | 4 | 8 | 16;// | 32 | 64;
 DateTime  alertTime = DateTime(2000, 1, 1, 7 , 20, 0);
