@@ -41,14 +41,6 @@ DateTime::DateTime (uint16_t year, uint8_t month, uint8_t day, uint8_t hour, uin
     ss = sec;
 }
 
-static uint8_t conv2d(const char* p)
-{
-    uint8_t v = 0;
-    if ('0' <= *p && *p <= '9')
-        v = *p - '0';
-    return 10 * v + *++p - '0';
-}
-
 uint8_t DateTime::dayOfWeek() const
 {
     uint16_t day = date2days(yOff, m, d);

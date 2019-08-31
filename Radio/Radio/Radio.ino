@@ -202,7 +202,7 @@ const RadioItem radioList[] PROGMEM =
 const int listSize = sizeof(radioList) / sizeof(RadioItem);
 
 int volume = 10;  // громкость
-int index = 32;   // индекс радиостанции
+int index = 35;   // индекс радиостанции
 
 typedef struct _alarmItem
 {
@@ -212,13 +212,13 @@ typedef struct _alarmItem
   byte second;
 } AlarmItem;
 
-#define FLAG_MONDAY		1
-#define FLAG_TUESDAY		2
-#define FLAG_WEDNESDAY		4
-#define FLAG_THURSDAY		8
-#define FLAG_FRIDAY		16
-#define FLAG_SATURDAY		32
-#define FLAG_SUNDAY		64
+#define FLAG_MONDAY		  B00000001
+#define FLAG_TUESDAY	  B00000010
+#define FLAG_WEDNESDAY	B00000100
+#define FLAG_THURSDAY	  B00001000
+#define FLAG_FRIDAY		  B00010000
+#define FLAG_SATURDAY	  B00100000
+#define FLAG_SUNDAY		  B01000000
 #define FLAG_WORK_WEEK	(FLAG_MONDAY | FLAG_TUESDAY | FLAG_WEDNESDAY | FLAG_THURSDAY | FLAG_FRIDAY)
 
 AlarmItem *pCurrentAlarm = NULL;
@@ -311,7 +311,7 @@ const char *playList[] =
 const int playListSize = sizeof(playList) / sizeof(char*);
 int currentPlay = 0;
 
-char corrSec = 0;
+int8_t corrSec = 0;
 bool corrApplied = 0;
 
 #define EEPROM_ADDR_CONFIGURATION     0
@@ -323,10 +323,13 @@ bool corrApplied = 0;
 #define EEPROM_ADDR_ALARM_ON2         (EEPROM_ADDR_ALARM_ON1 + sizeof(AlarmItem))
 #define EEPROM_ADDR_ALARM_ON3         (EEPROM_ADDR_ALARM_ON2 + sizeof(AlarmItem))
 #define EEPROM_ADDR_ALARM_ON4         (EEPROM_ADDR_ALARM_ON3 + sizeof(AlarmItem))
-#define EEPROM_ADDR_ALARM_OFF1        20
+#define EEPROM_ADDR_ALARM_OFF1        (EEPROM_ADDR_ALARM_ON4 + sizeof(AlarmItem))
 #define EEPROM_ADDR_ALARM_OFF2        (EEPROM_ADDR_ALARM_OFF1 + sizeof(AlarmItem))
 #define EEPROM_ADDR_ALARM_OFF3        (EEPROM_ADDR_ALARM_OFF2 + sizeof(AlarmItem))
 #define EEPROM_ADDR_ALARM_OFF4        (EEPROM_ADDR_ALARM_OFF3 + sizeof(AlarmItem))
+
+typedef void (* ActionInit)(int);
+typedef void (* ActionSelect)(void);
 
 void setup()
 {
@@ -390,7 +393,7 @@ void setup()
   //saveAlarmData(EEPROM_ADDR_ALARM_OFF3, &alarmOff[2]);
   //saveAlarmData(EEPROM_ADDR_ALARM_OFF4, &alarmOff[3]);
   
-  dumpInfo();  
+  dumpInfo();
 }
 
 void dumpInfo()
@@ -417,8 +420,8 @@ void dumpInfo()
 
 void dumpInfoAlarm(AlarmItem *pAlarmData)
 {
-  char text[20];
-  sprintf(text, ":%02X, %02d:%02d:%02d", pAlarmData->week, pAlarmData->hour, pAlarmData->minute, pAlarmData->second);
+  char text[21];
+  sprintf(text, "%02X, %02d:%02d:%02d", pAlarmData->week, pAlarmData->hour, pAlarmData->minute, pAlarmData->second);
   Serial.println(text);
 }
 
@@ -808,59 +811,16 @@ void loopSettings()
   // 1 - установка времени
   // 2 - коррекция времени
   // 3 - будильник
-  int selected = 0;
-
-  showSettingsInit(selected);
-  while (mode == MODE_SETTING)
-  {
-    if (digitalRead(buttonPin1) == LOW)
-    {
-      selected ++;
-      selected = constrain(selected, 0, 3);
-      showSettingsSelected(selected);
-    }
-    if (digitalRead(buttonPin2) == LOW)
-    {
-      selected --;
-      selected = constrain(selected, 0, 3);
-      showSettingsSelected(selected);
-    }
-
-    if (digitalRead(buttonPin3) == LOW || digitalRead(buttonPin4) == LOW)
-    {
-      switch (selected)
-      {
-        case 0:
-          subselect_date();
-          break;
-        case 1:
-          subselect_time();
-          break;
-        case 2:
-          subselect_correct();
-          break;
-        case 3:
-          subselect_alarm(EEPROM_ADDR_ALARM_ON1, &alarmOn[0]);
-          break;
-        default:
-          break;
-      }
-      mode = MODE_SETTING;
-      showSettingsInit(selected);
-    }
-  }
+  show_choice_list(4, showSettingsInit, subselect_date, subselect_time, subselect_correct, subselect_alarm);
 }
 
 void showSettingsSelected(int selected)
 {
-  lcd.setCursor(0, 0);
-  lcd.write(0x20);
-  lcd.setCursor(0, 1);
-  lcd.write(0x20);
-  lcd.setCursor(0, 2);
-  lcd.write(0x20);
-  lcd.setCursor(0, 3);
-  lcd.write(0x20);
+  for (byte i = 0; i < 4 ; i++)
+  {
+    lcd.setCursor(0, i);
+    lcd.write(0x20);
+  }
   lcd.setCursor(0, selected);
   lcd.write('*');
 }
@@ -876,8 +836,14 @@ void showSettingsInit(int selected)
   lcd.print(F(" Koppe\xBA\xE5\xB8\xC7 \xB3pe\xBC""e\xBD\xB8"));
   lcd.setCursor(0, 3);
   lcd.print(F(" \xA0y\xE3\xB8\xBB\xC4\xBD\xB8\xBA"));
-  lcd.setCursor(0, selected);
-  lcd.write('*');
+  showSettingsSelected(selected);
+}
+
+void subselect_alarm()
+{
+  // 0 - Включить
+  // 1 - Выключить
+  show_choice_list(2, showSettingsInitAlarmType, select_alarm_list_on, select_alarm_list_off, NULL, NULL);
 }
 
 boolean showDigitalEditor(char *text, int length, char space)
@@ -997,6 +963,7 @@ void subselect_date()
     tone(TONE_PIN, notes[1], 500);
   }
 }
+
 void subselect_time()
 {
   DateTime now = rtc.now();
@@ -1095,6 +1062,151 @@ void subselect_correct()
     delay(200);
   }
   lcd.noBlink();
+}
+
+void show_choice_list(byte actionCount,
+  ActionInit pActionInit,
+  ActionSelect pActionSelect1,
+  ActionSelect pActionSelect2,
+  ActionSelect pActionSelect3,
+  ActionSelect pActionSelect4)
+{
+  int selected = 0;
+  actionCount--;
+
+  pActionInit(selected);
+  while (mode == MODE_SETTING)
+  {
+    if (digitalRead(buttonPin1) == LOW)
+    {
+      selected++;
+      selected = constrain(selected, 0, actionCount);
+      showSettingsSelected(selected);
+    }
+    if (digitalRead(buttonPin2) == LOW)
+    {
+      selected--;
+      selected = constrain(selected, 0, actionCount);
+      showSettingsSelected(selected);
+    }
+
+    if (digitalRead(buttonPin3) == LOW || digitalRead(buttonPin4) == LOW)
+    {
+      switch (selected)
+      {
+      case 0:
+        pActionSelect1();
+        break;
+      case 1:
+        pActionSelect2();
+        break;
+      case 2:
+        pActionSelect3();
+        break;
+      case 3:
+        pActionSelect4();
+        break;
+      default:
+        break;
+      }
+      mode = MODE_SETTING;
+      pActionInit(selected);
+    }
+  }
+}
+
+void showSettingsInitAlarmType(int selected)
+{
+	lcd.clear();
+	lcd.setCursor(0, 0);
+	lcd.print(F(" B\xBA\xBB\xC6\xC0\xB8\xBF\xC4"));
+	lcd.setCursor(0, 1);
+	lcd.print(F(" B\xC3\xBA\xBB\xC6\xC0\xB8\xBF\xC4"));
+	showSettingsSelected(selected);
+}
+
+void select_alarm_list_on()
+{
+  show_choice_list(4, showSettingsInitAlarmOn, select_alarm_on1, select_alarm_on2, select_alarm_on3, select_alarm_on4);
+}
+
+void select_alarm_list_off()
+{
+  show_choice_list(4, showSettingsInitAlarmOff, select_alarm_off1, select_alarm_off2, select_alarm_off3, select_alarm_off4);
+}
+
+void showSettingsInitAlarmOn(int selected)
+{
+  showSettingsInitAlarmList(selected, alarmOn);
+}
+
+void select_alarm_on1()
+{
+  subselect_alarm(EEPROM_ADDR_ALARM_ON1, &alarmOn[0]);
+}
+
+void select_alarm_on2()
+{
+  subselect_alarm(EEPROM_ADDR_ALARM_ON2, &alarmOn[1]);
+}
+
+void select_alarm_on3()
+{
+  subselect_alarm(EEPROM_ADDR_ALARM_ON3, &alarmOn[2]);
+}
+
+void select_alarm_on4()
+{
+  subselect_alarm(EEPROM_ADDR_ALARM_ON4, &alarmOn[3]);
+}
+
+void showSettingsInitAlarmOff(int selected)
+{
+  showSettingsInitAlarmList(selected, alarmOff);
+}
+
+void select_alarm_off1()
+{
+  subselect_alarm(EEPROM_ADDR_ALARM_OFF1, &alarmOff[0]);
+}
+
+void select_alarm_off2()
+{
+  subselect_alarm(EEPROM_ADDR_ALARM_OFF2, &alarmOff[1]);
+}
+
+void select_alarm_off3()
+{
+  subselect_alarm(EEPROM_ADDR_ALARM_OFF3, &alarmOff[2]);
+}
+
+void select_alarm_off4()
+{
+  subselect_alarm(EEPROM_ADDR_ALARM_OFF4, &alarmOff[3]);
+}
+
+void showSettingsInitAlarmList(int selected, AlarmItem list[])
+{
+  char text[21];
+  for (byte i = 0; i < 4; i++)
+  {
+    AlarmItem* pAlarmData = &list[i];
+    lcd.setCursor(0, i);
+    sprintf(text, "  %02d:%02d:%02d   %c%c%c%c%c%c%c",
+      pAlarmData->hour,
+      pAlarmData->minute,
+      pAlarmData->second,
+      pAlarmData->week & FLAG_MONDAY ? '\xFF' : ' ',
+      pAlarmData->week & FLAG_TUESDAY ? '\xFF' : ' ',
+      pAlarmData->week & FLAG_WEDNESDAY ? '\xFF' : ' ',
+      pAlarmData->week & FLAG_THURSDAY ? '\xFF' : ' ',
+      pAlarmData->week & FLAG_FRIDAY ? '\xFF' : ' ',
+      pAlarmData->week & FLAG_SATURDAY ? '\xFF' : ' ',
+      pAlarmData->week & FLAG_SUNDAY ? '\xFF' : ' '
+    );
+    lcd.print(text);
+  }
+  showSettingsSelected(selected);
 }
 
 void subselect_alarm(uint16_t address, AlarmItem *pAlarmData)
