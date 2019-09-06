@@ -1,5 +1,11 @@
 #include "Radio.h"
 
+void showSaveButtton()
+{
+	lcd.setCursor(6, 3);
+	lcd.print(F("coxpa\xBD\xB8\xBF\xC4"));
+}
+
 boolean showDigitalEditor(char* text, int length, char space)
 {
 	bool result = false;
@@ -9,9 +15,7 @@ boolean showDigitalEditor(char* text, int length, char space)
 	lcd.clear();
 	lcd.setCursor(x, 1);
 	lcd.print(text);
-	lcd.setCursor(6, 3);
-	lcd.print(F("coxpa\xBD\xB8\xBF\xC4"));
-
+	showSaveButtton();
 	lcd.setCursor(x, 1);
 	lcd.blink();
 
@@ -89,9 +93,8 @@ boolean showWeekEditor(char* text)
 	lcd.print(F("\xA8H BT CP \xABT \xA8T C\xA0 BC"));
 	lcd.setCursor(0, 1);
 	lcd.print(text);
-	lcd.setCursor(6, 3);
-	lcd.print(F("coxpa\xBD\xB8\xBF\xC4"));
-	lcd.setCursor(0, 1);
+	showSaveButtton();
+    lcd.setCursor(0, 1);
 	lcd.blink();
 
 	while (mode == MODE_SETTING)
@@ -156,12 +159,7 @@ void showSettingsSelected(int selected)
 	lcd.write('*');
 }
 
-void show_choice_list(byte actionCount,
-	ActionInit pActionInit,
-	ActionSelect pActionSelect1,
-	ActionSelect pActionSelect2,
-	ActionSelect pActionSelect3,
-	ActionSelect pActionSelect4)
+void show_choice_list(byte actionCount, ActionInit pActionInit, ActionSelect pActionSelect1, ActionSelect pActionSelect2, ActionSelect pActionSelect3, ActionSelect pActionSelect4)
 {
 	int selected = 0;
 	actionCount--;
@@ -296,8 +294,7 @@ void subselect_correct()
 	lcd.print(sign);
 	lcd.print(c);
 	lcd.print(F(" ce\xBA."));
-	lcd.setCursor(6, 3);
-	lcd.print(F("coxpa\xBD\xB8\xBF\xC4"));
+	showSaveButtton();
 	lcd.setCursor(10, 1);
 
 	lcd.blink();
