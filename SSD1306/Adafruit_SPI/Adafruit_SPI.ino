@@ -41,7 +41,7 @@ http://digitrode.ru/computing-devices/mcu_cpu/1706-arduino-i-oled-displey-ssd130
 
 #define SCREEN_WIDTH 128 // OLED display width, in pixels
 #define SCREEN_HEIGHT 64 // OLED display height, in pixels
-
+/*
 // Declaration for SSD1306 display connected using software SPI (default case):
 #define OLED_MOSI   9
 #define OLED_CLK   10
@@ -50,14 +50,14 @@ http://digitrode.ru/computing-devices/mcu_cpu/1706-arduino-i-oled-displey-ssd130
 #define OLED_RESET 13
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT,
   OLED_MOSI, OLED_CLK, OLED_DC, OLED_RESET, OLED_CS);
-
-/* Comment out above, uncomment this block to use hardware SPI
+*/
+// Comment out above, uncomment this block to use hardware SPI
 #define OLED_DC     6
 #define OLED_CS     7
 #define OLED_RESET  8
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT,
   &SPI, OLED_DC, OLED_RESET, OLED_CS);
-*/
+
 
 #define NUMFLAKES     10 // Number of snowflakes in the animation example
 
