@@ -125,7 +125,7 @@ https://arduinka.pro/blog/wp-content/uploads/2017/09/mega2560-pinout-1024x724.pn
 #define ADDR10     (35)     //PC2
 #define ADDR11     (34)     //PC3
 #define ADDR12     (33)     //PC4
-#define ADDR13     (33)     //PC5
+#define ADDR13     (32)     //PC5
 #define ADDR14     (31)     //PC6
 #define ADDR15     (30)     //PC7
 
