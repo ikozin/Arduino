@@ -9,6 +9,6 @@ void setup()
 void loop()
 {
 	delay(5000);
-	//Keyboard.print("Hello World!");
+	Keyboard.print("Hello World!");
 	while (1) {}
 }
