@@ -43,14 +43,18 @@ void loop()
 void setup()
 {
   // initialize control over the keyboard:
-  Keyboard.begin();
+  //Keyboard.begin();
+  Serial.begin(9600);
 }
 
 void loop()
 {
-  delay(5000);
+  delay(1000);
+  int sensorValue = analogRead(A0);
+  Serial.println(sensorValue);
+  
+/*
   //Keyboard.print("Hello World!");
-
   // CTRL-ALT-DEL:
   Keyboard.press(KEY_LEFT_CTRL);
   Keyboard.press(KEY_LEFT_ALT);
@@ -61,4 +65,5 @@ void loop()
   delay(1000);
   Keyboard.write(KEY_RETURN);
   while (1) {}
+*/
 }

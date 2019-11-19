@@ -230,26 +230,126 @@ void displayInfo(uint16_t addr, uint16_t size)
 void displayDumpHelp()
 {
     Serial.println();
-    Serial.println(F("Dump commnad:"));
-    Serial.println(F("* - Dump 32 KB"));
-    Serial.println(F("0 - Dump  2 KB [0000]"));
-    Serial.println(F("1 - Dump  2 KB [0001]"));
-    Serial.println(F("2 - Dump  2 KB [0010]"));
-    Serial.println(F("3 - Dump  2 KB [0011]"));
-    Serial.println(F("4 - Dump  2 KB [0100]"));
-    Serial.println(F("5 - Dump  2 KB [0101]"));
-    Serial.println(F("6 - Dump  2 KB [0110]"));
-    Serial.println(F("7 - Dump  2 KB [0111]"));
-    Serial.println(F("8 - Dump  2 KB [1000]"));
-    Serial.println(F("9 - Dump  2 KB [1001]"));
-    Serial.println(F("A - Dump  2 KB [1010]"));
-    Serial.println(F("B - Dump  2 KB [1011]"));
-    Serial.println(F("C - Dump  2 KB [1100]"));
-    Serial.println(F("D - Dump  2 KB [1101]"));
-    Serial.println(F("E - Dump  2 KB [1110]"));
-    Serial.println(F("F - Dump  2 KB [1111]"));
+    Serial.println(F("Dump  commnad:"));
+    Serial.println(F("* - Dump  32 KB"));
+    Serial.println(F("0 - Dump   2 KB [0000]"));
+    Serial.println(F("1 - Dump   2 KB [0001]"));
+    Serial.println(F("2 - Dump   2 KB [0010]"));
+    Serial.println(F("3 - Dump   2 KB [0011]"));
+    Serial.println(F("4 - Dump   2 KB [0100]"));
+    Serial.println(F("5 - Dump   2 KB [0101]"));
+    Serial.println(F("6 - Dump   2 KB [0110]"));
+    Serial.println(F("7 - Dump   2 KB [0111]"));
+    Serial.println(F("8 - Dump   2 KB [1000]"));
+    Serial.println(F("9 - Dump   2 KB [1001]"));
+    Serial.println(F("A - Dump   2 KB [1010]"));
+    Serial.println(F("B - Dump   2 KB [1011]"));
+    Serial.println(F("C - Dump   2 KB [1100]"));
+    Serial.println(F("D - Dump   2 KB [1101]"));
+    Serial.println(F("E - Dump   2 KB [1110]"));
+    Serial.println(F("F - Dump   2 KB [1111]"));
     Serial.println();
-    Serial.print(F("Enter dump commnad:"));
+    Serial.print(F("Enter Dump  command:"));
+}
+
+void displayReadHelp()
+{
+    Serial.println();
+    Serial.println(F("Read  commnad:"));
+    Serial.println(F("* - Read  32 KB"));
+    Serial.println(F("0 - Read   2 KB [0000]"));
+    Serial.println(F("1 - Read   2 KB [0001]"));
+    Serial.println(F("2 - Read   2 KB [0010]"));
+    Serial.println(F("3 - Read   2 KB [0011]"));
+    Serial.println(F("4 - Read   2 KB [0100]"));
+    Serial.println(F("5 - Read   2 KB [0101]"));
+    Serial.println(F("6 - Read   2 KB [0110]"));
+    Serial.println(F("7 - Read   2 KB [0111]"));
+    Serial.println(F("8 - Read   2 KB [1000]"));
+    Serial.println(F("9 - Read   2 KB [1001]"));
+    Serial.println(F("A - Read   2 KB [1010]"));
+    Serial.println(F("B - Read   2 KB [1011]"));
+    Serial.println(F("C - Read   2 KB [1100]"));
+    Serial.println(F("D - Read   2 KB [1101]"));
+    Serial.println(F("E - Read   2 KB [1110]"));
+    Serial.println(F("F - Read   2 KB [1111]"));
+    Serial.println();
+    Serial.print(F("Enter Read  command:"));
+}
+
+void displayCheckHelp()
+{
+    Serial.println();
+    Serial.println(F("Check commnad:"));
+    Serial.println(F("* - Check 32 KB"));
+    Serial.println(F("0 - Check  2 KB [0000]"));
+    Serial.println(F("1 - Check  2 KB [0001]"));
+    Serial.println(F("2 - Check  2 KB [0010]"));
+    Serial.println(F("3 - Check  2 KB [0011]"));
+    Serial.println(F("4 - Check  2 KB [0100]"));
+    Serial.println(F("5 - Check  2 KB [0101]"));
+    Serial.println(F("6 - Check  2 KB [0110]"));
+    Serial.println(F("7 - Check  2 KB [0111]"));
+    Serial.println(F("8 - Check  2 KB [1000]"));
+    Serial.println(F("9 - Check  2 KB [1001]"));
+    Serial.println(F("A - Check  2 KB [1010]"));
+    Serial.println(F("B - Check  2 KB [1011]"));
+    Serial.println(F("C - Check  2 KB [1100]"));
+    Serial.println(F("D - Check  2 KB [1101]"));
+    Serial.println(F("E - Check  2 KB [1110]"));
+    Serial.println(F("F - Check  2 KB [1111]"));
+    Serial.println();
+    Serial.print(F("Enter Check command:"));
+}
+
+void displayWriteHelp()
+{
+    Serial.println();
+    Serial.println(F("Write commnad:"));
+    Serial.println(F("* - Write 32 KB"));
+    Serial.println(F("0 - Write  2 KB [0000]"));
+    Serial.println(F("1 - Write  2 KB [0001]"));
+    Serial.println(F("2 - Write  2 KB [0010]"));
+    Serial.println(F("3 - Write  2 KB [0011]"));
+    Serial.println(F("4 - Write  2 KB [0100]"));
+    Serial.println(F("5 - Write  2 KB [0101]"));
+    Serial.println(F("6 - Write  2 KB [0110]"));
+    Serial.println(F("7 - Write  2 KB [0111]"));
+    Serial.println(F("8 - Write  2 KB [1000]"));
+    Serial.println(F("9 - Write  2 KB [1001]"));
+    Serial.println(F("A - Write  2 KB [1010]"));
+    Serial.println(F("B - Write  2 KB [1011]"));
+    Serial.println(F("C - Write  2 KB [1100]"));
+    Serial.println(F("D - Write  2 KB [1101]"));
+    Serial.println(F("E - Write  2 KB [1110]"));
+    Serial.println(F("F - Write  2 KB [1111]"));
+    Serial.println();
+    Serial.print(F("Enter Write command:"));
+}
+
+void displayClearHelp()
+{
+    Serial.println();
+    Serial.println(F("Clear commnad:"));
+    Serial.println(F("* - Clear 32 KB"));
+    Serial.println(F("0 - Clear  2 KB [0000]"));
+    Serial.println(F("1 - Clear  2 KB [0001]"));
+    Serial.println(F("2 - Clear  2 KB [0010]"));
+    Serial.println(F("3 - Clear  2 KB [0011]"));
+    Serial.println(F("4 - Clear  2 KB [0100]"));
+    Serial.println(F("5 - Clear  2 KB [0101]"));
+    Serial.println(F("6 - Clear  2 KB [0110]"));
+    Serial.println(F("7 - Clear  2 KB [0111]"));
+    Serial.println(F("8 - Clear  2 KB [1000]"));
+    Serial.println(F("9 - Clear  2 KB [1001]"));
+    Serial.println(F("A - Clear  2 KB [1010]"));
+    Serial.println(F("B - Clear  2 KB [1011]"));
+    Serial.println(F("C - Clear  2 KB [1100]"));
+    Serial.println(F("D - Clear  2 KB [1101]"));
+    Serial.println(F("E - Clear  2 KB [1110]"));
+    Serial.println(F("F - Clear  2 KB [1111]"));
+    Serial.println();
+    Serial.print(F("Enter Clear command:"));
 }
 
 void loopDump()
@@ -301,31 +401,6 @@ void loopDump()
               break;
         }
     }
-}
-
-void displayReadHelp()
-{
-    Serial.println();
-    Serial.println(F("Read commnad:"));
-    Serial.println(F("* - Read 32 KB"));
-    Serial.println(F("0 - Read  2 KB [0000]"));
-    Serial.println(F("1 - Read  2 KB [0001]"));
-    Serial.println(F("2 - Read  2 KB [0010]"));
-    Serial.println(F("3 - Read  2 KB [0011]"));
-    Serial.println(F("4 - Read  2 KB [0100]"));
-    Serial.println(F("5 - Read  2 KB [0101]"));
-    Serial.println(F("6 - Read  2 KB [0110]"));
-    Serial.println(F("7 - Read  2 KB [0111]"));
-    Serial.println(F("8 - Read  2 KB [1000]"));
-    Serial.println(F("9 - Read  2 KB [1001]"));
-    Serial.println(F("A - Read  2 KB [1010]"));
-    Serial.println(F("B - Read  2 KB [1011]"));
-    Serial.println(F("C - Read  2 KB [1100]"));
-    Serial.println(F("D - Read  2 KB [1101]"));
-    Serial.println(F("E - Read  2 KB [1110]"));
-    Serial.println(F("F - Read  2 KB [1111]"));
-    Serial.println();
-    Serial.print(F("Enter read commnad:"));
 }
 
 void loopRead()
@@ -381,31 +456,6 @@ void loopRead()
     }
 }
 
-void displayCheckHelp()
-{
-    Serial.println();
-    Serial.println(F("Check commnad:"));
-    Serial.println(F("* - Check 32 KB"));
-    Serial.println(F("0 - Check  2 KB [0000]"));
-    Serial.println(F("1 - Check  2 KB [0001]"));
-    Serial.println(F("2 - Check  2 KB [0010]"));
-    Serial.println(F("3 - Check  2 KB [0011]"));
-    Serial.println(F("4 - Check  2 KB [0100]"));
-    Serial.println(F("5 - Check  2 KB [0101]"));
-    Serial.println(F("6 - Check  2 KB [0110]"));
-    Serial.println(F("7 - Check  2 KB [0111]"));
-    Serial.println(F("8 - Check  2 KB [1000]"));
-    Serial.println(F("9 - Check  2 KB [1001]"));
-    Serial.println(F("A - Check  2 KB [1010]"));
-    Serial.println(F("B - Check  2 KB [1011]"));
-    Serial.println(F("C - Check  2 KB [1100]"));
-    Serial.println(F("D - Check  2 KB [1101]"));
-    Serial.println(F("E - Check  2 KB [1110]"));
-    Serial.println(F("F - Check  2 KB [1111]"));
-    Serial.println();
-    Serial.print(F("Enter Check commnad:"));
-}
-
 void loopCheck()
 {
     displayCheckHelp();
@@ -457,31 +507,6 @@ void loopCheck()
               break;
         }
     }
-}
-
-void displayWriteHelp()
-{
-    Serial.println();
-    Serial.println(F("Write commnad:"));
-    Serial.println(F("* - Write 32 KB"));
-    Serial.println(F("0 - Write  2 KB [0000]"));
-    Serial.println(F("1 - Write  2 KB [0001]"));
-    Serial.println(F("2 - Write  2 KB [0010]"));
-    Serial.println(F("3 - Write  2 KB [0011]"));
-    Serial.println(F("4 - Write  2 KB [0100]"));
-    Serial.println(F("5 - Write  2 KB [0101]"));
-    Serial.println(F("6 - Write  2 KB [0110]"));
-    Serial.println(F("7 - Write  2 KB [0111]"));
-    Serial.println(F("8 - Write  2 KB [1000]"));
-    Serial.println(F("9 - Write  2 KB [1001]"));
-    Serial.println(F("A - Write  2 KB [1010]"));
-    Serial.println(F("B - Write  2 KB [1011]"));
-    Serial.println(F("C - Write  2 KB [1100]"));
-    Serial.println(F("D - Write  2 KB [1101]"));
-    Serial.println(F("E - Write  2 KB [1110]"));
-    Serial.println(F("F - Write  2 KB [1111]"));
-    Serial.println();
-    Serial.print(F("Enter write commnad:"));
 }
 
 void loopWrite()
@@ -536,32 +561,6 @@ void loopWrite()
         }
     }
 }
-
-void displayClearHelp()
-{
-    Serial.println();
-    Serial.println(F("Clear commnad:"));
-    Serial.println(F("* - Clear 32 KB"));
-    Serial.println(F("0 - Clear  2 KB [0000]"));
-    Serial.println(F("1 - Clear  2 KB [0001]"));
-    Serial.println(F("2 - Clear  2 KB [0010]"));
-    Serial.println(F("3 - Clear  2 KB [0011]"));
-    Serial.println(F("4 - Clear  2 KB [0100]"));
-    Serial.println(F("5 - Clear  2 KB [0101]"));
-    Serial.println(F("6 - Clear  2 KB [0110]"));
-    Serial.println(F("7 - Clear  2 KB [0111]"));
-    Serial.println(F("8 - Clear  2 KB [1000]"));
-    Serial.println(F("9 - Clear  2 KB [1001]"));
-    Serial.println(F("A - Clear  2 KB [1010]"));
-    Serial.println(F("B - Clear  2 KB [1011]"));
-    Serial.println(F("C - Clear  2 KB [1100]"));
-    Serial.println(F("D - Clear  2 KB [1101]"));
-    Serial.println(F("E - Clear  2 KB [1110]"));
-    Serial.println(F("F - Clear  2 KB [1111]"));
-    Serial.println();
-    Serial.print(F("Enter clear commnad:"));
-}
-
 
 void loopClear()
 {
@@ -729,8 +728,9 @@ void writeData(uint16_t addr, byte data)
     disableCE();
 }
 
-void dumpMemory(uint16_t addr, uint16_t size, Stream* pStream)
+void dumpMemory(uint16_t addrress, uint16_t size, Stream* pStream)
 {
+    uint16_t addr = 0;
     setDataInMode();
     size /= BLOCK_SIZE;
     // Читаем блоками по 16 байт (BLOCK_SIZE)
@@ -740,7 +740,8 @@ void dumpMemory(uint16_t addr, uint16_t size, Stream* pStream)
         pStream->print(text);
         for (int i = 0; i < BLOCK_SIZE; i++)
         {
-            dataRow[i] = readData(addr);
+            dataRow[i] = readData(addrress);
+            addrress++;
             addr++;
         }
         char* pdata = text;
@@ -753,13 +754,13 @@ void dumpMemory(uint16_t addr, uint16_t size, Stream* pStream)
     }
 }
 
-void readMemory(uint16_t addr, uint16_t size, char* pFileName)
+void readMemory(uint16_t addrress, uint16_t size, char* pFileName)
 {
     SD.remove(pFileName);
     File dataFile = SD.open(pFileName, FILE_WRITE);
     if (dataFile)
     {
-        dumpMemory(addr, size, &dataFile);
+        dumpMemory(addrress, size, &dataFile);
         dataFile.close();
     }
     else
@@ -769,7 +770,7 @@ void readMemory(uint16_t addr, uint16_t size, char* pFileName)
     }
 }
 
-void checkMemory(uint16_t addr, uint16_t size, char* pFileName)
+void checkMemory(uint16_t address, uint16_t size, char* pFileName)
 {
     File dataFile = SD.open(pFileName);
     if (dataFile)
@@ -780,9 +781,9 @@ void checkMemory(uint16_t addr, uint16_t size, char* pFileName)
             int result;
             result = readLine(&dataFile, text, TEXT_SIZE);
             if (result == 0) break;
-            int address, hex0, hex1, hex2, hex3, hex4, hex5, hex6, hex7, hex8, hex9, hexA, hexB, hexC, hexD, hexE, hexF;
+            int addr, hex0, hex1, hex2, hex3, hex4, hex5, hex6, hex7, hex8, hex9, hexA, hexB, hexC, hexD, hexE, hexF;
             result = sscanf(text, "%04X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X",
-              &address, &hex0, &hex1, &hex2, &hex3, &hex4, &hex5, &hex6, &hex7, &hex8, &hex9, &hexA, &hexB, &hexC, &hexD, &hexE, &hexF);
+              &addr, &hex0, &hex1, &hex2, &hex3, &hex4, &hex5, &hex6, &hex7, &hex8, &hex9, &hexA, &hexB, &hexC, &hexD, &hexE, &hexF);
             if (result != BLOCK_SIZE + 1)
             {
                 error = true;
@@ -806,7 +807,7 @@ void checkMemory(uint16_t addr, uint16_t size, char* pFileName)
             dataRow[0x0F] = hexF;// & 0xFF;
             for (int i = 0; i < BLOCK_SIZE; i++)
             {
-				error = readData(address) != dataRow[i];
+                error = readData(address + addr) != dataRow[i];
                 if (error) break;
                 address++;
             }
@@ -814,10 +815,9 @@ void checkMemory(uint16_t addr, uint16_t size, char* pFileName)
         dataFile.close();
         if (error)
         {
-			
             Serial.println(F("\nError!"));
             Serial.print(F("Address: "));
-            bin2hex(text, addr);
+            bin2hex(text, address);
             Serial.println(text);
         }
     }
@@ -828,7 +828,7 @@ void checkMemory(uint16_t addr, uint16_t size, char* pFileName)
     }
 }
 
-void writeMemory(uint16_t addr, uint16_t size, char* pFileName)
+void writeMemory(uint16_t address, uint16_t size, char* pFileName)
 {
     File dataFile = SD.open(pFileName);
     if (dataFile)
@@ -840,9 +840,9 @@ void writeMemory(uint16_t addr, uint16_t size, char* pFileName)
             int result;
             result = readLine(&dataFile, text, TEXT_SIZE);
             if (result == 0) break;
-            int address, hex0, hex1, hex2, hex3, hex4, hex5, hex6, hex7, hex8, hex9, hexA, hexB, hexC, hexD, hexE, hexF;
+            int addr, hex0, hex1, hex2, hex3, hex4, hex5, hex6, hex7, hex8, hex9, hexA, hexB, hexC, hexD, hexE, hexF;
             result = sscanf(text, "%04X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X",
-              &address, &hex0, &hex1, &hex2, &hex3, &hex4, &hex5, &hex6, &hex7, &hex8, &hex9, &hexA, &hexB, &hexC, &hexD, &hexE, &hexF);
+              &addr, &hex0, &hex1, &hex2, &hex3, &hex4, &hex5, &hex6, &hex7, &hex8, &hex9, &hexA, &hexB, &hexC, &hexD, &hexE, &hexF);
             if (result != BLOCK_SIZE + 1)
             {
                 error = true;
@@ -866,13 +866,19 @@ void writeMemory(uint16_t addr, uint16_t size, char* pFileName)
             dataRow[0x0F] = hexF;// & 0xFF;
             for (int i = 0; i < BLOCK_SIZE; i++)
             {
-                writeData(address, dataRow[i]);
+                writeData(address + addr, dataRow[i]);
                 address++;
             }
         }
         setDataInMode();
         dataFile.close();
-        if (error) Serial.println(F("\nError!"));
+        if (error)
+        {
+            Serial.println(F("\nError!"));
+            Serial.print(F("Address: "));
+            bin2hex(text, address);
+            Serial.println(text);
+        }        
     }
     else
     {
@@ -881,7 +887,7 @@ void writeMemory(uint16_t addr, uint16_t size, char* pFileName)
     }
 }
 
-void clearMemory(uint16_t addr, uint16_t size)
+void clearMemory(uint16_t address, uint16_t size)
 {
     setDataOutMode();
     for (int i = 0; i < BLOCK_SIZE; i++)
@@ -893,8 +899,8 @@ void clearMemory(uint16_t addr, uint16_t size)
     {
         for (int i = 0; i < BLOCK_SIZE; i++)
         {
-            writeData(addr, dataRow[i]);
-            addr++;
+            writeData(address, dataRow[i]);
+            address++;
         }
     }
     setDataInMode();
