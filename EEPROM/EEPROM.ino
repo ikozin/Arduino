@@ -1,5 +1,5 @@
 /*
-Программатор для EEPROM - AT28C256, AT28C64
+Программатор для EEPROM - AT28C256
 
 Arduino MEGA
 https://www.arduino.cc/en/Main/arduinoBoardMega/
@@ -85,23 +85,24 @@ https://arduinka.pro/blog/wp-content/uploads/2017/09/mega2560-pinout-1024x724.pn
    |   |                    |   |
    ------------------------------
 
+https://static.chipdip.ru/lib/248/DOC000248438.pdf
 Распиновка AT28C256
-      -------------
-  1 -| A14     +5V |- 28
-  2 -| A12     ~WE |- 27
-  3 -| A7      A13 |- 26
-  4 -| A6       A8 |- 25
-  5 -| A5       A9 |- 24
-  6 -| A4      A11 |- 23
-  7 -| A3      ~OE |- 22
-  8 -| A2      A10 |- 21
-  9 -| A1      ~CE |- 20
- 10 -| A0       D7 |- 19
- 11 -| D0       D6 |- 18
- 12 -| D1       D5 |- 17
- 13 -| D2       D4 |- 16
- 14 -| GND      D3 |- 15
-      -------------
+ ____      -------------        ____
+|____|  1 -| A14     +5V |- 28 |____|
+|____|  2 -| A12     ~WE |- 27 |____|
+|    |  3 -| A7      A13 |- 26 |____|
+|    |  4 -| A6       A8 |- 25 |  <-|
+|    |  5 -| A5       A9 |- 24 |____|
+|    |  6 -| A4      A11 |- 23 |____|
+|    |  7 -| A3      ~OE |- 22 |____|
+|    |  8 -| A2      A10 |- 21 |____|
+|    |  9 -| A1      ~CE |- 20 |____|
+|->__| 10 -| A0       D7 |- 19 |    |
+|->  | 11 -| D0       D6 |- 18 |    |
+|    | 12 -| D1       D5 |- 17 |    |
+|____| 13 -| D2       D4 |- 16 |    |
+|____| 14 -| GND      D3 |- 15 |__<-|
+           -------------
     
 */
 
@@ -112,44 +113,47 @@ https://arduinka.pro/blog/wp-content/uploads/2017/09/mega2560-pinout-1024x724.pn
 #include <SPI.h>
 #include <SD.h>
 
-#define ADDR0      (22)		//PA0
-#define ADDR1      (23)		//PA1
-#define ADDR2      (24)		//PA2
-#define ADDR3      (25)		//PA3
-#define ADDR4      (26)		//PA4
-#define ADDR5      (27)		//PA5
-#define ADDR6      (28)		//PA6
-#define ADDR7      (29)		//PA7
-#define ADDR8      (37)     //PC0
-#define ADDR9      (36)     //PC1
-#define ADDR10     (35)     //PC2
-#define ADDR11     (34)     //PC3
-#define ADDR12     (33)     //PC4
-#define ADDR13     (32)     //PC5
-#define ADDR14     (31)     //PC6
-#define ADDR15     (30)     //PC7
+#define ADDR0       (22)
+#define ADDR1       (23)
+#define ADDR2       (24)
+#define ADDR3       (25)
+#define ADDR4       (26)
+#define ADDR5       (27)
+#define ADDR6       (28)
+#define ADDR7       (29)
+#define ADDR8       (30)
+#define ADDR9       (31)
+#define ADDR10      (32)
+#define ADDR11      (33)
+#define ADDR12      (34)
+#define ADDR13      (35)
+#define ADDR14      (36)
+#define ADDR15      (37)
 
-#define D0         (49)     //PL0
-#define D1         (48)     //PL1
-#define D2         (47)     //PL2
-#define D3         (46)     //PL3
-#define D4         (45)     //PL4
-#define D5         (44)     //PL5
-#define D6         (43)     //PL6
-#define D7         (42)     //PL7
+#define D0          (38)
+#define D1          (39)
+#define D2          (40)
+#define D3          (41)
+#define D4          (42)
+#define D5          (43)
+#define D6          (44)
+#define D7          (45)
 
-#define SD_CS      (53)
+#define SD_CS       (53)
 
-#define WE          (7)
-#define CE          (6)
-#define OE          (5)
+#define WE          (7) // Write Enable
+#define CE          (6) // Chip Enable
+#define OE          (5) // Output Enable
 
-#define BLOCK_SIZE    16
+#define CHIP_SIZE       32768
+#define CHIP_MIN_SIZE   2048
+#define BLOCK_SIZE      16
+#define TEXT_SIZE       64
+
 uint8_t dataRow[BLOCK_SIZE];
-#define TEXT_SIZE     64
 char text[TEXT_SIZE];
 
-byte buffer[] = { 0xC3, 0x00, 0xF8 };
+char fileName[] = "X_DUMP.TXT";
 
 void enableWE() { digitalWrite(WE, LOW); }
 void disableWE() { digitalWrite(WE, HIGH); }
@@ -159,7 +163,6 @@ void disableCE() { digitalWrite(CE, HIGH); }
 
 void enableOE() { digitalWrite(OE, LOW); }
 void disableOE() { digitalWrite(OE, HIGH); }
-
 
 void  setup()
 {
@@ -185,13 +188,11 @@ void  setup()
     pinMode(ADDR13, OUTPUT);
     pinMode(ADDR14, OUTPUT);
     pinMode(ADDR15, OUTPUT);
-
     setDataInMode();
 
     // Initialize Serial
     Serial.begin(9600);
     while (!Serial) {}
-
     // Initialize SD
     if (!SD.begin(SD_CS))
     {
@@ -199,56 +200,452 @@ void  setup()
         for (;;);
     }
     Serial.println(F("SD card initialized."));
-
     displayHelp();
-    //debugAddr();
 }
-
-
-void  loop()
-{
-    int cmd = Serial.read();
-    switch (cmd)
-    {
-    case '1':					// 1 - Dump  32768 KB [AT28C256]
-        dumpMemory(32768);
-        displayHelp();
-        break;
-
-    case '3':					// 3 - Read  32768 KB [AT28C256]
-        readMemory(32768);
-        displayHelp();
-        break;
-
-    //case '5':					// 5 - Check 32768 KB [AT28C256]
-    //    checkMemory(32768);
-    //    displayHelp();
-    //    break;
-
-    case '7':					// 7 - Write 32768 KB [AT28C256]
-        writeMemory(32768);
-        displayHelp();
-        break;
-    }
-}
-
 
 void displayHelp()
 {
     Serial.println();
     Serial.println(F("Reset Arduino after insert SD card"));
-    Serial.println(F("Enter commnad:"));
+    Serial.println(F("List commnad:"));
+    Serial.println(F("1 - Dump  32 KB [AT28C256]"));
+    Serial.println(F("2 - Read  32 KB [AT28C256] (DUMP.TXT)"));
+    Serial.println(F("3 - Check 32 KB [AT28C256] (DUMP.TXT)"));
+    Serial.println(F("4 - Write 32 KB [AT28C256] (DUMP.TXT)"));
+    Serial.println(F("5 - Clear 32 KB [AT28C256]"));
     Serial.println();
-    Serial.println(F("1 - Dump  32768 KB [AT28C256]"));
-    Serial.println();
-    Serial.println(F("3 - Read  32768 KB [AT28C256] (DUMP.TXT)"));
-    Serial.println();
-    //Serial.println(F("5 - Check 32768 KB [AT28C256] (DUMP.TXT)"));
-    //Serial.println();
-    Serial.println(F("7 - Write 32768 KB [AT28C256] (DUMP.TXT)"));
-    Serial.println();
+    Serial.print(F("Enter commnad:"));
 }
 
+void displayInfo(uint16_t addr, uint16_t size)
+{
+    Serial.print(F("Address: "));
+    bin2hex(text, addr);
+    Serial.print(text);
+    Serial.print(F(" Size: "));
+    bin2hex(text, size);
+    Serial.println(text);
+}
+
+void displayDumpHelp()
+{
+    Serial.println();
+    Serial.println(F("Dump commnad:"));
+    Serial.println(F("* - Dump 32 KB"));
+    Serial.println(F("0 - Dump  2 KB [0000]"));
+    Serial.println(F("1 - Dump  2 KB [0001]"));
+    Serial.println(F("2 - Dump  2 KB [0010]"));
+    Serial.println(F("3 - Dump  2 KB [0011]"));
+    Serial.println(F("4 - Dump  2 KB [0100]"));
+    Serial.println(F("5 - Dump  2 KB [0101]"));
+    Serial.println(F("6 - Dump  2 KB [0110]"));
+    Serial.println(F("7 - Dump  2 KB [0111]"));
+    Serial.println(F("8 - Dump  2 KB [1000]"));
+    Serial.println(F("9 - Dump  2 KB [1001]"));
+    Serial.println(F("A - Dump  2 KB [1010]"));
+    Serial.println(F("B - Dump  2 KB [1011]"));
+    Serial.println(F("C - Dump  2 KB [1100]"));
+    Serial.println(F("D - Dump  2 KB [1101]"));
+    Serial.println(F("E - Dump  2 KB [1110]"));
+    Serial.println(F("F - Dump  2 KB [1111]"));
+    Serial.println();
+    Serial.print(F("Enter dump commnad:"));
+}
+
+void loopDump()
+{
+    displayDumpHelp();
+    uint16_t addr;
+    for (;;)
+    {
+        char cmd = toUpperCase(Serial.read());
+        switch(cmd)
+        {
+          case -1:
+              break;
+          case '*':
+              Serial.println(cmd);
+              addr = 0;
+              displayInfo(addr, CHIP_SIZE);
+              dumpMemory(addr, CHIP_SIZE, &Serial);
+              return;
+          case '0':
+          case '1':
+          case '2':
+          case '3':
+          case '4':
+          case '5':
+          case '6':
+          case '7':
+          case '8':
+          case '9':
+              Serial.println(cmd);
+              addr = (cmd - '0') * CHIP_MIN_SIZE;
+              displayInfo(addr, CHIP_MIN_SIZE);
+              dumpMemory(addr, CHIP_MIN_SIZE, &Serial);
+              return;
+          case 'A':
+          case 'B':
+          case 'C':
+          case 'D':
+          case 'E':
+          case 'F':
+              Serial.println(cmd);
+              addr = (cmd - 'A' + 10 ) * CHIP_MIN_SIZE;
+              displayInfo(addr, CHIP_MIN_SIZE);
+              dumpMemory(addr, CHIP_MIN_SIZE, &Serial);
+              return;
+          default:
+              Serial.println(cmd);
+              displayDumpHelp();
+              break;
+        }
+    }
+}
+
+void displayReadHelp()
+{
+    Serial.println();
+    Serial.println(F("Read commnad:"));
+    Serial.println(F("* - Read 32 KB"));
+    Serial.println(F("0 - Read  2 KB [0000]"));
+    Serial.println(F("1 - Read  2 KB [0001]"));
+    Serial.println(F("2 - Read  2 KB [0010]"));
+    Serial.println(F("3 - Read  2 KB [0011]"));
+    Serial.println(F("4 - Read  2 KB [0100]"));
+    Serial.println(F("5 - Read  2 KB [0101]"));
+    Serial.println(F("6 - Read  2 KB [0110]"));
+    Serial.println(F("7 - Read  2 KB [0111]"));
+    Serial.println(F("8 - Read  2 KB [1000]"));
+    Serial.println(F("9 - Read  2 KB [1001]"));
+    Serial.println(F("A - Read  2 KB [1010]"));
+    Serial.println(F("B - Read  2 KB [1011]"));
+    Serial.println(F("C - Read  2 KB [1100]"));
+    Serial.println(F("D - Read  2 KB [1101]"));
+    Serial.println(F("E - Read  2 KB [1110]"));
+    Serial.println(F("F - Read  2 KB [1111]"));
+    Serial.println();
+    Serial.print(F("Enter read commnad:"));
+}
+
+void loopRead()
+{
+    displayReadHelp();
+    uint16_t addr;
+    for (;;)
+    {
+        char cmd = toUpperCase(Serial.read());
+        switch(cmd)
+        {
+          case -1:
+              break;
+          case '*':
+              Serial.println(cmd);
+              addr = 0;
+              displayInfo(addr, CHIP_SIZE);
+              readMemory(addr, CHIP_SIZE, "DUMP.TXT");
+              return;
+          case '0':
+          case '1':
+          case '2':
+          case '3':
+          case '4':
+          case '5':
+          case '6':
+          case '7':
+          case '8':
+          case '9':
+              Serial.println(cmd);
+              fileName[0] = cmd;
+              addr = (cmd - '0') * CHIP_MIN_SIZE;
+              displayInfo(addr, CHIP_MIN_SIZE);
+              readMemory(addr, CHIP_MIN_SIZE, fileName);
+              return;
+          case 'A':
+          case 'B':
+          case 'C':
+          case 'D':
+          case 'E':
+          case 'F':
+              Serial.println(cmd);
+              fileName[0] = cmd;
+              addr = (cmd - 'A' + 10) * CHIP_MIN_SIZE;
+              displayInfo(addr, CHIP_MIN_SIZE);
+              readMemory(addr, CHIP_MIN_SIZE, fileName);
+              return;
+          default:
+              Serial.println(cmd);
+              displayReadHelp();
+              break;
+        }
+    }
+}
+
+void displayCheckHelp()
+{
+    Serial.println();
+    Serial.println(F("Check commnad:"));
+    Serial.println(F("* - Check 32 KB"));
+    Serial.println(F("0 - Check  2 KB [0000]"));
+    Serial.println(F("1 - Check  2 KB [0001]"));
+    Serial.println(F("2 - Check  2 KB [0010]"));
+    Serial.println(F("3 - Check  2 KB [0011]"));
+    Serial.println(F("4 - Check  2 KB [0100]"));
+    Serial.println(F("5 - Check  2 KB [0101]"));
+    Serial.println(F("6 - Check  2 KB [0110]"));
+    Serial.println(F("7 - Check  2 KB [0111]"));
+    Serial.println(F("8 - Check  2 KB [1000]"));
+    Serial.println(F("9 - Check  2 KB [1001]"));
+    Serial.println(F("A - Check  2 KB [1010]"));
+    Serial.println(F("B - Check  2 KB [1011]"));
+    Serial.println(F("C - Check  2 KB [1100]"));
+    Serial.println(F("D - Check  2 KB [1101]"));
+    Serial.println(F("E - Check  2 KB [1110]"));
+    Serial.println(F("F - Check  2 KB [1111]"));
+    Serial.println();
+    Serial.print(F("Enter Check commnad:"));
+}
+
+void loopCheck()
+{
+    displayCheckHelp();
+    uint16_t addr;
+    for (;;)
+    {
+        char cmd = toUpperCase(Serial.read());
+        switch(cmd)
+        {
+          case -1:
+              break;
+          case '*':
+              Serial.println(cmd);
+              addr = 0;
+              displayInfo(addr, CHIP_SIZE);
+              checkMemory(addr, CHIP_SIZE, "DUMP.TXT");
+              return;
+          case '0':
+          case '1':
+          case '2':
+          case '3':
+          case '4':
+          case '5':
+          case '6':
+          case '7':
+          case '8':
+          case '9':
+              Serial.println(cmd);
+              fileName[0] = cmd;
+              addr = (cmd - '0') * CHIP_MIN_SIZE;
+              displayInfo(addr, CHIP_MIN_SIZE);
+              checkMemory(addr, CHIP_MIN_SIZE, fileName);
+              return;
+          case 'A':
+          case 'B':
+          case 'C':
+          case 'D':
+          case 'E':
+          case 'F':
+              Serial.println(cmd);
+              fileName[0] = cmd;
+              addr = (cmd - 'A' + 10) * CHIP_MIN_SIZE;
+              displayInfo(addr, CHIP_MIN_SIZE);
+              checkMemory(addr, CHIP_MIN_SIZE, fileName);
+              return;
+          default:
+              Serial.println(cmd);
+              displayCheckHelp();
+              break;
+        }
+    }
+}
+
+void displayWriteHelp()
+{
+    Serial.println();
+    Serial.println(F("Write commnad:"));
+    Serial.println(F("* - Write 32 KB"));
+    Serial.println(F("0 - Write  2 KB [0000]"));
+    Serial.println(F("1 - Write  2 KB [0001]"));
+    Serial.println(F("2 - Write  2 KB [0010]"));
+    Serial.println(F("3 - Write  2 KB [0011]"));
+    Serial.println(F("4 - Write  2 KB [0100]"));
+    Serial.println(F("5 - Write  2 KB [0101]"));
+    Serial.println(F("6 - Write  2 KB [0110]"));
+    Serial.println(F("7 - Write  2 KB [0111]"));
+    Serial.println(F("8 - Write  2 KB [1000]"));
+    Serial.println(F("9 - Write  2 KB [1001]"));
+    Serial.println(F("A - Write  2 KB [1010]"));
+    Serial.println(F("B - Write  2 KB [1011]"));
+    Serial.println(F("C - Write  2 KB [1100]"));
+    Serial.println(F("D - Write  2 KB [1101]"));
+    Serial.println(F("E - Write  2 KB [1110]"));
+    Serial.println(F("F - Write  2 KB [1111]"));
+    Serial.println();
+    Serial.print(F("Enter write commnad:"));
+}
+
+void loopWrite()
+{
+    displayWriteHelp();
+    uint16_t addr;
+    for (;;)
+    {
+        char cmd = toUpperCase(Serial.read());
+        switch(cmd)
+        {
+          case -1:
+              break;
+          case '*':
+              Serial.println(cmd);
+              addr = 0;
+              displayInfo(addr, CHIP_SIZE);
+              writeMemory(addr, CHIP_SIZE, "DUMP.TXT");
+              return;
+          case '0':
+          case '1':
+          case '2':
+          case '3':
+          case '4':
+          case '5':
+          case '6':
+          case '7':
+          case '8':
+          case '9':
+              Serial.println(cmd);
+              fileName[0] = cmd;
+              addr = (cmd - '0') * CHIP_MIN_SIZE;
+              displayInfo(addr, CHIP_MIN_SIZE);
+              writeMemory(addr, CHIP_MIN_SIZE, fileName);
+              return;
+          case 'A':
+          case 'B':
+          case 'C':
+          case 'D':
+          case 'E':
+          case 'F':
+              Serial.println(cmd);
+              fileName[0] = cmd;
+              addr = (cmd - 'A' + 10) * CHIP_MIN_SIZE;
+              displayInfo(addr, CHIP_MIN_SIZE);
+              writeMemory(addr, CHIP_MIN_SIZE, fileName);
+              return;
+          default:
+              Serial.println(cmd);
+              displayWriteHelp();
+              break;
+        }
+    }
+}
+
+void displayClearHelp()
+{
+    Serial.println();
+    Serial.println(F("Clear commnad:"));
+    Serial.println(F("* - Clear 32 KB"));
+    Serial.println(F("0 - Clear  2 KB [0000]"));
+    Serial.println(F("1 - Clear  2 KB [0001]"));
+    Serial.println(F("2 - Clear  2 KB [0010]"));
+    Serial.println(F("3 - Clear  2 KB [0011]"));
+    Serial.println(F("4 - Clear  2 KB [0100]"));
+    Serial.println(F("5 - Clear  2 KB [0101]"));
+    Serial.println(F("6 - Clear  2 KB [0110]"));
+    Serial.println(F("7 - Clear  2 KB [0111]"));
+    Serial.println(F("8 - Clear  2 KB [1000]"));
+    Serial.println(F("9 - Clear  2 KB [1001]"));
+    Serial.println(F("A - Clear  2 KB [1010]"));
+    Serial.println(F("B - Clear  2 KB [1011]"));
+    Serial.println(F("C - Clear  2 KB [1100]"));
+    Serial.println(F("D - Clear  2 KB [1101]"));
+    Serial.println(F("E - Clear  2 KB [1110]"));
+    Serial.println(F("F - Clear  2 KB [1111]"));
+    Serial.println();
+    Serial.print(F("Enter clear commnad:"));
+}
+
+
+void loopClear()
+{
+    displayClearHelp();
+    uint16_t addr;
+    for (;;)
+    {
+        char cmd = toUpperCase(Serial.read());
+        switch(cmd)
+        {
+          case -1:
+              break;
+          case '*':
+              Serial.println(cmd);
+              addr = 0;
+              displayInfo(addr, CHIP_SIZE);
+              clearMemory(addr, CHIP_SIZE);
+              return;
+          case '0':
+          case '1':
+          case '2':
+          case '3':
+          case '4':
+          case '5':
+          case '6':
+          case '7':
+          case '8':
+          case '9':
+              Serial.println(cmd);
+              addr = (cmd - '0') * CHIP_MIN_SIZE;
+              displayInfo(addr, CHIP_MIN_SIZE);
+              clearMemory(addr, CHIP_MIN_SIZE);
+              return;
+          case 'A':
+          case 'B':
+          case 'C':
+          case 'D':
+          case 'E':
+          case 'F':
+              Serial.println(cmd);
+              addr = (cmd - 'A' + 10) * CHIP_MIN_SIZE;
+              displayInfo(addr, CHIP_MIN_SIZE);
+              clearMemory(addr, CHIP_MIN_SIZE);
+              return;
+          default:
+              Serial.println(cmd);
+              displayClearHelp();
+              break;
+        }
+    }
+}
+
+void  loop()
+{
+    char cmd = Serial.read();
+    switch (cmd)
+    {
+      case '1':					// 1 - Dump  [AT28C256]
+          Serial.println(cmd);
+          loopDump();
+          displayHelp();
+          break;
+      case '2':					// 2 - Read  [AT28C256]
+          Serial.println(cmd);
+          loopRead();
+          displayHelp();
+          break;
+      case '3':					// 3 - Check [AT28C256]
+          Serial.println(cmd);
+          loopCheck();
+          displayHelp();
+          break;
+      case '4':					// 4 - Write [AT28C256]
+          Serial.println(cmd);
+          loopWrite();
+          displayHelp();
+          break;
+      case '5':					// 5 - Clear [AT28C256]
+          Serial.println(cmd);
+          loopClear();
+          displayHelp();
+          break;
+    }
+}
 
 void setDataInMode()
 {
@@ -262,7 +659,6 @@ void setDataInMode()
     pinMode(D7, INPUT_PULLUP);
 }
 
-
 void setDataOutMode()
 {
     pinMode(D0, OUTPUT);
@@ -274,7 +670,6 @@ void setDataOutMode()
     pinMode(D6, OUTPUT);
     pinMode(D7, OUTPUT);
 }
-
 
 void setAddres(uint16_t addr)
 {
@@ -296,11 +691,12 @@ void setAddres(uint16_t addr)
     digitalWrite(ADDR0,  bitRead(addr,  0));
 }
 
-
 byte readData(uint16_t addr)
 {
     setAddres(addr);
-    delayMicroseconds(2);
+    enableCE();
+    enableOE();
+    delayMicroseconds(1);
     byte data = 0;
     if (digitalRead(D0) == HIGH) bitSet(data, 0);
     if (digitalRead(D1) == HIGH) bitSet(data, 1);
@@ -310,86 +706,74 @@ byte readData(uint16_t addr)
     if (digitalRead(D5) == HIGH) bitSet(data, 5);
     if (digitalRead(D6) == HIGH) bitSet(data, 6);
     if (digitalRead(D7) == HIGH) bitSet(data, 7);
+    disableOE();
+    disableCE();
     return data;
 }
 
-
-void dumpMemory(uint16_t size)
+void writeData(uint16_t addr, byte data)
 {
-    setDataInMode();
-
-    Serial.println(size);
+    setAddres(addr);
+    digitalWrite(D0, bitRead(data, 0));
+    digitalWrite(D1, bitRead(data, 1));
+    digitalWrite(D2, bitRead(data, 2));
+    digitalWrite(D3, bitRead(data, 3));
+    digitalWrite(D4, bitRead(data, 4));
+    digitalWrite(D5, bitRead(data, 5));
+    digitalWrite(D6, bitRead(data, 6));
+    digitalWrite(D7, bitRead(data, 7));
     enableCE();
-    enableOE();
-    size /= BLOCK_SIZE;
-    uint16_t addr = 0;
-    // Читаем блоками по 16 байт (BLOCK_SIZE)
-    for (uint16_t n = 0; n < size; n++)
-    {
-        sprintf(text, "%04X ", addr);
-        Serial.print(text); // Выводим адрес
-        for (int i = 0; i < BLOCK_SIZE; i++)
-        {
-            sprintf(text, " %02X", readData(addr));
-            Serial.print(text);
-            addr++;
-        }
-        Serial.println();
-    }
-    disableOE();
+    enableWE();
+    delayMicroseconds(1);
+    disableWE();
     disableCE();
 }
 
-
-void readMemory(uint16_t size)
+void dumpMemory(uint16_t addr, uint16_t size, Stream* pStream)
 {
-    SD.remove("DUMP.TXT");
-    File dataFile = SD.open("DUMP.TXT", FILE_WRITE);
-    if (dataFile)
+    setDataInMode();
+    size /= BLOCK_SIZE;
+    // Читаем блоками по 16 байт (BLOCK_SIZE)
+    for (uint16_t n = 0; n < size; n++)
     {
-        setDataInMode();
-        Serial.println(size);
-        enableCE();
-        enableOE();
-        size /= BLOCK_SIZE;
-        uint16_t addr = 0;
-        for (uint16_t n = 0; n < size; n++)
+        bin2hex(text, addr);
+        pStream->print(text);
+        for (int i = 0; i < BLOCK_SIZE; i++)
         {
-            bin2hex(text, addr);
-            dataFile.print(text);
-            for (int i = 0; i < BLOCK_SIZE; i++)
-            {
-                dataRow[i] = readData(addr);
-                addr++;
-            }
-            char* pdata = text;
-            for (int i = 0; i < BLOCK_SIZE; i++)
-            {
-                *pdata++ = ' ';
-                pdata = bin2hex(pdata, dataRow[i]);
-            }
-            dataFile.println(text);
+            dataRow[i] = readData(addr);
+            addr++;
         }
-        dataFile.close();
-        disableOE();
-        disableCE();
-    }
-    else
-    {
-        Serial.println(F("Error create file: DUMP.TXT"));
+        char* pdata = text;
+        for (int i = 0; i < BLOCK_SIZE; i++)
+        {
+            *pdata++ = ' ';
+            pdata = bin2hex(pdata, dataRow[i]);
+        }
+        pStream->println(text);
     }
 }
 
-
-void writeMemory(uint16_t size)
+void readMemory(uint16_t addr, uint16_t size, char* pFileName)
 {
-    File dataFile = SD.open("DUMP.TXT");
+    SD.remove(pFileName);
+    File dataFile = SD.open(pFileName, FILE_WRITE);
     if (dataFile)
     {
-        setDataOutMode();
-        enableCE();
-        disableOE();
+        dumpMemory(addr, size, &dataFile);
+        dataFile.close();
+    }
+    else
+    {
+        Serial.print(F("Error create file: "));
+        Serial.println(pFileName);
+    }
+}
 
+void checkMemory(uint16_t addr, uint16_t size, char* pFileName)
+{
+    File dataFile = SD.open(pFileName);
+    if (dataFile)
+    {
         bool error = false;
         while (!error)
         {
@@ -398,7 +782,7 @@ void writeMemory(uint16_t size)
             if (result == 0) break;
             int address, hex0, hex1, hex2, hex3, hex4, hex5, hex6, hex7, hex8, hex9, hexA, hexB, hexC, hexD, hexE, hexF;
             result = sscanf(text, "%04X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X",
-                &address, &hex0, &hex1, &hex2, &hex3, &hex4, &hex5, &hex6, &hex7, &hex8, &hex9, &hexA, &hexB, &hexC, &hexD, &hexE, &hexF);
+              &address, &hex0, &hex1, &hex2, &hex3, &hex4, &hex5, &hex6, &hex7, &hex8, &hex9, &hexA, &hexB, &hexC, &hexD, &hexE, &hexF);
             if (result != BLOCK_SIZE + 1)
             {
                 error = true;
@@ -422,40 +806,99 @@ void writeMemory(uint16_t size)
             dataRow[0x0F] = hexF;// & 0xFF;
             for (int i = 0; i < BLOCK_SIZE; i++)
             {
-                uint16_t addr = address + i;
-                setAddres(addr);
-                delayMicroseconds(1);
-
-                uint8_t data = dataRow[i];
-                digitalWrite(D0, bitRead(data, 0));
-                digitalWrite(D1, bitRead(data, 1));
-                digitalWrite(D2, bitRead(data, 2));
-                digitalWrite(D3, bitRead(data, 3));
-                digitalWrite(D4, bitRead(data, 4));
-                digitalWrite(D5, bitRead(data, 5));
-                digitalWrite(D6, bitRead(data, 6));
-                digitalWrite(D7, bitRead(data, 7));
-
-                delayMicroseconds(3);
-                enableWE();
-                delayMicroseconds(2);
-                disableWE();
-                delayMicroseconds(3);
+				error = readData(address) != dataRow[i];
+                if (error) break;
+                address++;
             }
         }
-
         dataFile.close();
-        disableOE();
-        disableCE();
+        if (error)
+        {
+			
+            Serial.println(F("\nError!"));
+            Serial.print(F("Address: "));
+            bin2hex(text, addr);
+            Serial.println(text);
+        }
+    }
+    else
+    {
+        Serial.print(F("Error open file: "));
+        Serial.println(pFileName);
+    }
+}
+
+void writeMemory(uint16_t addr, uint16_t size, char* pFileName)
+{
+    File dataFile = SD.open(pFileName);
+    if (dataFile)
+    {
+        setDataOutMode();
+        bool error = false;
+        while (!error)
+        {
+            int result;
+            result = readLine(&dataFile, text, TEXT_SIZE);
+            if (result == 0) break;
+            int address, hex0, hex1, hex2, hex3, hex4, hex5, hex6, hex7, hex8, hex9, hexA, hexB, hexC, hexD, hexE, hexF;
+            result = sscanf(text, "%04X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X",
+              &address, &hex0, &hex1, &hex2, &hex3, &hex4, &hex5, &hex6, &hex7, &hex8, &hex9, &hexA, &hexB, &hexC, &hexD, &hexE, &hexF);
+            if (result != BLOCK_SIZE + 1)
+            {
+                error = true;
+                break;
+            }
+            dataRow[0x00] = hex0;// & 0xFF;
+            dataRow[0x01] = hex1;// & 0xFF;
+            dataRow[0x02] = hex2;// & 0xFF;
+            dataRow[0x03] = hex3;// & 0xFF;
+            dataRow[0x04] = hex4;// & 0xFF;
+            dataRow[0x05] = hex5;// & 0xFF;
+            dataRow[0x06] = hex6;// & 0xFF;
+            dataRow[0x07] = hex7;// & 0xFF;
+            dataRow[0x08] = hex8;// & 0xFF;
+            dataRow[0x09] = hex9;// & 0xFF;
+            dataRow[0x0A] = hexA;// & 0xFF;
+            dataRow[0x0B] = hexB;// & 0xFF;
+            dataRow[0x0C] = hexC;// & 0xFF;
+            dataRow[0x0D] = hexD;// & 0xFF;
+            dataRow[0x0E] = hexE;// & 0xFF;
+            dataRow[0x0F] = hexF;// & 0xFF;
+            for (int i = 0; i < BLOCK_SIZE; i++)
+            {
+                writeData(address, dataRow[i]);
+                address++;
+            }
+        }
         setDataInMode();
+        dataFile.close();
         if (error) Serial.println(F("\nError!"));
     }
     else
     {
-        Serial.println(F("Error open file: DUMP.TXT"));
+        Serial.print(F("Error open file: "));
+        Serial.println(pFileName);
     }
 }
 
+void clearMemory(uint16_t addr, uint16_t size)
+{
+    setDataOutMode();
+    for (int i = 0; i < BLOCK_SIZE; i++)
+    {
+        dataRow[i] = 0xFF;
+    }
+    size /= BLOCK_SIZE;
+    for (uint16_t n = 0; n < size; n++)
+    {
+        for (int i = 0; i < BLOCK_SIZE; i++)
+        {
+            writeData(addr, dataRow[i]);
+            addr++;
+        }
+    }
+    setDataInMode();
+}
 
 int readLine(File* pFile, char* pText, int maxSize)
 {
@@ -479,7 +922,6 @@ int readLine(File* pFile, char* pText, int maxSize)
     return i;
 }
 
-
 char* bin2hex(char* pText, uint8_t value)
 {
     for (int i = 0; i < 2; i++)
@@ -493,24 +935,9 @@ char* bin2hex(char* pText, uint8_t value)
     return pText;
 }
 
-
 char* bin2hex(char* pText, uint16_t value)
 {
     pText = bin2hex(pText, highByte(value));
     pText = bin2hex(pText, lowByte(value));
     return pText;
-}
-
-void debugAddr()
-{
-  while(true)
-  {
-    uint16_t addr = 1;
-    for (int i = 0; i < 16; i++)
-    {
-      setAddres(addr);
-      delay(1000);
-      addr <<= 1;
-    }
-  }
 }

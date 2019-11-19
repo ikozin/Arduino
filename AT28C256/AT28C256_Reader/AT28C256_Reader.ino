@@ -128,6 +128,7 @@ void setDataInMode()
   pinMode(D7, INPUT_PULLUP);
 }
 
+/*
 void setDataOutMode()
 {
   pinMode(D0, OUTPUT);
@@ -139,6 +140,7 @@ void setDataOutMode()
   pinMode(D6, OUTPUT);
   pinMode(D7, OUTPUT);
 }
+*/
 
 void  setup ( )
 {
@@ -198,8 +200,6 @@ void setAddres(uint16_t addr)
 
 void readMemory(uint16_t size)
 {
-  setDataInMode();
-  
   char text[32];
   Serial.println(size);
   enableCE();

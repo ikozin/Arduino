@@ -70,7 +70,7 @@ https://arduinka.pro/blog/wp-content/uploads/2017/09/mega2560-pinout-1024x724.pn
                               |                4x2|                4x2|                4x2|
                               |                3+5|      2+1+1+1+1+1+1|                  8|
                               |         ключ D0,D3|    ключ A8,A10-A14|            ключ A0|
-                           ------------------- ------------------- -------------------
+                               ------------------- ------------------- -------------------
 
 */
 
@@ -82,7 +82,47 @@ https://arduinka.pro/blog/wp-content/uploads/2017/09/mega2560-pinout-1024x724.pn
 #include "m1.h"
 #include "m2.h"
 
-const uint8_t *list[] = {ram_test, m1, m2};
+#define CHIP_SIZE   2048
+
+const uint8_t *list[16] =
+{
+  ram_test,
+  m1,
+  m2,
+  NULL,
+  NULL,
+  NULL,
+  NULL,
+  NULL,
+  NULL,
+  NULL,
+  NULL,
+  NULL,
+  NULL,
+  NULL,
+  NULL,
+  NULL,
+};
+
+const uint16_t addrList[16] =
+{
+  CHIP_SIZE * 0,
+  CHIP_SIZE * 1,
+  CHIP_SIZE * 2,
+  CHIP_SIZE * 3,
+  CHIP_SIZE * 4,
+  CHIP_SIZE * 5,
+  CHIP_SIZE * 6,
+  CHIP_SIZE * 7,
+  CHIP_SIZE * 8,
+  CHIP_SIZE * 9,
+  CHIP_SIZE * 10,
+  CHIP_SIZE * 11,
+  CHIP_SIZE * 12,
+  CHIP_SIZE * 13,
+  CHIP_SIZE * 14,
+  CHIP_SIZE * 15,
+};
 
 #define ADDR0   (22)
 #define ADDR1   (23)
@@ -122,6 +162,8 @@ void disableCE(){ digitalWrite(CE, HIGH);}
 void enableOE() { digitalWrite(OE, LOW); }
 void disableOE(){ digitalWrite(OE, HIGH);}
 
+char text[64];
+
 void setDataInMode()
 {
   pinMode(D0, INPUT_PULLUP);
@@ -146,7 +188,7 @@ void setDataOutMode()
   pinMode(D7, OUTPUT);
 }
 
-void  setup ( )
+void setup( )
 {
   Serial.begin(9600);
   pinMode(WE,  OUTPUT);
@@ -171,18 +213,40 @@ void  setup ( )
   pinMode(ADDR13, OUTPUT);
   pinMode(ADDR14, OUTPUT);
   setDataInMode();
-  displayHelp();
 }
 
-void displayHelp()
+byte selectChip()
 {
-  Serial.println();
-  Serial.println(F("Enter commnad:"));
-  Serial.println(F("1 - Read   2048 KB"));
-  Serial.println(F("2 - Read  32768 KB"));
-  Serial.println(F("9 - Write  2048 KB"));
-  Serial.println(F("0 - Write 32768 KB"));
-  Serial.println();
+  Serial.print(F("Select Chip [0-9,A-F]:"));
+  while (!Serial.available());
+  char chip = toUpperCase(Serial.read());
+  Serial.println(chip);
+  switch (chip)
+  {
+    case '0':
+    case '1':
+    case '2':
+    case '3':
+    case '4':
+    case '5':
+    case '6':
+    case '7':
+    case '8':
+    {
+      return chip - '0';
+      break;
+    }
+    case 'A':
+    case 'B':
+    case 'C':
+    case 'D':
+    case 'E':
+    case 'F':
+      return chip - 'A' + 10;
+      break;
+  
+  }
+  return 0xFF;
 }
 
 void setAddres(uint16_t addr)
@@ -204,20 +268,22 @@ void setAddres(uint16_t addr)
   digitalWrite(ADDR0,  bitRead(addr, 0));
 }
 
-void readMemory(uint16_t size)
+void readMemory(byte chip)
 {
-  setDataInMode();
+  Serial.println();
+  Serial.print(F("ReadMemory: "));
+  uint16_t addr = addrList[chip];
+  sprintf(text, "chip: %02d, address:%04X", chip, addr);
+  Serial.println(text);
+  Serial.println();
   
-  char text[32];
-  Serial.println(size);
+  setDataInMode();
   enableCE();
   enableOE();
-  size /= 16;
-  uint16_t addr = 0;
   // Читаем блоками по 16 байт
-  for (uint16_t n = 0; n < size; n++)
+  for (uint16_t n = 0; n < CHIP_SIZE / 16; n++)
   {
-    sprintf(text, "%04X ", addr);
+    sprintf(text, "%04X", addr);
     Serial.print(text);
     for (int i = 0; i < 16; i++)
     {
@@ -238,20 +304,25 @@ void readMemory(uint16_t size)
     }
     Serial.println();
   }
-
   disableOE();
   disableCE();
 }
 
-void writeMemory(uint8_t count)
+void writeMemory(byte chip)
 {
-  setDataInMode();
+  Serial.println();
+  Serial.print(F("WriteMemory: "));
+  uint16_t addr = addrList[chip];
+  sprintf(text, "chip: %02d, address:%04X", chip, addr);
+  Serial.println(text);
+  Serial.println();
 
-  uint16_t addr = 0;
+/*  
+  setDataOutMode();
   for (uint8_t  i = 0; i < count; i++)
   {
     const uint8_t *pData = list[i];
-    for (uint16_t  n = 0; n < 2048; n++)
+    for (uint16_t  n = 0; n < CHIP_SIZE; n++)
     {
       byte data = pData[n];
       setAddres(addr);
@@ -268,28 +339,82 @@ void writeMemory(uint8_t count)
       addr++;
     }  
   }
+*/
 }
 
-void  loop ( )
+void clearMemory(byte chip)
 {
-  int cmd = Serial.read();
+  Serial.println();
+  Serial.print(F("ClearMemory: "));
+  uint16_t addr = addrList[chip];
+  sprintf(text, "chip: %02d, address:%04X", chip, addr);
+  Serial.println(text);
+  Serial.println();
+
+  setDataOutMode();
+  for (uint16_t i = 0; i < CHIP_SIZE; i++)
+  {
+    setAddres(addr);
+    delayMicroseconds(1);
+    digitalWrite(D0, HIGH);
+    digitalWrite(D1, HIGH);
+    digitalWrite(D2, HIGH);
+    digitalWrite(D3, HIGH);
+    digitalWrite(D4, HIGH);
+    digitalWrite(D5, HIGH);
+    digitalWrite(D6, HIGH);
+    digitalWrite(D7, HIGH);
+    delayMicroseconds(1);
+    enableWE();
+    delayMicroseconds(10);
+    disableWE();
+    addr++;
+  }
+  enableWE();
+  disableWE();
+  disableOE();
+  disableCE();
+  setDataInMode();
+}
+
+void selectCommand()
+{
+  Serial.println();
+  Serial.println(F("AT28C256 - 32KB [32768]"));
+  Serial.println(F("Commnad List"));
+  Serial.println(F("1 - Read  [2 KB]"));
+  Serial.println(F("2 - Write [2 KB]"));
+  Serial.println(F("0 - Clear [2 KB]"));
+  Serial.print(F("Enter command:"));
+  while (!Serial.available());
+  char cmd = Serial.read();
+  Serial.println(cmd);
   switch (cmd)
   {
-    case '1':
-      readMemory(2048);
-      displayHelp();
-      break;
-    case '2':
-      readMemory(32768);
-      displayHelp();
-      break;
-    case '9':
-      writeMemory(1);
-      displayHelp();
-      break;
     case '0':
-      writeMemory(3);
-      displayHelp();
+    case '1':
+    case '2':
+    {
+      byte chip = selectChip();
+      if (chip == 0xFF) return;
+      switch (cmd)
+      {
+        case '0':
+          clearMemory(chip);
+          break;
+        case '1':
+          readMemory(chip);
+          break;
+        case '2':
+          writeMemory(chip);
+          break;
+      }
       break;
+    }
   }
+}
+
+void loop ( )
+{
+  selectCommand();
 }
