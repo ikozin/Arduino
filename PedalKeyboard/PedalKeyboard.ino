@@ -3,6 +3,8 @@
 https://compacttool.ru/viewtovar.php?id=683
 
 На плате Pro Micro нет светодиода подключенного к 13 пину
+                     -----
+                    | USB |
              ---------------------
       TX 0  | TX0             RAW | (7-12V)
       RX 1  | RX1             GND |
@@ -37,9 +39,19 @@ void loop()
 }
 
 */
+#define RAW_VALUE
 
 #include <Keyboard.h>
 #include "pitches.h"
+typedef struct
+{
+  uint16_t value;
+  uint16_t delay;
+  uint8_t  keyCodeControl[3];
+  uint8_t  keyCode[2];
+} KeyInfo;
+
+KeyInfo key = { 600, 1000, { KEY_LEFT_CTRL, 0xFF, 0xFF}, { 'f', 0xFF}};
 
 // notes in the melody:
 int melody[] =
@@ -53,12 +65,9 @@ int noteDurations[] =
   4, 8, 8, 4, 4, 4, 4, 4
 };
 
-void setup()
-{
-  // initialize control over the keyboard:
-  Keyboard.begin();
-  Serial.begin(9600);
 
+void playMelody()
+{
   for (int thisNote = 0; thisNote < 8; thisNote++)
   {
     // to calculate the note duration, take one second divided by the note type.
@@ -72,28 +81,55 @@ void setup()
     // stop the tone playing:
     noTone(5);
   }
-  
+}
+
+void setup()
+{
+  // initialize control over the keyboard:
+  Keyboard.begin();
+  Serial.begin(9600);
+  playMelody();
 }
 
 void DoAction()
 {
+#ifdef RAW_VALUE
   Serial.println("DoAction");
-  Keyboard.press(KEY_LEFT_CTRL);
-  Keyboard.press('s');
+#endif
+  for (byte i = 0; i < 2; i++)
+  {
+    uint8_t value = key.keyCodeControl[i];
+    if (value == 0xFF) break;
+#ifdef RAW_VALUE
+    Serial.println(value);
+#endif
+    Keyboard.press(value);
+  }
+  for (byte i = 0; i < 2; i++)
+  {
+    uint8_t value = key.keyCode[i];
+    if (value == 0xFF) break;
+#ifdef RAW_VALUE
+    Serial.println(value);
+#endif
+    Keyboard.write(value);
+  }
   delay(10);
   Keyboard.releaseAll();  
+  delay(key.delay);
 }
 
 void loop()
 {
-  delay(100);
-  int sensorValue0 = analogRead(A0);
-  if (sensorValue0 >= 200)
+  int value = analogRead(A0);
+#ifdef RAW_VALUE
+  Serial.println(value);
+#endif
+  if (value >= key.value)
   {
-    Serial.print("A0 = ");
-    Serial.println(sensorValue0);
     DoAction();
   }
+
   
 /*
   //Keyboard.print("Hello World!");
