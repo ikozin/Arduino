@@ -6,6 +6,7 @@ http://www.inp.nsk.su/~kozak/mem/mem18.htm
 http://www.eandc.ru/pdf/mikroskhema/k573rf2.pdf
 http://vip-cxema.org/index.php/home/mikrokontrollery/357-prostoj-kopirovshchik-rpzu-k573rf2-5
 
+Распиновка платы К573РФ2
 
                      ключ
                       ^
@@ -44,6 +45,23 @@ A0...A10  -CE  -OE  Vpp    D0...D7
    X       L    H   24v       Z       Запрет записи
   L/H      L    L   24v      Out      Проверка записи
 ------------------------------------------------------------------------
+
+Распиновка К573РФ2
+      -------------
+  1 -| A7      +5V |- 24
+  2 -| A6       A8 |- 23
+  3 -| A5       A9 |- 22
+  4 -| A4      Vpp |- 21
+  5 -| A3      ~OE |- 20
+  6 -| A2      A10 |- 19
+  7 -| A1      ~CE |- 18
+  8 -| A0       D7 |- 17
+  9 -| D0       D6 |- 16
+ 10 -| D1       D5 |- 15
+ 11 -| D2       D4 |- 14
+ 12 -| GND      D3 |- 13
+      -------------
+
 */
 #ifndef __AVR_ATmega2560__
 #error "Select board ATMEG2560"
@@ -65,6 +83,11 @@ A0...A10  -CE  -OE  Vpp    D0...D7
 #define ADDR8      (37)   //PC0
 #define ADDR9      (36)   //PC1
 #define ADDR10     (35)   //PC2
+#define ADDR11     (34)   //PC3
+#define ADDR12     (33)   //PC4
+#define ADDR13     (33)   //PC5
+#define ADDR14     (31)   //PC6
+#define ADDR15     (30)   //PC7
 
 #define D0         (49)   //PL0
 #define D1         (48)   //PL1
@@ -75,8 +98,8 @@ A0...A10  -CE  -OE  Vpp    D0...D7
 #define D6         (43)   //PL6
 #define D7         (42)   //PL7
 */
-#define CE         (40)   //PL0
-#define OE         (41)   //PL1
+#define CE         (40)   //PG1
+#define OE         (41)   //PG0
 
 #define SD_CS      (53)
 
@@ -87,8 +110,11 @@ char text[textLen];
 
 void setup()
 {
+  // Адрес,  контакты 22-39, порты A и C
   DDRA =  B11111111;
   DDRC =  B11111111;
+  // Данные, контакты 42-49, порт L
+  DDRL  = B00000000;
 
   // К573РФ2
   pinMode(CE, OUTPUT);
@@ -115,13 +141,14 @@ void setup()
 void showMenu()
 {
     Serial.println();
+    Serial.println(F("K573RF2"));
     Serial.println(F("Reset Arduino after insert SD card"));
     Serial.println(F("Enter commnad:"));
     Serial.println();
-    Serial.println(F("1 - Check  2048 KB [573RF2]"));
-    Serial.println(F("3 - Read  2048 KB [573RF2] (DUMP.TXT)"));
-    Serial.println(F("5 - Compare 2048 KB [573RF2] (DUMP.TXT)"));
-    Serial.println(F("7 - Write 2048 KB [573RF2] (DUMP.TXT)"));
+    Serial.println(F("1 - Check   2048 KB (CHECK.TXT)"));
+    Serial.println(F("3 - Read    2048 KB (DUMP.TXT)"));
+    Serial.println(F("5 - Compare 2048 KB (DUMP.TXT)"));
+    Serial.println(F("7 - Write   2048 KB (DUMP.TXT)"));
     Serial.println();
 }
 
@@ -341,6 +368,7 @@ void WriteMemoryMode()
         uint16_t addr = address + i;
         SetAddress(addr);
         WriteData(dataRow[i]);
+        delay(2);
         SetWriteMode(); 
         delay(50);
         SetDisableMode();

@@ -1,4 +1,8 @@
-/*
+ /*
+
+Arduino UNO  - Flash Memory  32 KB (ATmega328P) of which 0.5 KB used by bootloader
+Arduino Mega - Flash Memory  256 KB of which 8 KB used by bootloader
+
 I2C EEPROM 24LC02 - 24LC16
 24LC02  https://static.chipdip.ru/lib/204/DOC000204386.pdf
 24LC04  https://static.chipdip.ru/lib/204/DOC000204591.pdf
@@ -51,80 +55,91 @@ Arduino
 24LC16 = 16
 */
 #include <Wire.h>
+#include "data.h"
+
+//#define _24LC02_
+//#define _24LC04_
+//#define _24LC08_
+#define _24LC16_
+
+#if !defined(_24LC02_) && !defined(_24LC04_) && !defined(_24LC08_) && !defined(_24LC16_)
+#error Необходимо раскоментировать тип платы
+#endif
+
+#if defined(_24LC02_)
+  #define MEMORY_SIZE 256   //Размер памяти
+  #define BUFFER_SIZE 16    //Размер буфера для записи/чтения
+#elif defined(_24LC04_)
+  #define MEMORY_SIZE 512   //Размер памяти
+  #define BUFFER_SIZE 16    //Размер буфера для записи/чтения
+#elif defined(_24LC08_)
+  #define MEMORY_SIZE 1024  //Размер памяти
+  #define BUFFER_SIZE 16    //Размер буфера для записи/чтения
+#elif defined(_24LC16_)
+  #define MEMORY_SIZE 2048  //Размер памяти
+  #define BUFFER_SIZE 16    //Размер буфера для записи/чтения
+#endif
 
 //Адрес устройства
 #define DEVICE_EEPROM 0x50
-//Размер буфера для записи/чтения
-#define BUFFER_SIZE   16
+
+//Буфер для чтения
 byte data[BUFFER_SIZE];
-//Размер памяти
-#define MEMORY_SIZE 2048
 
-void fillBuffer(uint8_t* buffer, byte value)
-{
-  for (int i = 0; i < BUFFER_SIZE; i++) buffer[i] = value;
-}
-
-uint8_t makeDevAddress(uint8_t device, int address)
-{
+uint8_t makeDevAddress(uint8_t device, uint16_t address) {
     return (uint8_t)(device | (highByte(address) & 0x07));
 }
 
-void EEPROM_Write(uint8_t device, int address, uint8_t* buffer)
-{
+void EEPROM_Write(uint8_t device, uint16_t address, uint8_t* buffer) {
     Wire.beginTransmission(makeDevAddress(device, address));
     Wire.write(lowByte(address));
-    for (int i = 0; i < BUFFER_SIZE; i++)
+    for (uint16_t i = 0; i < BUFFER_SIZE; i++) {
       Wire.write(buffer[i]);
+    }
     Wire.endTransmission();
     delay(5);
 }
 
-void EEPROM_Read(uint8_t device, int address, uint8_t* buffer)
-{
+void EEPROM_Read(uint8_t device, uint16_t address, uint8_t* buffer) {
   device = makeDevAddress(device, address);
   Wire.beginTransmission(device);
   Wire.write(lowByte(address));
   Wire.endTransmission();
   Wire.requestFrom(device,(uint8_t)BUFFER_SIZE);
-  for (int i = 0; i < BUFFER_SIZE; i++ )
+  for (uint16_t i = 0; i < BUFFER_SIZE; i++ ) {
     if (Wire.available()) buffer[i] = Wire.read();
+  }
 }
 
 char text[32];
 
-void setup()
-{
+void setup() {
   Wire.begin();
   Serial.begin(9600);
   while (!Serial) {}
 
-  Serial.println(F("Start 24LC16 Writing"));
-  byte value = 0;
-  for (int addr = 0; addr < MEMORY_SIZE; addr += BUFFER_SIZE)
-  {
-    fillBuffer(data, value++);
-    EEPROM_Write(DEVICE_EEPROM, addr, data);
+  Serial.print(F("Memory size:"));
+  Serial.println(MEMORY_SIZE);
+  Serial.println(F("Start Writing"));
+  for (uint16_t addr = 0; addr < MEMORY_SIZE; addr += BUFFER_SIZE) {
+    EEPROM_Write(DEVICE_EEPROM, addr, &dataMemory[addr]);
   }
   delay(100);
 
-  Serial.println(F("Start 24LC16 Reading"));
-  fillBuffer(data, 0x00);
-  for (int addr = 0; addr < MEMORY_SIZE; addr += BUFFER_SIZE)
-  {
+  Serial.println(F("Start Reading"));
+  for (uint16_t addr = 0; addr < MEMORY_SIZE; addr += BUFFER_SIZE) {
     Serial.println();      
-    sprintf(text, "%04X ", addr);
+    sprintf(text, "%04X", addr);
     Serial.print(text);      
     EEPROM_Read(DEVICE_EEPROM, addr, data);
-    for (int i = 0; i < BUFFER_SIZE; i++)
-    {
-      sprintf(text, "%02X ", data[i]);
+    for (uint16_t i = 0; i < BUFFER_SIZE; i++) {
+      sprintf(text, " %02X", data[i]);
       Serial.print(text);      
     }
   }
   delay(100);
+  Serial.println(F("Stoped"));
 }
 
-void loop()
-{
+void loop() {
 }

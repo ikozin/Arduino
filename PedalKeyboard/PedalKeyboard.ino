@@ -47,11 +47,16 @@ typedef struct
 {
   uint16_t value;
   uint16_t delay;
-  uint8_t  keyCodeControl[3];
-  uint8_t  keyCode[2];
+  uint8_t  keyCodeControl[7];
+  uint8_t  keyCode[5];
 } KeyInfo;
 
-KeyInfo key = { 600, 1000, { KEY_LEFT_CTRL, 0xFF, 0xFF}, { 'f', 0xFF}};
+byte selectedProfile = 0;
+KeyInfo keyProfiles[] =
+{
+  { 600, 1000, { KEY_LEFT_CTRL, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF }, { 'f', 0xFF, 0xFF, 0xFF, 0xFF } },
+  { 600, 1000, { KEY_LEFT_CTRL, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF }, { 'f', 0xFF, 0xFF, 0xFF, 0xFF } },
+};
 
 // notes in the melody:
 int melody[] =
@@ -83,6 +88,261 @@ void playMelody()
   }
 }
 
+void printKeyCode(uint8_t key)
+{
+  switch(key)
+  {
+    case KEY_LEFT_CTRL:
+    {
+      Serial.print(F("KEY_LEFT_CTRL"));
+      break;
+    }
+    case KEY_LEFT_SHIFT:
+    {
+      Serial.print(F("KEY_LEFT_SHIFT"));
+      break;
+    }
+    case KEY_LEFT_ALT:
+    {
+      Serial.print(F("KEY_LEFT_ALT"));
+      break;
+    }
+    case KEY_LEFT_GUI:
+    {
+      Serial.print(F("KEY_LEFT_GUI"));
+      break;
+    }
+    case KEY_RIGHT_CTRL:
+    {
+      Serial.print(F("KEY_RIGHT_CTRL"));
+      break;
+    }
+    case KEY_RIGHT_SHIFT:
+    {
+      Serial.print(F("KEY_RIGHT_SHIFT"));
+      break;
+    }
+    case KEY_RIGHT_ALT:
+    {
+      Serial.print(F("KEY_RIGHT_ALT"));
+      break;
+    }
+    case KEY_RIGHT_GUI:
+    {
+      Serial.print(F("KEY_RIGHT_GUI"));
+      break;
+    }
+    case KEY_UP_ARROW:
+    {
+      Serial.print(F("KEY_UP_ARROW"));
+      break;
+    }
+    case KEY_DOWN_ARROW:
+    {
+      Serial.print(F("KEY_DOWN_ARROW"));
+      break;
+    }
+    case KEY_LEFT_ARROW:
+    {
+      Serial.print(F("KEY_LEFT_ARROW"));
+      break;
+    }
+    case KEY_RIGHT_ARROW:
+    {
+      Serial.print(F("KEY_RIGHT_ARROW"));
+      break;
+    }
+    case KEY_BACKSPACE:
+    {
+      Serial.print(F("KEY_BACKSPACE"));
+      break;
+    }
+    case KEY_TAB:
+    {
+      Serial.print(F("KEY_TAB"));
+      break;
+    }
+    case KEY_RETURN:
+    {
+      Serial.print(F("KEY_RETURN"));
+      break;
+    }
+    case KEY_ESC:
+    {
+      Serial.print(F("KEY_ESC"));
+      break;
+    }
+    case KEY_INSERT:
+    {
+      Serial.print(F("KEY_INSERT"));
+      break;
+    }
+    case KEY_DELETE:
+    {
+      Serial.print(F("KEY_DELETE"));
+      break;
+    }
+    case KEY_PAGE_UP:
+    {
+      Serial.print(F("KEY_PAGE_UP"));
+      break;
+    }
+    case KEY_PAGE_DOWN:
+    {
+      Serial.print(F("KEY_PAGE_DOWN"));
+      break;
+    }
+    case KEY_HOME:
+    {
+      Serial.print(F("KEY_HOME"));
+      break;
+    }
+    case KEY_END:
+    {
+      Serial.print(F("KEY_END"));
+      break;
+    }
+    case KEY_CAPS_LOCK:
+    {
+      Serial.print(F("KEY_CAPS_LOCK"));
+      break;
+    }
+    case KEY_F1:
+    {
+      Serial.print(F("KEY_F1"));
+      break;
+    }
+    case KEY_F2:
+    {
+      Serial.print(F("KEY_F2"));
+      break;
+    }
+    case KEY_F3:
+    {
+      Serial.print(F("KEY_F3"));
+      break;
+    }
+    case KEY_F4:
+    {
+      Serial.print(F("KEY_F4"));
+      break;
+    }
+    case KEY_F5:
+    {
+      Serial.print(F("KEY_F5"));
+      break;
+    }
+    case KEY_F6:
+    {
+      Serial.print(F("KEY_F6"));
+      break;
+    }
+    case KEY_F7:
+    {
+      Serial.print(F("KEY_F7"));
+      break;
+    }
+    case KEY_F8:
+    {
+      Serial.print(F("KEY_F8"));
+      break;
+    }
+    case KEY_F9:
+    {
+      Serial.print(F("KEY_F9"));
+      break;
+    }
+    case KEY_F10:
+    {
+      Serial.print(F("KEY_F10"));
+      break;
+    }
+    case KEY_F11:
+    {
+      Serial.print(F("KEY_F11"));
+      break;
+    }
+    case KEY_F12:
+    {
+      Serial.print(F("KEY_F12"));
+      break;
+    }
+    case KEY_F13:
+    {
+      Serial.print(F("KEY_F13"));
+      break;
+    }
+    case KEY_F14:
+    {
+      Serial.print(F("KEY_F14"));
+      break;
+    }
+    case KEY_F15:
+    {
+      Serial.print(F("KEY_F15"));
+      break;
+    }
+    case KEY_F16:
+    {
+      Serial.print(F("KEY_F16"));
+      break;
+    }
+    case KEY_F17:
+    {
+      Serial.print(F("KEY_F17"));
+      break;
+    }
+    case KEY_F18:
+    {
+      Serial.print(F("KEY_F18"));
+      break;
+    }
+    case KEY_F19:
+    {
+      Serial.print(F("KEY_F19"));
+      break;
+    }
+    case KEY_F20:
+    {
+      Serial.print(F("KEY_F20"));
+      break;
+    }
+    case KEY_F21:
+    {
+      Serial.print(F("KEY_F21"));
+      break;
+    }
+    case KEY_F22:
+    {
+      Serial.print(F("KEY_F22"));
+      break;
+    }
+    case KEY_F23:
+    {
+      Serial.print(F("KEY_F23"));
+      break;
+    }
+    case KEY_F24:
+    {
+      Serial.print(F("KEY_F24"));
+      break;
+    }
+    default:
+    {
+      break;
+    }
+  }
+}
+
+void diplayhelp()
+{
+  Serial.println();
+  Serial.println("? - help");
+  Serial.println("l - list profiles");
+  Serial.println("! - change profiles");
+    
+}
+
 void setup()
 {
   // initialize control over the keyboard:
@@ -98,7 +358,7 @@ void DoAction()
 #endif
   for (byte i = 0; i < 2; i++)
   {
-    uint8_t value = key.keyCodeControl[i];
+    uint8_t value = keyProfiles[selectedProfile].keyCodeControl[i];
     if (value == 0xFF) break;
 #ifdef RAW_VALUE
     Serial.println(value);
@@ -107,7 +367,7 @@ void DoAction()
   }
   for (byte i = 0; i < 2; i++)
   {
-    uint8_t value = key.keyCode[i];
+    uint8_t value = keyProfiles[selectedProfile].keyCode[i];
     if (value == 0xFF) break;
 #ifdef RAW_VALUE
     Serial.println(value);
@@ -116,7 +376,7 @@ void DoAction()
   }
   delay(10);
   Keyboard.releaseAll();  
-  delay(key.delay);
+  delay(keyProfiles[selectedProfile].delay);
 }
 
 void loop()
@@ -125,7 +385,7 @@ void loop()
 #ifdef RAW_VALUE
   Serial.println(value);
 #endif
-  if (value >= key.value)
+  if (value >= keyProfiles[selectedProfile].value)
   {
     DoAction();
   }
