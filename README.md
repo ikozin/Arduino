@@ -4,14 +4,13 @@
 | ![24LC16](Images/at24lcXXX_board.png "24LC16") ![24LC256](Images/at24c256_iic.jpg "24LC256") 24LC16 | Плата расширения для I2C EEPROM 24LC02 - 24LC16. Запись возврастающего значения 0-255 с последующим чтением |
 | ![24LC32](Images/at24lcXXX_board.png "24LC32") ![24LC256](Images/at24c256_iic.jpg "24LC256") 24LC32 | Плата расширения для I2C EEPROM 24LC32 - 24LC512. Запись возврастающего значения 0-255 с последующим чтением |
 | ![AM2301](Images/am2301.jpg "AM2301") AM2301 | Датчик температуры и влажности AM2301 |
-| AT28C256 | Paraller EEPROM AT28C256. Чтение 2КБ или 32КБ, используется Arduino MEGA 2560 + набор шлейфов |
+| AT28C256 | Paraller EEPROM AT28C256. Чтение/Запись 2КБ или 32КБ, используется Arduino MEGA 2560 + набор шлейфов + Micro SD |
 | ATMEGA328 | Время/Температура/Влажность, используется ATMEGA328 (8MHz internal clock), HS410561K-32, DS3231, AM2301AM |
 | BCD | Функции конвертировния BCD |
 | ![BLUNO](Images/bluno.jpg "BLUNO") BLUNO | Bluno v1.6 от DFRobot - все время пытается подключиться как USB диск |
 | ![BME280](Images/bme280_iic.jpg "BME280 I2C") ![BME280](Images/bme280_spi.jpg "BME280 SPI") BME280 | I2C - BME280_I2C, SPI - BME280_SPI |
 | ![DS1302](Images/ds1302.jpg "DS1302") DS1302 | DS1302 |
 | ![DS3231](Images/ds3231.jpg "DS3231") DS3231 | DS3231 |
-| EEPROM | Программатор для Paraller EEPROM AT28C256, используется Arduino MEGA 2560 + набор шлейфов + Micro SD |
 | ![HC-05](Images/hc05.jpg "HC-05") HC-05 (Bluetooth) | работа с модулем Bluetooth HC-05 |
 | ![HS410561K-32](Images/hs410561k-32.jpg "HS410561K-32") HS410561K-32 | 4-разрядный 7-сегментный индикатор с общим анодом |
 | ![Joystick](Images/joystick.jpg "Joystick") Joystick | Аналоговый джойстик + Змейка на Processig |
