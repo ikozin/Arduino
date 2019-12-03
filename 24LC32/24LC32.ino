@@ -87,6 +87,10 @@ Arduino
   #define BUFFER_SIZE 128   //Размер буфера для записи/чтения
 #endif
 
+#if (defined(_24LC256_) || defined(_24LC512_)) && !defined(__AVR_ATmega2560__)
+#error Select board ATMEGA2560
+#endif
+
 //Адрес устройства
 #define DEVICE_EEPROM 0x50
 
