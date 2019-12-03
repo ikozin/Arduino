@@ -776,8 +776,7 @@ void clearMemory(uint16_t address, uint16_t size) {
   }
   size /= BLOCK_SIZE;
   for (uint16_t n = 0; n < size; n++) {
-    for (int i = 0; i < BLOCK_SIZE; i++)
-    {
+    for (int i = 0; i < BLOCK_SIZE; i++) {
       writeData(address, dataRow[i]);
       address++;
     }
@@ -825,19 +824,31 @@ char* bin2hex(char* pText, uint16_t value) {
 
 void loopTest() {
   Serial.println(F("TEST"));
+  testAllOn();
   while (1) {
     loopTestCrtl();
     loopTestCrtl();
     loopTestCrtl();
+    testAllOn();
 
     loopTestData();
     loopTestData();
     loopTestData();
+    testAllOn();
 
     loopTestAddress();
     loopTestAddress();
     loopTestAddress();
+    testAllOn();
   }
+}
+
+void testAllOn() {
+  disableCE();
+  disableOE();
+  disableWE();
+  setDataPort(0xFF); 
+  setAddress(0xFFFF); 
 }
 
 void loopTestCrtl() {
