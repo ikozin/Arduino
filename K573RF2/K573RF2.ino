@@ -346,7 +346,7 @@ void checkMemory(char* pFileName) {
           error = true;
           char* pdata = bin2hex(text, addr);
           *pdata++ = ' ';
-          bin2hex(pdata, data);
+          pdata = bin2hex(pdata, data);
           *pdata++ = ' ';
           bin2hex(pdata, dataRow[i]);
           Serial.println(text);
