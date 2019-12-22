@@ -70,7 +70,7 @@ int noteDurations[] = { 4, 8, 8, 4, 4, 4, 4, 4 };
 
 char text[64];
 
-void playMelody() {
+const void playMelody() {
   for (int thisNote = 0; thisNote < 8; thisNote++) {
     // to calculate the note duration, take one second divided by the note type.
     //e.g. quarter note = 1000 / 4, eighth note = 1000/8, etc.
@@ -89,203 +89,208 @@ void printKeyCode(uint8_t key) {
   switch(key) {
     case KEY_LEFT_CTRL: {
       Serial.print(F("KEY_LEFT_CTRL"));
-      return;
+      break;
     }
     case KEY_LEFT_SHIFT: {
       Serial.print(F("KEY_LEFT_SHIFT"));
-      return;
+      break;
     }
     case KEY_LEFT_ALT: {
       Serial.print(F("KEY_LEFT_ALT"));
-      return;
+      break;
     }
     case KEY_LEFT_GUI: {
       Serial.print(F("KEY_LEFT_GUI"));
-      return;
+      break;
     }
     case KEY_RIGHT_CTRL: {
       Serial.print(F("KEY_RIGHT_CTRL"));
-      return;
+      break;
     }
     case KEY_RIGHT_SHIFT: {
       Serial.print(F("KEY_RIGHT_SHIFT"));
-      return;
+      break;
     }
     case KEY_RIGHT_ALT: {
       Serial.print(F("KEY_RIGHT_ALT"));
-      return;
+      break;
     }
     case KEY_RIGHT_GUI: {
       Serial.print(F("KEY_RIGHT_GUI"));
-      return;
+      break;
     }
     case KEY_UP_ARROW: {
       Serial.print(F("KEY_UP_ARROW"));
-      return;
+      break;
     }
     case KEY_DOWN_ARROW: {
       Serial.print(F("KEY_DOWN_ARROW"));
-      return;
+      break;
     }
     case KEY_LEFT_ARROW: {
       Serial.print(F("KEY_LEFT_ARROW"));
-      return;
+      break;
     }
     case KEY_RIGHT_ARROW: {
       Serial.print(F("KEY_RIGHT_ARROW"));
-      return;
+      break;
     }
     case KEY_BACKSPACE: {
       Serial.print(F("KEY_BACKSPACE"));
-      return;
+      break;
     }
     case KEY_TAB: {
       Serial.print(F("KEY_TAB"));
-      return;
+      break;
     }
     case KEY_RETURN: {
       Serial.print(F("KEY_RETURN"));
-      return;
+      break;
     }
     case KEY_ESC: {
       Serial.print(F("KEY_ESC"));
-      return;
+      break;
     }
     case KEY_INSERT: {
       Serial.print(F("KEY_INSERT"));
-      return;
+      break;
     }
     case KEY_DELETE: {
       Serial.print(F("KEY_DELETE"));
-      return;
+      break;
     }
     case KEY_PAGE_UP: {
       Serial.print(F("KEY_PAGE_UP"));
-      return;
+      break;
     }
     case KEY_PAGE_DOWN: {
       Serial.print(F("KEY_PAGE_DOWN"));
-      return;
+      break;
     }
     case KEY_HOME: {
       Serial.print(F("KEY_HOME"));
-      return;
+      break;
     }
     case KEY_END: {
       Serial.print(F("KEY_END"));
-      return;
+      break;
     }
     case KEY_CAPS_LOCK: {
       Serial.print(F("KEY_CAPS_LOCK"));
-      return;
+      break;
     }
     case KEY_F1: {
       Serial.print(F("KEY_F1"));
-      return;
+      break;
     }
     case KEY_F2: {
       Serial.print(F("KEY_F2"));
-      return;
+      break;
     }
     case KEY_F3: {
       Serial.print(F("KEY_F3"));
-      return;
+      break;
     }
     case KEY_F4: {
       Serial.print(F("KEY_F4"));
-      return;
+      break;
     }
     case KEY_F5: {
       Serial.print(F("KEY_F5"));
-      return;
+      break;
     }
     case KEY_F6: {
       Serial.print(F("KEY_F6"));
-      return;
+      break;
     }
     case KEY_F7: {
       Serial.print(F("KEY_F7"));
-      return;
+      break;
     }
     case KEY_F8: {
       Serial.print(F("KEY_F8"));
-      return;
+      break;
     }
     case KEY_F9: {
       Serial.print(F("KEY_F9"));
-      return;
+      break;
     }
     case KEY_F10: {
       Serial.print(F("KEY_F10"));
-      return;
+      break;
     }
     case KEY_F11: {
       Serial.print(F("KEY_F11"));
-      return;
+      break;
     }
     case KEY_F12: {
       Serial.print(F("KEY_F12"));
-      return;
+      break;
     }
     case KEY_F13: {
       Serial.print(F("KEY_F13"));
-      return;
+      break;
     }
     case KEY_F14: {
       Serial.print(F("KEY_F14"));
-      return;
+      break;
     }
     case KEY_F15: {
       Serial.print(F("KEY_F15"));
-      return;
+      break;
     }
     case KEY_F16: {
       Serial.print(F("KEY_F16"));
-      return;
+      break;
     }
     case KEY_F17: {
       Serial.print(F("KEY_F17"));
-      return;
+      break;
     }
     case KEY_F18: {
       Serial.print(F("KEY_F18"));
-      return;
+      break;
     }
     case KEY_F19: {
       Serial.print(F("KEY_F19"));
-      return;
+      break;
     }
     case KEY_F20: {
       Serial.print(F("KEY_F20"));
-      return;
+      break;
     }
     case KEY_F21: {
       Serial.print(F("KEY_F21"));
-      return;
+      break;
     }
     case KEY_F22: {
       Serial.print(F("KEY_F22"));
-      return;
+      break;
     }
     case KEY_F23: {
       Serial.print(F("KEY_F23"));
-      return;
+      break;
     }
     case KEY_F24: {
       Serial.print(F("KEY_F24"));
+      break;
+    }
+    default: {
+      if (isPrintable(key)) {
+        sprintf(text, "%c [0x%02X]", key, key);
+      }
+      else {
+        sprintf(text, "0x%02X", key);
+      }
+      Serial.print(text);
       return;
     }
   }
-  if (isPrintable(key)) {
-    sprintf(text, "%c [0x%02X]", key, key);
-  }
-  else {
-    sprintf(text, "0x%02X", key);
-  }
+  sprintf(text, " [0x%02X]", key);
   Serial.print(text);
 }
 
-void diplayHelp() {
+const void diplayHelp() {
   Serial.println();
   for (int i = 0; i < PROFILES_SIZE; i++) {
     sprintf(text, "%d: ", i + 1);
@@ -297,8 +302,7 @@ void diplayHelp() {
       KeyInfo *p = &keyProfiles[i];
       sprintf(text, "Value: %d, Press: %d, Delay: %d, Keys: ", p->value, p->press, p->delay);
       Serial.print(text);
-      for (int n = 0; n < KEYS_SIZE; n++)
-      {
+      for (int n = 0; n < KEYS_SIZE; n++) {
         uint8_t key = p->keyCode[n];
         if (key == NO_KEY) {
           break;
@@ -314,25 +318,91 @@ void diplayHelp() {
   Serial.print(F("Enter command:"));
 }
 
+const void clearSerialInput() {
+  while (Serial.available()) Serial.read();
+}
+
+bool editValue(KeyInfo *p, int *pvalue, __FlashStringHelper *message) {
+  clearSerialInput();
+  Serial.print(message);
+  while (!Serial.available());
+  String str = Serial.readString();
+  Serial.println(str);
+
+  int value = str.toInt();
+
+  if (value == 0) {
+    return false;
+  }
+
+  if (value < 0) {
+    p->value = NO_VALUE;
+    p->press = NO_VALUE;
+    p->delay = NO_VALUE;
+    for (int n = 0; n < KEYS_SIZE; n++) {
+      p->keyCode[n] = NO_KEY;
+    }
+    return false;
+  }
+  
+  *pvalue = value;
+  return true;
+}
+
+void editProfile(byte index) {
+  KeyInfo *p = &keyProfiles[index];
+  if (!editValue(p, &p->value, F("Enter Value, 0 - exit, -1 - delete profile [600]):"))) return;
+  if (!editValue(p, &p->press, F("Enter Press, 0 - exit, -1 - delete profile [100]):"))) return;
+  if (!editValue(p, &p->delay, F("Enter Delay, 0 - exit, -1 - delete profile [1000]):"))) return;
+  int n = 0;
+  for (; n < KEYS_SIZE; n++) {
+    clearSerialInput();
+    Serial.print(F("Enter Key Code [0 - exit, -1 - clear, sample: 'A', 65, 0x41]:"));
+    while (!Serial.available());
+    String str = Serial.readString();
+    Serial.println(str);
+    
+    if (str == "0") return;
+    if (str == "-1") break;
+
+    if (str[0] == '\'') {
+      if (str.length() < 3 || str[2] != '\'') {
+        Serial.println("error");
+        break;
+      }
+      p->keyCode[n] = toLowerCase(str[1]);
+    }
+    
+    if (str[0] == '0') {
+      if (str.length() < 3 || str[1] != 'x') {
+        Serial.println("error");
+        break;
+      }
+      str.remove(0, 2);
+      int value;
+      if (sscanf(str.c_str(), "%02X", &value) != 1) {
+        Serial.println("error");
+        break;
+      }
+      p->keyCode[n] = (uint8_t)value;
+    }
+  }
+  for (; n < KEYS_SIZE; n++) {
+    p->keyCode[n] = NO_KEY;
+  }  
+}
+
 void loopDialog() {
   if (Serial.available()) {
-    while (Serial.available()) Serial.read();    
+    clearSerialInput();
     while (true) {
       diplayHelp();
       while (!Serial.available());
       char cmd = Serial.read();
       Serial.println(cmd);
       switch (cmd) {
-        case '1': {
-          break;
-        }
-        case '2': {
-          break;
-        }
-        case '3': {
-          break;
-        }
-        case '4': {
+        case '1': case '2': case '3': case '4': {
+          editProfile(cmd - '1');
           break;
         }
         case ' ': {
