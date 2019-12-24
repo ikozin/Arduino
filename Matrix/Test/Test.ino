@@ -88,6 +88,13 @@
 
 */
 
+#define TEST_PARALLEL
+//#define TEST_SHIFT
+//#define TEST_BLOCK
+
+#define C             (12)
+
+#if defined(TEST_PARALLEL) || defined(TEST_BLOCK)
 #define D0            (2)
 #define D1            (3)
 #define D2            (4)
@@ -96,9 +103,11 @@
 #define D5            (7)
 #define D6            (8)
 #define D7            (9)
+#endif
 
-#define C             (12)
+#if defined(TEST_SHIFT) || defined(TEST_BLOCK)
 #define R             (13)
+#endif
 
 #define LINE_COUNT    (8)   // количество линий в одном блоке матрицы
 #define BLOCK_COUNT   (6)   // количество блоков матрицы (3x2)
@@ -107,6 +116,10 @@
 #define DELAY_FRAME   (1000)
 
 void setup() {
+  pinMode(C, OUTPUT);
+  digitalWrite(C, LOW);
+
+#if defined(TEST_PARALLEL)
   pinMode(D0, OUTPUT);
   pinMode(D1, OUTPUT);
   pinMode(D2, OUTPUT);
@@ -115,17 +128,20 @@ void setup() {
   pinMode(D5, OUTPUT);
   pinMode(D6, OUTPUT);
   pinMode(D7, OUTPUT);
-  pinMode(R, OUTPUT);
-  pinMode(C, OUTPUT);
+  setData(0x00);
+#endif
 
-  digitalWrite(C, LOW);
+#if defined(TEST_SHIFT)
+  pinMode(R, OUTPUT);
   digitalWrite(R, HIGH);
   resetAddress();
-  setData(0x00);
+#endif
 
-  // Serial
-  Serial.begin(9600);
-
+#if defined(TEST_BLOCK)
+  pinMode(R, OUTPUT);
+  digitalWrite(R, HIGH);
+  resetAddress();
+/*
   pinMode(A0, OUTPUT);
   pinMode(A1, OUTPUT);
   pinMode(A2, OUTPUT);
@@ -139,16 +155,12 @@ void setup() {
   digitalWrite(A3, LOW);
   digitalWrite(A4, LOW);
   digitalWrite(A5, LOW);
-}
+*/
+#endif
 
-void loop() {
-  //loopShift();
-  loopData();
-}
-
-void resetAddress() {
-  digitalWrite(R, LOW);
-  digitalWrite(R, HIGH);
+  // Serial
+  Serial.begin(9600);
+  while (!Serial) {}
 }
 
 void clockCycle() {
@@ -156,6 +168,29 @@ void clockCycle() {
   digitalWrite(C, LOW);
 }
 
+#if defined(TEST_SHIFT) || defined(TEST_BLOCK)
+void resetAddress() {
+  digitalWrite(R, LOW);
+  digitalWrite(R, HIGH);
+}
+
+void test_loopShift() {
+  long time = micros();
+  
+  for (int i = 0; i < LINE_COUNT; i++) {
+    clockCycle();
+    delay(DELAY_TIME);
+  }
+  resetAddress();
+  
+  time = micros() - time;
+  Serial.println(time);
+
+  delay(DELAY_FRAME);
+}
+#endif
+
+#if defined(TEST_PARALLEL) || defined(TEST_BLOCK)
 void setData(byte data) {
   digitalWrite(D0, bitRead(data, 0));
   digitalWrite(D1, bitRead(data, 1));
@@ -167,36 +202,10 @@ void setData(byte data) {
   digitalWrite(D7, bitRead(data, 7));
 }
 
-void loopShift() {
-  long time = micros();
-  
-  for (int i = 0; i < LINE_COUNT * BLOCK_COUNT; i++) {
-    setData(0xFF);
-    clockCycle();
-    delay(DELAY_TIME);
-  }
-  resetAddress();
-  
-  time = micros() - time;
-  Serial.println(time);
-
-  delay(DELAY_FRAME);
-}
-
-void loopData() {
-  long time = micros();
-
-  testDataLoad(0xFF);
-  delay(DELAY_FRAME);
-  testDataLoad(0x00);
-  delay(DELAY_FRAME);
-  
-  time = micros() - time;
-  Serial.println(time);
-}
-
-void testDataLoad(byte data) {
+void loadData(byte data) {
   setData(data);
+  clockCycle();
+/*
   digitalWrite(A0, HIGH);
   digitalWrite(A1, HIGH);
   digitalWrite(A2, HIGH);
@@ -209,4 +218,54 @@ void testDataLoad(byte data) {
   digitalWrite(A3, LOW);
   digitalWrite(A4, LOW);
   digitalWrite(A5, LOW);
+*/
+}
+
+void test_loopData() {
+  loadData(0x00);
+  delay(DELAY_TIME);
+  loadData(0xFF);
+  delay(DELAY_TIME);
+
+  loadData(0x00);
+  delay(DELAY_TIME);
+  for (uint8_t data = B00000001; data > 0; data <<= 1) {
+    loadData(data);
+    delay(DELAY_TIME);
+  }
+  
+  loadData(0x00);
+  delay(DELAY_TIME);
+  for (uint8_t data = B00000011; data > 0; data <<= 2) {
+    loadData(data);
+    delay(DELAY_TIME);
+  }
+
+  loadData(0x00);
+  delay(DELAY_TIME);
+  loadData(B01010101);
+  delay(DELAY_TIME);
+  loadData(B10101010);
+  delay(DELAY_TIME);
+  loadData(B01010101);
+  delay(DELAY_TIME);
+  loadData(B10101010);
+  delay(DELAY_TIME);
+}
+#endif
+
+void loop() {
+#if defined(TEST_PARALLEL)
+  Serial.println(F("TEST PARALLEL"));
+  test_loopData();
+#endif
+
+#if defined(TEST_SHIFT)
+  Serial.println(F("TEST SHIFT"));
+  test_loopShift();
+#endif
+
+#if defined(TEST_BLOCK)
+  Serial.println(F("TEST BLOCK"));
+#endif
 }
