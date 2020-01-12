@@ -39,7 +39,7 @@ void loop()
 }
 
 */
-#define RAW_VALUE
+//#define RAW_VALUE
 #include <Keyboard.h>
 #include "pitches.h"
 
