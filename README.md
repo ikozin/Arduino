@@ -24,7 +24,7 @@
 | ![PCF8574_Button](Images/pcf8574_button_board.png "PCF8574_Button") PCF8574_Button | Плата расширения для 8-bit I/O expander (I2C) PCF8574, расширитель клавиатуры - 8 кнопок |
 | Programmer573RF2 | Программатор для ППЗУ К573РФ2, использует платы расширения: "1533ИР24x2", "573РФ2", "PCF8574", "PCF8574_Button", SD Card |
 | Radio | FM Radio (MP1090S) |
-| ![SSD1306](Images/oled_128x64_iic.jpg "SSD1306") ![SSD1306](Images/oled_128x64_spi.jpg "SSD1306") SSD1306 | I2C - OLED_I2C, SPI - Adafruit_SPI |
+| ![SSD1306](Images/oled_128x64_iic.jpg "SSD1306") ![SSD1306](Images/OLED_128x64_spi.jpg "SSD1306") SSD1306 | I2C - OLED_I2C, SPI - Adafruit_SPI |
 | ![TM1990A](Images/TM1990A.jpg "TM1990A") TM1990A | i-Button reader |
 | УМС | Плата расширения для УМС-7, УМС-8 |
 | ![TTGO T7](Images/TTGO_T7.jpg "TTGO T7") LILYGO® TTGO T7 V1.3 MINI 32 ESP32 WiFi Bluetooth Module Development Board||
