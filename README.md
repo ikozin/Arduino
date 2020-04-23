@@ -30,3 +30,4 @@
 | ![TTGO T7](Images/TTGO_T7.jpg "TTGO T7") LILYGO® TTGO T7 V1.3 MINI 32 ESP32 WiFi Bluetooth Module Development Board||
 | ![TTGO TM](Images/TTGO_TM.jpg "TTGO TM") LILYGO® TTGO Tm Music Albums 2.4 Inch PCM5102A SD Card ESP32 WiFi And Bluetooth Module||
 | ![TTGO T-Diplay](Images/TTGO_T-Display.jpg "TTGO T-Diplay") LILYGO® TTGO T-Display ESP32 WiFi And Bluetooth Module Development Board 1.14 Inch LCD Control Board||
+| ![MP1094](Images/mp1094_1.jpg "MP1094") MP1094 | ИФК пульт ДУ с приемником |
