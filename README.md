@@ -26,7 +26,7 @@
 | Radio | FM Radio (MP1090S) |
 | ![SSD1306](Images/oled_128x64_iic.jpg "SSD1306") ![SSD1306](Images/OLED_128x64_spi.jpg "SSD1306") SSD1306 | I2C - OLED_I2C, SPI - Adafruit_SPI |
 | ![TM1990A](Images/TM1990A.jpg "TM1990A") TM1990A | i-Button reader |
-| УМС | Плата расширения для УМС-7, УМС-8 |
+| УМС | Плата расширения для УМС-7, УМС-8 [Cхемы](УМС/readme.md "Схемы") |
 | ![TTGO T7](Images/TTGO_T7.jpg "TTGO T7") LILYGO® TTGO T7 | V1.3 MINI 32 ESP32 WiFi Bluetooth Module Development Board|
 | ![TTGO TM](Images/TTGO_TM.jpg "TTGO TM") LILYGO® TTGO Tm | Music Albums 2.4 Inch PCM5102A SD Card ESP32 WiFi And Bluetooth Module|
 | ![TTGO T-Diplay](Images/TTGO_T-Display.jpg "TTGO T-Diplay") LILYGO® TTGO T-Display | ESP32 WiFi And Bluetooth Module Development Board 1.14 Inch LCD Control Board|
