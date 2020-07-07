@@ -670,9 +670,7 @@ void writeData(uint16_t addr, byte data)
   delayMicroseconds(1);
   disableWE();
   disableCE();
-  delayMicroseconds(1);
-  sprintf(text, "%04X %02X", addr, data);
-  Serial.println(text);  
+  delayMicroseconds(2);
 }
 
 void dumpMemory(uint16_t address, uint16_t size, Stream* pStream)
