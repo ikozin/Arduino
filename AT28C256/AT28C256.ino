@@ -16,7 +16,7 @@ https://docs-europe.electrocomponents.com/webdocs/1596/0900766b815963c9.pdf
 	14x1 - папа, для подключения AT28C256, выводы  1 - 14
 	14x1 - папа, для подключения AT28C256, выводы 15 - 28
 	 4x1 - мама, для подключения Arduino MEGA к Micro SD
-	 2x1 - мама, для подключения питания Micro SD к Макетной плате
+	 2x1 - мама, для подключения питания к Micro SD
 
 Распиновка подключения к ATMEGA2560
             -------                                                          -------
@@ -29,8 +29,8 @@ https://docs-europe.electrocomponents.com/webdocs/1596/0900766b815963c9.pdf
   ---|                                                                                      12 |   |
  |   | RST                                                                                  11 |   |
  |   | 3V                                                                                   10 |   |
- | X | 5V                                                                                    9 |   |
- | X | GND                                                                                   8 |   |
+ |   | 5V                                                                                    9 |   |
+ |   | GND                                                                                   8 |   |
  |   |                                                                                         |---
  |   | VIN                                                                                   7 |   |
   ---|                                                                                       6 |   |
@@ -79,7 +79,14 @@ https://docs-europe.electrocomponents.com/webdocs/1596/0900766b815963c9.pdf
                                           |      | 13 -| D2       D4 |- 16 |      |
                                           |      | 14 -| GND      D3 |- 15 |<-ключ|
                                            ------       -------------       ------
+ D0  D1  D2  D3  D4  D5  D6  D7
+ 11  12  13  15  16  17  18  19
 
+ A0  A1  A2  A3  A4  A5  A6  A7
+ 10   9   8   7   6   5   4   3
+
+ A8  A9 A10 A11 A12 A13 A14
+ 25  24  21  23   2  26   1
 */
 
 #ifndef __AVR_ATmega2560__
@@ -139,7 +146,8 @@ void disableCE() { digitalWrite(CE, HIGH); }
 void enableOE() { digitalWrite(OE, LOW); }
 void disableOE() { digitalWrite(OE, HIGH); }
 
-void  setup() {
+void  setup()
+{
   pinMode(WE, OUTPUT);
   pinMode(CE, OUTPUT);
   pinMode(OE, OUTPUT);
@@ -154,7 +162,8 @@ void  setup() {
   Serial.begin(9600);
   while (!Serial) {}
   // Initialize SD
-  if (!SD.begin(SD_CS)) {
+  if (!SD.begin(SD_CS))
+  {
     Serial.println(F("Initialization failed!"));
     for (;;);
   }
@@ -162,7 +171,8 @@ void  setup() {
   displayHelp();
 }
 
-void displayHelp() {
+void displayHelp()
+{
   Serial.println();
   Serial.println(F("Reset Arduino after insert SD card"));
   Serial.println(F("List commnad:"));
@@ -171,12 +181,14 @@ void displayHelp() {
   Serial.println(F("3 - Check 32 KB [AT28C256] (DUMP.TXT)"));
   Serial.println(F("4 - Write 32 KB [AT28C256] (DUMP.TXT)"));
   Serial.println(F("5 - Clear 32 KB [AT28C256]"));
+  Serial.println(F("7 - Disable Protect Mode"));
   Serial.println(F("0 - TEST"));
   Serial.println();
   Serial.print(F("Enter commnad:"));
 }
 
-void displayInfo(uint16_t addr, uint16_t size) {
+void displayInfo(uint16_t addr, uint16_t size)
+{
   Serial.print(F("Address: "));
   bin2hex(text, addr);
   Serial.print(text);
@@ -185,7 +197,8 @@ void displayInfo(uint16_t addr, uint16_t size) {
   Serial.println(text);
 }
 
-void displayDumpHelp() {
+void displayDumpHelp()
+{
   Serial.println();
   Serial.println(F("Dump  commnad:"));
   Serial.println(F("* - Dump  32 KB"));
@@ -209,7 +222,8 @@ void displayDumpHelp() {
   Serial.print(F("Enter Dump  command:"));
 }
 
-void displayReadHelp() {
+void displayReadHelp()
+{
   Serial.println();
   Serial.println(F("Read  commnad:"));
   Serial.println(F("* - Read  32 KB"));
@@ -233,7 +247,8 @@ void displayReadHelp() {
   Serial.print(F("Enter Read  command:"));
 }
 
-void displayCheckHelp() {
+void displayCheckHelp()
+{
   Serial.println();
   Serial.println(F("Check commnad:"));
   Serial.println(F("* - Check 32 KB"));
@@ -257,7 +272,8 @@ void displayCheckHelp() {
   Serial.print(F("Enter Check command:"));
 }
 
-void displayWriteHelp() {
+void displayWriteHelp()
+{
   Serial.println();
   Serial.println(F("Write commnad:"));
   Serial.println(F("* - Write 32 KB"));
@@ -281,7 +297,8 @@ void displayWriteHelp() {
   Serial.print(F("Enter Write command:"));
 }
 
-void displayClearHelp() {
+void displayClearHelp()
+{
   Serial.println();
   Serial.println(F("Clear commnad:"));
   Serial.println(F("* - Clear 32 KB"));
@@ -305,10 +322,12 @@ void displayClearHelp() {
   Serial.print(F("Enter Clear command:"));
 }
 
-void loopDump() {
+void loopDump()
+{
   displayDumpHelp();
   uint16_t addr;
-  for (;;) {
+  for (;;)
+  {
     char cmd = toUpperCase(Serial.read());
     switch(cmd) {
       case -1:
@@ -353,10 +372,12 @@ void loopDump() {
   }
 }
 
-void loopRead() {
+void loopRead()
+{
   displayReadHelp();
   uint16_t addr;
-  for (;;) {
+  for (;;)
+  {
     char cmd = toUpperCase(Serial.read());
     switch(cmd) {
       case -1:
@@ -403,10 +424,12 @@ void loopRead() {
   }
 }
 
-void loopCheck() {
+void loopCheck()
+{
   displayCheckHelp();
   uint16_t addr;
-  for (;;) {
+  for (;;)
+  {
     char cmd = toUpperCase(Serial.read());
     switch(cmd) {
       case -1:
@@ -453,10 +476,12 @@ void loopCheck() {
   }
 }
 
-void loopWrite() {
+void loopWrite()
+{
   displayWriteHelp();
   uint16_t addr;
-  for (;;) {
+  for (;;)
+  {
     char cmd = toUpperCase(Serial.read());
     switch(cmd) {
       case -1:
@@ -503,10 +528,12 @@ void loopWrite() {
   }
 }
 
-void loopClear() {
+void loopClear()
+{
   displayClearHelp();
   uint16_t addr;
-  for (;;) {
+  for (;;)
+  {
     char cmd = toUpperCase(Serial.read());
     switch(cmd) {
       case -1:
@@ -551,9 +578,11 @@ void loopClear() {
   }
 }
 
-void  loop() {
+void  loop()
+{
   char cmd = Serial.read();
-  switch (cmd) {
+  switch (cmd)
+  {
     case '1':					// 1 - Dump  [AT28C256]
       Serial.println(cmd);
       loopDump();
@@ -579,6 +608,11 @@ void  loop() {
       loopClear();
       displayHelp();
       break;
+    case '7':
+      Serial.println(cmd);
+      disableProtectMode();
+      displayHelp();
+      break;
     case '0':          // 0 - TEST
       Serial.println(cmd);
       loopTest();
@@ -587,29 +621,35 @@ void  loop() {
   }
 }
 
-void setDataInMode() {
+void setDataInMode()
+{
 	DDRL = B00000000;
 }
 
-void setDataOutMode() {
+void setDataOutMode()
+{
 	DDRL = B11111111;
 }
 
 
-void setDataPort(byte data) {
+void setDataPort(byte data)
+{
   PORTL = data;
 }
 
-byte getDataPort() {
+byte getDataPort()
+{
   return PINL;
 }
 
-void setAddress(uint16_t addr) {
-	PORTA = lowByte(addr);
-	PORTC = highByte(addr);
+void setAddress(uint16_t addr)
+{
+  PORTA = lowByte(addr);
+  PORTC = highByte(addr);
 }
 
-byte readData(uint16_t addr) {
+byte readData(uint16_t addr)
+{
   setAddress(addr);
   enableCE();
   enableOE();
@@ -617,6 +657,7 @@ byte readData(uint16_t addr) {
   byte data = getDataPort();
   disableOE();
   disableCE();
+  delayMicroseconds(1);
   return data;
 }
 
@@ -629,23 +670,30 @@ void writeData(uint16_t addr, byte data)
   delayMicroseconds(1);
   disableWE();
   disableCE();
+  delayMicroseconds(1);
+  sprintf(text, "%04X %02X", addr, data);
+  Serial.println(text);  
 }
 
-void dumpMemory(uint16_t addrress, uint16_t size, Stream* pStream) {
+void dumpMemory(uint16_t address, uint16_t size, Stream* pStream)
+{
   uint16_t addr = 0;
   setDataInMode();
   size /= BLOCK_SIZE;
   // Читаем блоками по 16 байт (BLOCK_SIZE)
-  for (uint16_t n = 0; n < size; n++) {
+  for (uint16_t n = 0; n < size; n++)
+  {
     bin2hex(text, addr);
     pStream->print(text);
-    for (int i = 0; i < BLOCK_SIZE; i++) {
-      dataRow[i] = readData(addrress);
-      addrress++;
+    for (int i = 0; i < BLOCK_SIZE; i++)
+    {
+      dataRow[i] = readData(address);
+      address++;
       addr++;
     }
     char* pdata = text;
-    for (int i = 0; i < BLOCK_SIZE; i++) {
+    for (int i = 0; i < BLOCK_SIZE; i++)
+    {
       *pdata++ = ' ';
       pdata = bin2hex(pdata, dataRow[i]);
     }
@@ -653,31 +701,38 @@ void dumpMemory(uint16_t addrress, uint16_t size, Stream* pStream) {
   }
 }
 
-void readMemory(uint16_t addrress, uint16_t size, char* pFileName) {
+void readMemory(uint16_t addrress, uint16_t size, char* pFileName)
+{
   SD.remove(pFileName);
   File dataFile = SD.open(pFileName, FILE_WRITE);
-  if (dataFile) {
+  if (dataFile)
+  {
     dumpMemory(addrress, size, &dataFile);
     dataFile.close();
   }
-  else {
+  else
+  {
     Serial.print(F("Error create file: "));
     Serial.println(pFileName);
   }
 }
 
-void checkMemory(uint16_t address, uint16_t size, char* pFileName) {
+void checkMemory(uint16_t address, uint16_t size, char* pFileName)
+{
   File dataFile = SD.open(pFileName);
-  if (dataFile) {
+  if (dataFile)
+  {
     bool error = false;
-    while (!error) {
+    while (!error)
+    {
       int result;
       result = readLine(&dataFile, text, TEXT_SIZE);
       if (result == 0) break;
       int addr, hex0, hex1, hex2, hex3, hex4, hex5, hex6, hex7, hex8, hex9, hexA, hexB, hexC, hexD, hexE, hexF;
       result = sscanf(text, "%04X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X",
         &addr, &hex0, &hex1, &hex2, &hex3, &hex4, &hex5, &hex6, &hex7, &hex8, &hex9, &hexA, &hexB, &hexC, &hexD, &hexE, &hexF);
-      if (result != BLOCK_SIZE + 1) {
+      if (result != BLOCK_SIZE + 1)
+      {
         error = true;
         break;
       }
@@ -697,39 +752,50 @@ void checkMemory(uint16_t address, uint16_t size, char* pFileName) {
       dataRow[0x0D] = hexD;// & 0xFF;
       dataRow[0x0E] = hexE;// & 0xFF;
       dataRow[0x0F] = hexF;// & 0xFF;
-      for (int i = 0; i < BLOCK_SIZE; i++) {
+      for (int i = 0; i < BLOCK_SIZE; i++)
+      {
         error = readData(address + addr) != dataRow[i];
-        if (error) break;
-        address++;
+        if (error)
+        {
+          address = addr;
+          break;
+        }
+        addr++;
       }
     }
     dataFile.close();
-    if (error) {
+    if (error)
+    {
       Serial.println(F("\nError!"));
       Serial.print(F("Address: "));
       bin2hex(text, address);
       Serial.println(text);
     }
   }
-  else {
+  else
+  {
     Serial.print(F("Error open file: "));
     Serial.println(pFileName);
   }
 }
 
-void writeMemory(uint16_t address, uint16_t size, char* pFileName) {
+void writeMemory(uint16_t address, uint16_t size, char* pFileName)
+{
   File dataFile = SD.open(pFileName);
-  if (dataFile) {
+  if (dataFile)
+  {
     setDataOutMode();
     bool error = false;
-    while (!error) {
+    while (!error)
+    {
       int result;
       result = readLine(&dataFile, text, TEXT_SIZE);
       if (result == 0) break;
       int addr, hex0, hex1, hex2, hex3, hex4, hex5, hex6, hex7, hex8, hex9, hexA, hexB, hexC, hexD, hexE, hexF;
       result = sscanf(text, "%04X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X",
         &addr, &hex0, &hex1, &hex2, &hex3, &hex4, &hex5, &hex6, &hex7, &hex8, &hex9, &hexA, &hexB, &hexC, &hexD, &hexE, &hexF);
-      if (result != BLOCK_SIZE + 1) {
+      if (result != BLOCK_SIZE + 1)
+      {
         error = true;
         break;
       }
@@ -749,34 +815,41 @@ void writeMemory(uint16_t address, uint16_t size, char* pFileName) {
       dataRow[0x0D] = hexD;// & 0xFF;
       dataRow[0x0E] = hexE;// & 0xFF;
       dataRow[0x0F] = hexF;// & 0xFF;
-      for (int i = 0; i < BLOCK_SIZE; i++) {
+      for (int i = 0; i < BLOCK_SIZE; i++)
+      {
         writeData(address + addr, dataRow[i]);
-        address++;
+        addr++;
       }
     }
     setDataInMode();
     dataFile.close();
-    if (error) {
+    if (error)
+    {
       Serial.println(F("\nError!"));
       Serial.print(F("Address: "));
       bin2hex(text, address);
       Serial.println(text);
     }        
   }
-  else {
+  else
+  {
     Serial.print(F("Error open file: "));
     Serial.println(pFileName);
   }
 }
 
-void clearMemory(uint16_t address, uint16_t size) {
+void clearMemory(uint16_t address, uint16_t size)
+{
   setDataOutMode();
-  for (int i = 0; i < BLOCK_SIZE; i++) {
+  for (int i = 0; i < BLOCK_SIZE; i++)
+  {
     dataRow[i] = 0xFF;
   }
   size /= BLOCK_SIZE;
-  for (uint16_t n = 0; n < size; n++) {
-    for (int i = 0; i < BLOCK_SIZE; i++) {
+  for (uint16_t n = 0; n < size; n++)
+  {
+    for (int i = 0; i < BLOCK_SIZE; i++)
+    {
       writeData(address, dataRow[i]);
       address++;
     }
@@ -784,17 +857,33 @@ void clearMemory(uint16_t address, uint16_t size) {
   setDataInMode();
 }
 
-int readLine(File* pFile, char* pText, int maxSize) {
+void disableProtectMode()
+{
+  setDataOutMode();
+  writeData(0x5555, 0xAA);
+  writeData(0x2AAA, 0x55);
+  writeData(0x5555, 0x80);
+  writeData(0x5555, 0xAA);
+  writeData(0x2AAA, 0x55);
+  writeData(0x5555, 0x20);
+  setDataInMode();
+}
+
+int readLine(File* pFile, char* pText, int maxSize)
+{
   maxSize--;
   int i = 0;
-  while (i < maxSize) {
+  while (i < maxSize)
+  {
     char value = pFile->read();
     // Конец файла
-    if (value == -1) {
+    if (value == -1)
+    {
       break;
     }
     //Конец строки = 13, 10
-    if (value == 13) {
+    if (value == 13)
+    {
       pFile->read(); // Вычитываем следом за символом 13 символ 10
       break;
     }
@@ -804,7 +893,8 @@ int readLine(File* pFile, char* pText, int maxSize) {
   return i;
 }
 
-char* bin2hex(char* pText, uint8_t value) {
+char* bin2hex(char* pText, uint8_t value)
+{
   for (int i = 0; i < 2; i++)
   {
     byte v = (byte)((value & 0xF0) >> 4);
@@ -816,16 +906,19 @@ char* bin2hex(char* pText, uint8_t value) {
   return pText;
 }
 
-char* bin2hex(char* pText, uint16_t value) {
+char* bin2hex(char* pText, uint16_t value)
+{
   pText = bin2hex(pText, highByte(value));
   pText = bin2hex(pText, lowByte(value));
   return pText;
 }
 
-void loopTest() {
+void loopTest()
+{
   Serial.println(F("TEST"));
   testAllOn();
-  while (1) {
+  while (1)
+  {
     loopTestCrtl();
     loopTestCrtl();
     loopTestCrtl();
@@ -843,7 +936,8 @@ void loopTest() {
   }
 }
 
-void testAllOn() {
+void testAllOn()
+{
   disableCE();
   disableOE();
   disableWE();
@@ -851,7 +945,8 @@ void testAllOn() {
   setAddress(0xFFFF); 
 }
 
-void loopTestCrtl() {
+void loopTestCrtl()
+{
   Serial.println(F("Control TEST: CE, OE, WE"));
   disableCE();
   disableOE();
@@ -865,7 +960,8 @@ void loopTestCrtl() {
   delay(1000);
 }
 
-void loopTestData() {
+void loopTestData()
+{
   Serial.println(F("Data TEST"));
   setDataOutMode();
 
@@ -893,7 +989,8 @@ void loopTestData() {
   delay(1000);
 }
 
-void loopTestAddress() {
+void loopTestAddress()
+{
   Serial.println(F("Address TEST"));
   setAddress(0xFFFF); 
   delay(1000);
