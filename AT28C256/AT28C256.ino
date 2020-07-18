@@ -181,6 +181,7 @@ void displayHelp()
   Serial.println(F("3 - Check 32 KB [AT28C256] (DUMP.TXT)"));
   Serial.println(F("4 - Write 32 KB [AT28C256] (DUMP.TXT)"));
   Serial.println(F("5 - Clear 32 KB [AT28C256]"));
+  Serial.println(F("6 - Fill  32 KB [AT28C256]"));
   Serial.println(F("7 - Disable Protect Mode"));
   Serial.println(F("0 - TEST"));
   Serial.println();
@@ -200,6 +201,7 @@ void displayInfo(uint16_t addr, uint16_t size)
 void displayDumpHelp()
 {
   Serial.println();
+  Serial.println(F("Dump from EEPROM to Screen"));
   Serial.println(F("Dump  commnad:"));
   Serial.println(F("* - Dump  32 KB"));
   Serial.println(F("0 - Dump   2 KB [0000]"));
@@ -225,24 +227,25 @@ void displayDumpHelp()
 void displayReadHelp()
 {
   Serial.println();
+  Serial.println(F("Read from EEPROM to File"));
   Serial.println(F("Read  commnad:"));
-  Serial.println(F("* - Read  32 KB"));
-  Serial.println(F("0 - Read   2 KB [0000]"));
-  Serial.println(F("1 - Read   2 KB [0001]"));
-  Serial.println(F("2 - Read   2 KB [0010]"));
-  Serial.println(F("3 - Read   2 KB [0011]"));
-  Serial.println(F("4 - Read   2 KB [0100]"));
-  Serial.println(F("5 - Read   2 KB [0101]"));
-  Serial.println(F("6 - Read   2 KB [0110]"));
-  Serial.println(F("7 - Read   2 KB [0111]"));
-  Serial.println(F("8 - Read   2 KB [1000]"));
-  Serial.println(F("9 - Read   2 KB [1001]"));
-  Serial.println(F("A - Read   2 KB [1010]"));
-  Serial.println(F("B - Read   2 KB [1011]"));
-  Serial.println(F("C - Read   2 KB [1100]"));
-  Serial.println(F("D - Read   2 KB [1101]"));
-  Serial.println(F("E - Read   2 KB [1110]"));
-  Serial.println(F("F - Read   2 KB [1111]"));
+  Serial.println(F("* - Read  32 KB (DUMP.TXT)"));
+  Serial.println(F("0 - Read   2 KB [0000] (0_DUMP.TXT)"));
+  Serial.println(F("1 - Read   2 KB [0001] (1_DUMP.TXT)"));
+  Serial.println(F("2 - Read   2 KB [0010] (2_DUMP.TXT)"));
+  Serial.println(F("3 - Read   2 KB [0011] (3_DUMP.TXT)"));
+  Serial.println(F("4 - Read   2 KB [0100] (4_DUMP.TXT)"));
+  Serial.println(F("5 - Read   2 KB [0101] (5_DUMP.TXT)"));
+  Serial.println(F("6 - Read   2 KB [0110] (6_DUMP.TXT)"));
+  Serial.println(F("7 - Read   2 KB [0111] (7_DUMP.TXT)"));
+  Serial.println(F("8 - Read   2 KB [1000] (8_DUMP.TXT)"));
+  Serial.println(F("9 - Read   2 KB [1001] (9_DUMP.TXT)"));
+  Serial.println(F("A - Read   2 KB [1010] (A_DUMP.TXT)"));
+  Serial.println(F("B - Read   2 KB [1011] (B_DUMP.TXT)"));
+  Serial.println(F("C - Read   2 KB [1100] (C_DUMP.TXT)"));
+  Serial.println(F("D - Read   2 KB [1101] (D_DUMP.TXT)"));
+  Serial.println(F("E - Read   2 KB [1110] (E_DUMP.TXT)"));
+  Serial.println(F("F - Read   2 KB [1111] (F_DUMP.TXT)"));
   Serial.println();
   Serial.print(F("Enter Read  command:"));
 }
@@ -250,6 +253,7 @@ void displayReadHelp()
 void displayCheckHelp()
 {
   Serial.println();
+  Serial.println(F("Check EEPROM from File"));
   Serial.println(F("Check commnad:"));
   Serial.println(F("* - Check 32 KB"));
   Serial.println(F("0 - Check  2 KB [0000]"));
@@ -275,24 +279,25 @@ void displayCheckHelp()
 void displayWriteHelp()
 {
   Serial.println();
+  Serial.println(F("Write from File to EEPROM"));
   Serial.println(F("Write commnad:"));
-  Serial.println(F("* - Write 32 KB"));
-  Serial.println(F("0 - Write  2 KB [0000]"));
-  Serial.println(F("1 - Write  2 KB [0001]"));
-  Serial.println(F("2 - Write  2 KB [0010]"));
-  Serial.println(F("3 - Write  2 KB [0011]"));
-  Serial.println(F("4 - Write  2 KB [0100]"));
-  Serial.println(F("5 - Write  2 KB [0101]"));
-  Serial.println(F("6 - Write  2 KB [0110]"));
-  Serial.println(F("7 - Write  2 KB [0111]"));
-  Serial.println(F("8 - Write  2 KB [1000]"));
-  Serial.println(F("9 - Write  2 KB [1001]"));
-  Serial.println(F("A - Write  2 KB [1010]"));
-  Serial.println(F("B - Write  2 KB [1011]"));
-  Serial.println(F("C - Write  2 KB [1100]"));
-  Serial.println(F("D - Write  2 KB [1101]"));
-  Serial.println(F("E - Write  2 KB [1110]"));
-  Serial.println(F("F - Write  2 KB [1111]"));
+  Serial.println(F("* - Write 32 KB (DUMP.TXT)"));
+  Serial.println(F("0 - Write  2 KB [0000] (0_DUMP.TXT)"));
+  Serial.println(F("1 - Write  2 KB [0001] (1_DUMP.TXT)"));
+  Serial.println(F("2 - Write  2 KB [0010] (2_DUMP.TXT)"));
+  Serial.println(F("3 - Write  2 KB [0011] (3_DUMP.TXT)"));
+  Serial.println(F("4 - Write  2 KB [0100] (4_DUMP.TXT)"));
+  Serial.println(F("5 - Write  2 KB [0101] (5_DUMP.TXT)"));
+  Serial.println(F("6 - Write  2 KB [0110] (6_DUMP.TXT)"));
+  Serial.println(F("7 - Write  2 KB [0111] (7_DUMP.TXT)"));
+  Serial.println(F("8 - Write  2 KB [1000] (8_DUMP.TXT)"));
+  Serial.println(F("9 - Write  2 KB [1001] (9_DUMP.TXT)"));
+  Serial.println(F("A - Write  2 KB [1010] (A_DUMP.TXT)"));
+  Serial.println(F("B - Write  2 KB [1011] (B_DUMP.TXT)"));
+  Serial.println(F("C - Write  2 KB [1100] (C_DUMP.TXT)"));
+  Serial.println(F("D - Write  2 KB [1101] (D_DUMP.TXT)"));
+  Serial.println(F("E - Write  2 KB [1110] (E_DUMP.TXT)"));
+  Serial.println(F("F - Write  2 KB [1111] (F_DUMP.TXT)"));
   Serial.println();
   Serial.print(F("Enter Write command:"));
 }
@@ -300,6 +305,7 @@ void displayWriteHelp()
 void displayClearHelp()
 {
   Serial.println();
+  Serial.println(F("Clear EEPROM"));
   Serial.println(F("Clear commnad:"));
   Serial.println(F("* - Clear 32 KB"));
   Serial.println(F("0 - Clear  2 KB [0000]"));
@@ -320,6 +326,32 @@ void displayClearHelp()
   Serial.println(F("F - Clear  2 KB [1111]"));
   Serial.println();
   Serial.print(F("Enter Clear command:"));
+}
+
+void displayFillHelp()
+{
+  Serial.println();
+  Serial.println(F("Check filling EEPROM for 0FFH"));
+  Serial.println(F("Fill commnad:"));
+  Serial.println(F("* - Check Fill 32 KB"));
+  Serial.println(F("0 - Check Fill  2 KB [0000]"));
+  Serial.println(F("1 - Check Fill  2 KB [0001]"));
+  Serial.println(F("2 - Check Fill  2 KB [0010]"));
+  Serial.println(F("3 - Check Fill  2 KB [0011]"));
+  Serial.println(F("4 - Check Fill  2 KB [0100]"));
+  Serial.println(F("5 - Check Fill  2 KB [0101]"));
+  Serial.println(F("6 - Check Fill  2 KB [0110]"));
+  Serial.println(F("7 - Check Fill  2 KB [0111]"));
+  Serial.println(F("8 - Check Fill  2 KB [1000]"));
+  Serial.println(F("9 - Check Fill  2 KB [1001]"));
+  Serial.println(F("A - Check Fill  2 KB [1010]"));
+  Serial.println(F("B - Check Fill  2 KB [1011]"));
+  Serial.println(F("C - Check Fill  2 KB [1100]"));
+  Serial.println(F("D - Check Fill  2 KB [1101]"));
+  Serial.println(F("E - Check Fill  2 KB [1110]"));
+  Serial.println(F("F - Check Fill  2 KB [1111]"));
+  Serial.println();
+  Serial.print(F("Enter Fill command:"));
 }
 
 void loopDump()
@@ -578,6 +610,56 @@ void loopClear()
   }
 }
 
+void loopFill()
+{
+  displayFillHelp();
+  uint16_t addr;
+  for (;;)
+  {
+    char cmd = toUpperCase(Serial.read());
+    switch(cmd) {
+      case -1:
+        break;
+      case '*':
+        Serial.println(cmd);
+        addr = 0;
+        displayInfo(addr, CHIP_SIZE);
+        checkFillMemory(addr, CHIP_SIZE);
+        return;
+      case '0':
+      case '1':
+      case '2':
+      case '3':
+      case '4':
+      case '5':
+      case '6':
+      case '7':
+      case '8':
+      case '9':
+        Serial.println(cmd);
+        addr = (cmd - '0') * CHIP_MIN_SIZE;
+        displayInfo(addr, CHIP_MIN_SIZE);
+        checkFillMemory(addr, CHIP_MIN_SIZE);
+        return;
+      case 'A':
+      case 'B':
+      case 'C':
+      case 'D':
+      case 'E':
+      case 'F':
+        Serial.println(cmd);
+        addr = (cmd - 'A' + 10) * CHIP_MIN_SIZE;
+        displayInfo(addr, CHIP_MIN_SIZE);
+        checkFillMemory(addr, CHIP_MIN_SIZE);
+        return;
+      default:
+        Serial.println(cmd);
+        displayFillHelp();
+        break;
+    }
+  }
+}
+
 void  loop()
 {
   char cmd = Serial.read();
@@ -608,7 +690,12 @@ void  loop()
       loopClear();
       displayHelp();
       break;
-    case '7':
+    case '6':         // 6 - Fill  [AT28C256]
+      Serial.println(cmd);
+      loopFill();
+      displayHelp();
+      break;
+    case '7':         // 7 - Disable Protect Mode
       Serial.println(cmd);
       disableProtectMode();
       displayHelp();
@@ -853,6 +940,22 @@ void clearMemory(uint16_t address, uint16_t size)
     }
   }
   setDataInMode();
+}
+
+void checkFillMemory(uint16_t address, uint16_t size)
+{
+  setDataInMode();
+  for (int i = 0; i < size; i++)
+  {
+    if (readData(address) != 0xFF)
+    {
+      Serial.print(F("\nError in Address: "));
+      bin2hex(text, address);
+      Serial.print(text);
+    }
+    address++;
+  }
+  Serial.println();
 }
 
 void disableProtectMode()
