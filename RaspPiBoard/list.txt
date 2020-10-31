@@ -1,11 +1,11 @@
 ---------------------------------------
-|   PBD-4 (PBS-2)   |   2 шт (4 шт)   |
-|   PBS-9           |   2 шт          |
-|   PLD-6 (PLS-3)   |   2 шт (4 шт)   |
-|   PLS-3           |   1 шт          |
-|   PLS-7           |   1 шт          |
-|   PLS-8           |   1 шт          |
-|   PLS-10          |   2 шт          |
-|   PLS-10 (PLS-3)  |   6 шт (20 шт)  |
-|   PLS-10 (PLD-20) |   4 шт (2 шт)   |
+|   PBD-4 (PBS-2)   |   2 шт (4 шт)   | https://www.chipdip.ru/product/pbd-4
+|   PBS-9           |   2 шт          | https://www.chipdip.ru/product/pbs-10
+|   PLD-6 (PLS-3)   |   2 шт (4 шт)   | https://www.chipdip.ru/product/pbd-6
+|   PLS-3           |   1 шт          | https://www.chipdip.ru/product/pls-3
+|   PLS-7           |   1 шт          | https://www.chipdip.ru/product/pls-8
+|   PLS-8           |   1 шт          | https://www.chipdip.ru/product/pls-8
+|   PLS-10          |   2 шт          | https://www.chipdip.ru/product/pls-10
+|   PLS-10 (PLS-3)  |   6 шт (20 шт)  | https://www.chipdip.ru/product/pls-10 (https://www.chipdip.ru/product/pls-3)
+|   PLS-10 (PLD-20) |   4 шт (2 шт)   | https://www.chipdip.ru/product/pls-10 (https://www.chipdip.ru/product/pld-20)
 --------------------------------------- 
