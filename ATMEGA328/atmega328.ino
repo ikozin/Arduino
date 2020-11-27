@@ -14,6 +14,8 @@ https://www.arduino.cc/en/Tutorial/ArduinoToBreadboard
 http://codius.ru/articles/Arduino_UNO_4%D1%80%D0%B0%D0%B7%D1%80%D1%8F%D0%B4%D0%BD%D1%8B%D0%B9_7%D1%81%D0%B5%D0%B3%D0%BC%D0%B5%D0%BD%D1%82%D0%BD%D1%8B%D0%B9_%D0%B8%D0%B4%D0%B8%D0%BA%D0%B0%D1%82%D0%BE%D1%80_12_pin_3641BS_red
 https://masterkit.ru/images/sets_scheme/nm7039box_sx.jpg
 https://ecs7.tokopedia.net/img/product-1/2016/11/17/2550072/2550072_fa6ef4d0-76c7-4839-b123-9a678cd10d10.jpg
+
+Плата: ATmega328 on a breadboard (8MHz internal clock)
        
 Распиновка atmega328
 	--------------------------------------------------
