@@ -1,5 +1,4 @@
-
- #!/usr/bin/env python
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import smbus
 from gpiozero import * #https://gpiozero.readthedocs.io/en/stable/recipes.html
