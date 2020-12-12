@@ -1,9 +1,13 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 import smbus
 from gpiozero import * #https://gpiozero.readthedocs.io/en/stable/recipes.html
 from signal import pause
 from time import sleep
+
+PIR_PIN = 24
+LED_PIN = 25
+
 
 def main(): 
   print('{0:board}'.format(pi_info())) 
@@ -20,12 +24,12 @@ def main():
   print('---------------------')
   print('Press Ctrl+C to exit')
   print('---------------------')
-  print('PIR gpio24 (+5V)')
-  print('LED gpio25')
+  print('PIR {0} (+5V)'.format(PIR_PIN))
+  print('LED {0}'.format(LED_PIN))
   print('---------------------')
   
-  pir = MotionSensor(24)
-  led = LED(25) 
+  pir = MotionSensor(PIR_PIN)
+  led = LED(LED_PIN) 
 
   try:
     while True:
@@ -35,7 +39,7 @@ def main():
       else:
         print('                     ', end='\r')
         led.off()
-    sleep(10)
+    sleep(0.5)
   except:
     pass
 
