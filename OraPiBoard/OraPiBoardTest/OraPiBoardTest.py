@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 import smbus
 import orangepi.winplus     # https://github.com/rm-hull/OPi.GPIO/blob/master/orangepi/winplus.py
