@@ -1,12 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import smbus
+import orangepi.winplus     # https://github.com/rm-hull/OPi.GPIO/blob/master/orangepi/winplus.py
 import OPi.GPIO as GPIO     # https://github.com/rm-hull/OPi.GPIO       https://opi-gpio.readthedocs.io/en/latest/api-documentation.html
 from signal import pause
 from time import sleep
 
-PIR_PIN = 'PC4'  # PC4 - 18
-LED_PIN = 'PL9'  # PL9 - 16
+PIR_PIN = 18    # 'PC4' - GPIO.setmode(GPIO.SUNXI)
+LED_PIN = 16    # 'PL9' - GPIO.setmode(GPIO.SUNXI)
 
 
 def main(): 
@@ -45,10 +46,10 @@ def main():
   print('---------------------')
   print('Press Ctrl+C to exit')
   print('---------------------')
-  print('PIR PC4 (+5V)')
-  print('LED PL9')
+  print('PIR {0} (+5V)'.format(PIR_PIN))
+  print('LED {0}'.format(LED_PIN))
   print('---------------------')
-  GPIO.setmode(GPIO.SUNXI)
+  GPIO.setmode(orangepi.winplus.BOARD)
   GPIO.setwarnings(False)
   GPIO.setup(LED_PIN, GPIO.OUT)
   GPIO.setup(PIR_PIN, GPIO.IN)
@@ -61,7 +62,7 @@ def main():
       else:
         print('                     ', end='\r')
         GPIO.output(LED_PIN, 0)
-      sleep(1)
+      sleep(0.5)
   except:
     pass
   
