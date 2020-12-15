@@ -6,7 +6,7 @@ from signal import pause
 from time import sleep
 
 PIR_PIN = 24
-LED_PIN = 25
+LED_PIN = 23
 
 
 def main(): 
