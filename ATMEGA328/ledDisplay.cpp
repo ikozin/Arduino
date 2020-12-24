@@ -1,6 +1,8 @@
 #include "ledDisplay.h"
 #include <MsTimer2.h>
 
+// https://zen.yandex.ru/media/id/5b935f60343d6c00a9f52b06/dinamicheskaia-indikaciia-5d0083fb254b9f00af8aa0a8
+
 byte LED_DISPLAY::_curIndex;
 byte LED_DISPLAY::_dataValue[LED_DISPLAY_LENGTH];
 
@@ -15,7 +17,7 @@ void LED_DISPLAY::begin()
 		pinMode(_digitPin[i], OUTPUT);
 		digitalWrite(_digitPin[i], HIGH); // для S8550 HIGH = выключено, при прямом подключении LOW = выключено
 	}
-	MsTimer2::set(4, LED_DISPLAY::_refresh); // 4ms period
+	MsTimer2::set(4, LED_DISPLAY::_refresh); // 4ms period (5ms = 50Hz)
 	MsTimer2::start();  
 }
 
