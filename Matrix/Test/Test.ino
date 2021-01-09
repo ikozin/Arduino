@@ -93,8 +93,8 @@
 //#define TEST_BLOCK
 
 #define C             (12)
+#define R             (13)
 
-#if defined(TEST_PARALLEL) || defined(TEST_BLOCK)
 #define D0            (2)
 #define D1            (3)
 #define D2            (4)
@@ -103,11 +103,7 @@
 #define D5            (7)
 #define D6            (8)
 #define D7            (9)
-#endif
 
-#if defined(TEST_SHIFT) || defined(TEST_BLOCK)
-#define R             (13)
-#endif
 
 #define LINE_COUNT    (8)   // количество линий в одном блоке матрицы
 #define BLOCK_COUNT   (6)   // количество блоков матрицы (3x2)
@@ -131,31 +127,10 @@ void setup() {
   setData(0x00);
 #endif
 
-#if defined(TEST_SHIFT)
+#if defined(TEST_SHIFT) || defined(TEST_BLOCK)
   pinMode(R, OUTPUT);
   digitalWrite(R, HIGH);
   resetAddress();
-#endif
-
-#if defined(TEST_BLOCK)
-  pinMode(R, OUTPUT);
-  digitalWrite(R, HIGH);
-  resetAddress();
-/*
-  pinMode(A0, OUTPUT);
-  pinMode(A1, OUTPUT);
-  pinMode(A2, OUTPUT);
-  pinMode(A3, OUTPUT);
-  pinMode(A4, OUTPUT);
-  pinMode(A5, OUTPUT);
-
-  digitalWrite(A0, LOW);
-  digitalWrite(A1, LOW);
-  digitalWrite(A2, LOW);
-  digitalWrite(A3, LOW);
-  digitalWrite(A4, LOW);
-  digitalWrite(A5, LOW);
-*/
 #endif
 
   // Serial
@@ -168,10 +143,25 @@ void clockCycle() {
   digitalWrite(C, LOW);
 }
 
-#if defined(TEST_SHIFT) || defined(TEST_BLOCK)
 void resetAddress() {
   digitalWrite(R, LOW);
   digitalWrite(R, HIGH);
+}
+
+void setData(byte data) {
+  digitalWrite(D0, bitRead(data, 0));
+  digitalWrite(D1, bitRead(data, 1));
+  digitalWrite(D2, bitRead(data, 2));
+  digitalWrite(D3, bitRead(data, 3));
+  digitalWrite(D4, bitRead(data, 4));
+  digitalWrite(D5, bitRead(data, 5));
+  digitalWrite(D6, bitRead(data, 6));
+  digitalWrite(D7, bitRead(data, 7));
+}
+
+void loadData(byte data) {
+  setData(data);
+  clockCycle();
 }
 
 void test_loopShift() {
@@ -187,38 +177,6 @@ void test_loopShift() {
   Serial.println(time);
 
   delay(DELAY_FRAME);
-}
-#endif
-
-#if defined(TEST_PARALLEL) || defined(TEST_BLOCK)
-void setData(byte data) {
-  digitalWrite(D0, bitRead(data, 0));
-  digitalWrite(D1, bitRead(data, 1));
-  digitalWrite(D2, bitRead(data, 2));
-  digitalWrite(D3, bitRead(data, 3));
-  digitalWrite(D4, bitRead(data, 4));
-  digitalWrite(D5, bitRead(data, 5));
-  digitalWrite(D6, bitRead(data, 6));
-  digitalWrite(D7, bitRead(data, 7));
-}
-
-void loadData(byte data) {
-  setData(data);
-  clockCycle();
-/*
-  digitalWrite(A0, HIGH);
-  digitalWrite(A1, HIGH);
-  digitalWrite(A2, HIGH);
-  digitalWrite(A3, HIGH);
-  digitalWrite(A4, HIGH);
-  digitalWrite(A5, HIGH);
-  digitalWrite(A0, LOW);
-  digitalWrite(A1, LOW);
-  digitalWrite(A2, LOW);
-  digitalWrite(A3, LOW);
-  digitalWrite(A4, LOW);
-  digitalWrite(A5, LOW);
-*/
 }
 
 void test_loopData() {
@@ -252,7 +210,67 @@ void test_loopData() {
   loadData(B10101010);
   delay(DELAY_TIME);
 }
-#endif
+
+void test_loopBlock() {
+  long time = micros();
+  resetAddress();
+  loadData(0x00);
+  loadData(0x00);
+  loadData(0x00);
+  loadData(0x00);
+  loadData(0x00);
+  loadData(0x00);
+  loadData(0x00);
+  loadData(0x00);
+  time = micros() - time;
+  Serial.println(time);
+  delay(DELAY_TIME);
+
+  time = micros();
+  resetAddress();
+  loadData(0x55);
+  loadData(0x55);
+  loadData(0x55);
+  loadData(0x55);
+  loadData(0x55);
+  loadData(0x55);
+  loadData(0x55);
+  loadData(0x55);
+  time = micros() - time;
+  Serial.println(time);
+
+  delay(DELAY_TIME);
+
+  time = micros();
+  resetAddress();
+  loadData(0xAA);
+  loadData(0xAA);
+  loadData(0xAA);
+  loadData(0xAA);
+  loadData(0xAA);
+  loadData(0xAA);
+  loadData(0xAA);
+  loadData(0xAA);
+  time = micros() - time;
+  Serial.println(time);
+
+  delay(DELAY_TIME);
+
+  time = micros();
+  resetAddress();
+  loadData(0xFF);
+  loadData(0xFF);
+  loadData(0xFF);
+  loadData(0xFF);
+  loadData(0xFF);
+  loadData(0xFF);
+  loadData(0xFF);
+  loadData(0xFF);
+  time = micros() - time;
+  Serial.println(time);
+
+  delay(DELAY_TIME);
+}
 
 void loop() {
 #if defined(TEST_PARALLEL)
@@ -267,5 +285,6 @@ void loop() {
 
 #if defined(TEST_BLOCK)
   Serial.println(F("TEST BLOCK"));
+  test_loopBlock();
 #endif
 }
