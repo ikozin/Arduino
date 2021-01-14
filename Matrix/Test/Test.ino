@@ -88,9 +88,9 @@
 
 */
 
-#define TEST_PARALLEL
+//#define TEST_PARALLEL
 //#define TEST_SHIFT
-//#define TEST_BLOCK
+#define TEST_BLOCK
 
 #define C             (12)
 #define R             (13)
@@ -115,7 +115,7 @@ void setup() {
   pinMode(C, OUTPUT);
   digitalWrite(C, LOW);
 
-#if defined(TEST_PARALLEL)
+#if defined(TEST_PARALLEL) || defined(TEST_BLOCK)
   pinMode(D0, OUTPUT);
   pinMode(D1, OUTPUT);
   pinMode(D2, OUTPUT);
@@ -266,6 +266,21 @@ void test_loopBlock() {
   loadData(0xFF);
   loadData(0xFF);
   loadData(0xFF);
+  time = micros() - time;
+  Serial.println(time);
+
+  delay(DELAY_TIME);
+
+  time = micros();
+  resetAddress();
+  loadData(0x01);
+  loadData(0x02);
+  loadData(0x04);
+  loadData(0x08);
+  loadData(0x10);
+  loadData(0x20);
+  loadData(0x40);
+  loadData(0x80 ;
   time = micros() - time;
   Serial.println(time);
 
