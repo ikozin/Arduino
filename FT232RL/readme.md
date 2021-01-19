@@ -1,5 +1,5 @@
 # FT232RL USB UART
-![ft232rl](ft232rl.jpg "ft232rl")
+![ft232rl](./ft232rl.jpg "ft232rl")
 
 Страница загрузки драйвера
 https://ftdichip.com/drivers/vcp-drivers/
