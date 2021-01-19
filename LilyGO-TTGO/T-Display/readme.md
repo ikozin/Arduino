@@ -6,18 +6,18 @@ Git: https://github.com/Xinyuan-LilyGO/TTGO-T-Display
 https://github.com/espressif/arduino-esp32
 
 
-Настройка менеджера плат в Arduino IDE
+РќР°СЃС‚СЂРѕР№РєР° РјРµРЅРµРґР¶РµСЂР° РїР»Р°С‚ РІ Arduino IDE
 https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_index.json
-![setting](./setting.png "Настройки")
+![setting](./setting.png "РќР°СЃС‚СЂРѕР№РєРё")
 
-Библиотеки Arduino IDE: "%USERPROFILE%\Documents\Arduino\libraries"
+Р‘РёР±Р»РёРѕС‚РµРєРё Arduino IDE: "%USERPROFILE%\Documents\Arduino\libraries"
 
 ### [Button2](https://github.com/LennartHennigs/Button2)
 ![button2](./button2.png "Button2")
 
 ### [TFT_eSPI](https://github.com/ikozin/Arduino/tree/master/LilyGO-TTGO/T-Display/TFT_eSPI/)
-Оригинал библиотеки https://github.com/Bodmer/TFT_eSPI, подготовленная для T-Display https://github.com/Xinyuan-LilyGO/TTGO-T-Display/tree/master/TFT_eSPI/. Копия [TFT_eSPI](https://github.com/ikozin/Arduino/tree/master/LilyGO-TTGO/T-Display/TFT_eSPI/) (на 19 января 2021) 
+РћСЂРёРіРёРЅР°Р» Р±РёР±Р»РёРѕС‚РµРєРё https://github.com/Bodmer/TFT_eSPI, РїРѕРґРіРѕС‚РѕРІР»РµРЅРЅР°СЏ РґР»СЏ T-Display https://github.com/Xinyuan-LilyGO/TTGO-T-Display/tree/master/TFT_eSPI/. РљРѕРїРёСЏ [TFT_eSPI](https://github.com/ikozin/Arduino/tree/master/LilyGO-TTGO/T-Display/TFT_eSPI/) (РЅР° 19 СЏРЅРІР°СЂСЏ 2021) 
 
-### Выбор платы в Arduino IDE
+### Р’С‹Р±РѕСЂ РїР»Р°С‚С‹ РІ Arduino IDE
 ![menu](./menu.png "menu")
 
