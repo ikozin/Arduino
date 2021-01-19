@@ -10,11 +10,15 @@ https://github.com/espressif/arduino-esp32
 https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_index.json
 ![setting](./setting.png "Настройки")
 ## Необходимые библиотеки
-Библиотеки Arduino IDE: "%USERPROFILE%\Documents\Arduino\libraries"
+Библиотеки Arduino IDE: **"%USERPROFILE%\Documents\Arduino\libraries\"**
 ### [Button2](https://github.com/LennartHennigs/Button2)
 ![button2](./button2.png "Button2")
 ### [TFT_eSPI](https://github.com/ikozin/Arduino/tree/master/LilyGO-TTGO/T-Display/TFT_eSPI/)
 Оригинал библиотеки https://github.com/Bodmer/TFT_eSPI, подготовленная для T-Display https://github.com/Xinyuan-LilyGO/TTGO-T-Display/tree/master/TFT_eSPI/. Копия [TFT_eSPI](https://github.com/ikozin/Arduino/tree/master/LilyGO-TTGO/T-Display/TFT_eSPI/) (на 19 января 2021) 
 ## Выбор платы в Arduino IDE
 ![menu](./menu.png "menu")
-
+## Скетч
+Перед компиляцией необходимо установить локальную библиотеку **TFT_eSPI**,
+для этого необходимо выполнить скрипт **deploy_TFT_eSPI.cmd**
+После компиляции её нужно удалить выполнив скрипт **remove_TFT_eSPI.cmd**.
+Скетч: [TTGO-T-Display.ino](https://github.com/ikozin/Arduino/tree/master/LilyGO-TTGO/T-Display/TTGO-T-Display/)
