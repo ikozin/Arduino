@@ -4,6 +4,8 @@ Git: https://github.com/Xinyuan-LilyGO/TTGO-T-Display
 
 
 https://github.com/espressif/arduino-esp32
+https://docs.espressif.com/projects/esp-idf/en/latest/esp32/
+https://www.sites.google.com/site/jmaathuis/arduino/lilygo-ttgo-t-display-esp32
 
 ## Настройка Arduino IDE
 Настройка менеджера плат в Arduino IDE
