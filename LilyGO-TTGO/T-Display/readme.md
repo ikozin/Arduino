@@ -6,11 +6,14 @@ LILYGO® TTGO T-Display ESP32 WiFi and Bluetooth Module Development Board For Ar
 
 
 https://github.com/espressif/arduino-esp32
+
 https://docs.espressif.com/projects/esp-idf/en/latest/esp32/
+
 https://www.sites.google.com/site/jmaathuis/arduino/lilygo-ttgo-t-display-esp32
 
+https://www.espressif.com/en/support/download/other-tools
 
-Product  Description
+### Product  Description
 
 | Hardware                    | Specifications |
 | :-                          | :- |
