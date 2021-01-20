@@ -24,3 +24,8 @@ https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32
 для этого необходимо выполнить скрипт **deploy_TFT_eSPI.cmd**
 После компиляции её нужно удалить выполнив скрипт **remove_TFT_eSPI.cmd**.
 Скетч: [TTGO-T-Display.ino](https://github.com/ikozin/Arduino/tree/master/LilyGO-TTGO/T-Display/TTGO-T-Display/)
+
+## CP2104 USB to UART Bridge Controller
+Website: https://www.silabs.com/developers/usb-to-uart-bridge-vcp-drivers
+
+Скачать: [CP210x Universal Windows Driver](https://www.silabs.com/documents/public/software/CP210x_Universal_Windows_Driver.zip)

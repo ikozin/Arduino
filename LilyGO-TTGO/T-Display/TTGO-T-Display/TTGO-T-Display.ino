@@ -34,7 +34,7 @@ char buff[512];
 int vref = 1100;
 int btnCick = false;
 
-#define ENABLE_SPI_SDCARD
+//#define ENABLE_SPI_SDCARD
 
 //Uncomment will use SDCard, this is just a demonstration,
 //how to use the second SPI
