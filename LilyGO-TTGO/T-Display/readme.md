@@ -4,7 +4,6 @@ Git: https://github.com/Xinyuan-LilyGO/TTGO-T-Display
 
 LILYGO® TTGO T-Display ESP32 WiFi and Bluetooth Module Development Board For Arduino 1.14 Inch LCD
 
-
 https://github.com/espressif/arduino-esp32
 
 https://docs.espressif.com/projects/esp-idf/en/latest/esp32/
@@ -64,7 +63,6 @@ https://www.espressif.com/en/support/download/other-tools
 | OS                   | FreeRTOS |
 
 ![Pin diagram](./pins.jpg "Распиновка")
-
 
 ## Настройка Arduino IDE
 Настройка менеджера плат в Arduino IDE
