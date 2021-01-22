@@ -1,7 +1,7 @@
 #include "GyverTM1637.h" //https://alexgyver.ru/tm1637_display/
 
-#define CLK 2
-#define DIO 3
+#define CLK 6
+#define DIO 7
 
 GyverTM1637 disp(CLK, DIO);
 uint32_t Now, clocktimer;
@@ -11,7 +11,7 @@ void setup()
 {
   Serial.begin(9600);
   disp.clear();
-  disp.brightness(7);  // �������, 0 - 7 (������� - ��������)
+  disp.brightness(7);  // 0 - 7)
 }
 
 void loop ()
