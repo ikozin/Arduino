@@ -4,15 +4,12 @@ Git: https://github.com/Xinyuan-LilyGO/TTGO-T-Display
 
 LILYGO® TTGO T-Display ESP32 WiFi and Bluetooth Module Development Board For Arduino 1.14 Inch LCD
 
-https://github.com/espressif/arduino-esp32
-
-https://docs.espressif.com/projects/esp-idf/en/latest/esp32/
-
 https://www.sites.google.com/site/jmaathuis/arduino/lilygo-ttgo-t-display-esp32
 
-https://www.espressif.com/en/support/download/other-tools
+## Настройка Arduino IDE
+**Описание настройки и выбора платы: [ESP32](../ESP32/readme.md)**
 
-### Product  Description
+## Product  Description
 
 | Hardware                    | Specifications |
 | :-                          | :- |
@@ -62,24 +59,21 @@ https://www.espressif.com/en/support/download/other-tools
 | User Configuration   | AT + Instruction set, cloud server, android/iOSapp |
 | OS                   | FreeRTOS |
 
-![Pin diagram](./pins.jpg "Распиновка")
+![Pin diagram](./images/pins.jpg "Распиновка")
 
-## Настройка Arduino IDE
-Настройка менеджера плат в Arduino IDE
-https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_index.json
-![setting](./setting.png "Настройки")
 ## Необходимые библиотеки
-Библиотеки Arduino IDE: **"%USERPROFILE%\Documents\Arduino\libraries\"**
+
 ### [Button2](https://github.com/LennartHennigs/Button2)
-![button2](./button2.png "Button2")
+![button2](./images/button2.png "Button2")
+
 ### [TFT_eSPI](https://github.com/ikozin/Arduino/tree/master/LilyGO-TTGO/T-Display/TFT_eSPI/)
-Оригинал библиотеки https://github.com/Bodmer/TFT_eSPI, подготовленная для T-Display https://github.com/Xinyuan-LilyGO/TTGO-T-Display/tree/master/TFT_eSPI/. Копия [TFT_eSPI](https://github.com/ikozin/Arduino/tree/master/LilyGO-TTGO/T-Display/TFT_eSPI/) (на 19 января 2021) 
-## Выбор платы в Arduino IDE
-![menu](./menu.png "menu")
+Оригинал библиотеки https://github.com/Bodmer/TFT_eSPI, подготовленная для T-Display https://github.com/Xinyuan-LilyGO/TTGO-T-Display/tree/master/TFT_eSPI/.
+Копия [TFT_eSPI](https://github.com/ikozin/Arduino/tree/master/LilyGO-TTGO/T-Display/TFT_eSPI/) (на 19 января 2021) 
+- установка библиотеки, **deploy_TFT_eSPI.cmd**
+- удаление  библиотеки, **remove_TFT_eSPI.cmd**
+
 ## Скетч
-Перед компиляцией необходимо установить локальную библиотеку **TFT_eSPI**,
-для этого необходимо выполнить скрипт **deploy_TFT_eSPI.cmd**
-После компиляции её нужно удалить выполнив скрипт **remove_TFT_eSPI.cmd**.
+Перед компиляцией необходимо установить локальную библиотеку **TFT_eSPI**
 
 Скетч: [TTGO-T-Display.ino](https://github.com/ikozin/Arduino/tree/master/LilyGO-TTGO/T-Display/TTGO-T-Display/)
 
