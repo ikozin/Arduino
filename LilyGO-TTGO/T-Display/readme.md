@@ -72,10 +72,11 @@ https://www.sites.google.com/site/jmaathuis/arduino/lilygo-ttgo-t-display-esp32
 - установка библиотеки, **deploy_TFT_eSPI.cmd**
 - удаление  библиотеки, **remove_TFT_eSPI.cmd**
 
-## Скетч
-Перед компиляцией необходимо установить локальную библиотеку **TFT_eSPI**
+## Тест
+Перед компиляцией необходимо установить локальную библиотеку **TFT_eSPI** : [FactoryTest](./TFT_eSPI/examples/FactoryTest/FactoryTest.ino)
 
-Скетч: [TTGO-T-Display.ino](https://github.com/ikozin/Arduino/tree/master/LilyGO-TTGO/T-Display/TTGO-T-Display/)
+
+
 
 ## CP2104 USB to UART Bridge Controller
 Website: https://www.silabs.com/developers/usb-to-uart-bridge-vcp-drivers

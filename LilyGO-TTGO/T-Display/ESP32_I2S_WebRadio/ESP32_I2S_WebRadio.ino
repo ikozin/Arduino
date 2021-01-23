@@ -66,12 +66,13 @@ Audio audio;
 
 String ssid         = "";  // SSID WI-FI
 String password     = "";
-int currentStation = 0;
+int currentStation  = 0;
+int currentVolume   = 5;
 
 typedef struct _radioItem
 {
-  char *name;
-  char *url;
+  const char *name;
+  const char *url;
 } RadioItem;
 
 const RadioItem listStation[] PROGMEM = 
@@ -100,15 +101,24 @@ const RadioItem listStation[] PROGMEM =
 
 #define StationCount (sizeof(listStation)/sizeof(listStation[0]))
 
+#define TFT_BL              4   // Display backlight control pin
+
 void setup()
 {
   Serial.begin(115200);
+  
+  pinMode(TFT_BL, OUTPUT);                // Set backlight pin to output mode
+  digitalWrite(TFT_BL, TFT_BACKLIGHT_ON); // Turn backlight on. TFT_BACKLIGHT_ON has been set in the TFT_eSPI library in the User Setup file TTGO_T_Display.h
 
   tft.init();
   tft.setRotation(0);
   tft.fillScreen(TFT_BLACK);
-  //tft.setTextSize(2);
-  tft.drawCentreString("WebRadio", 67, 80, 2);
+  tft.setTextColor(TFT_GREEN);
+  tft.setTextFont(2);
+  tft.println("start WebRadio");
+  tft.print("wi-fi ssid: ");
+  tft.println(ssid.c_str());
+  tft.print("connecting");
 /*
   Serial.print("width  ");
   Serial.println(tft.width());
@@ -122,40 +132,46 @@ void setup()
   WiFi.begin(ssid.c_str(), password.c_str());
   while (WiFi.status() != WL_CONNECTED)
   {
-   tft.drawCentreString(".  ", 67, 120, 2);
-   delay(500);
-   tft.drawCentreString(" . ", 67, 120, 2);
-   delay(500);
-   tft.drawCentreString("  .", 67, 120, 2);
-   delay(500);
+    tft.print(".");
+    delay(500);
+    tft.print(".");
+    delay(500);
+    tft.print(".");
+    delay(500);
+    yield();
   }
-  tft.fillScreen(TFT_BLACK);
+  tft.println();
+  tft.println("connected!");
+  tft.print("ip: ");
+  tft.println(WiFi.localIP());
 
   audio.setPinout(I2S_BCLK, I2S_LRC, I2S_DOUT);
-  audio.setVolume(5); // 0...21
-  setRadioStation();
+  audio.setVolume(currentVolume); // 0...21
   
   btn1.setPressedHandler(nextRadioStation);
   btn2.setPressedHandler(prevRadioStation);
+
+  delay(1000);
+  setRadioStation();
 }
 
 void setRadioStation()
 {
   Serial.print("CurrentStation  ");
   Serial.println(currentStation);
+  audio.connecttohost(listStation[currentStation].url);
   tft.fillScreen(TFT_BLACK);
   tft.drawCentreString(listStation[currentStation].name, 67, 80, 2);
-  audio.connecttohost(listStation[currentStation].url);
 }
 
-void nextRadioStation(Button2 & b)
+void nextRadioStation(Button2& b)
 {
   currentStation++;
   if (currentStation == StationCount) currentStation = 0;
   setRadioStation();
 }
 
-void prevRadioStation(Button2 & b)
+void prevRadioStation(Button2& b)
 {
   currentStation--;
   if (currentStation < 0) currentStation = StationCount - 1;
