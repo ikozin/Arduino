@@ -1,0 +1,1 @@
+xcopy "*.*" "%USERPROFILE%\Documents\Arduino\libraries\TFT_eSPI\Fonts\" /E /Y

@@ -4,14 +4,10 @@ Git: https://github.com/LilyGO/ESP32-MINI-32-V1.3
 
 LILYGO® TTGO T7 V1.3 MINI 32 ESP32 WiFi Bluetooth Module Development Board
 
-https://github.com/espressif/arduino-esp32
+## Настройка Arduino IDE
+**Описание настройки и выбора платы: [ESP32](../ESP32/readme.md)**
 
-https://docs.espressif.com/projects/esp-idf/en/latest/esp32/
-
-https://www.espressif.com/en/support/download/other-tools
-
-
-### Product Description
+## Product Description
 
 | Hardware                | Specifications |
 | :-                      | :- |
@@ -21,12 +17,7 @@ https://www.espressif.com/en/support/download/other-tools
 | USB to serial port chip | CH340C |
 | JST Connector           | 2Pin 1.25mm |
 
-![Pin diagram](./pins.png "Распиновка")
-
-## Настройка Arduino IDE
-Настройка менеджера плат в Arduino IDE
-https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_index.json
-![setting](./setting.png "Настройки")
+![Pin diagram](./images/pins.png "Распиновка")
 
 ## CH340C USB to serial port
 Website: http://www.wch.cn/download/CH341SER_ZIP.html
