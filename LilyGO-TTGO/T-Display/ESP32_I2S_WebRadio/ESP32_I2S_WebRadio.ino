@@ -4,19 +4,19 @@
 (Standard I2S interface) BCLK->BCK, I2SO->DIN, and LRCLK(WS)->LCK
 
      ESP32         PCM5102A
-    ┌───┐     ┌───┬───┐             ┌────┬──────┐
-    │ +5V ├───┤ VCC │     │           ─┤  VCC  │          │
-    │     │     │ 3.3V│ 3.3V│           ─┤  3.3V │          ├─┐
-    │ GND ├───┤ GND │ GND │           ─┤  GND  │ PCM5102A │  │
-    │     │     │ FLT │ GND │           ─┤  FLT  │          ├─┘
-    │     │     │ DMP │ GND │           ─┤  DMP  │          │
-    │     │     │ SCL │ GND │           ─┤  SCL  │          │
-    │ 27  ├───┤ BCK │     │           ─┤  BCK  │          │
-    │ 25  ├───┤ DIN │     │           ─┤  DIN  │          │
-    │ 26  ├───┤ LCK │     │           ─┤  LCK  │          │
-    │     │     │ FMT │ GND │           ─┤  FMT  │          │
-    │     │     │ XMT │ 3.3V│           ─┤  XMT  │          │
-    └───┘     └───┴───┘             └────┴──────┘
+    ┌───┐     ┌───┬───┐             ┌────┬───────────────────────────────────────────┐
+    │ +5V ├───┤ VCC │     │           ─┤  VCC  │                                                                        │
+    │     │     │ 3.3V│ 3.3V│           ─┤  3.3V │ PCM5102A                                                               ├─┐
+    │ GND ├───┤ GND │ GND │           ─┤  GND  │                                                                        │  │
+    │     │     │ FLT │ GND │           ─┤  FLT  │ Filter select : Normal latency (Low) / Low latency (High)              ├─┘
+    │     │     │ DMP │ GND │           ─┤  DMP  │ De-emphasis control for 44.1kHz sampling rate(1): Off (Low) / On (High)│
+    │     │     │ SCL │ GND │           ─┤  SCL  │ System clock input                                                     │
+    │ 27  ├───┤ BCK │     │           ─┤  BCK  │ Audio data bit clock input                                             │
+    │ 25  ├───┤ DIN │     │           ─┤  DIN  │ Audio data input                                                       │
+    │ 26  ├───┤ LCK │     │           ─┤  LCK  │ Audio data word clock input                                            │
+    │     │     │ FMT │ GND │           ─┤  FMT  │ Audio format selection : I2S (Low) / Left justified (High)             │
+    │     │     │ XMT │ 3.3V│           ─┤  XMT  │ Soft mute control : Soft mute (Low) / soft un-mute (High)              │
+    └───┘     └───┴───┘             └────┴───────────────────────────────────────────┘
 
 +5V   from ESP32   -> VCC
 GND   from ESP32   -> GND, FLT, DMP, FMT, SCL
