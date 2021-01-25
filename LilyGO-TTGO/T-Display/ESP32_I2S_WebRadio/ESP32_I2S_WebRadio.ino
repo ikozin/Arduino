@@ -51,6 +51,7 @@ Partition Scheme: Huge APP (3MB No OTA/1MB SPIFFS)
 #include <Audio.h>
 #include <Button2.h>
 #include <TFT_eSPI.h>
+#include <Preferences.h>
 
 #define I2S_DOUT      25    // DIN connection
 #define I2S_BCLK      27    // Bit clock
@@ -63,6 +64,7 @@ TFT_eSPI tft = TFT_eSPI(135, 240);
 Button2 btn1(BUTTON_1);
 Button2 btn2(BUTTON_2);
 Audio audio;
+Preferences prefs;
 
 String ssid         = "";  // SSID WI-FI
 String password     = "";
@@ -115,67 +117,84 @@ void setup()
   tft.fillScreen(TFT_BLACK);
   tft.setTextColor(TFT_GREEN);
   tft.setTextFont(2);
-  tft.println("start WebRadio");
-  tft.print("wi-fi ssid: ");
-  tft.println(ssid.c_str());
-  tft.print("connecting");
-/*
-  Serial.print("width  ");
-  Serial.println(tft.width());
-  Serial.print("height  ");
-  Serial.println(tft.height());
-  Serial.print("StationCount  ");
-  Serial.println(StationCount);
-*/
+  tft.printf("\r\nstart WebRadio\r\n");
+  displaySystemInfo(tft);
+  displaySystemInfo(Serial);  
+  tft.printf("Wi-Fi SSID: %s\r\n", ssid.c_str());
+  tft.printf("connecting");
+
   WiFi.disconnect();
   WiFi.mode(WIFI_STA);
   WiFi.begin(ssid.c_str(), password.c_str());
   while (WiFi.status() != WL_CONNECTED)
   {
-    tft.print(".");
+    tft.printf(".");
     delay(500);
-    tft.print(".");
+    tft.printf(".");
     delay(500);
-    tft.print(".");
+    tft.printf(".");
     delay(500);
     yield();
   }
-  tft.println();
-  tft.println("connected!");
-  tft.print("ip: ");
-  tft.println(WiFi.localIP());
-
-  audio.setPinout(I2S_BCLK, I2S_LRC, I2S_DOUT);
-  audio.setVolume(currentVolume); // 0...21
+  tft.printf("\r\nconnected!\r\n");
+  tft.printf("ip: %s\r\n", WiFi.localIP().toString().c_str());
   
-  btn1.setPressedHandler(nextRadioStation);
-  btn2.setPressedHandler(prevRadioStation);
+  prefs.begin("WebRadio");
+  currentVolume = prefs.getInt("volume", 5);
+  currentStation = prefs.getInt("station", 0);
+  
+  audio.setPinout(I2S_BCLK, I2S_LRC, I2S_DOUT);
+  
+  btn1.setPressedHandler(nextStation);
+  btn2.setPressedHandler(prevStation);
 
   delay(1000);
-  setRadioStation();
+  setVolume();
+  setStation();
 }
 
-void setRadioStation()
+void setStation()
 {
-  Serial.print("CurrentStation  ");
-  Serial.println(currentStation);
+  Serial.printf("station: %d\r\n", currentStation);
+  prefs.putInt("station", currentStation);
   audio.connecttohost(listStation[currentStation].url);
   tft.fillScreen(TFT_BLACK);
   tft.drawCentreString(listStation[currentStation].name, 67, 80, 2);
 }
 
-void nextRadioStation(Button2& b)
+void nextStation(Button2& b)
 {
   currentStation++;
   if (currentStation == StationCount) currentStation = 0;
-  setRadioStation();
+  setStation();
 }
 
-void prevRadioStation(Button2& b)
+void prevStation(Button2& b)
 {
   currentStation--;
   if (currentStation < 0) currentStation = StationCount - 1;
-  setRadioStation();
+  setStation();
+}
+
+void setVolume()
+{
+  Serial.printf("volume: %d\r\n", currentVolume);
+  prefs.putInt("volume", currentVolume);
+  audio.setVolume(currentVolume); // 0...21
+}
+
+void upVolume()
+{
+  currentVolume++;
+  if (currentVolume > 21) currentVolume = 21;
+  setVolume();
+}
+
+void downVolume()
+{
+  currentVolume--;
+  if (currentVolume < 0) currentVolume = 0;
+  setVolume();
 }
 
 void loop()
@@ -185,59 +204,60 @@ void loop()
   btn2.loop();
 }
 
+void displaySystemInfo(Print& prn)
+{
+  prn.printf("Model: %s\r\n", ESP.getChipModel());
+  prn.printf("Rev: %d\r\n", ESP.getChipRevision());
+  prn.printf("Core: %d\r\n", ESP.getChipCores());
+  uint64_t chipid = ESP.getEfuseMac();
+  prn.printf("ChipId: %X08%X08\r\n", (uint32_t)(chipid >> 32), (uint32_t)(chipid & 0xFFFFFFFF));
+  prn.printf("Flash: %d\r\n", ESP.getFlashChipSize());
+  prn.printf("SDK: %s\r\n", ESP.getSdkVersion());
+}
+
+/////////////////////////////////////////////////////////////////////////////////
 // optional
 void audio_info(const char *info)
 {
-  Serial.print("info        ");
-  Serial.println(info);
+  Serial.printf("info        %s\r\n", info);
 }
 void audio_id3data(const char *info)
 {
-  Serial.print("id3data     ");
-  Serial.println(info);
+  Serial.printf("id3data     %s\r\n", info);
 }
 void audio_eof_mp3(const char *info)
 {
-  Serial.print("eof_mp3     ");
-  Serial.println(info);
+  Serial.printf("eof_mp3     %s\r\n", info);
 }
 void audio_showstation(const char *info)
 {
-  Serial.print("station     ");
-  Serial.println(info);
+  Serial.printf("station     %s\r\n", info);
 }
 void audio_showstreaminfo(const char *info)
 {
-  Serial.print("streaminfo  ");
-  Serial.println(info);
+  Serial.printf("streaminfo  %s\r\n", info);
 }
 void audio_showstreamtitle(const char *info)
 {
-  Serial.print("streamtitle ");
-  Serial.println(info);
+  Serial.printf("streamtitle %s\r\n", info);
 }
 void audio_bitrate(const char *info)
 {
-  Serial.print("bitrate     ");
-  Serial.println(info);
+  Serial.printf("bitrate     %s\r\n", info);
 }
 void audio_commercial(const char *info)
 {
-  Serial.print("commercial  ");
-  Serial.println(info);
+  Serial.printf("commercial  %s\r\n", info);
 }
 void audio_icyurl(const char *info)
 {
-  Serial.print("icyurl      ");
-  Serial.println(info);
+  Serial.printf("icyurl      %s\r\n", info);
 }
 void audio_lasthost(const char *info)
 {
-  Serial.print("lasthost    ");
-  Serial.println(info);
+  Serial.printf("lasthost    %s\r\n", info);
 }
 void audio_eof_speech(const char *info)
 {
-  Serial.print("eof_speech  ");
-  Serial.println(info);
+  Serial.printf("eof_speech  %s\r\n", info);
 }
