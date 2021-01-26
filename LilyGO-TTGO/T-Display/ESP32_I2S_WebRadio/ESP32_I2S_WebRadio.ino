@@ -46,6 +46,7 @@ GND   from ESP32   -> GND, FLT, DMP, FMT, SCL
 Partition Scheme: Huge APP (3MB No OTA/1MB SPIFFS)
 */
 
+
 #include <Arduino.h>
 #include <WiFi.h>
 #include <Audio.h>
@@ -98,7 +99,7 @@ const RadioItem listStation[] PROGMEM =
 //    {.name = "101.ru - Tech House",                 .url = "ic3.101.ru:8000/c18_5?setst=-1&tok=10750927noz69Grzhi/DPKrPfpYleLanrbg7jaVx0dPaV9MOQIW8AqUSV0N7kQ==" },
     {.name = "Radio Caprice - Techno",              .url = "79.120.77.11:9073/" },
 //    {.name = "101.ru - StarPro",                    .url = "ic3.101.ru:8000/c18_15" },
-    {.name = "Bells - Хорошее радио",               .url = "radio.horoshee.fm:8000/mp3" },
+//--    {.name = "Bells - Хорошее радио",               .url = "radio.horoshee.fm:8000/mp3" },
 };
 
 #define StationCount (sizeof(listStation)/sizeof(listStation[0]))
@@ -210,7 +211,7 @@ void displaySystemInfo(Print& prn)
   prn.printf("Rev: %d\r\n", ESP.getChipRevision());
   prn.printf("Core: %d\r\n", ESP.getChipCores());
   uint64_t chipid = ESP.getEfuseMac();
-  prn.printf("ChipId: %X08%X08\r\n", (uint32_t)(chipid >> 32), (uint32_t)(chipid & 0xFFFFFFFF));
+  prn.printf("ChipId: %04X%08X\r\n", (uint32_t)(chipid >> 32), (uint32_t)(chipid & 0xFFFFFFFF));
   prn.printf("Flash: %d\r\n", ESP.getFlashChipSize());
   prn.printf("SDK: %s\r\n", ESP.getSdkVersion());
 }
