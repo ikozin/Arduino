@@ -63,19 +63,14 @@ GND   from ESP32   -> GND, FLT, DMP, FMT, SCL
 Partition Scheme: Huge APP (3MB No OTA/1MB SPIFFS)
 */
 
-
-#include <Arduino.h>
 #include <WiFi.h>
 #include <Audio.h>
 #include <Button2.h>
 #include <TFT_eSPI.h>
 #include <Preferences.h>
 #include <ESP32Encoder.h>
-//#include <NTPClient.h>
 #include <esp_sntp.h>
-
-#include "FontsRus\CourierCyr8.h"
-#include "FontsRus\FreeMono8.h"
+#include "WebRadio.h"
 
 #define I2S_DIN       25    // DIN
 #define I2S_BCK       27    // BCK
@@ -93,55 +88,38 @@ Audio audio;
 Preferences prefs;
 ESP32Encoder encoderL;
 ESP32Encoder encoderR;
-//WiFiUDP ntpUDP;
-//NTPClient timeClient(ntpUDP);
 
-//#define StateRadioTab   0
-//#define StateTimeTab    1
-//#define StateWeatherTab 2
+int currentPage     = RADIO_PAGE;
 
-String ssid         = "";  // SSID WI-FI
-String password     = "";
+void (*loopPage)()  = NULL;
 
-int currentStation  = 0;
-int currentVolume   = 5;
 
-int scrollX         = 0;
-int scrollWidth     = 0;
-long scrollTime     = 0;
-#define scrollY     100
-#define scrollStep  4
-#define scrollDelay 25
+String ssid         = ""; // SSID WI-FI
+String pswd         = "";
 
-#define MaxStringLenght 127
-char target[MaxStringLenght + 1] = "";
+int station         = 0;
+int volume          = 5;
+
 
 typedef struct _radioItem {
   const char *name;
+  const char *name2;  
   const char *url;
 } RadioItem;
 
 const RadioItem listStation[] PROGMEM = {
-    {.name = "Наше радио",                          .url = "nashe1.hostingradio.ru/nashe-128.mp3" },
-    {.name = "Наше радио",                          .url = "nashe1.hostingradio.ru/nashe20-128.mp3" },
-    {.name = "Дорожное радио",                      .url = "dorognoe.hostingradio.ru:8000/radio" },
-//    {.name = "Авто радио",                          .url = "ic2.101.ru:8000/v3_1" },
-    {.name = "Европа плюс",                         .url = "ep128.streamr.ru/" },
-//    {.name = "101.ru - Евро хиты",                  .url = "ic3.101.ru:8000/c16_13" },
-    {.name = "Радио Рекорд - Супердискотека 90-х",  .url = "air.radiorecord.ru:8102/sd90_128" },
-    {.name = "Вести FM {Saint Petersburg}",         .url = "icecast.vgtrk.cdnvideo.ru/vestifm_mp3_192kbps" },
-    {.name = "Радио Маяк Москва {Mayak}",           .url = "icecast.vgtrk.cdnvideo.ru:8000/mayakfm" },
-    {.name = "101.ru - Retro",                      .url = "retroserver.streamr.ru:8043/retro128" },
-    {.name = "Radio Eurodance",                     .url = "stream2.laut.fm/eurodance" },
-//    {.name = "101.ru - Русский Рок",                .url = "ic3.101.ru:8000/c1_2" },
-//    {.name = "Abacus.fm - Mozart Piano",            .url = "listen.abacus.fm/mozartpiano.m3u" },
-//    {.name = "Classic FM",                          .url = "ice-sov.musicradio.com/ClassicFMMP3" },
-    {.name = "Klassik Radio - Pure Bach",           .url = "stream.klassikradio.de/purebach/mp3-128/radiosure/" },
-//  {.name = "NRK Klassisk",                        .url = "lyd.nrk.no/nrk_radio_klassisk_mp3_h" },
-//    {.name = "101.ru - Tech House",                 .url = "ic3.101.ru:8000/c18_5?setst=-1&tok=10750927noz69Grzhi/DPKrPfpYleLanrbg7jaVx0dPaV9MOQIW8AqUSV0N7kQ==" },
-    {.name = "Radio Caprice - Techno",              .url = "79.120.77.11:9073/" },
-//    {.name = "101.ru - StarPro",                    .url = "ic3.101.ru:8000/c18_15" },
-    {.name = "Bells - Хорошее радио",               .url = "radio.horoshee.fm:8000/mp3" },
+    {.name = "Наше радио",      .name2 = "",              .url = "nashe1.hostingradio.ru/nashe-128.mp3" },
+    {.name = "Наше радио",      .name2 = "",              .url = "nashe1.hostingradio.ru/nashe20-128.mp3" },
+    {.name = "Дорожное",        .name2 = "радио",         .url = "dorognoe.hostingradio.ru:8000/radio" },
+    {.name = "Европа плюс",     .name2 = "",              .url = "ep128.streamr.ru/" },
+    {.name = "Радио Рекорд",    .name2 = "Супердискотека",  .url = "air.radiorecord.ru:8102/sd90_128" },
+    {.name = "Вести FM",        .name2 = "Petersburg",    .url = "icecast.vgtrk.cdnvideo.ru/vestifm_mp3_192kbps" },
+    {.name = "Радио Маяк",      .name2 = "Москва",        .url = "icecast.vgtrk.cdnvideo.ru:8000/mayakfm" },
+    {.name = "101.ru",          .name2 = "Retro",         .url = "retroserver.streamr.ru:8043/retro128" },
+    {.name = "Radio",           .name2 = "Eurodance",     .url = "stream2.laut.fm/eurodance" },
+    {.name = "Klassik Radio",   .name2 = "Pure Bach",     .url = "stream.klassikradio.de/purebach/mp3-128/radiosure/" },
+    {.name = "Radio Caprice",   .name2 = "Techno",        .url = "79.120.77.11:9073/" },
+    {.name = "Bells",           .name2 = "Хорошее радио", .url = "radio.horoshee.fm:8000/mp3" },
 };
 
 #define StationCount (sizeof(listStation)/sizeof(listStation[0]))
@@ -152,6 +130,13 @@ void setup() {
   pinMode(TFT_BL, OUTPUT);                // Set backlight pin to output mode
   digitalWrite(TFT_BL, TFT_BACKLIGHT_ON); // Turn backlight on. TFT_BACKLIGHT_ON has been set in the TFT_eSPI library in the User Setup file TTGO_T_Display.h
 
+  prefs.begin("WebRadio");
+  
+  ssid = prefs.getString("ssid", ssid);
+  pswd = prefs.getString("pswd", pswd);
+  //prefs.putString("ssid", ssid);
+  //prefs.putString("pswd", pswd);
+  
   tft.init();
   tft.setRotation(1);
   tft.fillScreen(TFT_BLACK);
@@ -163,7 +148,7 @@ void setup() {
   tft.printf("Wi-Fi SSID: %s, connecting", ssid.c_str());
   WiFi.disconnect();
   WiFi.mode(WIFI_STA);
-  WiFi.begin(ssid.c_str(), password.c_str());
+  WiFi.begin(ssid.c_str(), pswd.c_str());
   while (WiFi.status() != WL_CONNECTED) {
     tft.printf(".");
     delay(500);
@@ -177,32 +162,43 @@ void setup() {
 
   setup_sntp();
   
-  prefs.begin("WebRadio");
-  currentVolume = prefs.getInt("volume", 5);
-  currentStation = prefs.getInt("station", 0);
+  currentPage = prefs.getInt("page", TIME_PAGE);
+  volume    = prefs.getInt("volume", volume);
+  station   = prefs.getInt("station", station);
+  
+  stationY  = prefs.getInt("stationY", stationY);
+  station2Y = prefs.getInt("station2Y", station2Y);
+  scrollY   = prefs.getInt("scrollY", scrollY);
+
+  timeX     = prefs.getInt("timeX", timeX);
+  timeY     = prefs.getInt("timeY", timeY);
+  dowY      = prefs.getInt("dowY", dowY);
+  calendarY = prefs.getInt("calendarY", calendarY);
   
   audio.setPinout(I2S_BCK, I2S_LCK, I2S_DIN);
   
-  btn1.setPressedHandler(nextStation);
-  btn2.setPressedHandler(prevStation);
-  
-//  timeClient.setTimeOffset(prefs.getInt("utcOffset", 10800));
-//  timeClient.begin();
-//  timeClient.forceUpdate();
-//  Serial.println(timeClient.getFormattedTime());
+  btn1.setClickHandler(nextStation);
+  btn2.setClickHandler(prevStation);
 
-
-  yield();
+  btn1.setLongClickHandler(nextPage);
+  btn2.setLongClickHandler(prevPage);
   
   delay(1000);
-  get_time();
+
+  logTime(tft);
+  logTime(Serial);
+  
   setVolume();
-
-  //fontDemo(&CourierCyr8pt8b);
-  //fontDemo(&FreeMono8pt8b);
-  tft.setFreeFont(&CourierCyr8pt8b);
-
   setStation();
+
+  switch (currentPage) {
+    case RADIO_PAGE:
+      setRadioPage();
+      break;
+    case TIME_PAGE:
+      setTimePage();
+      break;
+  }
 }
 
 void setup_sntp() {
@@ -210,11 +206,12 @@ void setup_sntp() {
   tzset();
 
   sntp_setoperatingmode(SNTP_OPMODE_POLL);
-  sntp_setservername(0, "pool.ntp.org");
+  sntp_setservername(0, "ntp1.stratum2.ru");
+  sntp_setservername(1, "pool.ntp.org");
   sntp_init();
 }
 
-void get_time()
+void logTime(Print& prn)
 {
   time_t now;
   char strftime_buf[64];
@@ -222,96 +219,89 @@ void get_time()
   time(&now);
   localtime_r(&now, &timeinfo);
   strftime(strftime_buf, sizeof(strftime_buf), "%c", &timeinfo);
-  Serial.printf("%s\r\n", strftime_buf);
+  prn.printf("%s\r\n", strftime_buf);
 }
 
-void setStation() {
-  clearScroll();
-  Serial.printf("station: %d\r\n", currentStation);
-  prefs.putInt("station", currentStation);
-  audio.connecttohost(listStation[currentStation].url);
-  tft.fillScreen(TFT_BLACK);
-  tft.setTextSize(2);
-  const char* pname = utf8rus2(listStation[currentStation].name);
-  int width = tft.textWidth(pname);
-  tft.drawString(pname, (TFT_HEIGHT - width) >> 2, 20);
+void nextPage(Button2& b) {
+  switch (currentPage) {
+    case RADIO_PAGE:
+      setTimePage();
+      break;
+    case TIME_PAGE:
+      setRadioPage();
+      break;
+  }
+  prefs.putInt("page", currentPage);
+}
+
+void prevPage(Button2& b) {
+  switch (currentPage) {
+    case TIME_PAGE:
+      setRadioPage();
+      break;
+    case RADIO_PAGE:
+      setTimePage();
+      break;
+  }
+  prefs.putInt("page", currentPage);
+}
+
+void setRadioPage() {
+  loopPage = NULL;
+  currentPage = RADIO_PAGE;
+  displayRadioPage();
+  loopPage = loopRadioPage;
+}
+
+void setTimePage() {
+  loopPage = NULL;
+  currentPage = TIME_PAGE;
+  displayTimePage();
+  loopPage = loopTimePage;
 }
 
 void nextStation(Button2& b) {
-  currentStation++;
-  if (currentStation == StationCount) currentStation = 0;
+  station++;
+  if (station == StationCount) station = 0;
   setStation();
 }
 
 void prevStation(Button2& b) {
-  currentStation--;
-  if (currentStation < 0) currentStation = StationCount - 1;
+  station--;
+  if (station < 0) station = StationCount - 1;
   setStation();
 }
 
-void setVolume() {
-  Serial.printf("volume: %d\r\n", currentVolume);
-  prefs.putInt("volume", currentVolume);
-  audio.setVolume(currentVolume); // 0...21
+void setStation() {
+  Serial.printf("station: %d\r\n", station);
+  prefs.putInt("station", station);
+  audio.connecttohost(listStation[station].url);
+  displayStation();
 }
 
 void upVolume() {
-  currentVolume++;
-  if (currentVolume > 21) currentVolume = 21;
+  volume++;
+  if (volume > 21) volume = 21;
   setVolume();
 }
 
 void downVolume() {
-  currentVolume--;
-  if (currentVolume < 0) currentVolume = 0;
+  volume--;
+  if (volume < 0) volume = 0;
   setVolume();
 }
 
-void clearScroll() {
-  scrollWidth = 0;
-  scrollX = TFT_HEIGHT;
-  int height = tft.fontHeight() >> 2;
-  tft.fillRect(0, scrollY - height, scrollX, scrollY + height, TFT_BLACK);
-}
-
-void setScroll(const char * ptext) {
-  clearScroll();
-  utf8rus2(ptext);
-  scrollX = TFT_HEIGHT;
-  scrollWidth = tft.textWidth(target);
-  if (scrollWidth < TFT_HEIGHT) {
-    tft.drawString(target, (TFT_HEIGHT - scrollWidth) >> 2, scrollY);
-    scrollWidth = 0;
-  }
-  strcat(target, "  ");
-}
-
-void nextScroll() {
-  if (scrollWidth == 0) return;
-  long time = millis();
-  if (time - scrollTime >= scrollDelay) {
-    tft.drawString(target, scrollX, scrollY);
-    scrollX -= scrollStep;
-    if (scrollX < -scrollWidth) scrollX = TFT_HEIGHT;  
-    //Serial.println(time - scrollTime);
-    scrollTime = time;
-  }
-}
-
-void setRadioTab() {
-
-}
-
-void loopRadioTab() {
-  nextScroll();
+void setVolume() {
+  Serial.printf("volume: %d\r\n", volume);
+  prefs.putInt("volume", volume);
+  audio.setVolume(volume); // 0...21
 }
 
 void loop() {
   audio.loop();
   btn1.loop();
   btn2.loop();
-  loopRadioTab();
-  //timeClient.update();  
+  if (loopPage) loopPage();
 }
 
 void displaySystemInfo(Print& prn) {
@@ -322,98 +312,7 @@ void displaySystemInfo(Print& prn) {
   prn.printf("SDK: %s\r\n", ESP.getSdkVersion());
 }
 
-void fontDemo(const GFXfont* pfont) {
-  tft.setFreeFont(pfont);
-  tft.setTextSize(1);
- 
-  tft.fillScreen(TFT_BLACK);
-  tft.setTextColor(TFT_GREEN, TFT_BLACK);
-
-  tft.setCursor(0, 20);
-  tft.printf("0123456789");
-  tft.setCursor(0, 40);
-
-  tft.print((char)149);
-  tft.print((char)181);
-  delay(12000);
-}
-
-
-char *utf8rus2(const char *source) {
-  int i,j,k;
-  unsigned char n;
-  char m[2] = { '0', '\0' };
-  strcpy(target, "");
-  k = strlen(source);
-  i = j = 0;
-  while (i < k) {
-    n = source[i++];
-    if (n >= 127) {
-      switch (n) {
-        case 208:{
-          n = source[i++];
-          if (n == 129) { n = 149; break; } // перекодируем букву Ё->Е
-          break;
-        }
-        case 209: {
-          n = source[i++];
-          if (n == 145) { n = 181; break; } // перекодируем букву ё->е
-          break;
-        }
-        case 239: {
-          n = source[i++];
-          n = source[i++];
-          continue;
-        }
-      }
-    }
-
-    m[0] = n; strcat(target, m);
-    if (++j >= MaxStringLenght) break;
-  }
-  return target;
-}
-
-/////////////////////////////////////////////////////////////////////////////////
-// optional
-/*
-void audio_info(const char *info) {
-  Serial.printf("info        %s\r\n", info);
-}
-void audio_id3data(const char *info) {
-  Serial.printf("id3data     %s\r\n", info);
-}
-void audio_eof_mp3(const char *info) {
-  Serial.printf("eof_mp3     %s\r\n", info);
-}
-void audio_showstation(const char *info) {
-  Serial.printf("station     %s\r\n", info);
-}
-*/
 void audio_showstreamtitle(const char *info) {
-
   Serial.printf("streamtitle %s\r\n", info);
-/*
-  for (int i = 0; i < strlen(info); i++)
-    Serial.printf("%d, ", (int)info[i]);
-  Serial.printf("\r\n");    
-*/
   setScroll(info);
 }
-/*
-void audio_bitrate(const char *info) {
-  Serial.printf("bitrate     %s\r\n", info);
-}
-void audio_commercial(const char *info) {
-  Serial.printf("commercial  %s\r\n", info);
-}
-void audio_icyurl(const char *info) {
-  Serial.printf("icyurl      %s\r\n", info);
-}
-void audio_lasthost(const char *info) {
-  Serial.printf("lasthost    %s\r\n", info);
-}
-void audio_eof_speech(const char *info) {
-  Serial.printf("eof_speech  %s\r\n", info);
-}
-*/
