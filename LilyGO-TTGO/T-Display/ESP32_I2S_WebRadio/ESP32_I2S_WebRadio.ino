@@ -206,8 +206,7 @@ void setup_sntp() {
   tzset();
 
   sntp_setoperatingmode(SNTP_OPMODE_POLL);
-  sntp_setservername(0, "ntp1.stratum2.ru");
-  sntp_setservername(1, "pool.ntp.org");
+  sntp_setservername(0, "pool.ntp.org");
   sntp_init();
 }
 
