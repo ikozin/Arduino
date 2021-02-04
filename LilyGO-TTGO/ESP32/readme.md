@@ -23,3 +23,17 @@ https://diytech.ru/projects/spravochnik-po-raspinovke-esp32-kakie-vyvody-gpio-sl
 
 ## Библиотеки Arduino IDE
 Расположение: **"%USERPROFILE%\\Documents\\Arduino\\libraries\\"**
+
+## Полезные библиотеки
+https://github.com/bblanchon/ArduinoJson
+
+https://github.com/me-no-dev/AsyncTCP
+
+https://github.com/me-no-dev/ESPAsyncWebServer
+
+https://github.com/LennartHennigs/Button2
+
+https://github.com/madhephaestus/ESP32Encoder/
+
+https://github.com/earlephilhower/ESP8266Audio
+

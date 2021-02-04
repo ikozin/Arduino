@@ -63,6 +63,7 @@ GND   from ESP32   -> GND, FLT, DMP, FMT, SCL
 Partition Scheme: Huge APP (3MB No OTA/1MB SPIFFS)
 */
 
+#include <Arduino.h>
 #include <WiFi.h>
 #include <Audio.h>
 #include <Button2.h>
@@ -111,8 +112,8 @@ typedef struct _radioItem {
 
 Вести ФМ                    https://icecast-vgtrk.cdnvideo.ru/vestifm_mp3_64kbps      https://icecast-vgtrk.cdnvideo.ru/vestifm_mp3_128kbps     https://icecast-vgtrk.cdnvideo.ru/vestifm_mp3_192kbps
 Ретро FM                    https://retro.hostingradio.ru:8043/retro64                https://retro.hostingradio.ru:8043/retro128               https://retro.hostingradio.ru:8014/retro320.mp3
-Юмор FM                     https://pub0301.101.ru:8443/stream/air/aac/64/102         https://pub0301.101.ru:8443/stream/air/mp3/256/102
-Авторадио                   https://pub0301.101.ru:8443/stream/air/aac/64/100         https://pub0301.101.ru:8443/stream/air/mp3/256/100
+Юмор FM                     https://pub0301.101.ru:8443/stream/air/aac/64/102                                                                   https://pub0301.101.ru:8443/stream/air/mp3/256/102
+Авторадио                   https://pub0301.101.ru:8443/stream/air/aac/64/100                                                                   https://pub0301.101.ru:8443/stream/air/mp3/256/100
 Дорожное радио              https://dorognoe.hostingradio.ru/dorognoe_acc             https://dorognoe.hostingradio.ru/radio
 Наше Радио                  https://nashe1.hostingradio.ru/nashe-128.mp3
 Наше радио 2.0              https://nashe1.hostingradio.ru/nashe20-128.mp3
@@ -171,15 +172,12 @@ void setup() {
   while (WiFi.status() != WL_CONNECTED) {
     tft.printf(".");
     delay(500);
-    tft.printf(".");
-    delay(500);
-    tft.printf(".");
-    delay(500);
     yield();
   }
   tft.printf("\r\nconnected!\r\nip: %s\r\n", WiFi.localIP().toString().c_str());
 
-  setup_sntp(prefs.getString("tz", "UTC-3").c_str());
+  configTime(prefs.getInt("tz", 10800), 0, "pool.ntp.org");
+  //setup_sntp(prefs.getString("tz", "UTC-3").c_str());
   
   currentPage = prefs.getInt("page", TIME_PAGE);
   volume    = prefs.getInt("volume", volume);
@@ -224,6 +222,12 @@ void setup() {
 }
 
 void setup_sntp(const char * tz) {
+// * configTime
+//void configTime(long gmtOffset_sec, int daylightOffset_sec, const char* server1, const char* server2, const char* server3)
+//  ..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\1.0.5-rc6\cores\esp32\esp32-hal-time.c (совпадений: 2)
+//	Line 44:  * configTime
+
+
   setenv("TZ", tz, 1);  // Set timezone to Moscow (UTC-3)
   tzset();
 
