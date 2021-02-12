@@ -51,4 +51,7 @@ extern int dowY;
 extern void displayTimePage();
 extern void loopTimePage();
 
+extern void displayWeatherPage();
+extern void loopWeatherPage();
+
 #endif //WEBRADIO_H_

@@ -63,6 +63,7 @@ GND   from ESP32   -> GND, FLT, DMP, FMT, SCL
 Partition Scheme: Huge APP (3MB No OTA/1MB SPIFFS)
 */
 
+#include <Arduino.h>
 #include <WiFi.h>
 #include <Audio.h>
 #include <Button2.h>
@@ -107,9 +108,28 @@ typedef struct _radioItem {
   const char *url;
 } RadioItem;
 
+/*
+
+Вести ФМ                    https://icecast-vgtrk.cdnvideo.ru/vestifm_mp3_64kbps      https://icecast-vgtrk.cdnvideo.ru/vestifm_mp3_128kbps     https://icecast-vgtrk.cdnvideo.ru/vestifm_mp3_192kbps
+Ретро FM                    https://retro.hostingradio.ru:8043/retro64                https://retro.hostingradio.ru:8043/retro128               https://retro.hostingradio.ru:8014/retro320.mp3
+Юмор FM                     https://pub0301.101.ru:8443/stream/air/aac/64/102                                                                   https://pub0301.101.ru:8443/stream/air/mp3/256/102
+Авторадио                   https://pub0301.101.ru:8443/stream/air/aac/64/100                                                                   https://pub0301.101.ru:8443/stream/air/mp3/256/100
+Дорожное радио              https://dorognoe.hostingradio.ru/dorognoe_acc             https://dorognoe.hostingradio.ru/radio
+Наше Радио                  https://nashe1.hostingradio.ru/nashe-128.mp3
+Наше радио 2.0              https://nashe1.hostingradio.ru/nashe20-128.mp3
+Русское радио               https://rusradio.hostingradio.ru/rusradio96.aacp
+Радио DFM                   https://dfm.hostingradio.ru/dfm96.aacp
+Радио Comedy                https://ic7.101.ru:8000/s60
+Радио Рекорд                https://air.radiorecord.ru:805/rr_aac_64                  https://air.radiorecord.ru:805/rr_128
+Дискотека СССР - 101.ru     https://pub0202.101.ru:8443/stream/pro/aac/64/144
+Дискотека 90-x - 101.ru     https://pub0302.101.ru:8443/stream/pro/aac/64/74
+Дискотека 80-х - Авторадио  https://pub0301.101.ru:8443/stream/pro/aac/64/1
+
+*/
+
 const RadioItem listStation[] PROGMEM = {
     {.name = "Наше радио",      .name2 = "",              .url = "nashe1.hostingradio.ru/nashe-128.mp3" },
-    {.name = "Наше радио",      .name2 = "",              .url = "nashe1.hostingradio.ru/nashe20-128.mp3" },
+    {.name = "Наше радио 2.0",  .name2 = "",              .url = "nashe1.hostingradio.ru/nashe20-128.mp3" },
     {.name = "Дорожное",        .name2 = "радио",         .url = "dorognoe.hostingradio.ru:8000/radio" },
     {.name = "Европа плюс",     .name2 = "",              .url = "ep128.streamr.ru/" },
     {.name = "Радио Рекорд",    .name2 = "Супердискотека",  .url = "air.radiorecord.ru:8102/sd90_128" },
@@ -152,15 +172,12 @@ void setup() {
   while (WiFi.status() != WL_CONNECTED) {
     tft.printf(".");
     delay(500);
-    tft.printf(".");
-    delay(500);
-    tft.printf(".");
-    delay(500);
     yield();
   }
   tft.printf("\r\nconnected!\r\nip: %s\r\n", WiFi.localIP().toString().c_str());
 
-  setup_sntp();
+  configTime(prefs.getInt("tz", 10800), 0, "pool.ntp.org");
+  //setup_sntp(prefs.getString("tz", "UTC-3").c_str());
   
   currentPage = prefs.getInt("page", TIME_PAGE);
   volume    = prefs.getInt("volume", volume);
@@ -198,11 +215,20 @@ void setup() {
     case TIME_PAGE:
       setTimePage();
       break;
+    case WEATHER_PAGE:
+      setWeatherPage();
+      break;
   }
 }
 
-void setup_sntp() {
-  setenv("TZ", "UTC-3", 1);// Set timezone to Moscow
+void setup_sntp(const char * tz) {
+// * configTime
+//void configTime(long gmtOffset_sec, int daylightOffset_sec, const char* server1, const char* server2, const char* server3)
+//  ..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\1.0.5-rc6\cores\esp32\esp32-hal-time.c (совпадений: 2)
+//	Line 44:  * configTime
+
+
+  setenv("TZ", tz, 1);  // Set timezone to Moscow (UTC-3)
   tzset();
 
   sntp_setoperatingmode(SNTP_OPMODE_POLL);
@@ -227,6 +253,9 @@ void nextPage(Button2& b) {
       setTimePage();
       break;
     case TIME_PAGE:
+      setWeatherPage();
+      break;
+    case WEATHER_PAGE:
       setRadioPage();
       break;
   }
@@ -235,10 +264,13 @@ void nextPage(Button2& b) {
 
 void prevPage(Button2& b) {
   switch (currentPage) {
+    case RADIO_PAGE:
+      setWeatherPage();
+      break;
     case TIME_PAGE:
       setRadioPage();
       break;
-    case RADIO_PAGE:
+    case WEATHER_PAGE:
       setTimePage();
       break;
   }
@@ -257,6 +289,13 @@ void setTimePage() {
   currentPage = TIME_PAGE;
   displayTimePage();
   loopPage = loopTimePage;
+}
+
+void setWeatherPage() {
+  loopPage = NULL;
+  currentPage = WEATHER_PAGE;
+  displayWeatherPage();
+  loopPage = loopWeatherPage;
 }
 
 void nextStation(Button2& b) {

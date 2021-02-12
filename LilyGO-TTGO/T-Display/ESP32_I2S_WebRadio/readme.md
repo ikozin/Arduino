@@ -29,5 +29,9 @@ https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/system
 
 https://github.com/espressif/arduino-esp32/releases/tag/1.0.5-rc5
 
+### Список радиостанций
+
+- ~~Пополняемы список - https://esp-radio.ru/stream_list/~~
+- Слушать радио онлайн - https://top-radio.ru/
 
 
