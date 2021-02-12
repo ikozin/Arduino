@@ -280,7 +280,7 @@ void test_loopBlock() {
   loadData(0x10);
   loadData(0x20);
   loadData(0x40);
-  loadData(0x80 ;
+  loadData(0x80);
   time = micros() - time;
   Serial.println(time);
 
