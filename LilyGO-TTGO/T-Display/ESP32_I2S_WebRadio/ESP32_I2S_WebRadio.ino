@@ -221,20 +221,15 @@ void setup() {
   }
 }
 
+/*
 void setup_sntp(const char * tz) {
-// * configTime
-//void configTime(long gmtOffset_sec, int daylightOffset_sec, const char* server1, const char* server2, const char* server3)
-//  ..\AppData\Local\Arduino15\packages\esp32\hardware\esp32\1.0.5-rc6\cores\esp32\esp32-hal-time.c (совпадений: 2)
-//	Line 44:  * configTime
-
-
   setenv("TZ", tz, 1);  // Set timezone to Moscow (UTC-3)
   tzset();
-
   sntp_setoperatingmode(SNTP_OPMODE_POLL);
   sntp_setservername(0, "pool.ntp.org");
   sntp_init();
 }
+*/
 
 void logTime(Print& prn)
 {

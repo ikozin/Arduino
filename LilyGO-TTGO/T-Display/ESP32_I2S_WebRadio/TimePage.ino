@@ -49,10 +49,11 @@ void loopTimePage() {
   if (t - lastTimeTime < TimeDelay) return;
   lastTimeTime = t;
 
-  time_t now;
+
   struct tm timeinfo;
-  time(&now);
-  localtime_r(&now, &timeinfo);
+  if(!getLocalTime(&timeinfo)){
+    return;
+  }
 
   // Для уменьшения моргания выводм время в момент когда секуда = 0
   if (timeText[0] == '\0' || timeinfo.tm_sec == 0) {
