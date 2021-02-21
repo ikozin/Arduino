@@ -8,6 +8,7 @@ https://www.espressif.com/en/support/download/other-tools
 
 https://diytech.ru/projects/spravochnik-po-raspinovke-esp32-kakie-vyvody-gpio-sleduet-ispolzovat
 
+https://github.com/me-no-dev/arduino-esp32fs-plugin/releases
 
 ## Настройка Arduino IDE
 Настройка менеджера плат в Arduino IDE

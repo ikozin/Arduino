@@ -72,6 +72,9 @@ Partition Scheme: Huge APP (3MB No OTA/1MB SPIFFS)
 #include <ESP32Encoder.h>
 #include <esp_sntp.h>
 #include "WebRadio.h"
+#include "RadioLogos\nashe.h"
+#include "RadioLogos\vestifm.h"
+#include "RadioLogos\rusradio.h"
 
 #define I2S_DIN       25    // DIN
 #define I2S_BCK       27    // BCK
@@ -116,7 +119,6 @@ typedef struct _radioItem {
 Авторадио                   https://pub0301.101.ru:8443/stream/air/aac/64/100                                                                   https://pub0301.101.ru:8443/stream/air/mp3/256/100
 Дорожное радио              https://dorognoe.hostingradio.ru/dorognoe_acc             https://dorognoe.hostingradio.ru/radio
 Наше Радио                  https://nashe1.hostingradio.ru/nashe-128.mp3
-Наше радио 2.0              https://nashe1.hostingradio.ru/nashe20-128.mp3
 Русское радио               https://rusradio.hostingradio.ru/rusradio96.aacp
 Радио DFM                   https://dfm.hostingradio.ru/dfm96.aacp
 Радио Comedy                https://ic7.101.ru:8000/s60
@@ -129,7 +131,7 @@ typedef struct _radioItem {
 
 const RadioItem listStation[] PROGMEM = {
     {.name = "Наше радио",      .name2 = "",              .url = "nashe1.hostingradio.ru/nashe-128.mp3" },
-    {.name = "Наше радио 2.0",  .name2 = "",              .url = "nashe1.hostingradio.ru/nashe20-128.mp3" },
+    {.name = "Русское радио",   .name2 = "",              .url = "https://rusradio.hostingradio.ru/rusradio96.aacp" },
     {.name = "Дорожное",        .name2 = "радио",         .url = "dorognoe.hostingradio.ru:8000/radio" },
     {.name = "Европа плюс",     .name2 = "",              .url = "ep128.streamr.ru/" },
     {.name = "Радио Рекорд",    .name2 = "Супердискотека",  .url = "air.radiorecord.ru:8102/sd90_128" },
@@ -201,7 +203,10 @@ void setup() {
   btn2.setLongClickHandler(prevPage);
   
   delay(1000);
+  
+  encoderL.attachHalfQuad(37, 38);
 
+  
   logTime(tft);
   logTime(Serial);
   
@@ -306,7 +311,7 @@ void prevStation(Button2& b) {
 }
 
 void setStation() {
-  Serial.printf("station: %d\r\n", station);
+  Serial.printf("station: %s %s\r\n", listStation[station].name, listStation[station].name2);
   prefs.putInt("station", station);
   audio.connecttohost(listStation[station].url);
   displayStation();
@@ -335,6 +340,16 @@ void loop() {
   btn1.loop();
   btn2.loop();
   if (loopPage) loopPage();
+
+  if (encoderL.getCount() == 0) return;
+  if (encoderL.getCount() > 0) {
+    upVolume();
+  }
+  if (encoderL.getCount() < 0) {
+    downVolume();
+  }
+  encoderL.setCount(0);
+  //Serial.println(encoderL.getCount());  
 }
 
 void displaySystemInfo(Print& prn) {

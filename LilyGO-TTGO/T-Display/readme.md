@@ -63,6 +63,9 @@ https://www.sites.google.com/site/jmaathuis/arduino/lilygo-ttgo-t-display-esp32
 
 ## Необходимые библиотеки
 
+### [ESP32FS](https://github.com/me-no-dev/arduino-esp32fs-plugin/releases)
+Плагин для Arduino IDE, загружает файлы из директории Data в ESP32 flash memory
+
 ### [Button2](https://github.com/LennartHennigs/Button2)
 ![button2](./images/button2.png "Button2")
 
