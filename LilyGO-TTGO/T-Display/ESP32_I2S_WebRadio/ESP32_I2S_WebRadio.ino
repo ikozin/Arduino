@@ -62,6 +62,11 @@ GND   from ESP32   -> GND, FLT, DMP, FMT, SCL
 Плата: ESP32 Dev Module
 Partition Scheme: Huge APP (3MB No OTA/1MB SPIFFS)
 */
+/*
+Скетч использует 1119917 байт (35%) памяти устройства. Всего доступно 3145728 байт.
+Глобальные переменные используют 84116 байт (25%) динамической памяти, оставляя 243564 байт для локальных переменных. Максимум: 327680 байт.
+
+*/
 
 #include <Arduino.h>
 #include <WiFi.h>
@@ -70,11 +75,12 @@ Partition Scheme: Huge APP (3MB No OTA/1MB SPIFFS)
 #include <TFT_eSPI.h>
 #include <Preferences.h>
 #include <ESP32Encoder.h>
-#include <esp_sntp.h>
+#include <FS.h>
+#include <SPIFFS.h>
 #include "WebRadio.h"
-#include "RadioLogos\nashe.h"
-#include "RadioLogos\vestifm.h"
-#include "RadioLogos\rusradio.h"
+//#include "RadioLogos\nashe.h"
+//#include "RadioLogos\vestifm.h"
+//#include "RadioLogos\rusradio.h"
 
 #define I2S_DIN       25    // DIN
 #define I2S_BCK       27    // BCK
@@ -167,6 +173,10 @@ void setup() {
   displaySystemInfo(tft);
   displaySystemInfo(Serial);  
 
+  if(!SPIFFS.begin(true)){
+      Serial.println("SPIFFS Mount Failed");
+  }
+    
   tft.printf("Wi-Fi SSID: %s, connecting", ssid.c_str());
   WiFi.disconnect();
   WiFi.mode(WIFI_STA);
