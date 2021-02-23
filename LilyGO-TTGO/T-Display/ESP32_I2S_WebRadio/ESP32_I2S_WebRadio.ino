@@ -1,15 +1,16 @@
 /*
+         T-Display
     ┌─────────┐
     ┤GND         3V3├ 
     ┤GND         SVP├ 
-    ┤21           37├ 
-    ┤22           38├ 
+    ┤21           37├ Encoder Volume
+    ┤22           38├ Encoder Volume
     ┤17          SVN├ 
     ┤2            32├ 
     ┤15           33├ 
-    ┤13           25├ I2S
-    ┤12           26├ I2S
-    ┤GND          27├ I2S
+    ┤13           25├ I2S Encoder Volume
+    ┤12           26├ I2S Encoder Volume
+    ┤GND          27├ I2S Encoder Volume
     ┤GND         GND├ 
     ┤3V3          5V├ 
     └─────────┘
@@ -145,7 +146,7 @@ const RadioItem listStation[] PROGMEM = {
     {.name = "Вести FM",        .name2 = "",                .file = "/vestifm.raw",     .url = "https://icecast-vgtrk.cdnvideo.ru/vestifm_mp3_128kbps" },
     {.name = "Дорожное",        .name2 = "радио",           .file = "",                 .url = "dorognoe.hostingradio.ru:8000/radio" },
     {.name = "Радио Рекорд",    .name2 = "",                .file = "",                 .url = "https://air.radiorecord.ru:805/rr_128" },
-    {.name = "Радио DFM",       .name2 = "",                .file = "",                 .url = "https://dfm.hostingradio.ru/dfm96.aacp" },
+    {.name = "Радио DFM",       .name2 = "",                .file = "/dfm.raw",          .url = "https://dfm.hostingradio.ru/dfm96.aacp" },
 //    {.name = "Европа плюс",     .name2 = "",                .file = "",                 .url = "ep128.streamr.ru/" },
 //    {.name = "101.ru",          .name2 = "Retro",           .file = "",                 .url = "retroserver.streamr.ru:8043/retro128" },
 //    {.name = "Radio",           .name2 = "Eurodance",       .file = "",                 .url = "stream2.laut.fm/eurodance" },
