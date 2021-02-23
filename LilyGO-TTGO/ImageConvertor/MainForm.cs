@@ -22,18 +22,19 @@ namespace ImageConvertor
         private void btnLoad_Click(object sender, EventArgs e)
         {
             if (openFileDlg.ShowDialog(this) != DialogResult.OK) return;
-            _bitmap = new Bitmap(Bitmap.FromFile(openFileDlg.FileName));
-            //_bitmap.
+            _bitmap = new Bitmap(Image.FromFile(openFileDlg.FileName));
             pictureBox.Image = _bitmap;
             textBoxWidth.Text = pictureBox.Image.Width.ToString();
             textBoxHeight.Text = pictureBox.Image.Height.ToString();
-            btnScan.PerformClick();
+            AnalizeImage();
             panelTool.Enabled = true;
             numericPosX.Value = ((240 - pictureBox.Image.Width) / 2);
             numericPosY.Value = 0;
+            panelSave.Enabled = true;
+            btnSave.Enabled = true;
         }
 
-        private void btnScan_Click(object sender, EventArgs e)
+        private void AnalizeImage()
         {
             listViewColor.SelectedItems.Clear();
             listViewColor.BeginUpdate();
@@ -105,7 +106,7 @@ namespace ImageConvertor
                 }
             }
             pictureBox.Image = _bitmap;
-            btnScan.PerformClick();
+            AnalizeImage();
         }
 
         private void btnSelectColor_Click(object sender, EventArgs e)
