@@ -1,22 +1,25 @@
 #include "WebRadio.h"
+#include <FS.h>
+#include <SPIFFS.h>
 
 #define WeatherDelay   90000
 long lastWeatherTime       = 0;
 
 void displayWeatherPage() {
-  //tft.fillScreen(0xe1c6);
-  //tft.setSwapBytes(true);
-  //tft.pushImage(37, 2, 165, 70, logoNasheRadio);
-
-  //tft.fillScreen(TFT_BLACK);
-  //tft.setSwapBytes(true);
-  //tft.pushImage(5, 0, 231, 47, logoVestiFm);
-  
-  tft.fillScreen(TFT_WHITE);
-  tft.setSwapBytes(true);
-  tft.pushImage(56, 0, 128, 76, logoRusRadio);
+  tft.fillScreen(TFT_BLACK);
 }
-
+/*
+void dumpImage(uint8_t *p, size_t len) {
+  Serial.print("Size: ");
+  Serial.println(len);
+  for (int i = 0; i < len; i+=2) {
+    if (i % 16 == 0)
+      Serial.println();
+    Serial.printf("%2X%2X ", p[i+1], p[i]);  
+  }
+  Serial.println();
+}
+*/
 void loopWeatherPage() {
   long t = millis();
   if (t - lastWeatherTime < WeatherDelay) return;

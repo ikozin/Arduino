@@ -1,4 +1,7 @@
-  #include "WebRadio.h"
+#include "WebRadio.h"
+#include <FS.h>
+#include <SPIFFS.h>
+
 
 int stationY        = 20;
 int station2Y       = 48;
@@ -10,6 +13,13 @@ long lastTimeScroll = 0;
 #define ScrollDelay 40
 char songText[128]  = { 0 };
 
+uint16_t backColor = TFT_BLACK;
+uint16_t foreColor = TFT_YELLOW;
+
+
+// Надо делать именно массив unsigned short, если сделать массив byte можно напороться на кривой вывод, видимо выравнивание данных влияет
+unsigned short buf[16384];
+
 void displayRadioPage() {
   displayStation();
   setScroll(rtrim(songText));
@@ -18,21 +28,41 @@ void displayRadioPage() {
 void displayStation() {
   if (currentPage != RADIO_PAGE) return;
 
-  tft.setFreeFont(&CourierCyr14pt8b);
-  tft.setTextSize(1);
-  
   clearScroll();
   tft.fillScreen(TFT_BLACK);
-  tft.setTextColor(TFT_WHITE, TFT_BLACK);
-  
-  const char* pname;
-  pname = utf8rus(listStation[station].name);
-  tft.drawString(pname, (TFT_HEIGHT - tft.textWidth(pname)) >> 2, stationY);
-  
-  pname = utf8rus(listStation[station].name2);
-  tft.drawString(pname, (TFT_HEIGHT - tft.textWidth(pname)) >> 2, station2Y);
+  tft.setFreeFont(&CourierCyr14pt8b);
+  tft.setTextSize(1);
 
-  tft.setTextColor(TFT_YELLOW, TFT_BLACK);
+  File f = SPIFFS.open(listStation[station].file);
+  if (f) {
+    size_t len = f.size();
+    f.read((uint8_t*)buf, len);
+    f.close();
+
+    uint16_t *p = buf;
+    foreColor = *p++;
+    backColor = *p++;
+    uint16_t x = *p++;
+    uint16_t y = *p++;
+    uint16_t w = *p++;
+    uint16_t h = *p++;
+
+    tft.fillScreen(backColor);
+    tft.pushImage(x, y, w, h, p);
+  }
+  else {
+    foreColor = TFT_YELLOW;
+    backColor = TFT_BLACK;
+    tft.setTextColor(TFT_WHITE, backColor);
+  
+    const char* pname;
+    pname = utf8rus(listStation[station].name);
+    tft.drawString(pname, (TFT_HEIGHT - tft.textWidth(pname)) >> 2, stationY);
+  
+    pname = utf8rus(listStation[station].name2);
+    tft.drawString(pname, (TFT_HEIGHT - tft.textWidth(pname)) >> 2, station2Y);
+  }
+  tft.setTextColor(foreColor, backColor);
 }
 
 void clearScroll() {
@@ -40,7 +70,7 @@ void clearScroll() {
   scrollX = TFT_HEIGHT;
   int height = tft.fontHeight() >> 2;
   if (currentPage == RADIO_PAGE) {
-    tft.fillRect(0, scrollY - height, scrollX, scrollY + height, TFT_BLACK);
+    tft.fillRect(0, scrollY - height, scrollX, scrollY + height, backColor);
   }
 }
 

@@ -114,6 +114,7 @@ int volume          = 5;
 typedef struct _radioItem {
   const char *name;
   const char *name2;  
+  const char *file;
   const char *url;
 } RadioItem;
 
@@ -136,18 +137,18 @@ typedef struct _radioItem {
 */
 
 const RadioItem listStation[] PROGMEM = {
-    {.name = "Наше радио",      .name2 = "",              .url = "nashe1.hostingradio.ru/nashe-128.mp3" },
-    {.name = "Русское радио",   .name2 = "",              .url = "https://rusradio.hostingradio.ru/rusradio96.aacp" },
-    {.name = "Дорожное",        .name2 = "радио",         .url = "dorognoe.hostingradio.ru:8000/radio" },
-    {.name = "Европа плюс",     .name2 = "",              .url = "ep128.streamr.ru/" },
-    {.name = "Радио Рекорд",    .name2 = "Супердискотека",  .url = "air.radiorecord.ru:8102/sd90_128" },
-    {.name = "Вести FM",        .name2 = "Petersburg",    .url = "icecast.vgtrk.cdnvideo.ru/vestifm_mp3_192kbps" },
-    {.name = "Радио Маяк",      .name2 = "Москва",        .url = "icecast.vgtrk.cdnvideo.ru:8000/mayakfm" },
-    {.name = "101.ru",          .name2 = "Retro",         .url = "retroserver.streamr.ru:8043/retro128" },
-    {.name = "Radio",           .name2 = "Eurodance",     .url = "stream2.laut.fm/eurodance" },
-    {.name = "Klassik Radio",   .name2 = "Pure Bach",     .url = "stream.klassikradio.de/purebach/mp3-128/radiosure/" },
-    {.name = "Radio Caprice",   .name2 = "Techno",        .url = "79.120.77.11:9073/" },
-    {.name = "Bells",           .name2 = "Хорошее радио", .url = "radio.horoshee.fm:8000/mp3" },
+    {.name = "Наше радио",      .name2 = "",                .file = "/nashe.raw",       .url = "https://nashe1.hostingradio.ru/nashe-128.mp3" },
+    {.name = "Русское радио",   .name2 = "",                .file = "/rusradio.raw",    .url = "https://rusradio.hostingradio.ru/rusradio96.aacp" },
+    {.name = "Вести FM",        .name2 = "",                .file = "/vestifm.raw",     .url = "https://icecast-vgtrk.cdnvideo.ru/vestifm_mp3_128kbps" },
+    {.name = "Дорожное",        .name2 = "радио",           .file = "",                 .url = "dorognoe.hostingradio.ru:8000/radio" },
+    {.name = "Европа плюс",     .name2 = "",                .file = "",                 .url = "ep128.streamr.ru/" },
+    {.name = "Радио Рекорд",    .name2 = "Супердискотека",  .file = "",                 .url = "air.radiorecord.ru:8102/sd90_128" },
+    {.name = "Радио Маяк",      .name2 = "Москва",          .file = "",                 .url = "icecast.vgtrk.cdnvideo.ru:8000/mayakfm" },
+//    {.name = "101.ru",          .name2 = "Retro",           .file = "",                 .url = "retroserver.streamr.ru:8043/retro128" },
+//    {.name = "Radio",           .name2 = "Eurodance",       .file = "",                 .url = "stream2.laut.fm/eurodance" },
+//    {.name = "Klassik Radio",   .name2 = "Pure Bach",       .file = "",                 .url = "stream.klassikradio.de/purebach/mp3-128/radiosure/" },
+//    {.name = "Radio Caprice",   .name2 = "Techno",          .file = "",                 .url = "79.120.77.11:9073/" },
+//    {.name = "Bells",           .name2 = "Хорошее радио",   .file = "",                 .url = "radio.horoshee.fm:8000/mp3" },
 };
 
 #define StationCount (sizeof(listStation)/sizeof(listStation[0]))
@@ -215,7 +216,6 @@ void setup() {
   delay(1000);
   
   encoderL.attachHalfQuad(37, 38);
-
   
   logTime(tft);
   logTime(Serial);
