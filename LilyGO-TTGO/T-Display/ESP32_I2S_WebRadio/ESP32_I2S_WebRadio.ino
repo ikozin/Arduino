@@ -61,10 +61,15 @@ GND   from ESP32   -> GND, FLT, DMP, FMT, SCL
 НАСТРОЙКИ ПЛАТЫ
 Плата: ESP32 Dev Module
 Partition Scheme: Huge APP (3MB No OTA/1MB SPIFFS)
-*/
-/*
-Скетч использует 1119917 байт (35%) памяти устройства. Всего доступно 3145728 байт.
-Глобальные переменные используют 84116 байт (25%) динамической памяти, оставляя 243564 байт для локальных переменных. Максимум: 327680 байт.
+
+
+Формат raw файла
+ --------- --------- --------- --------- --------- --------- -----------------------
+|ForeColor|BackColor|  Pos X  |  Pos Y  |  Width  |  Height | Image bytes in rgb565 |
+ --------- --------- --------- --------- --------- --------- -----------------------
+| 2 byte  | 2 byte  | 2 byte  | 2 byte  | 2 byte  | 2 byte  | N bytes ...           |
+ --------- --------- --------- --------- --------- --------- -----------------------
+
 
 */
 
@@ -78,9 +83,7 @@ Partition Scheme: Huge APP (3MB No OTA/1MB SPIFFS)
 #include <FS.h>
 #include <SPIFFS.h>
 #include "WebRadio.h"
-//#include "RadioLogos\nashe.h"
-//#include "RadioLogos\vestifm.h"
-//#include "RadioLogos\rusradio.h"
+
 
 #define I2S_DIN       25    // DIN
 #define I2S_BCK       27    // BCK
@@ -141,9 +144,9 @@ const RadioItem listStation[] PROGMEM = {
     {.name = "Русское радио",   .name2 = "",                .file = "/rusradio.raw",    .url = "https://rusradio.hostingradio.ru/rusradio96.aacp" },
     {.name = "Вести FM",        .name2 = "",                .file = "/vestifm.raw",     .url = "https://icecast-vgtrk.cdnvideo.ru/vestifm_mp3_128kbps" },
     {.name = "Дорожное",        .name2 = "радио",           .file = "",                 .url = "dorognoe.hostingradio.ru:8000/radio" },
-    {.name = "Европа плюс",     .name2 = "",                .file = "",                 .url = "ep128.streamr.ru/" },
-    {.name = "Радио Рекорд",    .name2 = "Супердискотека",  .file = "",                 .url = "air.radiorecord.ru:8102/sd90_128" },
-    {.name = "Радио Маяк",      .name2 = "Москва",          .file = "",                 .url = "icecast.vgtrk.cdnvideo.ru:8000/mayakfm" },
+    {.name = "Радио Рекорд",    .name2 = "",                .file = "",                 .url = "https://air.radiorecord.ru:805/rr_128" },
+    {.name = "Радио DFM",       .name2 = "",                .file = "",                 .url = "https://dfm.hostingradio.ru/dfm96.aacp" },
+//    {.name = "Европа плюс",     .name2 = "",                .file = "",                 .url = "ep128.streamr.ru/" },
 //    {.name = "101.ru",          .name2 = "Retro",           .file = "",                 .url = "retroserver.streamr.ru:8043/retro128" },
 //    {.name = "Radio",           .name2 = "Eurodance",       .file = "",                 .url = "stream2.laut.fm/eurodance" },
 //    {.name = "Klassik Radio",   .name2 = "Pure Bach",       .file = "",                 .url = "stream.klassikradio.de/purebach/mp3-128/radiosure/" },
@@ -176,6 +179,9 @@ void setup() {
 
   if(!SPIFFS.begin(true)){
       Serial.println("SPIFFS Mount Failed");
+  }
+  else {
+    listDir("/");
   }
     
   tft.printf("Wi-Fi SSID: %s, connecting", ssid.c_str());
@@ -245,7 +251,34 @@ void setup_sntp(const char * tz) {
   sntp_init();
 }
 */
+void listDir(const char * dirname){
+    Serial.printf("Listing directory: %s\r\n", dirname);
 
+    File root = SPIFFS.open(dirname);
+    if(!root){
+        Serial.println("- failed to open directory");
+        return;
+    }
+    if(!root.isDirectory()){
+        Serial.println(" - not a directory");
+        return;
+    }
+
+    File file = root.openNextFile();
+    while(file){
+        if(file.isDirectory()){
+            Serial.print("  DIR : ");
+            Serial.println(file.name());
+            listDir(file.name());
+        } else {
+            Serial.print("  FILE: ");
+            Serial.print(file.name());
+            Serial.print("\tSIZE: ");
+            Serial.println(file.size());
+        }
+        file = root.openNextFile();
+    }
+}
 void logTime(Print& prn)
 {
   time_t now;
