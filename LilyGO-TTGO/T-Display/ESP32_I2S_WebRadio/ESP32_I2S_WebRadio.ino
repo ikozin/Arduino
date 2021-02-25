@@ -144,9 +144,9 @@ const RadioItem listStation[] PROGMEM = {
     {.name = "Наше радио",      .name2 = "",                .file = "/nashe.raw",       .url = "https://nashe1.hostingradio.ru/nashe-128.mp3" },
     {.name = "Русское радио",   .name2 = "",                .file = "/rusradio.raw",    .url = "https://rusradio.hostingradio.ru/rusradio96.aacp" },
     {.name = "Вести FM",        .name2 = "",                .file = "/vestifm.raw",     .url = "https://icecast-vgtrk.cdnvideo.ru/vestifm_mp3_128kbps" },
-    {.name = "Дорожное",        .name2 = "радио",           .file = "",                 .url = "dorognoe.hostingradio.ru:8000/radio" },
+    {.name = "Дорожное",        .name2 = "радио",           .file = "",                 .url = "https://dorognoe.hostingradio.ru/radio" },
     {.name = "Радио Рекорд",    .name2 = "",                .file = "",                 .url = "https://air.radiorecord.ru:805/rr_128" },
-    {.name = "Радио DFM",       .name2 = "",                .file = "/dfm.raw",          .url = "https://dfm.hostingradio.ru/dfm96.aacp" },
+    {.name = "Радио DFM",       .name2 = "",                .file = "/dfm.raw",         .url = "https://dfm.hostingradio.ru/dfm96.aacp" },
 //    {.name = "Европа плюс",     .name2 = "",                .file = "",                 .url = "ep128.streamr.ru/" },
 //    {.name = "101.ru",          .name2 = "Retro",           .file = "",                 .url = "retroserver.streamr.ru:8043/retro128" },
 //    {.name = "Radio",           .name2 = "Eurodance",       .file = "",                 .url = "stream2.laut.fm/eurodance" },
@@ -178,6 +178,9 @@ void setup() {
   displaySystemInfo(tft);
   displaySystemInfo(Serial);  
 
+  Serial.printf("NVS Free Entries: %d\r\n", prefs.freeEntries());
+  tft.printf("NVS Free Entries: %d\r\n", prefs.freeEntries());
+
   if(!SPIFFS.begin(true)){
       Serial.println("SPIFFS Mount Failed");
   }
@@ -197,7 +200,6 @@ void setup() {
   tft.printf("\r\nconnected!\r\nip: %s\r\n", WiFi.localIP().toString().c_str());
 
   configTime(prefs.getInt("tz", 10800), 0, "pool.ntp.org");
-  //setup_sntp(prefs.getString("tz", "UTC-3").c_str());
   
   currentPage = prefs.getInt("page", TIME_PAGE);
   volume    = prefs.getInt("volume", volume);
@@ -219,6 +221,8 @@ void setup() {
 
   btn1.setLongClickHandler(nextPage);
   btn2.setLongClickHandler(prevPage);
+
+  prefs.end();
   
   delay(1000);
   
@@ -243,15 +247,6 @@ void setup() {
   }
 }
 
-/*
-void setup_sntp(const char * tz) {
-  setenv("TZ", tz, 1);  // Set timezone to Moscow (UTC-3)
-  tzset();
-  sntp_setoperatingmode(SNTP_OPMODE_POLL);
-  sntp_setservername(0, "pool.ntp.org");
-  sntp_init();
-}
-*/
 void listDir(const char * dirname){
     Serial.printf("Listing directory: %s\r\n", dirname);
 
@@ -280,13 +275,14 @@ void listDir(const char * dirname){
         file = root.openNextFile();
     }
 }
-void logTime(Print& prn)
-{
-  time_t now;
+
+void logTime(Print& prn) {
+  //time_t now;
   char strftime_buf[64];
   struct tm timeinfo;
-  time(&now);
-  localtime_r(&now, &timeinfo);
+  //time(&now);
+  //localtime_r(&now, &timeinfo);
+  getLocalTime(&timeinfo);
   strftime(strftime_buf, sizeof(strftime_buf), "%c", &timeinfo);
   prn.printf("%s\r\n", strftime_buf);
 }
@@ -385,15 +381,11 @@ void loop() {
   btn2.loop();
   if (loopPage) loopPage();
 
-  if (encoderL.getCount() == 0) return;
-  if (encoderL.getCount() > 0) {
-    upVolume();
+  if (encoderL.getCount() != 0) {
+    if (encoderL.getCount() > 0) upVolume();
+    if (encoderL.getCount() < 0) downVolume();
+    encoderL.setCount(0);    
   }
-  if (encoderL.getCount() < 0) {
-    downVolume();
-  }
-  encoderL.setCount(0);
-  //Serial.println(encoderL.getCount());  
 }
 
 void displaySystemInfo(Print& prn) {

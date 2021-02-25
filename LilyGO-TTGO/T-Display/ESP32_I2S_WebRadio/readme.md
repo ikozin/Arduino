@@ -10,24 +10,26 @@ https://diytech.ru/projects/spravochnik-po-raspinovke-esp32-kakie-vyvody-gpio-sl
 
 ## Необходимые библиотеки
 
+#### ESP32FS (SPIFFS)
+[ESP32FS](https://github.com/me-no-dev/arduino-esp32fs-plugin/releases)
+Плагин для Arduino IDE, загружает файлы из директории Data в ESP32 flash memory.
+Подробнее: https://habr.com/ru/post/483280/
+
 #### Графика
-используется локальная копия библиотеки TFT_eSPI https://github.com/Bodmer/TFT_eSPI
+Используется локальная копия библиотеки TFT_eSPI https://github.com/Bodmer/TFT_eSPI, для устанвки выполнить **deploy_TFT_eSPI.cmd** (находится уровнем выше)
 
 #### Кнопки
-библиотека https://github.com/LennartHennigs/Button2
+Библиотека https://github.com/LennartHennigs/Button2
 
 #### Аудио
-библиотека https://github.com/schreibfaul1/ESP32-audioI2S
+Библиотека https://github.com/schreibfaul1/ESP32-audioI2S
 
 #### Время
-Установка времени осуществляется через SNTP используя API ESP32 
+Установка времени осуществляется через функцию **configTime**, она использует API ESP32 для работы с SNTP: 
 https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/system/system_time.html
-как альтернативный вариант, можно использовать библиотеку https://github.com/arduino-libraries/NTPClient
 
 #### Энкодеры
-библиотека https://github.com/madhephaestus/ESP32Encoder/ основана на API ESP32
-
-https://github.com/espressif/arduino-esp32/releases/tag/1.0.5-rc5
+Библиотека https://github.com/madhephaestus/ESP32Encoder/ основана на API ESP32
 
 ### Список радиостанций
 
