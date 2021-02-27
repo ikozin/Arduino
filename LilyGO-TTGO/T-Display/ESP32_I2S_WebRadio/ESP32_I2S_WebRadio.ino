@@ -5,12 +5,12 @@
     ┤GND         SVP├ 
     ┤21           37├ Encoder Volume
     ┤22           38├ Encoder Volume
-    ┤17          SVN├ 
+    ┤17          SVN├ Encoder Volume Button
     ┤2            32├ 
-    ┤15           33├ 
-    ┤13           25├ I2S Encoder Volume
-    ┤12           26├ I2S Encoder Volume
-    ┤GND          27├ I2S Encoder Volume
+    ┤15           33├ I2S XMT
+    ┤13           25├ I2S DIN
+    ┤12           26├ I2S LCK
+    ┤GND          27├ I2S BCK
     ┤GND         GND├ 
     ┤3V3          5V├ 
     └─────────┘
@@ -85,6 +85,9 @@ Partition Scheme: Huge APP (3MB No OTA/1MB SPIFFS)
 #include <SPIFFS.h>
 #include "WebRadio.h"
 
+#if !defined(ESP32)
+  #error Select ESP32 DEV Board
+#endif
 
 #define I2S_DIN       25    // DIN
 #define I2S_BCK       27    // BCK
@@ -93,11 +96,17 @@ Partition Scheme: Huge APP (3MB No OTA/1MB SPIFFS)
 #define BUTTON_1      35
 #define BUTTON_2      0
 
+#define BUTTON_MUTE   39
+#define PIN_MUTE      32
+
+
 #define TFT_BL        4   // Display backlight control pin
 
 TFT_eSPI tft = TFT_eSPI(135, 240);
 Button2 btn1(BUTTON_1);
 Button2 btn2(BUTTON_2);
+Button2 btnMute(BUTTON_MUTE);
+
 Audio audio;
 Preferences prefs;
 ESP32Encoder encoderL;
@@ -113,6 +122,7 @@ String pswd         = "";
 
 int station         = 0;
 int volume          = 5;
+bool isMute         = false;
 
 
 typedef struct _radioItem {
@@ -159,6 +169,8 @@ const RadioItem listStation[] PROGMEM = {
 
 void setup() {
   Serial.begin(115200);
+
+  pinMode(PIN_MUTE, OUTPUT);
   
   pinMode(TFT_BL, OUTPUT);                // Set backlight pin to output mode
   digitalWrite(TFT_BL, TFT_BACKLIGHT_ON); // Turn backlight on. TFT_BACKLIGHT_ON has been set in the TFT_eSPI library in the User Setup file TTGO_T_Display.h
@@ -218,6 +230,7 @@ void setup() {
   
   btn1.setClickHandler(nextStation);
   btn2.setClickHandler(prevStation);
+  btnMute.setClickHandler(volumeMute);
 
   btn1.setLongClickHandler(nextPage);
   btn2.setLongClickHandler(prevPage);
@@ -231,8 +244,9 @@ void setup() {
   logTime(tft);
   logTime(Serial);
   
-  setVolume();
   setStation();
+  setVolume();
+  setMute(isMute);
 
   switch (currentPage) {
     case RADIO_PAGE:
@@ -350,6 +364,17 @@ void prevStation(Button2& b) {
   setStation();
 }
 
+void volumeMute(Button2& b) {
+  isMute = !isMute;
+  setMute(isMute);
+}
+
+void setMute(bool value) {
+  Serial.print("Mute:");
+  Serial.println(value ? "On": "Off");
+  digitalWrite(PIN_MUTE, value ? LOW: HIGH);
+}
+
 void setStation() {
   Serial.printf("station: %s %s\r\n", listStation[station].name, listStation[station].name2);
   prefs.putInt("station", station);
@@ -379,6 +404,7 @@ void loop() {
   audio.loop();
   btn1.loop();
   btn2.loop();
+  btnMute.loop();
   if (loopPage) loopPage();
 
   if (encoderL.getCount() != 0) {
