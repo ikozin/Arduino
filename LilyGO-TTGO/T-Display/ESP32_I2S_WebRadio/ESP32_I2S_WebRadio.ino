@@ -96,21 +96,26 @@ Partition Scheme: Huge APP (3MB No OTA/1MB SPIFFS)
 #define BUTTON_1      35
 #define BUTTON_2      0
 
-#define BUTTON_MUTE   39
-#define PIN_MUTE      32
 
+#define PIN_I2S_MUTE  32
 
 #define TFT_BL        4   // Display backlight control pin
 
 TFT_eSPI tft = TFT_eSPI(135, 240);
-Button2 btn1(BUTTON_1);
-Button2 btn2(BUTTON_2);
-Button2 btnMute(BUTTON_MUTE);
 
 Audio audio;
 Preferences prefs;
+
 ESP32Encoder encoderL;
+#define ENCODER_BTN_L 39
+
 ESP32Encoder encoderR;
+#define ENCODER_BTN_R 17
+
+Button2 btnHard1(BUTTON_1);
+Button2 btnHard2(BUTTON_2);
+Button2 btnEncoderL(ENCODER_BTN_L);
+Button2 btnEncoderR(ENCODER_BTN_R);
 
 int currentPage     = RADIO_PAGE;
 
@@ -153,16 +158,11 @@ typedef struct _radioItem {
 const RadioItem listStation[] PROGMEM = {
     {.name = "Наше радио",      .name2 = "",                .file = "/nashe.raw",       .url = "https://nashe1.hostingradio.ru/nashe-128.mp3" },
     {.name = "Русское радио",   .name2 = "",                .file = "/rusradio.raw",    .url = "https://rusradio.hostingradio.ru/rusradio96.aacp" },
+    {.name = "Авторадио",       .name2 = "",                .file = "",                 .url = "https://pub0301.101.ru:8443/stream/air/aac/64/100" },
     {.name = "Вести FM",        .name2 = "",                .file = "/vestifm.raw",     .url = "https://icecast-vgtrk.cdnvideo.ru/vestifm_mp3_128kbps" },
     {.name = "Дорожное",        .name2 = "радио",           .file = "",                 .url = "https://dorognoe.hostingradio.ru/radio" },
     {.name = "Радио Рекорд",    .name2 = "",                .file = "",                 .url = "https://air.radiorecord.ru:805/rr_128" },
     {.name = "Радио DFM",       .name2 = "",                .file = "/dfm.raw",         .url = "https://dfm.hostingradio.ru/dfm96.aacp" },
-//    {.name = "Европа плюс",     .name2 = "",                .file = "",                 .url = "ep128.streamr.ru/" },
-//    {.name = "101.ru",          .name2 = "Retro",           .file = "",                 .url = "retroserver.streamr.ru:8043/retro128" },
-//    {.name = "Radio",           .name2 = "Eurodance",       .file = "",                 .url = "stream2.laut.fm/eurodance" },
-//    {.name = "Klassik Radio",   .name2 = "Pure Bach",       .file = "",                 .url = "stream.klassikradio.de/purebach/mp3-128/radiosure/" },
-//    {.name = "Radio Caprice",   .name2 = "Techno",          .file = "",                 .url = "79.120.77.11:9073/" },
-//    {.name = "Bells",           .name2 = "Хорошее радио",   .file = "",                 .url = "radio.horoshee.fm:8000/mp3" },
 };
 
 #define StationCount (sizeof(listStation)/sizeof(listStation[0]))
@@ -170,8 +170,6 @@ const RadioItem listStation[] PROGMEM = {
 void setup() {
   Serial.begin(115200);
 
-  pinMode(PIN_MUTE, OUTPUT);
-  
   pinMode(TFT_BL, OUTPUT);                // Set backlight pin to output mode
   digitalWrite(TFT_BL, TFT_BACKLIGHT_ON); // Turn backlight on. TFT_BACKLIGHT_ON has been set in the TFT_eSPI library in the User Setup file TTGO_T_Display.h
 
@@ -190,10 +188,7 @@ void setup() {
   displaySystemInfo(tft);
   displaySystemInfo(Serial);  
 
-  Serial.printf("NVS Free Entries: %d\r\n", prefs.freeEntries());
-  tft.printf("NVS Free Entries: %d\r\n", prefs.freeEntries());
-
-  if(!SPIFFS.begin(true)){
+  if(!SPIFFS.begin(true)) {
       Serial.println("SPIFFS Mount Failed");
   }
   else {
@@ -226,20 +221,20 @@ void setup() {
   dowY      = prefs.getInt("dowY", dowY);
   calendarY = prefs.getInt("calendarY", calendarY);
   
+  pinMode(PIN_I2S_MUTE, OUTPUT);
   audio.setPinout(I2S_BCK, I2S_LCK, I2S_DIN);
   
-  btn1.setClickHandler(nextStation);
-  btn2.setClickHandler(prevStation);
-  btnMute.setClickHandler(volumeMute);
+  btnHard1.setClickHandler(btnHard1Click);
+  btnHard2.setClickHandler(btnHard2Click);
+  btnEncoderL.setClickHandler(btnEncoderClick);
+  btnEncoderR.setClickHandler(btnEncoderClick);
+  btnHard1.setLongClickHandler(btnHard1LongClick);
+  btnHard2.setLongClickHandler(btnHard2LongClick);
 
-  btn1.setLongClickHandler(nextPage);
-  btn2.setLongClickHandler(prevPage);
-
-  prefs.end();
+  encoderL.attachSingleEdge(37, 38);
+  encoderR.attachSingleEdge(13, 15);
   
   delay(1000);
-  
-  encoderL.attachHalfQuad(37, 38);
   
   logTime(tft);
   logTime(Serial);
@@ -261,47 +256,36 @@ void setup() {
   }
 }
 
-void listDir(const char * dirname){
-    Serial.printf("Listing directory: %s\r\n", dirname);
-
-    File root = SPIFFS.open(dirname);
-    if(!root){
-        Serial.println("- failed to open directory");
-        return;
-    }
-    if(!root.isDirectory()){
-        Serial.println(" - not a directory");
-        return;
-    }
-
-    File file = root.openNextFile();
-    while(file){
-        if(file.isDirectory()){
-            Serial.print("  DIR : ");
-            Serial.println(file.name());
-            listDir(file.name());
-        } else {
-            Serial.print("  FILE: ");
-            Serial.print(file.name());
-            Serial.print("\tSIZE: ");
-            Serial.println(file.size());
-        }
-        file = root.openNextFile();
-    }
-}
-
 void logTime(Print& prn) {
-  //time_t now;
   char strftime_buf[64];
   struct tm timeinfo;
-  //time(&now);
-  //localtime_r(&now, &timeinfo);
   getLocalTime(&timeinfo);
   strftime(strftime_buf, sizeof(strftime_buf), "%c", &timeinfo);
   prn.printf("%s\r\n", strftime_buf);
 }
 
-void nextPage(Button2& b) {
+void btnHard1LongClick(Button2& b) {
+  nextPage();
+}
+
+void btnHard2LongClick(Button2& b) {
+  prevPage();
+}
+
+void btnHard1Click(Button2& b) {
+  nextStation();
+}
+
+void btnHard2Click(Button2& b) {
+  prevStation();
+}
+
+void btnEncoderClick(Button2& b) {
+  isMute = !isMute;
+  setMute(isMute);
+}
+
+void nextPage() {
   switch (currentPage) {
     case RADIO_PAGE:
       setTimePage();
@@ -316,7 +300,7 @@ void nextPage(Button2& b) {
   prefs.putInt("page", currentPage);
 }
 
-void prevPage(Button2& b) {
+void prevPage() {
   switch (currentPage) {
     case RADIO_PAGE:
       setWeatherPage();
@@ -352,31 +336,25 @@ void setWeatherPage() {
   loopPage = loopWeatherPage;
 }
 
-void nextStation(Button2& b) {
+void setMute(bool value) {
+  Serial.printf("Mute: %s\r\n", value ? "On": "Off");
+  digitalWrite(PIN_I2S_MUTE, value ? LOW: HIGH);
+}
+
+void nextStation() {
   station++;
   if (station == StationCount) station = 0;
   setStation();
 }
 
-void prevStation(Button2& b) {
+void prevStation() {
   station--;
   if (station < 0) station = StationCount - 1;
   setStation();
 }
 
-void volumeMute(Button2& b) {
-  isMute = !isMute;
-  setMute(isMute);
-}
-
-void setMute(bool value) {
-  Serial.print("Mute:");
-  Serial.println(value ? "On": "Off");
-  digitalWrite(PIN_MUTE, value ? LOW: HIGH);
-}
-
 void setStation() {
-  Serial.printf("station: %s %s\r\n", listStation[station].name, listStation[station].name2);
+  Serial.printf("Station: %s %s\r\n", listStation[station].name, listStation[station].name2);
   prefs.putInt("station", station);
   audio.connecttohost(listStation[station].url);
   displayStation();
@@ -395,23 +373,37 @@ void downVolume() {
 }
 
 void setVolume() {
-  Serial.printf("volume: %d\r\n", volume);
+  Serial.printf("Volume: %d\r\n", volume);
   prefs.putInt("volume", volume);
   audio.setVolume(volume); // 0...21
 }
 
 void loop() {
   audio.loop();
-  btn1.loop();
-  btn2.loop();
-  btnMute.loop();
+
+  btnHard1.loop();
+  btnHard2.loop();
+  btnEncoderL.loop();
+  btnEncoderR.loop();
+
+  audio.loop();
+
   if (loopPage) loopPage();
+
+  audio.loop();
 
   if (encoderL.getCount() != 0) {
     if (encoderL.getCount() > 0) upVolume();
     if (encoderL.getCount() < 0) downVolume();
     encoderL.setCount(0);    
   }
+  if (encoderR.getCount() != 0) {
+    if (encoderR.getCount() > 0) nextStation();
+    if (encoderR.getCount() < 0) prevStation();
+    encoderR.setCount(0);    
+  }
+
+  audio.loop();
 }
 
 void displaySystemInfo(Print& prn) {
@@ -420,6 +412,32 @@ void displaySystemInfo(Print& prn) {
   prn.printf("ChipId: %04X%08X\r\n", (uint32_t)(chipid >> 32), (uint32_t)(chipid & 0xFFFFFFFF));
   prn.printf("Flash: %d\r\n", ESP.getFlashChipSize());
   prn.printf("SDK: %s\r\n", ESP.getSdkVersion());
+  prn.printf("NVS Free Entries: %d\r\n", prefs.freeEntries());
+}
+
+void listDir(const char * dirname) {
+    Serial.printf("Listing directory: %s\r\n", dirname);
+
+    File root = SPIFFS.open(dirname);
+    if(!root) {
+        Serial.printf("- failed to open directory\r\n");
+        return;
+    }
+    if(!root.isDirectory()) {
+        Serial.printf(" - not a directory\r\n");
+        return;
+    }
+
+    File file = root.openNextFile();
+    while(file) {
+        if(file.isDirectory()) {
+            Serial.printf("  DIR : %s\r\n", file.name());
+            listDir(file.name());
+        } else {
+            Serial.printf("  FILE: %s\tSIZE: %d\r\n", file.name(), file.size());
+        }
+        file = root.openNextFile();
+    }
 }
 
 void audio_showstreamtitle(const char *info) {
