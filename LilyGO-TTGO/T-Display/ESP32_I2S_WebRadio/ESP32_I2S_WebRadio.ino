@@ -1,19 +1,19 @@
 /*
-         T-Display
-    ┌─────────┐
-    ┤GND         3V3├ 
-    ┤GND         SVP├ 
-    ┤21           37├ Encoder Volume
-    ┤22           38├ Encoder Volume
-    ┤17          SVN├ Encoder Volume Button
-    ┤2            32├ 
-    ┤15           33├ I2S XMT
-    ┤13           25├ I2S DIN
-    ┤12           26├ I2S LCK
-    ┤GND          27├ I2S BCK
-    ┤GND         GND├ 
-    ┤3V3          5V├ 
-    └─────────┘
+                            T-Display
+                       ┌─────────┐
+                       ┤GND         3V3├ 
+                       ┤GND         SVP├ 
+                       ┤21           37├ Encoder Volume
+                       ┤22           38├ Encoder Volume
+Encoder Radio Button   ┤17          SVN├ Encoder Volume Button
+                       ┤2            32├ 
+Encoder Radio          ┤15           33├ I2S XMT
+Encoder Radio          ┤13           25├ I2S DIN
+                       ┤12           26├ I2S LCK
+                       ┤GND          27├ I2S BCK
+                       ┤GND         GND├ 
+                       ┤3V3          5V├ 
+                       └─────────┘
 
 
 

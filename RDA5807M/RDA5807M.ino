@@ -17,7 +17,7 @@
 RotaryEncoder encoderVolume(2, 3, RotaryEncoder::LatchMode::FOUR3);
 //RDA5807M radio;
 
-uint8_t currentVolume = 3;    // 0..15
+uint8_t currentVolume = 2;    // 0..15
 uint8_t currentIndex = 35;
 
 typedef struct _radioItem {
@@ -81,52 +81,34 @@ const RadioItem_t radioList[] PROGMEM = {
 
 const int listSize = sizeof(radioList) / sizeof(RadioItem_t);
 
+void (*currentHandle)(int);
+
 void setup() {
   Serial.begin(9600);
   Wire.begin();
   Serial.println();
   Serial.println();
-
   
   radioInit();
   radioSetRadio(currentIndex);
   radioSetVolume(currentVolume);
   
-  //radioInit();
-  //radioSetVolume(currentVolume);
-  //selectStation(currentIndex);
-  //radioSetHardMute(false);
-  //radioSetMute(false);
-    
-
   pinMode(4, INPUT_PULLUP);
-
-  //radio.init();
-  //radio.setBand(RADIO_BAND_FM);
-  ////radio.debugEnable();
-  ////setBand(currentBand);
-  //setRadio(currentIndex);
-  //radio.setVolume(currentVolume);
-  //radio.setMono(false);
-  //radio.setMute(false);
+  currentHandle = handleChannel;
 }
 
 void loop() {
-  //uint8_t RSSI = radioGetRssi();
-  //Serial.print(F("RSSI = "));
-  //Serial.print(RSSI);
-  //Serial.println(F(" (0-min, 127-max)"));
-  //delay(500);
-  //Serial.println(radioGetHardMute());
-
- 
   encoderVolume.tick();
   if (digitalRead(4) == LOW) {
-    radioSetMute(!radioGetMute());
-    delay(1000);
+    //radioSetMute(!radioGetMute());
+    //delay(1000);
+    if (currentHandle == handleChannel)
+      currentHandle = handleVolume;
+    else
+      currentHandle = handleChannel;
   }
   int dir = (int)encoderVolume.getDirection();
-  handleChannel(dir);
+  currentHandle(dir);
 }
 
 void handleChannel(int dir) {
@@ -158,7 +140,6 @@ void handleVolume(int dir) {
 void radioSetRadio(uint8_t index) {
   char c;
   byte *pData = (byte *)(radioList + index);
-  Serial.print(' ');
   uint16_t band = pgm_read_word(pData);
   Serial.print(band);
   Serial.print(':');
@@ -243,7 +224,6 @@ uint8_t radioGetRssi() {
   reg.value = getRegister(RDA5807M_REGB);
   return reg.RSSI;  
 }
-
 
 void waitTune() {
   rda_rega_t reg;
