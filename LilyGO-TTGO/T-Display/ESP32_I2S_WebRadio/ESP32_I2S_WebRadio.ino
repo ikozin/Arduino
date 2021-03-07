@@ -86,7 +86,12 @@ https://github.com/abashind/home_auto_2019
 #include <ESP32Encoder.h>
 #include <FS.h>
 #include <SPIFFS.h>
+
+#include <IRrecv.h>
+#include <IRremoteESP8266.h>
+
 #include "WebRadio.h"
+
 
 #if !defined(ESP32)
   #error Select ESP32 DEV Board
@@ -119,6 +124,9 @@ Button2 btnHard1(BUTTON_1);
 Button2 btnHard2(BUTTON_2);
 Button2 btnEncoderL(ENCODER_BTN_L);
 Button2 btnEncoderR(ENCODER_BTN_R);
+
+#define PIN_IR_RECIVER  13
+IRrecv irrecv(PIN_IR_RECIVER, 96, 50, true);
 
 int currentPage     = RADIO_PAGE;
 
@@ -235,9 +243,12 @@ void setup() {
   btnHard2.setLongClickHandler(btnHard2LongClick);
 
   encoderL.attachSingleEdge(37, 38);
-  encoderR.attachSingleEdge(13, 15);
-  
+  //encoderR.attachSingleEdge(13, 15);
+
   delay(1000);
+
+  //irrecv.setUnknownThreshold(60);
+  irrecv.enableIRIn();  // Start the receiver
   
   logTime(tft);
   logTime(Serial);
@@ -382,8 +393,28 @@ void setVolume() {
 }
 
 void loop() {
+  decode_results results;
+  
   audio.loop();
 
+  if (irrecv.decode(&results)) {
+    if (results.value == 0xFFA25D) {
+      prevStation();
+    }
+    if (results.value == 0xFFE21D) {
+      nextStation();
+    }
+    if (results.value == 0xFFE01F) {
+      downVolume();
+    }
+    if (results.value == 0xFFA857) {
+      upVolume();
+    }
+    if (results.value == 0xFF906F) {
+      isMute = !isMute;
+      setMute(isMute);
+    }
+  }
   btnHard1.loop();
   btnHard2.loop();
   btnEncoderL.loop();
@@ -400,11 +431,13 @@ void loop() {
     if (encoderL.getCount() < 0) downVolume();
     encoderL.setCount(0);    
   }
+/*
   if (encoderR.getCount() != 0) {
     if (encoderR.getCount() > 0) nextStation();
     if (encoderR.getCount() < 0) prevStation();
     encoderR.setCount(0);    
   }
+*/
 
   audio.loop();
 }
