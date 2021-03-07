@@ -98,14 +98,15 @@ void setup() {
 void loop() {
   encoderVolume.tick();
   if (digitalRead(4) == LOW) {
-      if (currentHandle == handleChannel) {
-          Serial.println(F("Volume Control"));
-          currentHandle = handleVolume;
-      }
-      else {
-          Serial.println(F("Channel Control"));
-          currentHandle = handleChannel;
-      }
+    delay(1000);
+    if (currentHandle == handleChannel) {
+        Serial.println(F("Volume Control"));
+        currentHandle = handleVolume;
+    }
+    else {
+        Serial.println(F("Channel Control"));
+        currentHandle = handleChannel;
+    }
   }
   int dir = (int)encoderVolume.getDirection();
   currentHandle(dir);
