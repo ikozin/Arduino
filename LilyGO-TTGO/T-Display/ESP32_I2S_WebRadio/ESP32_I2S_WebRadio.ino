@@ -71,7 +71,10 @@ Partition Scheme: Huge APP (3MB No OTA/1MB SPIFFS)
 | 2 byte  | 2 byte  | 2 byte  | 2 byte  | 2 byte  | 2 byte  | N bytes ...           |
  --------- --------- --------- --------- --------- --------- -----------------------
 
-
+Интересная задача про многозадачность
+https://habr.com/ru/post/479156/
+код
+https://github.com/abashind/home_auto_2019
 */
 
 #include <Arduino.h>
