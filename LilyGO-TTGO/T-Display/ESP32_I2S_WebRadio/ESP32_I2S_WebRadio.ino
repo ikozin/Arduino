@@ -161,7 +161,7 @@ typedef struct _radioItem {
 const RadioItem listStation[] PROGMEM = {
     {.name = "Наше радио",      .name2 = "",                .file = "/nashe.raw",       .url = "https://nashe1.hostingradio.ru/nashe-128.mp3" },
     {.name = "Русское радио",   .name2 = "",                .file = "/rusradio.raw",    .url = "https://rusradio.hostingradio.ru/rusradio96.aacp" },
-    {.name = "Авторадио",       .name2 = "",                .file = "",                 .url = "https://pub0301.101.ru:8443/stream/air/aac/64/100" },
+    {.name = "Авторадио",       .name2 = "",                .file = "/avto.raw",        .url = "https://pub0301.101.ru:8443/stream/air/aac/64/100" },
     {.name = "Вести FM",        .name2 = "",                .file = "/vestifm.raw",     .url = "https://icecast-vgtrk.cdnvideo.ru/vestifm_mp3_128kbps" },
     {.name = "Дорожное",        .name2 = "радио",           .file = "",                 .url = "https://dorognoe.hostingradio.ru/radio" },
     {.name = "Радио Рекорд",    .name2 = "",                .file = "",                 .url = "https://air.radiorecord.ru:805/rr_128" },

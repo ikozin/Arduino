@@ -128,6 +128,11 @@ namespace ImageConvertor
         }
         private void btnSave565_Click(object sender, EventArgs e)
         {
+            if (int.Parse(textBoxWidth.Text) > 240 || int.Parse(textBoxHeight.Text) > 135)
+            {
+                MessageBox.Show(this, "Привышен максимальный размер, маскимум 240x135", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
             try
             {
                 if (textBoxBackColor.Text.Length == 0)
@@ -162,7 +167,12 @@ namespace ImageConvertor
                         }
                     }
                     stream.Flush();
+                    if (stream.Length > 49152)
+                    {
+                        MessageBox.Show(this, "Превышен максимальный размер файла 49152 байта", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
                 }
+                
             }
             catch (Exception ex)
             {

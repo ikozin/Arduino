@@ -89,7 +89,7 @@ namespace ImageConvertor
             panelAction.Dock = System.Windows.Forms.DockStyle.Left;
             panelAction.Location = new System.Drawing.Point(0, 0);
             panelAction.Name = "panelAction";
-            panelAction.Size = new System.Drawing.Size(180, 476);
+            panelAction.Size = new System.Drawing.Size(232, 528);
             panelAction.TabIndex = 0;
             // 
             // panelSave
@@ -110,16 +110,16 @@ namespace ImageConvertor
             this.panelSave.Controls.Add(labelHeight);
             this.panelSave.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.panelSave.Enabled = false;
-            this.panelSave.Location = new System.Drawing.Point(0, 98);
+            this.panelSave.Location = new System.Drawing.Point(0, 122);
             this.panelSave.Name = "panelSave";
-            this.panelSave.Size = new System.Drawing.Size(180, 378);
+            this.panelSave.Size = new System.Drawing.Size(232, 406);
             this.panelSave.TabIndex = 2;
             // 
             // labelForeColor
             // 
             labelForeColor.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             labelForeColor.AutoSize = true;
-            labelForeColor.Location = new System.Drawing.Point(10, 247);
+            labelForeColor.Location = new System.Drawing.Point(12, 274);
             labelForeColor.Name = "labelForeColor";
             labelForeColor.Size = new System.Drawing.Size(74, 20);
             labelForeColor.TabIndex = 31;
@@ -129,9 +129,9 @@ namespace ImageConvertor
             // 
             this.textBoxForeColor.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBoxForeColor.Location = new System.Drawing.Point(92, 247);
+            this.textBoxForeColor.Location = new System.Drawing.Point(92, 271);
             this.textBoxForeColor.Name = "textBoxForeColor";
-            this.textBoxForeColor.Size = new System.Drawing.Size(78, 27);
+            this.textBoxForeColor.Size = new System.Drawing.Size(130, 27);
             this.textBoxForeColor.TabIndex = 30;
             this.textBoxForeColor.Text = "FFFFFFFF";
             // 
@@ -139,7 +139,7 @@ namespace ImageConvertor
             // 
             labelBackColor.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             labelBackColor.AutoSize = true;
-            labelBackColor.Location = new System.Drawing.Point(10, 209);
+            labelBackColor.Location = new System.Drawing.Point(10, 237);
             labelBackColor.Name = "labelBackColor";
             labelBackColor.Size = new System.Drawing.Size(76, 20);
             labelBackColor.TabIndex = 29;
@@ -149,17 +149,17 @@ namespace ImageConvertor
             // 
             this.textBoxBackColor.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBoxBackColor.Location = new System.Drawing.Point(92, 206);
+            this.textBoxBackColor.Location = new System.Drawing.Point(92, 234);
             this.textBoxBackColor.Name = "textBoxBackColor";
             this.textBoxBackColor.ReadOnly = true;
-            this.textBoxBackColor.Size = new System.Drawing.Size(78, 27);
+            this.textBoxBackColor.Size = new System.Drawing.Size(130, 27);
             this.textBoxBackColor.TabIndex = 28;
             // 
             // labelPosY
             // 
             labelPosY.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             labelPosY.AutoSize = true;
-            labelPosY.Location = new System.Drawing.Point(10, 84);
+            labelPosY.Location = new System.Drawing.Point(10, 126);
             labelPosY.Name = "labelPosY";
             labelPosY.Size = new System.Drawing.Size(73, 20);
             labelPosY.TabIndex = 27;
@@ -169,7 +169,7 @@ namespace ImageConvertor
             // 
             labelPosX.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             labelPosX.AutoSize = true;
-            labelPosX.Location = new System.Drawing.Point(10, 53);
+            labelPosX.Location = new System.Drawing.Point(10, 89);
             labelPosX.Name = "labelPosX";
             labelPosX.Size = new System.Drawing.Size(74, 20);
             labelPosX.TabIndex = 26;
@@ -179,28 +179,28 @@ namespace ImageConvertor
             // 
             this.numericPosY.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.numericPosY.Location = new System.Drawing.Point(92, 84);
+            this.numericPosY.Location = new System.Drawing.Point(92, 123);
             this.numericPosY.Maximum = new decimal(new int[] {
             135,
             0,
             0,
             0});
             this.numericPosY.Name = "numericPosY";
-            this.numericPosY.Size = new System.Drawing.Size(78, 27);
+            this.numericPosY.Size = new System.Drawing.Size(130, 27);
             this.numericPosY.TabIndex = 25;
             // 
             // numericPosX
             // 
             this.numericPosX.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.numericPosX.Location = new System.Drawing.Point(92, 51);
+            this.numericPosX.Location = new System.Drawing.Point(92, 86);
             this.numericPosX.Maximum = new decimal(new int[] {
             240,
             0,
             0,
             0});
             this.numericPosX.Name = "numericPosX";
-            this.numericPosX.Size = new System.Drawing.Size(78, 27);
+            this.numericPosX.Size = new System.Drawing.Size(130, 27);
             this.numericPosX.TabIndex = 24;
             // 
             // checkBoxSwap
@@ -209,9 +209,9 @@ namespace ImageConvertor
             | System.Windows.Forms.AnchorStyles.Right)));
             this.checkBoxSwap.Checked = true;
             this.checkBoxSwap.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBoxSwap.Location = new System.Drawing.Point(10, 21);
+            this.checkBoxSwap.Location = new System.Drawing.Point(10, 52);
             this.checkBoxSwap.Name = "checkBoxSwap";
-            this.checkBoxSwap.Size = new System.Drawing.Size(160, 24);
+            this.checkBoxSwap.Size = new System.Drawing.Size(212, 24);
             this.checkBoxSwap.TabIndex = 19;
             this.checkBoxSwap.Text = "Swap Bytes";
             this.checkBoxSwap.UseVisualStyleBackColor = true;
@@ -220,9 +220,9 @@ namespace ImageConvertor
             // 
             this.btnSave565.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnSave565.Location = new System.Drawing.Point(10, 284);
+            this.btnSave565.Location = new System.Drawing.Point(10, 312);
             this.btnSave565.Name = "btnSave565";
-            this.btnSave565.Size = new System.Drawing.Size(160, 73);
+            this.btnSave565.Size = new System.Drawing.Size(212, 73);
             this.btnSave565.TabIndex = 18;
             this.btnSave565.Text = "Save to RGB565";
             this.btnSave565.UseVisualStyleBackColor = true;
@@ -232,48 +232,50 @@ namespace ImageConvertor
             // 
             this.textBoxHeight.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBoxHeight.Location = new System.Drawing.Point(92, 162);
+            this.textBoxHeight.Location = new System.Drawing.Point(131, 197);
             this.textBoxHeight.Name = "textBoxHeight";
             this.textBoxHeight.ReadOnly = true;
-            this.textBoxHeight.Size = new System.Drawing.Size(78, 27);
+            this.textBoxHeight.Size = new System.Drawing.Size(91, 27);
             this.textBoxHeight.TabIndex = 21;
             // 
             // textBoxWidth
             // 
             this.textBoxWidth.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBoxWidth.Location = new System.Drawing.Point(92, 123);
+            this.textBoxWidth.Location = new System.Drawing.Point(131, 160);
             this.textBoxWidth.Name = "textBoxWidth";
             this.textBoxWidth.ReadOnly = true;
-            this.textBoxWidth.Size = new System.Drawing.Size(78, 27);
+            this.textBoxWidth.Size = new System.Drawing.Size(91, 27);
             this.textBoxWidth.TabIndex = 20;
             // 
             // labelWidth
             // 
             labelWidth.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             labelWidth.AutoSize = true;
-            labelWidth.Location = new System.Drawing.Point(10, 126);
+            labelWidth.Location = new System.Drawing.Point(10, 163);
             labelWidth.Name = "labelWidth";
-            labelWidth.Size = new System.Drawing.Size(49, 20);
+            labelWidth.Size = new System.Drawing.Size(119, 20);
             labelWidth.TabIndex = 22;
-            labelWidth.Text = "Width";
+            labelWidth.Text = "Width (Max 240)";
             // 
             // labelHeight
             // 
             labelHeight.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             labelHeight.AutoSize = true;
-            labelHeight.Location = new System.Drawing.Point(10, 165);
+            labelHeight.Location = new System.Drawing.Point(10, 200);
             labelHeight.Name = "labelHeight";
-            labelHeight.Size = new System.Drawing.Size(54, 20);
+            labelHeight.Size = new System.Drawing.Size(124, 20);
             labelHeight.TabIndex = 23;
-            labelHeight.Text = "Height";
+            labelHeight.Text = "Height (Max 135)";
             // 
             // btnSave
             // 
+            this.btnSave.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.btnSave.Enabled = false;
             this.btnSave.Location = new System.Drawing.Point(10, 47);
             this.btnSave.Name = "btnSave";
-            this.btnSave.Size = new System.Drawing.Size(160, 29);
+            this.btnSave.Size = new System.Drawing.Size(212, 29);
             this.btnSave.TabIndex = 1;
             this.btnSave.Text = "Save";
             this.btnSave.UseVisualStyleBackColor = true;
@@ -281,9 +283,11 @@ namespace ImageConvertor
             // 
             // btnLoad
             // 
+            this.btnLoad.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.btnLoad.Location = new System.Drawing.Point(10, 12);
             this.btnLoad.Name = "btnLoad";
-            this.btnLoad.Size = new System.Drawing.Size(160, 29);
+            this.btnLoad.Size = new System.Drawing.Size(212, 29);
             this.btnLoad.TabIndex = 0;
             this.btnLoad.Text = "Load";
             this.btnLoad.UseVisualStyleBackColor = true;
@@ -312,9 +316,9 @@ namespace ImageConvertor
             this.panelTool.Controls.Add(this.listViewColor);
             this.panelTool.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.panelTool.Enabled = false;
-            this.panelTool.Location = new System.Drawing.Point(180, 287);
+            this.panelTool.Location = new System.Drawing.Point(232, 339);
             this.panelTool.Name = "panelTool";
-            this.panelTool.Size = new System.Drawing.Size(686, 189);
+            this.panelTool.Size = new System.Drawing.Size(634, 189);
             this.panelTool.TabIndex = 8;
             // 
             // numericToB
@@ -422,9 +426,9 @@ namespace ImageConvertor
             // 
             this.pictureBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.pictureBox.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pictureBox.Location = new System.Drawing.Point(180, 0);
+            this.pictureBox.Location = new System.Drawing.Point(232, 0);
             this.pictureBox.Name = "pictureBox";
-            this.pictureBox.Size = new System.Drawing.Size(686, 287);
+            this.pictureBox.Size = new System.Drawing.Size(634, 339);
             this.pictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.pictureBox.TabIndex = 1;
             this.pictureBox.TabStop = false;
@@ -442,7 +446,7 @@ namespace ImageConvertor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(866, 476);
+            this.ClientSize = new System.Drawing.Size(866, 528);
             this.Controls.Add(this.pictureBox);
             this.Controls.Add(this.panelTool);
             this.Controls.Add(panelAction);

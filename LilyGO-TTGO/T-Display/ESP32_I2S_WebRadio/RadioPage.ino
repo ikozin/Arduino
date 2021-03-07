@@ -18,7 +18,7 @@ uint16_t foreColor = TFT_YELLOW;
 
 
 // Надо делать именно массив unsigned short, если сделать массив byte можно напороться на кривой вывод, видимо выравнивание данных влияет
-unsigned short buf[16384];
+unsigned short buf[24576];
 
 void displayRadioPage() {
   displayStation();
@@ -27,8 +27,8 @@ void displayRadioPage() {
 
 void displayStation() {
   if (currentPage != RADIO_PAGE) return;
-
-  clearScroll();
+  songText[0]  = '\0';
+  resetScroll();
   tft.fillScreen(TFT_BLACK);
   tft.setFreeFont(&CourierCyr14pt8b);
   tft.setTextSize(1);
@@ -65,17 +65,17 @@ void displayStation() {
   tft.setTextColor(foreColor, backColor);
 }
 
-void clearScroll() {
+void resetScroll() {
   scrollWidth = 0;
   scrollX = TFT_HEIGHT;
-  int height = tft.fontHeight() >> 2;
-  if (currentPage == RADIO_PAGE) {
-    tft.fillRect(0, scrollY - height, scrollX, scrollY + height, backColor);
-  }
 }
 
 void setScroll(const char * ptext) {
-  clearScroll();
+  resetScroll();
+  if (strlen(songText) > 0) {
+    int height = tft.fontHeight() >> 2;
+    tft.fillRect(0, scrollY - height, scrollX, scrollY + height, backColor);
+  }
   strcpy(songText, utf8rus(ptext));
   scrollX = TFT_HEIGHT;
   scrollWidth = tft.textWidth(songText);
