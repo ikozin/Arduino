@@ -12,10 +12,8 @@
 #if !defined(ARDUINO_AVR_UNO)
   #error Select ARDUINO_AVR_UNO
 #endif
-//dt clk
-//s2 s1
+
 RotaryEncoder encoderVolume(2, 3, RotaryEncoder::LatchMode::FOUR3);
-//RDA5807M radio;
 
 uint8_t currentVolume = 2;    // 0..15
 uint8_t currentIndex = 35;
@@ -100,12 +98,14 @@ void setup() {
 void loop() {
   encoderVolume.tick();
   if (digitalRead(4) == LOW) {
-    //radioSetMute(!radioGetMute());
-    //delay(1000);
-    if (currentHandle == handleChannel)
-      currentHandle = handleVolume;
-    else
-      currentHandle = handleChannel;
+      if (currentHandle == handleChannel) {
+          Serial.println(F("Volume Control"));
+          currentHandle = handleVolume;
+      }
+      else {
+          Serial.println(F("Channel Control"));
+          currentHandle = handleChannel;
+      }
   }
   int dir = (int)encoderVolume.getDirection();
   currentHandle(dir);
@@ -183,7 +183,7 @@ uint16_t radioGetChannel() {
 
 void radioSetVolume(uint8_t value) {
 #ifdef DEBUG
-  Serial.print("Volume = ");
+  Serial.print(F("Volume = "));
   Serial.println(value);
 #endif
   rda_reg5_t reg = { .value = getRegister(RDA5807M_REG5) };
