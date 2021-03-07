@@ -85,3 +85,17 @@ https://www.sites.google.com/site/jmaathuis/arduino/lilygo-ttgo-t-display-esp32
 Website: https://www.silabs.com/developers/usb-to-uart-bridge-vcp-drivers
 
 Скачать: [CP210x Universal Windows Driver](https://www.silabs.com/documents/public/software/CP210x_Universal_Windows_Driver.zip)
+
+## Разное
+ESP32 WROOM DevKit v1: распиновка, схема подключения и программирование - http://wiki.amperka.ru/products:esp32-wroom-wifi-devkit-v1
+
+ESP32 + Arduino Core + FreeRTOS + Blynk = дом с зачатками разума: https://habr.com/ru/post/479156/,
+исходники статьи https://github.com/abashind/home_auto_2019
+
+Интернет-радио ESP32 на декодере I2S PCM5102 - https://zen.yandex.ru/media/id/5d5ff446998ed600ad85b50c/internetradio-esp32-na-dekodere-i2s-pcm5102-5f80c3a6109c65627ebb6ca0
+
+Arduino core for the ESP32 - https://github.com/espressif/arduino-esp32
+
+Arduino ESP32 filesystem uploader - https://github.com/me-no-dev/arduino-esp32fs-plugin
+
+ESP32 Встроенный сенсорный интерфейс - https://zen.yandex.ru/media/id/5d5ff446998ed600ad85b50c/esp32-vstroennyi-sensornyi-interfeis-5f665680c833846a1dd152f3
