@@ -151,7 +151,7 @@ typedef struct _radioItem {
 Русское радио               https://rusradio.hostingradio.ru/rusradio96.aacp
 Радио DFM                   https://dfm.hostingradio.ru/dfm96.aacp
 Радио Comedy                https://ic7.101.ru:8000/s60
-Радио Рекорд                https://air.radiorecord.ru:805/rr_aac_64                  https://air.radiorecord.ru:805/rr_128
+Радио Рекорд                https://air.radiorecord.ru:805/rr_aac_64                  https://air2.radiorecord.ru:9002/rr_128
 Дискотека СССР - 101.ru     https://pub0202.101.ru:8443/stream/pro/aac/64/144
 Дискотека 90-x - 101.ru     https://pub0302.101.ru:8443/stream/pro/aac/64/74
 Дискотека 80-х - Авторадио  https://pub0301.101.ru:8443/stream/pro/aac/64/1
@@ -163,8 +163,8 @@ const RadioItem listStation[] PROGMEM = {
     {.name = "Русское радио",   .name2 = "",                .file = "/rusradio.raw",    .url = "https://rusradio.hostingradio.ru/rusradio96.aacp" },
     {.name = "Авторадио",       .name2 = "",                .file = "/avto.raw",        .url = "https://pub0301.101.ru:8443/stream/air/aac/64/100" },
     {.name = "Вести FM",        .name2 = "",                .file = "/vestifm.raw",     .url = "https://icecast-vgtrk.cdnvideo.ru/vestifm_mp3_128kbps" },
-    {.name = "Дорожное",        .name2 = "радио",           .file = "",                 .url = "https://dorognoe.hostingradio.ru/radio" },
-    {.name = "Радио Рекорд",    .name2 = "",                .file = "",                 .url = "https://air.radiorecord.ru:805/rr_128" },
+    {.name = "Дорожное",        .name2 = "радио",           .file = "/dorognoe.raw",    .url = "https://dorognoe.hostingradio.ru/radio" },
+    {.name = "Радио Рекорд",    .name2 = "",                .file = "/record.raw",      .url = "https://air2.radiorecord.ru:9002/rr_128" },
     {.name = "Радио DFM",       .name2 = "",                .file = "/dfm.raw",         .url = "https://dfm.hostingradio.ru/dfm96.aacp" },
 };
 
