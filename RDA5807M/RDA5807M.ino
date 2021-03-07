@@ -1,3 +1,6 @@
+//https://tsibrov.blogspot.com/2019/11/rda5807m-part1.html
+//https://tsibrov.blogspot.com/2020/01/rda5807m-part2-rds.html
+
 #include <Arduino.h>
 #include <Wire.h>
 #include <RotaryEncoder.h>    // https://github.com/mathertel/RotaryEncoder

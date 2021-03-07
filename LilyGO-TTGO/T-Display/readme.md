@@ -89,13 +89,25 @@ Website: https://www.silabs.com/developers/usb-to-uart-bridge-vcp-drivers
 ## Разное
 ESP32 WROOM DevKit v1: распиновка, схема подключения и программирование - http://wiki.amperka.ru/products:esp32-wroom-wifi-devkit-v1
 
+ESP32 - распиновка и характеристики: http://skproj.ru/esp32-raspinovka-i-harakteristiki/
+
+Справочник по распиновке ESP32: Какие выводы GPIO следует использовать?: https://diytech.ru/projects/spravochnik-po-raspinovke-esp32-kakie-vyvody-gpio-sleduet-ispolzovat
+
 ESP32 + Arduino Core + FreeRTOS + Blynk = дом с зачатками разума: https://habr.com/ru/post/479156/,
 исходники статьи https://github.com/abashind/home_auto_2019
 
 Интернет-радио ESP32 на декодере I2S PCM5102 - https://zen.yandex.ru/media/id/5d5ff446998ed600ad85b50c/internetradio-esp32-na-dekodere-i2s-pcm5102-5f80c3a6109c65627ebb6ca0
+
+Интернет радио на ESP32 из Советского абонентского громкоговорителя ОРФЕЙ-311 1988г.: https://zen.yandex.ru/media/id/5d5ff446998ed600ad85b50c/internet-radio-na-esp32-iz-sovetskogo-abonentskogo-gromkogovoritelia-orfei311-1988g-5f85b18c3940476c667d0e3b
 
 Arduino core for the ESP32 - https://github.com/espressif/arduino-esp32
 
 Arduino ESP32 filesystem uploader - https://github.com/me-no-dev/arduino-esp32fs-plugin
 
 ESP32 Встроенный сенсорный интерфейс - https://zen.yandex.ru/media/id/5d5ff446998ed600ad85b50c/esp32-vstroennyi-sensornyi-interfeis-5f665680c833846a1dd152f3
+
+ПОДКЛЮЧЕНИЕ ЭНКОДЕРА К ARDUINO: https://alexgyver.ru/encoder/
+
+ESP32 и файловая система SPIFFS: https://habr.com/ru/post/483280/
+
+WI-FI интернет радио: https://4pda.ru/forum/index.php?showtopic=1010378&st=40
