@@ -39,7 +39,6 @@ extern int scrollX;
 extern int scrollY;
 
 extern void displayRadioPage();
-extern void displayStation();
 extern void setScroll(const char * ptext);
 extern void loopRadioPage();
 

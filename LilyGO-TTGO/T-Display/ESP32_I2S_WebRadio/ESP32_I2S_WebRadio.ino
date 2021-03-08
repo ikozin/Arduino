@@ -9,20 +9,20 @@ Encoder Radio Button   ┤17          SVN├ Encoder Volume Button
                        ┤2            32├ 
 Encoder Radio          ┤15           33├ I2S XMT
 Encoder Radio          ┤13           25├ I2S DIN
-                       ┤12           26├ I2S LCK
+*IR Remore Control*    ┤12           26├ I2S LCK
                        ┤GND          27├ I2S BCK
                        ┤GND         GND├ 
                        ┤3V3          5V├ 
                        └─────────┘
 
+При подключению к COM порту устройства помеченные ** необходимо отключить, иначе не сможет загрузиться 
 
-
-Схема подлючения
+Схема подлючения I2S
 
 (Standard I2S interface) BCLK->BCK, I2SO->DIN, and LRCLK(WS)->LCK
 
      ESP32         PCM5102A
-    ┌───┐     ┌───┬───┐             ┌────┬───────────────────────────────────────────┐
+    ┌───┐     ┌───┬───┐             ┌────┬──────────────--─────────────────────────────┐
     │ +5V ├───┤ VCC │     │           ─┤  VCC  │                                                                        │
     │     │     │ 3.3V│ 3.3V│           ─┤  3.3V │ PCM5102A                                                               ├─┐
     │ GND ├───┤ GND │ GND │           ─┤  GND  │                                                                        │  │
@@ -34,7 +34,7 @@ Encoder Radio          ┤13           25├ I2S DIN
     │ 26  ├───┤ LCK │     │           ─┤  LCK  │ Audio data word clock input                                            │
     │     │     │ FMT │ GND │           ─┤  FMT  │ Audio format selection : I2S (Low) / Left justified (High)             │
     │     │     │ XMT │ 3.3V│           ─┤  XMT  │ Soft mute control : Soft mute (Low) / soft un-mute (High)              │
-    └───┘     └───┴───┘             └────┴───────────────────────────────────────────┘
+    └───┘     └───┴───┘             └────┴───────────────---───────────────────────────┘
 
 +5V   from ESP32   -> VCC
 GND   from ESP32   -> GND, FLT, DMP, FMT, SCL
@@ -43,7 +43,7 @@ GND   from ESP32   -> GND, FLT, DMP, FMT, SCL
 
   ESP32          PCM5102A
 ┌───┐     ┌───┬───┐                │     │     │     │     │
-│     │     │ FLT │ GND │      ┌─────┴───┴───┴───┴───┴────────┐
+│     │     │ FLT │ GND │      ┌─────┴───┴───┴───┴───┴──────-──┐
 │     │     │ DEMP│ GND │      │        FLT   DEMP   XSMT   FMT    3V3            │
 │     │     │ XSMT│ 3V3 │      ┤ BCK                                              │
 │     │     │ FMT │ GND │      ┤ DIN                                              │
@@ -51,9 +51,9 @@ GND   from ESP32   -> GND, FLT, DMP, FMT, SCL
 │     │     ├───┼───┤      ┤ GND                                              │
 │     │     │ SCK │ GND │      ┤ VIN                                              │
 │ 27  ├───┤ BCK │     │      │                                                  │
-│ 25  ├───┤ DIN │     │      └───────────────────────┬───┬──┘
-│ 26  ├───┤ LCK │     │                                              │     │
-│ GND ├───┤ GND │ GND │                                              └───┘
+│ 25  ├───┤ DIN │     │      └───────────────────────┬───┬─-─┘
+│ 26  ├───┤ LCK │     │                                             │     │
+│ GND ├───┤ GND │ GND │                                             └───┘
 │ +5V ├───┤ VIN │     │
 └───┘     └───┴───┘
 
@@ -87,8 +87,9 @@ https://github.com/abashind/home_auto_2019
 #include <FS.h>
 #include <SPIFFS.h>
 
-#include <IRrecv.h>
-#include <IRremoteESP8266.h>
+#define IR_INPUT_PIN      13 //12
+#define DO_NOT_USE_FEEDBACK_LED
+#include "TinyIRReceiver.cpp.h"
 
 #include "WebRadio.h"
 
@@ -97,12 +98,28 @@ https://github.com/abashind/home_auto_2019
   #error Select ESP32 DEV Board
 #endif
 
+#define DEBUG_CONSOLE
+/*
+Скетч использует 1184021 байт (90%) памяти устройства. Всего доступно 1310720 байт.
+Глобальные переменные используют 102564 байт (31%) динамической памяти, оставляя 225116 байт для локальных переменных. Максимум: 327680 байт.
+
+Скетч использует 1187501 байт (90%) памяти устройства. Всего доступно 1310720 байт.
+Глобальные переменные используют 102636 байт (31%) динамической памяти, оставляя 225044 байт для локальных переменных. Максимум: 327680 байт.
+
+*/
+#if defined(DEBUG_CONSOLE)
+#define debug_printf(...)   Serial.printf(__VA_ARGS__)
+#else
+#define debug_printf(...)
+#define listDir(...)
+#endif
+
 #define I2S_DIN       25    // DIN
 #define I2S_BCK       27    // BCK
 #define I2S_LCK       26    // LCK
 
-#define BUTTON_1      35
-#define BUTTON_2      0
+//#define BUTTON_1      35
+//#define BUTTON_2      0
 
 
 #define PIN_I2S_MUTE  32
@@ -117,29 +134,31 @@ Preferences prefs;
 ESP32Encoder encoderL;
 #define ENCODER_BTN_L 39
 
-ESP32Encoder encoderR;
+//ESP32Encoder encoderR;
 #define ENCODER_BTN_R 17
 
-Button2 btnHard1(BUTTON_1);
-Button2 btnHard2(BUTTON_2);
+//Button2 btnHard1(BUTTON_1);
+//Button2 btnHard2(BUTTON_2);
 Button2 btnEncoderL(ENCODER_BTN_L);
 Button2 btnEncoderR(ENCODER_BTN_R);
-
-#define PIN_IR_RECIVER  13
-IRrecv irrecv(PIN_IR_RECIVER, 96, 50, true);
 
 int currentPage     = RADIO_PAGE;
 
 void (*loopPage)()  = NULL;
-
+void (*updatePage)()  = NULL;
 
 String ssid         = ""; // SSID WI-FI
 String pswd         = "";
 
-int station         = 0;
-int volume          = 5;
-bool isMute         = false;
+volatile int station         = 0;
+volatile int volume          = 5;
+volatile bool isMute         = false;
 
+SemaphoreHandle_t mutex;
+
+volatile uint8_t  ir_cmd;
+volatile bool     ir_repeat;
+SemaphoreHandle_t ir_event;
 
 typedef struct _radioItem {
   const char *name;
@@ -147,24 +166,6 @@ typedef struct _radioItem {
   const char *file;
   const char *url;
 } RadioItem;
-
-/*
-
-Вести ФМ                    https://icecast-vgtrk.cdnvideo.ru/vestifm_mp3_64kbps      https://icecast-vgtrk.cdnvideo.ru/vestifm_mp3_128kbps     https://icecast-vgtrk.cdnvideo.ru/vestifm_mp3_192kbps
-Ретро FM                    https://retro.hostingradio.ru:8043/retro64                https://retro.hostingradio.ru:8043/retro128               https://retro.hostingradio.ru:8014/retro320.mp3
-Юмор FM                     https://pub0301.101.ru:8443/stream/air/aac/64/102                                                                   https://pub0301.101.ru:8443/stream/air/mp3/256/102
-Авторадио                   https://pub0301.101.ru:8443/stream/air/aac/64/100                                                                   https://pub0301.101.ru:8443/stream/air/mp3/256/100
-Дорожное радио              https://dorognoe.hostingradio.ru/dorognoe_acc             https://dorognoe.hostingradio.ru/radio
-Наше Радио                  https://nashe1.hostingradio.ru/nashe-128.mp3
-Русское радио               https://rusradio.hostingradio.ru/rusradio96.aacp
-Радио DFM                   https://dfm.hostingradio.ru/dfm96.aacp
-Радио Comedy                https://ic7.101.ru:8000/s60
-Радио Рекорд                https://air.radiorecord.ru:805/rr_aac_64                  https://air2.radiorecord.ru:9002/rr_128
-Дискотека СССР - 101.ru     https://pub0202.101.ru:8443/stream/pro/aac/64/144
-Дискотека 90-x - 101.ru     https://pub0302.101.ru:8443/stream/pro/aac/64/74
-Дискотека 80-х - Авторадио  https://pub0301.101.ru:8443/stream/pro/aac/64/1
-
-*/
 
 const RadioItem listStation[] PROGMEM = {
     {.name = "Наше радио",      .name2 = "",                .file = "/nashe.raw",       .url = "https://nashe1.hostingradio.ru/nashe-128.mp3" },
@@ -179,7 +180,10 @@ const RadioItem listStation[] PROGMEM = {
 #define StationCount (sizeof(listStation)/sizeof(listStation[0]))
 
 void setup() {
+#if defined(DEBUG_CONSOLE)  
   Serial.begin(115200);
+#endif
+  mutex = xSemaphoreCreateMutex();
 
   pinMode(TFT_BL, OUTPUT);                // Set backlight pin to output mode
   digitalWrite(TFT_BL, TFT_BACKLIGHT_ON); // Turn backlight on. TFT_BACKLIGHT_ON has been set in the TFT_eSPI library in the User Setup file TTGO_T_Display.h
@@ -197,13 +201,14 @@ void setup() {
   tft.setTextColor(TFT_GREEN, TFT_BLACK);
   
   displaySystemInfo(tft);
+#if defined(DEBUG_CONSOLE)
   displaySystemInfo(Serial);  
-
-  if(!SPIFFS.begin(true)) {
-      Serial.println("SPIFFS Mount Failed");
+#endif
+  if(SPIFFS.begin(true)) {
+    listDir("/");
   }
   else {
-    listDir("/");
+    debug_printf("SPIFFS Mount Failed");
   }
     
   tft.printf("Wi-Fi SSID: %s, connecting", ssid.c_str());
@@ -235,20 +240,24 @@ void setup() {
   pinMode(PIN_I2S_MUTE, OUTPUT);
   audio.setPinout(I2S_BCK, I2S_LCK, I2S_DIN);
   
-  btnHard1.setClickHandler(btnHard1Click);
-  btnHard2.setClickHandler(btnHard2Click);
-  btnEncoderL.setClickHandler(btnEncoderClick);
-  btnEncoderR.setClickHandler(btnEncoderClick);
-  btnHard1.setLongClickHandler(btnHard1LongClick);
-  btnHard2.setLongClickHandler(btnHard2LongClick);
+  btnEncoderL.setClickHandler(btnEncoderLClick);
+  btnEncoderR.setClickHandler(btnEncoderRClick);
+  btnEncoderL.setLongClickTime(500);
+  btnEncoderL.setLongClickTime(500);
+  btnEncoderL.setLongClickHandler(btnEncoderLongClick);
+  btnEncoderR.setLongClickHandler(btnEncoderLongClick);
+
+  //xTaskCreate(button_handler, "button_handler", 16384, NULL, 2, NULL);
+  xTaskCreate(button_handler, "button_handler", 4096, NULL, 2, NULL);
 
   encoderL.attachSingleEdge(37, 38);
   //encoderR.attachSingleEdge(13, 15);
 
   delay(1000);
 
-  //irrecv.setUnknownThreshold(60);
-  irrecv.enableIRIn();  // Start the receiver
+  ir_event = xSemaphoreCreateBinary();
+  xTaskCreate(ir_remote_handler, "ir_remote_handler", 4096, NULL, 2, NULL);
+  initPCIInterruptForTinyReceiver(); 
   
   logTime(tft);
   logTime(Serial);
@@ -256,6 +265,7 @@ void setup() {
   setStation();
   setVolume();
   setMute(isMute);
+  //xTaskCreate(audio_handler, "audio_handler", 16384 << 1, NULL, 2, NULL);
 
   switch (currentPage) {
     case RADIO_PAGE:
@@ -278,25 +288,17 @@ void logTime(Print& prn) {
   prn.printf("%s\r\n", strftime_buf);
 }
 
-void btnHard1LongClick(Button2& b) {
+void btnEncoderLongClick(Button2& b) {
+  isMute = !isMute;
+  setMute(isMute);
+}
+
+void btnEncoderLClick(Button2& b) {
   nextPage();
 }
 
-void btnHard2LongClick(Button2& b) {
+void btnEncoderRClick(Button2& b) {
   prevPage();
-}
-
-void btnHard1Click(Button2& b) {
-  nextStation();
-}
-
-void btnHard2Click(Button2& b) {
-  prevStation();
-}
-
-void btnEncoderClick(Button2& b) {
-  isMute = !isMute;
-  setMute(isMute);
 }
 
 void nextPage() {
@@ -331,100 +333,93 @@ void prevPage() {
 
 void setRadioPage() {
   loopPage = NULL;
+  updatePage = NULL;
   currentPage = RADIO_PAGE;
+  updatePage = displayRadioPage;
   displayRadioPage();
   loopPage = loopRadioPage;
 }
 
 void setTimePage() {
   loopPage = NULL;
+  updatePage = NULL;
   currentPage = TIME_PAGE;
+  updatePage = displayTimePage;
   displayTimePage();
   loopPage = loopTimePage;
 }
 
 void setWeatherPage() {
   loopPage = NULL;
+  updatePage = NULL;
   currentPage = WEATHER_PAGE;
+  updatePage = displayWeatherPage;
   displayWeatherPage();
   loopPage = loopWeatherPage;
 }
 
 void setMute(bool value) {
-  Serial.printf("Mute: %s\r\n", value ? "On": "Off");
+  xSemaphoreTake(mutex, portMAX_DELAY);
+
+  debug_printf("Mute: %s\r\n", value ? "On": "Off");
   digitalWrite(PIN_I2S_MUTE, value ? LOW: HIGH);
+
+  xSemaphoreGive(mutex);
 }
 
 void nextStation() {
+  xSemaphoreTake(mutex, portMAX_DELAY);
   station++;
   if (station == StationCount) station = 0;
   setStation();
+  xSemaphoreGive(mutex);
+
+  if (updatePage != NULL) updatePage();
 }
 
 void prevStation() {
+  xSemaphoreTake(mutex, portMAX_DELAY);
   station--;
   if (station < 0) station = StationCount - 1;
   setStation();
+  xSemaphoreGive(mutex);
+
+  if (updatePage != NULL) updatePage();
 }
 
 void setStation() {
-  Serial.printf("Station: %s %s\r\n", listStation[station].name, listStation[station].name2);
+  debug_printf("Station: %s %s\r\n", listStation[station].name, listStation[station].name2);
   prefs.putInt("station", station);
   audio.connecttohost(listStation[station].url);
-  displayStation();
 }
 
 void upVolume() {
+  xSemaphoreTake(mutex, portMAX_DELAY);
   volume++;
   if (volume > 21) volume = 21;
   setVolume();
+  xSemaphoreGive(mutex);
 }
 
 void downVolume() {
+  xSemaphoreTake(mutex, portMAX_DELAY);
   volume--;
   if (volume < 0) volume = 0;
   setVolume();
+  xSemaphoreGive(mutex);
 }
 
 void setVolume() {
-  Serial.printf("Volume: %d\r\n", volume);
+  debug_printf("Volume: %d\r\n", volume);
   prefs.putInt("volume", volume);
   audio.setVolume(volume); // 0...21
 }
 
 void loop() {
-  decode_results results;
   
   audio.loop();
 
-  if (irrecv.decode(&results)) {
-    if (results.value == 0xFFA25D) {
-      prevStation();
-    }
-    if (results.value == 0xFFE21D) {
-      nextStation();
-    }
-    if (results.value == 0xFFE01F) {
-      downVolume();
-    }
-    if (results.value == 0xFFA857) {
-      upVolume();
-    }
-    if (results.value == 0xFF906F) {
-      isMute = !isMute;
-      setMute(isMute);
-    }
-  }
-  btnHard1.loop();
-  btnHard2.loop();
-  btnEncoderL.loop();
-  btnEncoderR.loop();
-
-  audio.loop();
-
   if (loopPage) loopPage();
-
-  audio.loop();
 
   if (encoderL.getCount() != 0) {
     if (encoderL.getCount() > 0) upVolume();
@@ -438,8 +433,65 @@ void loop() {
     encoderR.setCount(0);    
   }
 */
+}
 
-  audio.loop();
+void audio_handler(void *pvParameters) {
+    while (true) {
+      audio.loop();
+      vTaskDelay(500 / portTICK_RATE_MS);
+    }
+}
+
+void button_handler(void *pvParameters) {
+    while (true) {
+      btnEncoderL.loop();
+      btnEncoderR.loop();
+      vTaskDelay(30 / portTICK_RATE_MS);
+    }
+}
+/*
+CarMP3
+0x45  0x46  0x47
+0x44  0x40  0x43
+0x07  0x15  0x09
+0x16  0x19  0x0D
+0x0C  0x18  0x5E
+0x08  0x1C  0x5A
+0x42  0x52  0x4A
+
+*/
+void ir_remote_handler(void *pvParameters) {
+    while (true) {
+      xSemaphoreTake(ir_event, portMAX_DELAY);
+      //debug_printf("C=0x%04X  R=%d\r\n", ir_cmd, ir_repeat);
+      if (ir_repeat) continue;
+      switch (ir_cmd) {
+        case 0x45:
+          prevStation();
+          break;
+        case 0x47:
+          nextStation();
+          break;
+        case 0x07:
+          downVolume();
+          break;
+        case 0x15:
+          upVolume();
+          break;
+        case 0x09:
+          isMute = !isMute;
+          setMute(isMute);
+          break;
+        default:
+          break;
+      }
+    }
+}
+
+IRAM_ATTR void handleReceivedTinyIRData(uint16_t aAddress, uint8_t aCommand, bool isRepeat) {
+  ir_cmd = aCommand;
+  ir_repeat = isRepeat;
+  xSemaphoreGive(ir_event);
 }
 
 void displaySystemInfo(Print& prn) {
@@ -451,6 +503,7 @@ void displaySystemInfo(Print& prn) {
   prn.printf("NVS Free Entries: %d\r\n", prefs.freeEntries());
 }
 
+#if defined(DEBUG_CONSOLE)
 void listDir(const char * dirname) {
     Serial.printf("Listing directory: %s\r\n", dirname);
 
@@ -475,8 +528,9 @@ void listDir(const char * dirname) {
         file = root.openNextFile();
     }
 }
+#endif
 
 void audio_showstreamtitle(const char *info) {
-  Serial.printf("streamtitle %s\r\n", info);
+  debug_printf("streamtitle %s\r\n", info);
   setScroll(info);
 }
