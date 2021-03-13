@@ -86,6 +86,10 @@ https://github.com/abashind/home_auto_2019
 #include <ESP32Encoder.h>
 #include <FS.h>
 #include <SPIFFS.h>
+#include <esp_adc_cal.h>
+int vref = 1100;
+#define ADC_EN              14  //ADC_EN is the ADC detection enable port
+#define ADC_PIN             34
 
 #define IR_INPUT_PIN      13 //12
 #define DO_NOT_USE_FEEDBACK_LED
@@ -189,7 +193,22 @@ void setup() {
   digitalWrite(TFT_BL, TFT_BACKLIGHT_ON); // Turn backlight on. TFT_BACKLIGHT_ON has been set in the TFT_eSPI library in the User Setup file TTGO_T_Display.h
 
   prefs.begin("WebRadio");
-  
+
+#if defined(DEBUG_CONSOLE)  
+  Serial.printf("\r\n");
+  Serial.printf("\r\n");
+  esp_adc_cal_characteristics_t adc_chars;
+  esp_adc_cal_value_t val_type = esp_adc_cal_characterize(ADC_UNIT_1, ADC_ATTEN_DB_11, ADC_WIDTH_BIT_12, 1100, &adc_chars);    //Check type of calibration value used to characterize ADC
+  if (val_type == ESP_ADC_CAL_VAL_EFUSE_VREF) {
+      Serial.printf("eFuse Vref:%u mV\r\n", adc_chars.vref);
+      vref = adc_chars.vref;
+  } else if (val_type == ESP_ADC_CAL_VAL_EFUSE_TP) {
+      Serial.printf("Two Point --> coeff_a:%umV coeff_b:%umV\r\n", adc_chars.coeff_a, adc_chars.coeff_b);
+  } else {
+      Serial.printf("Default Vref: 1100mV\r\n");
+  }
+#endif
+      
   ssid = prefs.getString("ssid", ssid);
   pswd = prefs.getString("pswd", pswd);
   //prefs.putString("ssid", ssid);
@@ -256,7 +275,7 @@ void setup() {
   delay(1000);
 
   ir_event = xSemaphoreCreateBinary();
-  xTaskCreate(ir_remote_handler, "ir_remote_handler", 4096, NULL, 2, NULL);
+  xTaskCreate(ir_remote_handler, "ir_remote_handler", 4096, NULL, 1, NULL);
   initPCIInterruptForTinyReceiver(); 
   
   logTime(tft);
@@ -421,6 +440,22 @@ void loop() {
 
   if (loopPage) loopPage();
 
+  static uint64_t timeStamp = 0;
+  if (millis() - timeStamp > 10000) {
+      timeStamp = millis();
+      uint16_t v = analogRead(ADC_PIN);
+      float battery_voltage = ((float)v / 4095.0) * 2.0 * 3.3 * (vref / 1000.0);
+      String voltage = " Voltage :" + String(battery_voltage) + "V";
+
+      char strftime_buf[64];
+      struct tm timeinfo;
+      getLocalTime(&timeinfo);
+      strftime(strftime_buf, sizeof(strftime_buf), "%c", &timeinfo);
+      Serial.print(strftime_buf);
+      
+      Serial.println(voltage);
+  }
+    
   if (encoderL.getCount() != 0) {
     if (encoderL.getCount() > 0) upVolume();
     if (encoderL.getCount() < 0) downVolume();
@@ -481,6 +516,15 @@ void ir_remote_handler(void *pvParameters) {
         case 0x09:
           isMute = !isMute;
           setMute(isMute);
+          break;
+        case 0x0C:
+          setRadioPage();
+          break;
+        case 0x18:
+          setTimePage();
+          break;
+        case 0x5E:
+          setWeatherPage();
           break;
         default:
           break;
