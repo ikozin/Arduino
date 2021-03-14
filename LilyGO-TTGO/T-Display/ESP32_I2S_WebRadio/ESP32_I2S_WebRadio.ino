@@ -87,30 +87,19 @@ https://github.com/abashind/home_auto_2019
 #include <FS.h>
 #include <SPIFFS.h>
 #include <esp_adc_cal.h>
-int vref = 1100;
-#define ADC_EN              14  //ADC_EN is the ADC detection enable port
-#define ADC_PIN             34
+#include "WebRadio.h"
 
 #define IR_INPUT_PIN      13 //12
 #define DO_NOT_USE_FEEDBACK_LED
 #include "TinyIRReceiver.cpp.h"
 
-#include "WebRadio.h"
-
-
 #if !defined(ESP32)
   #error Select ESP32 DEV Board
 #endif
 
-#define DEBUG_CONSOLE
-/*
-Скетч использует 1184021 байт (90%) памяти устройства. Всего доступно 1310720 байт.
-Глобальные переменные используют 102564 байт (31%) динамической памяти, оставляя 225116 байт для локальных переменных. Максимум: 327680 байт.
+//#define DEBUG_CONSOLE
 
-Скетч использует 1187501 байт (90%) памяти устройства. Всего доступно 1310720 байт.
-Глобальные переменные используют 102636 байт (31%) динамической памяти, оставляя 225044 байт для локальных переменных. Максимум: 327680 байт.
 
-*/
 #if defined(DEBUG_CONSOLE)
 #define debug_printf(...)   Serial.printf(__VA_ARGS__)
 #else
@@ -118,12 +107,17 @@ int vref = 1100;
 #define listDir(...)
 #endif
 
+
+int vref = 1100;
+#define ADC_EN        14  //ADC_EN is the ADC detection enable port
+#define ADC_PIN       34
+
 #define I2S_DIN       25    // DIN
 #define I2S_BCK       27    // BCK
 #define I2S_LCK       26    // LCK
 
-//#define BUTTON_1      35
-//#define BUTTON_2      0
+#define BUTTON_1      35
+#define BUTTON_2      0
 
 
 #define PIN_I2S_MUTE  32
@@ -266,16 +260,12 @@ void setup() {
   btnEncoderL.setLongClickHandler(btnEncoderLongClick);
   btnEncoderR.setLongClickHandler(btnEncoderLongClick);
 
-  //xTaskCreate(button_handler, "button_handler", 16384, NULL, 2, NULL);
-  xTaskCreate(button_handler, "button_handler", 4096, NULL, 2, NULL);
-
   encoderL.attachSingleEdge(37, 38);
   //encoderR.attachSingleEdge(13, 15);
 
   delay(1000);
 
   ir_event = xSemaphoreCreateBinary();
-  xTaskCreate(ir_remote_handler, "ir_remote_handler", 4096, NULL, 1, NULL);
   initPCIInterruptForTinyReceiver(); 
   
   logTime(tft);
@@ -378,31 +368,30 @@ void setWeatherPage() {
 }
 
 void setMute(bool value) {
-  xSemaphoreTake(mutex, portMAX_DELAY);
-
-  debug_printf("Mute: %s\r\n", value ? "On": "Off");
-  digitalWrite(PIN_I2S_MUTE, value ? LOW: HIGH);
-
-  xSemaphoreGive(mutex);
+  if (xSemaphoreTake(mutex, portMAX_DELAY) == pdTRUE) {
+    debug_printf("Mute: %s\r\n", value ? "On": "Off");
+    digitalWrite(PIN_I2S_MUTE, value ? LOW: HIGH);
+    xSemaphoreGive(mutex);
+  }
 }
 
 void nextStation() {
-  xSemaphoreTake(mutex, portMAX_DELAY);
-  station++;
-  if (station == StationCount) station = 0;
-  setStation();
-  xSemaphoreGive(mutex);
-
+  if (xSemaphoreTake(mutex, portMAX_DELAY) == pdTRUE) {
+    station++;
+    if (station == StationCount) station = 0;
+    setStation();
+    xSemaphoreGive(mutex);
+  }
   if (updatePage != NULL) updatePage();
 }
 
 void prevStation() {
-  xSemaphoreTake(mutex, portMAX_DELAY);
-  station--;
-  if (station < 0) station = StationCount - 1;
-  setStation();
-  xSemaphoreGive(mutex);
-
+  if (xSemaphoreTake(mutex, portMAX_DELAY) == pdTRUE) {
+    station--;
+    if (station < 0) station = StationCount - 1;
+    setStation();
+    xSemaphoreGive(mutex);
+  }
   if (updatePage != NULL) updatePage();
 }
 
@@ -413,19 +402,21 @@ void setStation() {
 }
 
 void upVolume() {
-  xSemaphoreTake(mutex, portMAX_DELAY);
-  volume++;
-  if (volume > 21) volume = 21;
-  setVolume();
-  xSemaphoreGive(mutex);
+  if (xSemaphoreTake(mutex, portMAX_DELAY) == pdTRUE) {
+    volume++;
+    if (volume > 21) volume = 21;
+    setVolume();
+    xSemaphoreGive(mutex);
+  }
 }
 
 void downVolume() {
-  xSemaphoreTake(mutex, portMAX_DELAY);
-  volume--;
-  if (volume < 0) volume = 0;
-  setVolume();
-  xSemaphoreGive(mutex);
+  if (xSemaphoreTake(mutex, portMAX_DELAY) == pdTRUE) {
+    volume--;
+    if (volume < 0) volume = 0;
+    setVolume();
+    xSemaphoreGive(mutex);
+  }
 }
 
 void setVolume() {
@@ -435,27 +426,13 @@ void setVolume() {
 }
 
 void loop() {
-  
   audio.loop();
 
-  if (loopPage) loopPage();
-
-  static uint64_t timeStamp = 0;
-  if (millis() - timeStamp > 10000) {
-      timeStamp = millis();
-      uint16_t v = analogRead(ADC_PIN);
-      float battery_voltage = ((float)v / 4095.0) * 2.0 * 3.3 * (vref / 1000.0);
-      String voltage = " Voltage :" + String(battery_voltage) + "V";
-
-      char strftime_buf[64];
-      struct tm timeinfo;
-      getLocalTime(&timeinfo);
-      strftime(strftime_buf, sizeof(strftime_buf), "%c", &timeinfo);
-      Serial.print(strftime_buf);
-      
-      Serial.println(voltage);
-  }
-    
+  btnEncoderL.loop();
+  btnEncoderR.loop();
+  
+  irCmdHandler();
+  
   if (encoderL.getCount() != 0) {
     if (encoderL.getCount() > 0) upVolume();
     if (encoderL.getCount() < 0) downVolume();
@@ -468,22 +445,32 @@ void loop() {
     encoderR.setCount(0);    
   }
 */
+
+  static uint64_t timeStamp = 0;
+  if (millis() - timeStamp > 10000) {
+      timeStamp = millis();
+      uint16_t v = analogRead(ADC_PIN);
+      float battery_voltage = ((float)v / 4095.0) * 2.0 * 3.3 * (vref / 1000.0);
+      String voltage = " Voltage :" + String(battery_voltage) + "V\r\n";
+
+      char strftime_buf[64];
+      struct tm timeinfo;
+      getLocalTime(&timeinfo);
+      strftime(strftime_buf, sizeof(strftime_buf), "%c", &timeinfo);
+      Serial.printf(strftime_buf);
+
+      Serial.printf(voltage.c_str());
+  }
+
+  if (loopPage) loopPage();
 }
 
-void audio_handler(void *pvParameters) {
-    while (true) {
-      audio.loop();
-      vTaskDelay(500 / portTICK_RATE_MS);
-    }
+IRAM_ATTR void handleReceivedTinyIRData(uint16_t aAddress, uint8_t aCommand, bool isRepeat) {
+  ir_cmd = aCommand;
+  ir_repeat = isRepeat;
+  xSemaphoreGive(ir_event);
 }
 
-void button_handler(void *pvParameters) {
-    while (true) {
-      btnEncoderL.loop();
-      btnEncoderR.loop();
-      vTaskDelay(30 / portTICK_RATE_MS);
-    }
-}
 /*
 CarMP3
 0x45  0x46  0x47
@@ -493,13 +480,11 @@ CarMP3
 0x0C  0x18  0x5E
 0x08  0x1C  0x5A
 0x42  0x52  0x4A
-
 */
-void ir_remote_handler(void *pvParameters) {
-    while (true) {
-      xSemaphoreTake(ir_event, portMAX_DELAY);
-      //debug_printf("C=0x%04X  R=%d\r\n", ir_cmd, ir_repeat);
-      if (ir_repeat) continue;
+void irCmdHandler() {
+  if (xSemaphoreTake(ir_event, 0) == pdTRUE) {
+    debug_printf("C=0x%04X  R=%d\r\n", ir_cmd, ir_repeat);
+    if (!ir_repeat) {
       switch (ir_cmd) {
         case 0x45:
           prevStation();
@@ -530,12 +515,8 @@ void ir_remote_handler(void *pvParameters) {
           break;
       }
     }
-}
-
-IRAM_ATTR void handleReceivedTinyIRData(uint16_t aAddress, uint8_t aCommand, bool isRepeat) {
-  ir_cmd = aCommand;
-  ir_repeat = isRepeat;
-  xSemaphoreGive(ir_event);
+  }
+ 
 }
 
 void displaySystemInfo(Print& prn) {
