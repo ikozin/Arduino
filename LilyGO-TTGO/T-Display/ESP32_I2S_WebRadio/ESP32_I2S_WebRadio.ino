@@ -186,6 +186,8 @@ const RadioItem listStation[] PROGMEM = {
 void setup() {
 #if defined(DEBUG_CONSOLE)  
   Serial.begin(115200);
+  Serial.printf("\r\n");
+  Serial.printf("\r\n");
 #endif
   mutex = xSemaphoreCreateMutex();
 
@@ -194,21 +196,6 @@ void setup() {
 
   prefs.begin("WebRadio");
 
-#if defined(DEBUG_CONSOLE)  
-  Serial.printf("\r\n");
-  Serial.printf("\r\n");
-  esp_adc_cal_characteristics_t adc_chars;
-  esp_adc_cal_value_t val_type = esp_adc_cal_characterize(ADC_UNIT_1, ADC_ATTEN_DB_11, ADC_WIDTH_BIT_12, 1100, &adc_chars);    //Check type of calibration value used to characterize ADC
-  if (val_type == ESP_ADC_CAL_VAL_EFUSE_VREF) {
-      Serial.printf("eFuse Vref:%u mV\r\n", adc_chars.vref);
-      vref = adc_chars.vref;
-  } else if (val_type == ESP_ADC_CAL_VAL_EFUSE_TP) {
-      Serial.printf("Two Point --> coeff_a:%umV coeff_b:%umV\r\n", adc_chars.coeff_a, adc_chars.coeff_b);
-  } else {
-      Serial.printf("Default Vref: 1100mV\r\n");
-  }
-#endif
-      
   ssid = prefs.getString("ssid", ssid);
   pswd = prefs.getString("pswd", pswd);
   //prefs.putString("ssid", ssid);
@@ -272,6 +259,19 @@ void setup() {
   encoderL.attachSingleEdge(37, 38);
   //encoderR.attachSingleEdge(13, 15);
 
+#if defined(DEBUG_CONSOLE)  
+  esp_adc_cal_characteristics_t adc_chars;
+  esp_adc_cal_value_t val_type = esp_adc_cal_characterize(ADC_UNIT_1, ADC_ATTEN_DB_11, ADC_WIDTH_BIT_12, 1100, &adc_chars);    //Check type of calibration value used to characterize ADC
+  if (val_type == ESP_ADC_CAL_VAL_EFUSE_VREF) {
+      Serial.printf("eFuse Vref:%u mV\r\n", adc_chars.vref);
+      vref = adc_chars.vref;
+  } else if (val_type == ESP_ADC_CAL_VAL_EFUSE_TP) {
+      Serial.printf("Two Point --> coeff_a:%umV coeff_b:%umV\r\n", adc_chars.coeff_a, adc_chars.coeff_b);
+  } else {
+      Serial.printf("Default Vref: 1100mV\r\n");
+  }
+#endif
+      
   delay(1000);
 
   ir_event = xSemaphoreCreateBinary();
@@ -284,7 +284,6 @@ void setup() {
   setStation();
   setVolume();
   setMute(isMute);
-  //xTaskCreate(audio_handler, "audio_handler", 16384 << 1, NULL, 2, NULL);
 
   switch (currentPage) {
     case RADIO_PAGE:
@@ -295,6 +294,9 @@ void setup() {
       break;
     case WEATHER_PAGE:
       setWeatherPage();
+      break;
+    default:
+      setRadioPage();
       break;
   }
 }
@@ -351,30 +353,45 @@ void prevPage() {
 }
 
 void setRadioPage() {
-  loopPage = NULL;
-  updatePage = NULL;
-  currentPage = RADIO_PAGE;
-  updatePage = displayRadioPage;
-  displayRadioPage();
-  loopPage = loopRadioPage;
+  if (xSemaphoreTake(mutex, portMAX_DELAY) == pdTRUE) {
+    debug_printf("RadioPage\r\n");
+    loopPage = NULL;
+    updatePage = NULL;
+    currentPage = RADIO_PAGE;
+    prefs.putInt("page", currentPage);
+    updatePage = displayRadioPage;
+    displayRadioPage();
+    loopPage = loopRadioPage;
+    xSemaphoreGive(mutex);
+  }
 }
 
 void setTimePage() {
-  loopPage = NULL;
-  updatePage = NULL;
-  currentPage = TIME_PAGE;
-  updatePage = displayTimePage;
-  displayTimePage();
-  loopPage = loopTimePage;
+  if (xSemaphoreTake(mutex, portMAX_DELAY) == pdTRUE) {
+    debug_printf("TimePage\r\n");
+    loopPage = NULL;
+    updatePage = NULL;
+    currentPage = TIME_PAGE;
+    prefs.putInt("page", currentPage);
+    updatePage = displayTimePage;
+    displayTimePage();
+    loopPage = loopTimePage;
+    xSemaphoreGive(mutex);
+  }
 }
 
 void setWeatherPage() {
-  loopPage = NULL;
-  updatePage = NULL;
-  currentPage = WEATHER_PAGE;
-  updatePage = displayWeatherPage;
-  displayWeatherPage();
-  loopPage = loopWeatherPage;
+  if (xSemaphoreTake(mutex, portMAX_DELAY) == pdTRUE) {
+    debug_printf("WeatherPage\r\n");
+    loopPage = NULL;
+    updatePage = NULL;
+    currentPage = WEATHER_PAGE;
+    prefs.putInt("page", currentPage);
+    updatePage = displayWeatherPage;
+    displayWeatherPage();
+    loopPage = loopWeatherPage;
+    xSemaphoreGive(mutex);
+  }
 }
 
 void setMute(bool value) {
