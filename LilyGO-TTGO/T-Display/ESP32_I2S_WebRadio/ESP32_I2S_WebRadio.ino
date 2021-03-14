@@ -1,4 +1,6 @@
 /*
+https://github.com/Xinyuan-LilyGO/TTGO-T-Display
+
                             T-Display
                        ┌─────────┐
                        ┤GND         3V3├ 
@@ -97,7 +99,7 @@ https://github.com/abashind/home_auto_2019
   #error Select ESP32 DEV Board
 #endif
 
-//#define DEBUG_CONSOLE
+#define DEBUG_CONSOLE
 
 
 #if defined(DEBUG_CONSOLE)
