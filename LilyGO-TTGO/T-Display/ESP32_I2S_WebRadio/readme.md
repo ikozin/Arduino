@@ -8,6 +8,8 @@ https://docs.espressif.com/projects/esp-idf/en/latest/esp32/
 
 https://diytech.ru/projects/spravochnik-po-raspinovke-esp32-kakie-vyvody-gpio-sleduet-ispolzovat
 
+https://github.com/LilyGO/ESP32_OLED_webradio
+
 ## Необходимые библиотеки
 
 #### ESP32FS (SPIFFS)
