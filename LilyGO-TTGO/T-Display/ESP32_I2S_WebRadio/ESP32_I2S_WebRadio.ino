@@ -7,9 +7,9 @@ https://github.com/Xinyuan-LilyGO/TTGO-T-Display
                        ┤GND         SVP├ 
                        ┤21           37├ Encoder Volume
                        ┤22           38├ Encoder Volume
-Encoder Radio Button   ┤17          SVN├ Encoder Volume Button
-                       ┤2            32├ 
-Encoder Radio          ┤15           33├ I2S XMT
+Encoder Radio Button   ┤17     (39) SVN├ Encoder Volume Button
+                       ┤2            32├ I2S XMT
+Encoder Radio          ┤15           33├ 
 Encoder Radio          ┤13           25├ I2S DIN
 *IR Remore Control*    ┤12           26├ I2S LCK
                        ┤GND          27├ I2S BCK
