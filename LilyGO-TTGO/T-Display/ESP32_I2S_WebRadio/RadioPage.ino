@@ -71,6 +71,7 @@ void resetScroll() {
 }
 
 void setScroll(const char * ptext) {
+  if (currentPage != RADIO_PAGE) return;  
   resetScroll();
   if (strlen(songText) > 0) {
     int height = tft.fontHeight() >> 2;

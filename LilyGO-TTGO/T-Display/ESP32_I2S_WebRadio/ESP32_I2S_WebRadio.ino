@@ -8,8 +8,8 @@ https://github.com/Xinyuan-LilyGO/TTGO-T-Display
                        ┤21           37├ Encoder Volume
                        ┤22           38├ Encoder Volume
 Encoder Radio Button   ┤17     (39) SVN├ Encoder Volume Button
-                       ┤2            32├ I2S XMT
-Encoder Radio          ┤15           33├ 
+                       ┤2            32├ 
+Encoder Radio          ┤15           33├ I2S XMT
 Encoder Radio          ┤13           25├ I2S DIN
 *IR Remore Control*    ┤12           26├ I2S LCK
                        ┤GND          27├ I2S BCK
@@ -91,7 +91,7 @@ https://github.com/abashind/home_auto_2019
 #include <esp_adc_cal.h>
 #include "WebRadio.h"
 
-#define IR_INPUT_PIN      13 //12
+#define IR_INPUT_PIN        12
 #define DO_NOT_USE_FEEDBACK_LED
 #include "TinyIRReceiver.cpp.h"
 
@@ -99,7 +99,7 @@ https://github.com/abashind/home_auto_2019
   #error Select ESP32 DEV Board
 #endif
 
-#define DEBUG_CONSOLE
+//#define DEBUG_CONSOLE
 
 
 #if defined(DEBUG_CONSOLE)
@@ -117,13 +117,10 @@ int vref = 1100;
 #define I2S_DIN       25    // DIN
 #define I2S_BCK       27    // BCK
 #define I2S_LCK       26    // LCK
+#define PIN_I2S_MUTE  33    // XMT
 
 #define BUTTON_1      35
 #define BUTTON_2      0
-
-
-#define PIN_I2S_MUTE  32
-
 #define TFT_BL        4   // Display backlight control pin
 
 TFT_eSPI tft = TFT_eSPI(135, 240);
@@ -134,7 +131,7 @@ Preferences prefs;
 ESP32Encoder encoderL;
 #define ENCODER_BTN_L 39
 
-//ESP32Encoder encoderR;
+ESP32Encoder encoderR;
 #define ENCODER_BTN_R 17
 
 //Button2 btnHard1(BUTTON_1);
@@ -168,13 +165,13 @@ typedef struct _radioItem {
 } RadioItem;
 
 const RadioItem listStation[] PROGMEM = {
-    {.name = "Наше радио",      .name2 = "",                .file = "/nashe.raw",       .url = "https://nashe1.hostingradio.ru/nashe-128.mp3" },
-    {.name = "Русское радио",   .name2 = "",                .file = "/rusradio.raw",    .url = "https://rusradio.hostingradio.ru/rusradio96.aacp" },
-    {.name = "Авторадио",       .name2 = "",                .file = "/avto.raw",        .url = "https://pub0301.101.ru:8443/stream/air/aac/64/100" },
-    {.name = "Вести FM",        .name2 = "",                .file = "/vestifm.raw",     .url = "https://icecast-vgtrk.cdnvideo.ru/vestifm_mp3_128kbps" },
-    {.name = "Дорожное",        .name2 = "радио",           .file = "/dorognoe.raw",    .url = "https://dorognoe.hostingradio.ru/radio" },
-    {.name = "Радио Рекорд",    .name2 = "",                .file = "/record.raw",      .url = "https://air2.radiorecord.ru:9002/rr_128" },
-    {.name = "Радио DFM",       .name2 = "",                .file = "/dfm.raw",         .url = "https://dfm.hostingradio.ru/dfm96.aacp" },
+    {.name = "Наше радио",    .name2 = "",      .file = "/nashe.raw",     .url = "https://nashe1.hostingradio.ru/nashe-128.mp3" },
+    {.name = "Русское радио", .name2 = "",      .file = "/rusradio.raw",  .url = "https://rusradio.hostingradio.ru/rusradio96.aacp" },
+    {.name = "Авторадио",     .name2 = "",      .file = "/avto.raw",      .url = "https://pub0301.101.ru:8443/stream/air/aac/64/100" },
+    {.name = "Вести FM",      .name2 = "",      .file = "/vestifm.raw",   .url = "https://icecast-vgtrk.cdnvideo.ru/vestifm_mp3_128kbps" },
+    {.name = "Дорожное",      .name2 = "радио", .file = "/dorognoe.raw",  .url = "https://dorognoe.hostingradio.ru/radio" },
+    {.name = "Радио Рекорд",  .name2 = "",      .file = "/record.raw",    .url = "https://air2.radiorecord.ru:9002/rr_128" },
+    {.name = "Радио DFM",     .name2 = "",      .file = "/dfm.raw",       .url = "https://dfm.hostingradio.ru/dfm96.aacp" },
 };
 
 #define StationCount (sizeof(listStation)/sizeof(listStation[0]))
@@ -250,7 +247,7 @@ void setup() {
   btnEncoderR.setLongClickHandler(btnEncoderLongClick);
 
   encoderL.attachSingleEdge(37, 38);
-  //encoderR.attachSingleEdge(13, 15);
+  encoderR.attachSingleEdge(13, 15);
 
 #if defined(DEBUG_CONSOLE)  
   esp_adc_cal_characteristics_t adc_chars;
@@ -457,14 +454,15 @@ void loop() {
     if (encoderL.getCount() < 0) downVolume();
     encoderL.setCount(0);    
   }
-/*
+
   if (encoderR.getCount() != 0) {
     if (encoderR.getCount() > 0) nextStation();
     if (encoderR.getCount() < 0) prevStation();
     encoderR.setCount(0);    
   }
-*/
 
+
+#if defined(DEBUG_CONSOLE)  
   static uint64_t timeStamp = 0;
   if (millis() - timeStamp > 10000) {
       timeStamp = millis();
@@ -480,6 +478,7 @@ void loop() {
 
       Serial.printf(voltage.c_str());
   }
+#endif
 
   if (loopPage) loopPage();
 }
@@ -540,8 +539,8 @@ void irCmdHandler() {
 
 void displaySystemInfo(Print& prn) {
   prn.printf("\r\nModel: %s, Rev: %d, Core: %d\r\n", ESP.getChipModel(), ESP.getChipRevision(), ESP.getChipCores());
-  uint64_t chipid = ESP.getEfuseMac();
-  prn.printf("ChipId: %04X%08X\r\n", (uint32_t)(chipid >> 32), (uint32_t)(chipid & 0xFFFFFFFF));
+  //uint64_t chipid = ESP.getEfuseMac();
+  //prn.printf("ChipId: %04X%08X\r\n", (uint32_t)(chipid >> 32), (uint32_t)(chipid & 0xFFFFFFFF));
   prn.printf("Flash: %d\r\n", ESP.getFlashChipSize());
   prn.printf("SDK: %s\r\n", ESP.getSdkVersion());
   prn.printf("NVS Free Entries: %d\r\n", prefs.freeEntries());
