@@ -242,7 +242,7 @@ void setup() {
   btnEncoderL.setClickHandler(btnEncoderLClick);
   btnEncoderR.setClickHandler(btnEncoderRClick);
   btnEncoderL.setLongClickTime(500);
-  btnEncoderL.setLongClickTime(500);
+  btnEncoderR.setLongClickTime(500);
   btnEncoderL.setLongClickHandler(btnEncoderLongClick);
   btnEncoderR.setLongClickHandler(btnEncoderLongClick);
 
