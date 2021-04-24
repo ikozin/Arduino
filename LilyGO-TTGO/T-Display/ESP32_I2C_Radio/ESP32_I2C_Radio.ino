@@ -2,11 +2,13 @@
 //https://tsibrov.blogspot.com/2020/01/rda5807m-part2-rds.html
 
 #include <Arduino.h>
+#include <WiFi.h>
 #include <Wire.h>
 #include <ESP32Encoder.h>
 #include <Button2.h>
 #include <TFT_eSPI.h>
-#include "radio.h"
+#include <Preferences.h>
+#include <HTTPClient.h>
 
 #define DEBUG_CONSOLE
 
@@ -19,6 +21,13 @@
 #endif
 
 TFT_eSPI tft = TFT_eSPI(135, 240);
+
+Preferences prefs;
+String ssid         = ""; // SSID WI-FI
+String pswd         = "";
+
+HTTPClient http;
+long lastTime       = 0;
 
 ESP32Encoder encoder;
 #define ENCODER_BTN_L 39
@@ -100,18 +109,38 @@ void setup() {
   tft.fillScreen(TFT_BLACK);
   tft.setTextColor(TFT_GREEN, TFT_BLACK);
 
+  prefs.begin("WebRadio");
+  ssid = prefs.getString("ssid", ssid);
+  pswd = prefs.getString("pswd", pswd);
+
+  tft.printf("Wi-Fi SSID: %s, connecting", ssid.c_str());
+  WiFi.disconnect();
+  WiFi.mode(WIFI_STA);
+  WiFi.begin(ssid.c_str(), pswd.c_str());
+  while (WiFi.status() != WL_CONNECTED) {
+    tft.printf(".");
+    delay(500);
+    yield();
+  }
+  tft.printf("\r\nconnected!\r\nip: %s\r\n", WiFi.localIP().toString().c_str());
+
+  configTime(prefs.getInt("tz", 10800), 0, "pool.ntp.org");
+
   currentHandle = handleVolume;
   
   encoder.attachSingleEdge(37, 38);
-  btnEncoder.setClickHandler(btnEncoderLClick);
+  btnEncoder.setClickHandler(btnEncoderClick);
   btnEncoder.setLongClickTime(500);
-  //btnEncoder.setLongClickHandler(btnEncoderLongClick);
+  btnEncoder.setLongClickHandler(btnEncoderLongClick);
 
   radioInit();
   radioSetRadio(currentIndex);
   radioSetVolume(currentVolume);
   
   pinMode(4, INPUT_PULLUP);
+
+  logTime(tft);
+  logTime(Serial);
 }
 
 void loop() {
@@ -119,25 +148,34 @@ void loop() {
   int dir = encoder.getCount();
   encoder.setCount(0);    
   currentHandle(dir);
+
+#if defined(DEBUG_CONSOLE)
+  long t = millis();
+  if (t - lastTime < 60000) return;
+  lastTime = t;
 /*
-  encoderVolume.tick();
-  if (digitalRead(4) == LOW) {
-    delay(1000);
-    if (currentHandle == handleChannel) {
-        Serial.println(F("Volume Control"));
-        currentHandle = handleVolume;
-    }
-    else {
-        Serial.println(F("Channel Control"));
-        currentHandle = handleChannel;
-    }
+  http.begin("https://export.yandex.ru/bar/reginfo.xml?region=213");
+  int httpCode = http.GET();
+  if (httpCode > 0) {
+      Serial.printf("[HTTP] GET... code: %d\r\n", httpCode);
+      if (httpCode == HTTP_CODE_OK) {
+        delay(1000);
+        http.writeToStream(&Serial);
+
+        //String payload = http.getString();
+        //Serial.println(payload);
+      }
+  } else {
+    Serial.printf("[HTTP] GET... failed, error: %s\r\n", http.errorToString(httpCode).c_str());
   }
-  int dir = (int)encoderVolume.getDirection();
-  currentHandle(dir);
+  http.end();
+  Serial.printf("\r\n");
 */
+#endif
+  
 }
 
-void btnEncoderLClick(Button2& b) {
+void btnEncoderClick(Button2& b) {
   if (currentHandle == handleChannel) {
 #if defined(DEBUG_CONSOLE)
       Serial.println(F("Volume Control"));
@@ -151,6 +189,11 @@ void btnEncoderLClick(Button2& b) {
       currentHandle = handleChannel;
   }
 }
+
+void btnEncoderLongClick(Button2& b) {
+  radioSetMute(!radioGetMute());
+}
+
 
 void handleChannel(int dir) {
   if (dir > 0) {
@@ -178,125 +221,10 @@ void handleVolume(int dir) {
   }
 }
 
-void radioSetRadio(uint8_t index) {
-  char c;
-  byte *pData = (byte *)(radioList + index);
-  uint16_t band = pgm_read_word(pData);
-#if defined(DEBUG_CONSOLE)  
-  Serial.print(band);
-  Serial.print(':');
-  pData += sizeof(uint16_t);
-  while ((c = (char)pgm_read_byte(pData++)) != 0) {
-    Serial.print(c);
-  }
-  Serial.println();
-#endif
-  radioSetChannel(band);
-}
-
-void radioInit() {
-  Wire.begin();
-  
-  rda_reg2_t reg2 = { .value = 0 };
-  reg2.DMUTE = 1;
-  reg2.DHIZ = 1;
-  reg2.ENABLE = 1;
-  reg2.BASS = 1;
-  setRegister(RDA5807M_REG2, reg2.value);
-  
-  rda_reg5_t reg5 = { .value = 0 };
-  reg5.LNA_PORT_SEL = 2;
-  reg5.SEEKTH = 8;
-  setRegister(RDA5807M_REG5, reg5.value);
-  delay(1000);
-}
-
-void radioSetChannel(uint16_t value) {
-  rda_reg3_t reg = { .value = 0 };
-  reg.CHAN = value - RADIO_BAND_MIN;
-  reg.TUNE = 1;
-  reg.BAND = RADIO_BAND_WIDTH; //00 - 87..108МГц, 01 - 76..91МГц, 10 - 76..108МГц, 11 - 65..76МГц или 50..65МГц (определяется битом 65M_50M MODE регистра 07h)
-  setRegister(RDA5807M_REG3, reg.value);
-  waitTune();
-  delay(200);
-}
-
-uint16_t radioGetChannel() {
-  rda_reg3_t reg = { .value = getRegister(RDA5807M_REG3) };
-  return reg.CHAN + RADIO_BAND_MIN;
-}
-
-void radioSetVolume(uint8_t value) {
-#if defined(DEBUG_CONSOLE)  
-  Serial.print(F("Volume = "));
-  Serial.println(value);
-#endif
-  rda_reg5_t reg = { .value = getRegister(RDA5807M_REG5) };
-  reg.VOLUME = value;
-  setRegister(RDA5807M_REG5, reg.value);
-  delay(100);
-}
-
-uint8_t radioGetVolume() {
-  rda_reg5_t reg = { .value = getRegister(RDA5807M_REG5) };
-  return reg.VOLUME;
-}
-
-void radioSetMute(bool value) {
-  rda_reg2_t reg = { .value = getRegister(RDA5807M_REG2) };
-  reg.DMUTE = !value;
-  setRegister(RDA5807M_REG2, reg.value);
-}
-
-bool radioGetMute() {
-  rda_reg2_t reg = { .value = getRegister(RDA5807M_REG2) };
-  return reg.DMUTE == 0;
-}
-
-void radioSetHardMute(bool value) {
-  rda_reg2_t reg = { .value = getRegister(RDA5807M_REG2) };
-  reg.DHIZ = !value;
-  setRegister(RDA5807M_REG2, reg.value);
-}
-
-bool radioGetHardMute() {
-  rda_reg2_t reg = { .value = getRegister(RDA5807M_REG2) };
-  return reg.DHIZ == 0;
-}
-
-uint8_t radioGetRssi() {
-  rda_regb_t reg;
-  reg.value = getRegister(RDA5807M_REGB);
-  return reg.RSSI;  
-}
-
-void waitTune() {
-  rda_rega_t reg;
-  do {
-    reg.value = getRegister(RDA5807M_REGA);
-  } while (reg.STC == 0);
-}
-
-uint16_t getRegister(uint8_t reg) {
-  uint16_t result;
-  Wire.beginTransmission(RDA5807M_RANDOM_ACCESS_ADDRESS);
-  Wire.write(reg);
-  Wire.endTransmission(false);
-  Wire.requestFrom(RDA5807M_RANDOM_ACCESS_ADDRESS, 2, true);
-  result = (uint16_t)Wire.read() << 8;
-  result |= Wire.read();
-  return result;
-}
-
-void setRegister(uint8_t reg, const uint16_t value) {
-#if defined(DEBUG_CONSOLE)  
-  char text[128];
-  sprintf(text, "0x%02X = 0x%04X", reg, value);
-  Serial.println(text);
-#endif
-  Wire.beginTransmission(RDA5807M_RANDOM_ACCESS_ADDRESS);
-  Wire.write(reg);
-  Wire.write(highByte(value));
-  Wire.write(lowByte(value));
-  Wire.endTransmission(true);
+void logTime(Print& prn) {
+  char strftime_buf[64];
+  struct tm timeinfo;
+  getLocalTime(&timeinfo);
+  strftime(strftime_buf, sizeof(strftime_buf), "%c", &timeinfo);
+  prn.printf("%s\r\n", strftime_buf);
 }
