@@ -10,8 +10,6 @@
 #include <Preferences.h>
 #include <HTTPClient.h>
 
-#include "tinyxml2.h"
-
 #define DEBUG_CONSOLE
 
 //ARDUINO_AVR_MINI
