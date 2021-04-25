@@ -10,6 +10,8 @@
 #include <Preferences.h>
 #include <HTTPClient.h>
 
+#include "tinyxml2.h"
+
 #define DEBUG_CONSOLE
 
 //ARDUINO_AVR_MINI
@@ -20,14 +22,14 @@
   #error Select ESP32 DEV Board
 #endif
 
-TFT_eSPI tft = TFT_eSPI(135, 240);
+TFT_eSPI tft = TFT_eSPI(TFT_WIDTH, TFT_HEIGHT); // 135x240
 
 Preferences prefs;
 String ssid         = ""; // SSID WI-FI
 String pswd         = "";
 
-HTTPClient http;
 long lastTime       = 0;
+//void updateWeather();
 
 ESP32Encoder encoder;
 #define ENCODER_BTN_L 39
@@ -105,6 +107,8 @@ void setup() {
   Serial.printf("\r\n");
   Serial.printf("\r\n");
 #endif
+  pinMode(TFT_BL, OUTPUT);                // Set backlight pin to output mode
+  digitalWrite(TFT_BL, TFT_BACKLIGHT_ON); // Turn backlight on. TFT_BACKLIGHT_ON has been set in the TFT_eSPI library in the User Setup file TTGO_T_Display.h
   tft.init();
   tft.fillScreen(TFT_BLACK);
   tft.setTextColor(TFT_GREEN, TFT_BLACK);
@@ -113,7 +117,7 @@ void setup() {
   ssid = prefs.getString("ssid", ssid);
   pswd = prefs.getString("pswd", pswd);
 
-  tft.printf("Wi-Fi SSID: %s, connecting", ssid.c_str());
+  tft.printf("Wi-Fi SSID: %s ", ssid.c_str());
   WiFi.disconnect();
   WiFi.mode(WIFI_STA);
   WiFi.begin(ssid.c_str(), pswd.c_str());
@@ -137,8 +141,9 @@ void setup() {
   radioSetRadio(currentIndex);
   radioSetVolume(currentVolume);
   
-  pinMode(4, INPUT_PULLUP);
-
+  delay(1000);
+  //yield();
+  
   logTime(tft);
   logTime(Serial);
 }
@@ -153,24 +158,7 @@ void loop() {
   long t = millis();
   if (t - lastTime < 60000) return;
   lastTime = t;
-/*
-  http.begin("https://export.yandex.ru/bar/reginfo.xml?region=213");
-  int httpCode = http.GET();
-  if (httpCode > 0) {
-      Serial.printf("[HTTP] GET... code: %d\r\n", httpCode);
-      if (httpCode == HTTP_CODE_OK) {
-        delay(1000);
-        http.writeToStream(&Serial);
-
-        //String payload = http.getString();
-        //Serial.println(payload);
-      }
-  } else {
-    Serial.printf("[HTTP] GET... failed, error: %s\r\n", http.errorToString(httpCode).c_str());
-  }
-  http.end();
-  Serial.printf("\r\n");
-*/
+  updateWeather();
 #endif
   
 }

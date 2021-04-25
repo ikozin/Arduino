@@ -69,17 +69,33 @@ https://www.sites.google.com/site/jmaathuis/arduino/lilygo-ttgo-t-display-esp32
 ### [Button2](https://github.com/LennartHennigs/Button2)
 ![button2](./images/button2.png "Button2")
 
-### [TFT_eSPI](https://github.com/ikozin/Arduino/tree/master/LilyGO-TTGO/T-Display/TFT_eSPI/)
+### [TFT_eSPI](https://github.com/Bodmer/TFT_eSPI)
+#### Оригинальная версия ####
+![TFT_ESPI](./images/tft_espi.png)
+**ПОСЛЕ УСТАНОВКИ НУЖНО ЕЁ НАСТРОИТЬ ПОД КОНКРЕТНУЮ ПЛАТУ, ДЛЯ ЭТОГО НЕОБХОДИМО В ДИРЕКТОРИИ**
+
+%USERPROFILE%\Documents\Arduino\libraries\\TFT_eSPI\
+
+**ОТРЕДАКТИРОВАТЬ ФАЙЛ __User_Setup_Select.h__ В КОТОРОМ ЗАКОМЕНТИРОВАТЬ СТРОКУ (нормер 22)**
+
+```C++
+//#include <User_Setup.h>
+```
+
+**И РАСКОМЕНТИРОВАТЬ СТРОКУ (номер 53)**
+
+```C++
+#include <User_Setups/Setup25_TTGO_T_Display.h>
+```
+
+#### Локальная версия ####
 Оригинал библиотеки https://github.com/Bodmer/TFT_eSPI, подготовленная для T-Display https://github.com/Xinyuan-LilyGO/TTGO-T-Display/tree/master/TFT_eSPI/.
 Копия [TFT_eSPI](https://github.com/ikozin/Arduino/tree/master/LilyGO-TTGO/T-Display/TFT_eSPI/) (на 19 января 2021) 
 - установка библиотеки, **deploy_TFT_eSPI.cmd**
 - удаление  библиотеки, **remove_TFT_eSPI.cmd**
 
-## Тест
+### Заводской тест ###
 Перед компиляцией необходимо установить локальную библиотеку **TFT_eSPI** : [FactoryTest](./TFT_eSPI/examples/FactoryTest/FactoryTest.ino)
-
-
-
 
 ## CP2104 USB to UART Bridge Controller
 Website: https://www.silabs.com/developers/usb-to-uart-bridge-vcp-drivers
