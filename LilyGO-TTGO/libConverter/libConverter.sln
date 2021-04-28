@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31205.134
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "libConverter", "libConverter.csproj", "{177A38D5-7600-4633-8CC1-32C502F64072}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{177A38D5-7600-4633-8CC1-32C502F64072}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{177A38D5-7600-4633-8CC1-32C502F64072}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{177A38D5-7600-4633-8CC1-32C502F64072}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{177A38D5-7600-4633-8CC1-32C502F64072}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {1F9BC51F-81B5-4C72-A73A-3588AA00A6C3}
+	EndGlobalSection
+EndGlobal
