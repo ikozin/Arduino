@@ -2,13 +2,15 @@
 //https://tsibrov.blogspot.com/2020/01/rda5807m-part2-rds.html
 
 #include <Arduino.h>
-#include <WiFi.h>
 #include <Wire.h>
-#include <ESP32Encoder.h>
+#include <WiFi.h>
+#include <Preferences.h>
+#include <FS.h>
+#include <SPIFFS.h>
+#include <HTTPClient.h>
 #include <Button2.h>
 #include <TFT_eSPI.h>
-#include <Preferences.h>
-#include <HTTPClient.h>
+#include <ESP32Encoder.h>
 
 #define DEBUG_CONSOLE
 
@@ -99,6 +101,7 @@ const int listSize = sizeof(radioList) / sizeof(RadioItem_t);
 
 void (*currentHandle)(int);
 
+unsigned short buf[4096];
 void setup() {
 #if defined(DEBUG_CONSOLE)
   Serial.begin(115200);
@@ -126,6 +129,13 @@ void setup() {
   }
   tft.printf("\r\nconnected!\r\nip: %s\r\n", WiFi.localIP().toString().c_str());
 
+  if(SPIFFS.begin(true)) {
+    listDir("/");
+  }
+  else {
+    tft.printf("SPIFFS Failed\r\n");
+  }
+
   configTime(prefs.getInt("tz", 10800), 0, "pool.ntp.org");
 
   currentHandle = handleVolume;
@@ -144,6 +154,15 @@ void setup() {
   
   logTime(tft);
   logTime(Serial);
+
+  File f = SPIFFS.open("/bkn_+ra.png");
+  if (f) {
+    size_t len = f.size();
+    f.read((uint8_t*)buf, len);
+    f.close();
+    //tft.fillScreen(0);
+    tft.pushImage(0, 100, 48, 48, buf);
+  }
 }
 
 void loop() {
@@ -214,3 +233,30 @@ void logTime(Print& prn) {
   strftime(strftime_buf, sizeof(strftime_buf), "%c", &timeinfo);
   prn.printf("%s\r\n", strftime_buf);
 }
+
+#if defined(DEBUG_CONSOLE)
+void listDir(const char * dirname) {
+    Serial.printf("Listing directory: %s\r\n", dirname);
+
+    File root = SPIFFS.open(dirname);
+    if(!root) {
+        Serial.printf("- failed to open directory\r\n");
+        return;
+    }
+    if(!root.isDirectory()) {
+        Serial.printf(" - not a directory\r\n");
+        return;
+    }
+
+    File file = root.openNextFile();
+    while(file) {
+        if(file.isDirectory()) {
+            Serial.printf("  DIR : %s\r\n", file.name());
+            listDir(file.name());
+        } else {
+            Serial.printf("  FILE: %s\tSIZE: %d\r\n", file.name(), file.size());
+        }
+        file = root.openNextFile();
+    }
+}
+#endif

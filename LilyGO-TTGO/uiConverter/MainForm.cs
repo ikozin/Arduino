@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Drawing;
 using System.IO;
+using System.Text;
 using System.Windows.Forms;
 
 
@@ -20,22 +21,7 @@ namespace uiConverter
         private void btnLoad_Click(object sender, EventArgs e)
         {
             if (openFileDlg.ShowDialog(this) != DialogResult.OK) return;
-            try
-            {
-                _bitmap = new Bitmap(Image.FromFile(openFileDlg.FileName));
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(this, ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
-            }
-            if (_bitmap.Width > MaxWidth || _bitmap.Height > MaxHeigth)
-            {
-                _bitmap.Dispose();
-                _bitmap = null;
-                MessageBox.Show(this, "Image is too big", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
-            }
+            if (!LoadImage(openFileDlg.FileName)) return;
             pictureBox.Image = _bitmap;
             textBoxWidth.Text = pictureBox.Image.Width.ToString();
             textBoxHeight.Text = pictureBox.Image.Height.ToString();
@@ -47,6 +33,32 @@ namespace uiConverter
             panelInfo.Enabled = true;
         }
 
+        private bool LoadImage(string fileName, bool silent = false)
+        {
+            try
+            {
+                _bitmap = new Bitmap(Image.FromFile(fileName));
+            }
+            catch (Exception ex)
+            {
+                if (!silent)
+                {
+                    MessageBox.Show(this, ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+                return false;
+            }
+            if (_bitmap.Width > MaxWidth || _bitmap.Height > MaxHeigth)
+            {
+                _bitmap.Dispose();
+                _bitmap = null;
+                if (!silent)
+                {
+                    MessageBox.Show(this, "Image is too big", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+                return false;
+            }
+            return true;
+        }
         private void textBoxColor_MouseDoubleClick(object sender, MouseEventArgs e)
         {
             pictureBox.Capture = true;
@@ -81,6 +93,43 @@ namespace uiConverter
                 libConverter.rgb565 tool = new libConverter.rgb565();
                 tool.WriteRawData(stream, _bitmap, checkBoxSwap.Checked, posX, posY, foreColor, backColor);
             }
+        }
+
+        private void btnBatch_Click(object sender, EventArgs e)
+        {
+            folderBrowserDialog.Description = "Выберите директорию с картинками";
+            if (folderBrowserDialog.ShowDialog(this) != DialogResult.OK) return;
+            var sourceDir = folderBrowserDialog.SelectedPath;
+
+            folderBrowserDialog.Description = "Выберите директорию для сохранения";
+            if (folderBrowserDialog.ShowDialog(this) != DialogResult.OK) return;
+            var targetDir = folderBrowserDialog.SelectedPath;
+
+            int totalFiles = 0;
+            int errorFiles = 0;
+            var errorNames = new StringBuilder(1024);
+            long maxSize = 0;
+            libConverter.rgb565 tool = new libConverter.rgb565();
+            foreach (var item in Directory.EnumerateFiles(sourceDir))
+            {
+                totalFiles++;
+                if (LoadImage(item, true))
+                {
+                    maxSize = Math.Max(new FileInfo(item).Length, maxSize);
+                    string fileName = Path.Combine(targetDir, Path.GetFileName(item));
+                    using (var stream = File.Create(fileName))
+                    {
+                        tool.WriteBitmap(stream, _bitmap, true);
+                    }
+                }
+                else
+                {
+                    errorNames.AppendFormat("{0}{1}", Path.GetFileName(item), Environment.NewLine);
+                    errorFiles++;
+                }
+            }
+            MessageBox.Show(this, String.Format("Всего обработано: {1} файлов.{0}Из них с ошибкой: {2}{0}{3}{0}Максимальный размер: {4}",
+                Environment.NewLine, totalFiles, errorFiles, errorNames.ToString(), maxSize), "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
     }
 }

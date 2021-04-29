@@ -26,7 +26,9 @@ void updateWeather() {
         Serial.println(value.c_str());
         getMatch(payload.begin(), _icon, value);
         Serial.println(value.c_str());
-
+        char * fileName = value.begin() + value.lastIndexOf('/');
+        Serial.println(fileName);
+       
         //
       }
   } else {

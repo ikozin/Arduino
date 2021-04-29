@@ -50,6 +50,8 @@ namespace uiConverter
             this.pictureBox = new System.Windows.Forms.PictureBox();
             this.openFileDlg = new System.Windows.Forms.OpenFileDialog();
             this.toolTip = new System.Windows.Forms.ToolTip(this.components);
+            this.btnBatch = new System.Windows.Forms.Button();
+            this.folderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
             labelPositionX = new System.Windows.Forms.Label();
             labelPositionY = new System.Windows.Forms.Label();
             labelWidth = new System.Windows.Forms.Label();
@@ -119,6 +121,7 @@ namespace uiConverter
             // 
             // panelMain
             // 
+            this.panelMain.Controls.Add(this.btnBatch);
             this.panelMain.Controls.Add(this.btnSaveRaw);
             this.panelMain.Controls.Add(this.btnLoad);
             this.panelMain.Controls.Add(this.panelInfo);
@@ -246,6 +249,16 @@ namespace uiConverter
             // 
             this.openFileDlg.Filter = "All files|*.*";
             // 
+            // btnBatch
+            // 
+            this.btnBatch.Location = new System.Drawing.Point(110, 30);
+            this.btnBatch.Name = "btnBatch";
+            this.btnBatch.Size = new System.Drawing.Size(94, 29);
+            this.btnBatch.TabIndex = 3;
+            this.btnBatch.Text = "Batch";
+            this.btnBatch.UseVisualStyleBackColor = true;
+            this.btnBatch.Click += new System.EventHandler(this.btnBatch_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
@@ -281,6 +294,8 @@ namespace uiConverter
         private System.Windows.Forms.TextBox textBoxForeColor;
         private System.Windows.Forms.OpenFileDialog openFileDlg;
         private System.Windows.Forms.ToolTip toolTip;
+        private System.Windows.Forms.Button btnBatch;
+        private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog;
     }
 }
 
