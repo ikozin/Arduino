@@ -36,9 +36,10 @@ namespace uiConverter
             System.Windows.Forms.Label labelHeight;
             System.Windows.Forms.Label labelBackColor;
             System.Windows.Forms.Label labelForeColor;
-            this.panelMain = new System.Windows.Forms.Panel();
-            this.btnSaveRaw = new System.Windows.Forms.Button();
-            this.btnLoad = new System.Windows.Forms.Button();
+            System.Windows.Forms.Panel panelMain;
+            System.Windows.Forms.Button btnBatch;
+            System.Windows.Forms.Button btnSaveRaw;
+            System.Windows.Forms.Button btnLoad;
             this.panelInfo = new System.Windows.Forms.Panel();
             this.textBoxForeColor = new System.Windows.Forms.TextBox();
             this.textBoxBackColor = new System.Windows.Forms.TextBox();
@@ -50,7 +51,6 @@ namespace uiConverter
             this.pictureBox = new System.Windows.Forms.PictureBox();
             this.openFileDlg = new System.Windows.Forms.OpenFileDialog();
             this.toolTip = new System.Windows.Forms.ToolTip(this.components);
-            this.btnBatch = new System.Windows.Forms.Button();
             this.folderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
             labelPositionX = new System.Windows.Forms.Label();
             labelPositionY = new System.Windows.Forms.Label();
@@ -58,7 +58,11 @@ namespace uiConverter
             labelHeight = new System.Windows.Forms.Label();
             labelBackColor = new System.Windows.Forms.Label();
             labelForeColor = new System.Windows.Forms.Label();
-            this.panelMain.SuspendLayout();
+            panelMain = new System.Windows.Forms.Panel();
+            btnBatch = new System.Windows.Forms.Button();
+            btnSaveRaw = new System.Windows.Forms.Button();
+            btnLoad = new System.Windows.Forms.Button();
+            panelMain.SuspendLayout();
             this.panelInfo.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericPosY)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericPosX)).BeginInit();
@@ -121,35 +125,45 @@ namespace uiConverter
             // 
             // panelMain
             // 
-            this.panelMain.Controls.Add(this.btnBatch);
-            this.panelMain.Controls.Add(this.btnSaveRaw);
-            this.panelMain.Controls.Add(this.btnLoad);
-            this.panelMain.Controls.Add(this.panelInfo);
-            this.panelMain.Dock = System.Windows.Forms.DockStyle.Left;
-            this.panelMain.Location = new System.Drawing.Point(0, 0);
-            this.panelMain.Name = "panelMain";
-            this.panelMain.Size = new System.Drawing.Size(210, 362);
-            this.panelMain.TabIndex = 0;
+            panelMain.Controls.Add(btnBatch);
+            panelMain.Controls.Add(btnSaveRaw);
+            panelMain.Controls.Add(btnLoad);
+            panelMain.Controls.Add(this.panelInfo);
+            panelMain.Dock = System.Windows.Forms.DockStyle.Left;
+            panelMain.Location = new System.Drawing.Point(0, 0);
+            panelMain.Name = "panelMain";
+            panelMain.Size = new System.Drawing.Size(210, 385);
+            panelMain.TabIndex = 0;
+            // 
+            // btnBatch
+            // 
+            btnBatch.Location = new System.Drawing.Point(12, 82);
+            btnBatch.Name = "btnBatch";
+            btnBatch.Size = new System.Drawing.Size(187, 29);
+            btnBatch.TabIndex = 3;
+            btnBatch.Text = "Batch (swap:true)";
+            btnBatch.UseVisualStyleBackColor = true;
+            btnBatch.Click += new System.EventHandler(this.btnBatch_Click);
             // 
             // btnSaveRaw
             // 
-            this.btnSaveRaw.Location = new System.Drawing.Point(12, 47);
-            this.btnSaveRaw.Name = "btnSaveRaw";
-            this.btnSaveRaw.Size = new System.Drawing.Size(94, 29);
-            this.btnSaveRaw.TabIndex = 0;
-            this.btnSaveRaw.Text = "Save RAW";
-            this.btnSaveRaw.UseVisualStyleBackColor = true;
-            this.btnSaveRaw.Click += new System.EventHandler(this.btnSaveRaw_Click);
+            btnSaveRaw.Location = new System.Drawing.Point(12, 47);
+            btnSaveRaw.Name = "btnSaveRaw";
+            btnSaveRaw.Size = new System.Drawing.Size(187, 29);
+            btnSaveRaw.TabIndex = 0;
+            btnSaveRaw.Text = "Save RAW";
+            btnSaveRaw.UseVisualStyleBackColor = true;
+            btnSaveRaw.Click += new System.EventHandler(this.btnSaveRaw_Click);
             // 
             // btnLoad
             // 
-            this.btnLoad.Location = new System.Drawing.Point(12, 12);
-            this.btnLoad.Name = "btnLoad";
-            this.btnLoad.Size = new System.Drawing.Size(94, 29);
-            this.btnLoad.TabIndex = 2;
-            this.btnLoad.Text = "Load";
-            this.btnLoad.UseVisualStyleBackColor = true;
-            this.btnLoad.Click += new System.EventHandler(this.btnLoad_Click);
+            btnLoad.Location = new System.Drawing.Point(12, 12);
+            btnLoad.Name = "btnLoad";
+            btnLoad.Size = new System.Drawing.Size(187, 29);
+            btnLoad.TabIndex = 2;
+            btnLoad.Text = "Load";
+            btnLoad.UseVisualStyleBackColor = true;
+            btnLoad.Click += new System.EventHandler(this.btnLoad_Click);
             // 
             // panelInfo
             // 
@@ -169,7 +183,7 @@ namespace uiConverter
             this.panelInfo.Controls.Add(labelPositionX);
             this.panelInfo.Controls.Add(this.checkBoxSwap);
             this.panelInfo.Enabled = false;
-            this.panelInfo.Location = new System.Drawing.Point(0, 98);
+            this.panelInfo.Location = new System.Drawing.Point(0, 121);
             this.panelInfo.Name = "panelInfo";
             this.panelInfo.Size = new System.Drawing.Size(210, 264);
             this.panelInfo.TabIndex = 0;
@@ -240,7 +254,7 @@ namespace uiConverter
             this.pictureBox.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pictureBox.Location = new System.Drawing.Point(210, 0);
             this.pictureBox.Name = "pictureBox";
-            this.pictureBox.Size = new System.Drawing.Size(370, 362);
+            this.pictureBox.Size = new System.Drawing.Size(395, 385);
             this.pictureBox.TabIndex = 1;
             this.pictureBox.TabStop = false;
             this.pictureBox.MouseClick += new System.Windows.Forms.MouseEventHandler(this.pictureBox_MouseClick);
@@ -249,26 +263,16 @@ namespace uiConverter
             // 
             this.openFileDlg.Filter = "All files|*.*";
             // 
-            // btnBatch
-            // 
-            this.btnBatch.Location = new System.Drawing.Point(110, 30);
-            this.btnBatch.Name = "btnBatch";
-            this.btnBatch.Size = new System.Drawing.Size(94, 29);
-            this.btnBatch.TabIndex = 3;
-            this.btnBatch.Text = "Batch";
-            this.btnBatch.UseVisualStyleBackColor = true;
-            this.btnBatch.Click += new System.EventHandler(this.btnBatch_Click);
-            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(580, 362);
+            this.ClientSize = new System.Drawing.Size(605, 385);
             this.Controls.Add(this.pictureBox);
-            this.Controls.Add(this.panelMain);
+            this.Controls.Add(panelMain);
             this.Name = "MainForm";
-            this.Text = "uiConverter";
-            this.panelMain.ResumeLayout(false);
+            this.Text = "LilyGO-TTGO T-Display [135 x 240]";
+            panelMain.ResumeLayout(false);
             this.panelInfo.ResumeLayout(false);
             this.panelInfo.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericPosY)).EndInit();
