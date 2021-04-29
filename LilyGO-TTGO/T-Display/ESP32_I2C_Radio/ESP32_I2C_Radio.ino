@@ -101,7 +101,7 @@ const int listSize = sizeof(radioList) / sizeof(RadioItem_t);
 
 void (*currentHandle)(int);
 
-unsigned short buf[4096];
+unsigned short buf[3072];
 void setup() {
 #if defined(DEBUG_CONSOLE)
   Serial.begin(115200);

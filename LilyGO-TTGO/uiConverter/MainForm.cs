@@ -115,11 +115,11 @@ namespace uiConverter
                 totalFiles++;
                 if (LoadImage(item, true))
                 {
-                    maxSize = Math.Max(new FileInfo(item).Length, maxSize);
                     string fileName = Path.Combine(targetDir, Path.GetFileName(item));
                     using (var stream = File.Create(fileName))
                     {
                         tool.WriteBitmap(stream, _bitmap, true);
+                        maxSize = Math.Max(stream.Length, maxSize);
                     }
                 }
                 else
