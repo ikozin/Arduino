@@ -12,14 +12,21 @@
 #include <TFT_eSPI.h>
 #include <ESP32Encoder.h>
 
-#define DEBUG_CONSOLE
-
 //ARDUINO_AVR_MINI
 //ARDUINO_AVR_NANO
 //ARDUINO_AVR_UNO
 
 #if !defined(ESP32)
   #error Select ESP32 DEV Board
+#endif
+
+#define DEBUG_CONSOLE
+
+#if defined(DEBUG_CONSOLE)
+#define debug_printf(...)   Serial.printf(__VA_ARGS__)
+#else
+#define debug_printf(...)
+#define listDir(...)
 #endif
 
 TFT_eSPI tft = TFT_eSPI(TFT_WIDTH, TFT_HEIGHT); // 135x240
@@ -101,13 +108,13 @@ const int listSize = sizeof(radioList) / sizeof(RadioItem_t);
 
 void (*currentHandle)(int);
 
-unsigned short buf[3072];
 void setup() {
 #if defined(DEBUG_CONSOLE)
   Serial.begin(115200);
-  Serial.printf("\r\n");
-  Serial.printf("\r\n");
 #endif
+  debug_printf("\r\n");
+  debug_printf("\r\n");
+
   pinMode(TFT_BL, OUTPUT);                // Set backlight pin to output mode
   digitalWrite(TFT_BL, TFT_BACKLIGHT_ON); // Turn backlight on. TFT_BACKLIGHT_ON has been set in the TFT_eSPI library in the User Setup file TTGO_T_Display.h
   tft.init();
@@ -119,21 +126,26 @@ void setup() {
   pswd = prefs.getString("pswd", pswd);
 
   tft.printf("Wi-Fi SSID: %s ", ssid.c_str());
+  debug_printf("Wi-Fi SSID: %s ", ssid.c_str());
+
   WiFi.disconnect();
   WiFi.mode(WIFI_STA);
   WiFi.begin(ssid.c_str(), pswd.c_str());
   while (WiFi.status() != WL_CONNECTED) {
     tft.printf(".");
+    debug_printf(".");
     delay(500);
     yield();
   }
   tft.printf("\r\nconnected!\r\nip: %s\r\n", WiFi.localIP().toString().c_str());
-
+  debug_printf("\r\nconnected!\r\nip: %s\r\n", WiFi.localIP().toString().c_str());
+  
   if(SPIFFS.begin(true)) {
     listDir("/");
   }
   else {
     tft.printf("SPIFFS Failed\r\n");
+    debug_printf("SPIFFS Failed\r\n");
   }
 
   configTime(prefs.getInt("tz", 10800), 0, "pool.ntp.org");
@@ -148,21 +160,12 @@ void setup() {
   radioInit();
   radioSetRadio(currentIndex);
   radioSetVolume(currentVolume);
+  radioSetMute(!radioGetMute());
   
   delay(1000);
-  //yield();
-  
+ 
   logTime(tft);
   logTime(Serial);
-
-  File f = SPIFFS.open("/bkn_+ra.png");
-  if (f) {
-    size_t len = f.size();
-    f.read((uint8_t*)buf, len);
-    f.close();
-    //tft.fillScreen(0);
-    tft.pushImage(0, 100, 48, 48, buf);
-  }
 }
 
 void loop() {
@@ -182,15 +185,11 @@ void loop() {
 
 void btnEncoderClick(Button2& b) {
   if (currentHandle == handleChannel) {
-#if defined(DEBUG_CONSOLE)
-      Serial.println(F("Volume Control"));
-#endif
+      debug_printf("Volume Control\r\n");
       currentHandle = handleVolume;
   }
   else {
-#if defined(DEBUG_CONSOLE)
-      Serial.println(F("Channel Control"));
-#endif
+      debug_printf("Channel Control\r\n");
       currentHandle = handleChannel;
   }
 }
@@ -235,28 +234,28 @@ void logTime(Print& prn) {
 }
 
 #if defined(DEBUG_CONSOLE)
-void listDir(const char * dirname) {
-    Serial.printf("Listing directory: %s\r\n", dirname);
+void listDir(const char* dirname) {
+  Serial.printf("Listing directory: %s\r\n", dirname);
 
-    File root = SPIFFS.open(dirname);
-    if(!root) {
-        Serial.printf("- failed to open directory\r\n");
-        return;
-    }
-    if(!root.isDirectory()) {
-        Serial.printf(" - not a directory\r\n");
-        return;
-    }
+  File root = SPIFFS.open(dirname);
+  if(!root) {
+    Serial.printf("- failed to open directory\r\n");
+    return;
+  }
+  if(!root.isDirectory()) {
+    Serial.printf(" - not a directory\r\n");
+    return;
+  }
 
-    File file = root.openNextFile();
-    while(file) {
-        if(file.isDirectory()) {
-            Serial.printf("  DIR : %s\r\n", file.name());
-            listDir(file.name());
-        } else {
-            Serial.printf("  FILE: %s\tSIZE: %d\r\n", file.name(), file.size());
-        }
-        file = root.openNextFile();
+  File file = root.openNextFile();
+  while(file) {
+    if(file.isDirectory()) {
+      Serial.printf("  DIR : %s\r\n", file.name());
+      listDir(file.name());
+    } else {
+      Serial.printf("  FILE: %s\tSIZE: %d\r\n", file.name(), file.size());
     }
+    file = root.openNextFile();
+  }
 }
 #endif

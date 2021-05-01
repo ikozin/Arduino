@@ -1,65 +1,101 @@
+extern TFT_eSPI tft;
+
 HTTPClient _http;
 
-char _type[] = "<info|<weather|<day_part|<weather_type";
-char _windSpeed[] = "<info|<weather|<day_part|<wind_speed";
-char _temperature[] = "<info|<weather|<day_part|<temperature";
-char _icon[] = "<info|<weather|<day_part|<image-v3";
-String value;
+char _typePattern[]        = "<info|<weather|<day_part|<weather_type";
+char _iconPattern[]        = "<image-v3";
+char _windSpeedPattern[]   = "<wind_speed";
+char _windTypePattern[]    = "<wind_direction";
+char _dampnessPattern[]    = "<dampness";
+char _pressurePattern[]    = "<pressure";
+char _temperaturePattern[] = "<temperature";
+
+char weatherType[128]      = {'\0'};
+char weatherIcon[128]      = {'\0'};
+char weatherWindSpeed[16]  = {'\0'};
+char weatherWindType[64]   = {'\0'};
+char weatherDampness[16]   = {'\0'};
+char weatherPressure[16]   = {'\0'};
+char weatherTemperature[16]= {'\0'};
+char* fileName = NULL;
+
+unsigned short imageData[3072];
 
 void updateWeather() {
 /*
-  Serial.printf("\r\n");
   _http.begin("https://export.yandex.ru/bar/reginfo.xml?region=213");
   int httpCode = _http.GET();
   if (httpCode > 0) {
-      Serial.printf("[HTTP] GET... code: %d\r\n", httpCode);
+      //debug_printf("\r\n[HTTP] GET... code: %d\r\n", httpCode);
       if (httpCode == HTTP_CODE_OK) {
-        //_http.writeToStream(&Serial);
         String payload = _http.getString();
-        Serial.println(payload);
-        //value.reserve(128);
-        getMatch(payload.begin(), _type, value);
-        Serial.println(value.c_str());
-        getMatch(payload.begin(), _windSpeed, value);
-        Serial.println(value.c_str());
-        getMatch(payload.begin(), _temperature, value);
-        Serial.println(value.c_str());
-        getMatch(payload.begin(), _icon, value);
-        Serial.println(value.c_str());
-        char * fileName = value.begin() + value.lastIndexOf('/');
+        char* pstr = payload.begin();
+        pstr = getMatch(pstr, _typePattern, weatherType, sizeof(weatherType)-1);
+        pstr = getMatch(pstr, _iconPattern, weatherIcon, sizeof(weatherIcon)-1);
+        pstr = getMatch(pstr, _windSpeedPattern, weatherWindSpeed, sizeof(weatherWindSpeed)-1);
+        pstr = getMatch(pstr, _windTypePattern, weatherWindType, sizeof(weatherWindType)-1);
+        pstr = getMatch(pstr, _dampnessPattern, weatherDampness, sizeof(weatherDampness)-1);
+        pstr = getMatch(pstr, _pressurePattern, weatherPressure, sizeof(weatherPressure)-1);
+        pstr = getMatch(pstr, _temperaturePattern, weatherTemperature, sizeof(weatherTemperature)-1);
+        fileName = strrchr(weatherIcon, '/');
+
+#if defined(DEBUG_CONSOLE)
+        //Serial.println(payload);
+        Serial.println(weatherType);
+        Serial.println(weatherIcon);
+        Serial.println(weatherWindSpeed);
+        Serial.println(weatherWindType);
+        Serial.println(weatherDampness);
+        Serial.println(weatherPressure);
+        Serial.println(weatherTemperature);
         Serial.println(fileName);
-       
-        //
+        Serial.println();
+#endif
+
       }
   } else {
-    Serial.printf("[HTTP] GET... failed, error: %d\r\n", httpCode);
+    debug_printf("\r\n[HTTP] GET... failed, error: %d\r\n", httpCode);
   }
   _http.end();
-  Serial.printf("\r\n");  
+
+  tft.fillScreen(TFT_CYAN);
+  if (fileName != NULL) {
+    File f = SPIFFS.open(fileName);
+    if (f) {
+      size_t len = f.size();
+      f.read((uint8_t*)imageData, len);
+      f.close();
+      tft.pushImage(0, 0, 48, 48, imageData);
+    }
+  }
+  
 */
 }
 
-bool getMatch(char* text, char* pattern, String& value ) {
-    //Serial.println(pattern);
+// Возврат: указатель на последний обработанный символ, мелкая оптимизация,
+// чтобы каждый раз не начинать с начала,
+// в связи с этим ВАЖЕН ПОРЯДОК ПОИСКА ЗНАЧЕНИЙ.
+char* getMatch(char* text, char* pattern, char* value, size_t size) {
+    if (text == NULL ) return NULL;
     char* delimeter = strchr(pattern, '|');
     if (delimeter == NULL) {
         char* begin = strstr(text, pattern);
-        if (begin == NULL) return false;
+        if (begin == NULL) return NULL;
         begin += strlen(pattern);
         while (*begin++ != '>');
         char* end = strchr(begin, '<');
         *end = '\0';
-        value = begin;
+        strncpy (value, begin, size);
         *end = '<';
-        return true;
+        return end + 1;
     }
     *delimeter = '\0';
     char* begin = strstr(text, pattern);
     if (begin == NULL) {
       *delimeter = '|';
-      return false;
+      return NULL;
     }
     begin += strlen(pattern);
     *delimeter++ = '|';
-    return getMatch(begin, delimeter, value);
+    return getMatch(begin, delimeter, value, size);
 }
