@@ -16,6 +16,10 @@ namespace YandexWeather
             comboBoxPngUrl.SelectedIndex = 0;
             comboBoxSvgUrl.SelectedIndex = 0;
             comboBoxApiUrl.SelectedIndex = 0;
+            if (!String.IsNullOrEmpty(textBoxSvgColor.Text))
+            {
+                colorDialog.Color = ColorTranslator.FromHtml(textBoxSvgColor.Text);
+            }
         }
 
         private void btnPng_Click(object sender, EventArgs e)

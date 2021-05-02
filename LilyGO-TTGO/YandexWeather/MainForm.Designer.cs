@@ -224,6 +224,11 @@ namespace YandexWeather
             this.textBoxLog.TabIndex = 1;
             this.textBoxLog.WordWrap = false;
             // 
+            // colorDialog
+            // 
+            this.colorDialog.AnyColor = true;
+            this.colorDialog.FullOpen = true;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
