@@ -38,8 +38,8 @@ namespace uiConverter
             System.Windows.Forms.Label labelForeColor;
             System.Windows.Forms.Panel panelMain;
             System.Windows.Forms.Button btnBatch;
-            System.Windows.Forms.Button btnSaveRaw;
             System.Windows.Forms.Button btnLoad;
+            this.btnSaveRaw = new System.Windows.Forms.Button();
             this.panelInfo = new System.Windows.Forms.Panel();
             this.textBoxForeColor = new System.Windows.Forms.TextBox();
             this.textBoxBackColor = new System.Windows.Forms.TextBox();
@@ -60,7 +60,6 @@ namespace uiConverter
             labelForeColor = new System.Windows.Forms.Label();
             panelMain = new System.Windows.Forms.Panel();
             btnBatch = new System.Windows.Forms.Button();
-            btnSaveRaw = new System.Windows.Forms.Button();
             btnLoad = new System.Windows.Forms.Button();
             panelMain.SuspendLayout();
             this.panelInfo.SuspendLayout();
@@ -126,7 +125,7 @@ namespace uiConverter
             // panelMain
             // 
             panelMain.Controls.Add(btnBatch);
-            panelMain.Controls.Add(btnSaveRaw);
+            panelMain.Controls.Add(this.btnSaveRaw);
             panelMain.Controls.Add(btnLoad);
             panelMain.Controls.Add(this.panelInfo);
             panelMain.Dock = System.Windows.Forms.DockStyle.Left;
@@ -147,13 +146,13 @@ namespace uiConverter
             // 
             // btnSaveRaw
             // 
-            btnSaveRaw.Location = new System.Drawing.Point(12, 47);
-            btnSaveRaw.Name = "btnSaveRaw";
-            btnSaveRaw.Size = new System.Drawing.Size(187, 29);
-            btnSaveRaw.TabIndex = 0;
-            btnSaveRaw.Text = "Save RAW";
-            btnSaveRaw.UseVisualStyleBackColor = true;
-            btnSaveRaw.Click += new System.EventHandler(this.btnSaveRaw_Click);
+            this.btnSaveRaw.Location = new System.Drawing.Point(12, 47);
+            this.btnSaveRaw.Name = "btnSaveRaw";
+            this.btnSaveRaw.Size = new System.Drawing.Size(187, 29);
+            this.btnSaveRaw.TabIndex = 0;
+            this.btnSaveRaw.Text = "Save RAW";
+            this.btnSaveRaw.UseVisualStyleBackColor = true;
+            this.btnSaveRaw.Click += new System.EventHandler(this.btnSaveRaw_Click);
             // 
             // btnLoad
             // 

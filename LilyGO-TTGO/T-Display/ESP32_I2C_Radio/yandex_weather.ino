@@ -1,6 +1,7 @@
 extern TFT_eSPI tft;
 
 HTTPClient _http;
+const int32_t iconSize = 64;
 
 char _typePattern[]        = "<info|<weather|<day_part|<weather_type";
 char _iconPattern[]        = "<image-v3";
@@ -19,10 +20,9 @@ char weatherPressure[16]   = {'\0'};
 char weatherTemperature[16]= {'\0'};
 char* fileName = NULL;
 
-unsigned short imageData[3072];
+unsigned short imageData[8192];
 
 void updateWeather() {
-/*
   _http.begin("https://export.yandex.ru/bar/reginfo.xml?region=213");
   int httpCode = _http.GET();
   if (httpCode > 0) {
@@ -58,18 +58,16 @@ void updateWeather() {
   }
   _http.end();
 
-  tft.fillScreen(TFT_CYAN);
+  tft.fillScreen(ColorToRGB565(0x4D, 0x8D, 0xEE));
   if (fileName != NULL) {
     File f = SPIFFS.open(fileName);
     if (f) {
       size_t len = f.size();
       f.read((uint8_t*)imageData, len);
       f.close();
-      tft.pushImage(0, 0, 48, 48, imageData);
+      tft.pushImage(0, 0, iconSize, iconSize, imageData);
     }
   }
-  
-*/
 }
 
 // Возврат: указатель на последний обработанный символ, мелкая оптимизация,
@@ -98,4 +96,9 @@ char* getMatch(char* text, char* pattern, char* value, size_t size) {
     begin += strlen(pattern);
     *delimeter++ = '|';
     return getMatch(begin, delimeter, value, size);
+}
+
+uint16_t ColorToRGB565(uint8_t r, uint8_t g, uint8_t b)
+{
+    return (uint16_t)(((r & 0b11111000) << 8) | ((g & 0b11111100) << 3) | (b >> 3));
 }

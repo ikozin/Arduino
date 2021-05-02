@@ -118,6 +118,7 @@ void setup() {
   pinMode(TFT_BL, OUTPUT);                // Set backlight pin to output mode
   digitalWrite(TFT_BL, TFT_BACKLIGHT_ON); // Turn backlight on. TFT_BACKLIGHT_ON has been set in the TFT_eSPI library in the User Setup file TTGO_T_Display.h
   tft.init();
+  tft.setRotation(1);
   tft.fillScreen(TFT_BLACK);
   tft.setTextColor(TFT_GREEN, TFT_BLACK);
 
@@ -144,8 +145,9 @@ void setup() {
     listDir("/");
   }
   else {
-    tft.printf("SPIFFS Failed\r\n");
-    debug_printf("SPIFFS Failed\r\n");
+    SPIFFS.format();
+    tft.printf("SPIFFS Formatting\r\n");
+    debug_printf("SPIFFS Formatting\r\n");
   }
 
   configTime(prefs.getInt("tz", 10800), 0, "pool.ntp.org");
@@ -176,7 +178,8 @@ void loop() {
 
 #if defined(DEBUG_CONSOLE)
   long t = millis();
-  if (t - lastTime < 60000) return;
+  //if (t - lastTime < 60000) return;
+  if (lastTime > 0) return;
   lastTime = t;
   updateWeather();
 #endif
