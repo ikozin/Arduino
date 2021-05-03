@@ -1,0 +1,1 @@
+использовать YandexWeather

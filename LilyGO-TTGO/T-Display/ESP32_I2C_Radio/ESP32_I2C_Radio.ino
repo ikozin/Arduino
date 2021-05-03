@@ -108,6 +108,11 @@ const int listSize = sizeof(radioList) / sizeof(RadioItem_t);
 
 void (*currentHandle)(int);
 
+//Для генерации шрифта использовать Create_font.pde (Processing)
+// TFT_eSPI\Tools\Create_Smooth_Font\Create_font\Create_font.pde
+#define FONT_CALIBRI_32  "Calibri32"// unicodeBlocks = 0x0400, 0x0452, | specificUnicodes =  0x002B, 0x002C, 0x002D, 0x002E, 
+#define FONT_CALIBRI_56  "Calibri56"// unicodeBlocks =                 | specificUnicodes =  0x00B0, 0x002B, 0x002D, 0x002E, 0x0030, 0x0031, 0x0032, 0x0033, 0x0034, 0x0035, 0x0036, 0x0037, 0x0038, 0x0039,
+
 void setup() {
 #if defined(DEBUG_CONSOLE)
   Serial.begin(115200);
@@ -117,8 +122,22 @@ void setup() {
 
   pinMode(TFT_BL, OUTPUT);                // Set backlight pin to output mode
   digitalWrite(TFT_BL, TFT_BACKLIGHT_ON); // Turn backlight on. TFT_BACKLIGHT_ON has been set in the TFT_eSPI library in the User Setup file TTGO_T_Display.h
+
+  if(SPIFFS.begin(true)) {
+    listDir("/");
+  }
+  else {
+    SPIFFS.format();
+    tft.printf("SPIFFS Formatting\r\n");
+    debug_printf("SPIFFS Formatting\r\n");
+  }
+  //SPIFFS.format();
+ 
+  
   tft.init();
   tft.setRotation(1);
+  //tft.loadFont(FONT_CALIBRI);
+  //tft.loadFont(FONT_SANSERIF);
   tft.fillScreen(TFT_BLACK);
   tft.setTextColor(TFT_GREEN, TFT_BLACK);
 
@@ -141,15 +160,6 @@ void setup() {
   tft.printf("\r\nconnected!\r\nip: %s\r\n", WiFi.localIP().toString().c_str());
   debug_printf("\r\nconnected!\r\nip: %s\r\n", WiFi.localIP().toString().c_str());
   
-  if(SPIFFS.begin(true)) {
-    listDir("/");
-  }
-  else {
-    SPIFFS.format();
-    tft.printf("SPIFFS Formatting\r\n");
-    debug_printf("SPIFFS Formatting\r\n");
-  }
-
   configTime(prefs.getInt("tz", 10800), 0, "pool.ntp.org");
 
   currentHandle = handleVolume;
@@ -162,7 +172,7 @@ void setup() {
   radioInit();
   radioSetRadio(currentIndex);
   radioSetVolume(currentVolume);
-  radioSetMute(!radioGetMute());
+  //radioSetMute(!radioGetMute());
   
   delay(1000);
  
@@ -178,8 +188,7 @@ void loop() {
 
 #if defined(DEBUG_CONSOLE)
   long t = millis();
-  //if (t - lastTime < 60000) return;
-  if (lastTime > 0) return;
+  if (lastTime && (t - lastTime < 20 * 60000)) return;
   lastTime = t;
   updateWeather();
 #endif
