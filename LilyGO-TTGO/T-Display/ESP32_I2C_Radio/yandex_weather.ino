@@ -90,16 +90,14 @@ void updateWeather() {
       drawImage(107, 0, iconSize, iconSize, imageData);
     }
   }
-  if (fileName != NULL) {
-    File f = SPIFFS.open(windFileName);
-    if (f) {
-      size_t len = f.size();
-      f.read((uint8_t*)imageData, len);
-      f.close();
-      drawImage(192, 8, 32, 32, imageData);
-    }
+  File f = SPIFFS.open(windFileName);
+  if (f) {
+    size_t len = f.size();
+    f.read((uint8_t*)imageData, len);
+    f.close();
+    drawImage(192, 8, 32, 32, imageData);
   }
-/*
+#if defined(USE_TFT_ESPI)
   //strcpy(weatherType, "облачно с прояснениями, необльшой дождь");
   tft.loadFont(FONT_CALIBRI_32);
   tft.setTextColor(TFT_WHITE);
@@ -116,7 +114,7 @@ void updateWeather() {
   posX = ((int32_t)101 - tft.textWidth(weatherTemperature)) >> 1;
   tft.drawString(weatherTemperature, posX + 2, 10);
   tft.unloadFont();
-*/
+#endif
 }
 
 // Возврат: указатель на последний обработанный символ, мелкая оптимизация,

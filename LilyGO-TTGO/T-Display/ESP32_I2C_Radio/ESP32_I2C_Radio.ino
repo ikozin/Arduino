@@ -1,8 +1,8 @@
 //https://tsibrov.blogspot.com/2019/11/rda5807m-part1.html
 //https://tsibrov.blogspot.com/2020/01/rda5807m-part2-rds.html
 
-//#define USE_TFT_ESPI
-#define USE_ADAFUIT_ST7789
+#define USE_TFT_ESPI
+//#define USE_ADAFUIT_ST7789
 
 #include <Arduino.h>
 #include <Wire.h>
@@ -58,7 +58,7 @@
   //Глобальные переменные используют 57256 байт (19%) динамической памяти, оставляя 237656 байт для локальных переменных. Максимум: 294912 байт.
 #endif
 
-//#define DEBUG_CONSOLE
+#define DEBUG_CONSOLE
 
 #if defined(DEBUG_CONSOLE)
 #define debug_printf(...)   Serial.printf(__VA_ARGS__)
@@ -156,6 +156,8 @@ void setup() {
   debug_printf("\r\n");
 #endif
 
+  initDisplayTFT();
+
   if(SPIFFS.begin(true)) {
     listDir("/");
   }
@@ -164,8 +166,6 @@ void setup() {
     debug_printf("SPIFFS Formatting\r\n");
   }
   //SPIFFS.format();
-  
-  initDisplayTFT();
 
   prefs.begin("WebRadio");
   ssid = prefs.getString("ssid", ssid);
