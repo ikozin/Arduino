@@ -20,7 +20,7 @@
   #error Select ESP32 DEV Board
 #endif
 
-#define DEBUG_CONSOLE
+//#define DEBUG_CONSOLE
 
 #if defined(DEBUG_CONSOLE)
 #define debug_printf(...)   Serial.printf(__VA_ARGS__)
@@ -174,10 +174,12 @@ void setup() {
   radioSetVolume(currentVolume);
   //radioSetMute(!radioGetMute());
   
-  delay(1000);
+  delay(1000);  // Ожидаем установку времени по NTP
  
   logTime(tft);
+#if defined(DEBUG_CONSOLE)
   logTime(Serial);
+#endif
 }
 
 void loop() {
@@ -186,13 +188,11 @@ void loop() {
   encoder.setCount(0);    
   currentHandle(dir);
 
-#if defined(DEBUG_CONSOLE)
-  long t = millis();
-  if (lastTime && (t - lastTime < 20 * 60000)) return;
-  lastTime = t;
-  updateWeather();
-#endif
-  
+  long time = millis();
+  if (lastTime && (time - lastTime > 20 * 60000)) {
+    lastTime = time;
+    updateWeather();
+  }  
 }
 
 void btnEncoderClick(Button2& b) {

@@ -89,7 +89,6 @@ https://www.sites.google.com/site/jmaathuis/arduino/lilygo-ttgo-t-display-esp32
 ![button2](./images/button2.png "Button2")
 
 ### [TFT_eSPI](https://github.com/Bodmer/TFT_eSPI)
-#### Оригинальная версия ####
 ![TFT_ESPI](./images/tft_espi.png)
 **ПОСЛЕ УСТАНОВКИ НУЖНО ЕЁ НАСТРОИТЬ ПОД КОНКРЕТНУЮ ПЛАТУ, ДЛЯ ЭТОГО НЕОБХОДИМО В ДИРЕКТОРИИ**
 
@@ -107,11 +106,29 @@ https://www.sites.google.com/site/jmaathuis/arduino/lilygo-ttgo-t-display-esp32
 #include <User_Setups/Setup25_TTGO_T_Display.h>
 ```
 
-#### Локальная версия ####
-Оригинал библиотеки https://github.com/Bodmer/TFT_eSPI, подготовленная для T-Display https://github.com/Xinyuan-LilyGO/TTGO-T-Display/tree/master/TFT_eSPI/.
-Копия [TFT_eSPI](https://github.com/ikozin/Arduino/tree/master/LilyGO-TTGO/T-Display/TFT_eSPI/) (на 19 января 2021) 
-- установка библиотеки, **deploy_TFT_eSPI.cmd**
-- удаление  библиотеки, **remove_TFT_eSPI.cmd**
+### [Adafruit ST7735 and ST7789](https://github.com/adafruit/Adafruit-ST7735-Library)
+![TFT_ESPI](./images/st7789.png)
+Пример использования:
+```C++
+#include <Adafruit_GFX.h>    // Core graphics library
+#include <Adafruit_ST7789.h> // Hardware-specific library for ST7789
+#include <SPI.h>
+
+#define TFT_CS        5
+#define TFT_RST       23
+#define TFT_DC        16
+#define TFT_MOSI      19
+#define TFT_SCLK      18
+#define TFT_BL        4
+
+Adafruit_ST7789 tft = Adafruit_ST7789(TFT_CS, TFT_DC, TFT_MOSI, TFT_SCLK, TFT_RST);
+
+pinMode(TFT_BL, OUTPUT);
+digitalWrite(TFT_BL, HIGH); // Включаем подсветку
+
+tft.init(135, 240);         // Init ST7789 240x135
+```
+
 
 ### Заводской тест ###
 Перед компиляцией необходимо установить локальную библиотеку **TFT_eSPI** : [FactoryTest](./TFT_eSPI/examples/FactoryTest/FactoryTest.ino)
