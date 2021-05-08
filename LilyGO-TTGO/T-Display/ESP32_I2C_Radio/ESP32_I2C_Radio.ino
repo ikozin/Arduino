@@ -180,6 +180,7 @@ void setup() {
 #if defined(DEBUG_CONSOLE)
   logTime(Serial);
 #endif
+  updateWeather();
 }
 
 void loop() {
@@ -188,9 +189,9 @@ void loop() {
   encoder.setCount(0);    
   currentHandle(dir);
 
-  long time = millis();
-  if (lastTime && (time - lastTime > 20 * 60000)) {
-    lastTime = time;
+  long curTime = millis();
+  if (curTime - lastTime > 20 * 60000) {
+    lastTime = curTime;
     updateWeather();
   }  
 }

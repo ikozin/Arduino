@@ -2,6 +2,10 @@
 #include <Adafruit_ST7789.h> // Hardware-specific library for ST7789
 #include <SPI.h>
 
+#if !defined(ESP32)
+  #error Select ESP32 DEV Board
+#endif
+
 #define TFT_CS        5
 #define TFT_RST       23
 #define TFT_DC        16
@@ -18,9 +22,9 @@ void setup(void) {
   Serial.print(F("Hello! ST77xx TFT Test"));
 
   pinMode(TFT_BL, OUTPUT);
-  digitalWrite(TFT_BL, HIGH);
+  digitalWrite(TFT_BL, HIGH); // Включаем подсветку
 
-  tft.init(135, 240);           // Init ST7789 240x135
+  tft.init(135, 240);         // Init ST7789 240x135
   
   // SPI speed defaults to SPI_DEFAULT_FREQ defined in the library, you can override it here
   // Note that speed allowable depends on chip and quality of wiring, if you go too fast, you
