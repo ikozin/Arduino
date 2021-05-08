@@ -1,4 +1,9 @@
-extern TFT_eSPI tft;
+#if defined(USE_TFT_ESPI)
+  extern TFT_eSPI tft;
+#endif
+#if defined(USE_ADAFUIT_ST7789)
+  extern Adafruit_ST7789 tft;
+#endif
 
 HTTPClient _http;
 const int32_t iconSize = 64;
@@ -82,7 +87,7 @@ void updateWeather() {
       size_t len = f.size();
       f.read((uint8_t*)imageData, len);
       f.close();
-      tft.pushImage(107, 0, iconSize, iconSize, imageData);
+      drawImage(107, 0, iconSize, iconSize, imageData);
     }
   }
   if (fileName != NULL) {
@@ -91,9 +96,10 @@ void updateWeather() {
       size_t len = f.size();
       f.read((uint8_t*)imageData, len);
       f.close();
-      tft.pushImage(192, 8, 32, 32, imageData);
+      drawImage(192, 8, 32, 32, imageData);
     }
   }
+/*
   //strcpy(weatherType, "облачно с прояснениями, необльшой дождь");
   tft.loadFont(FONT_CALIBRI_32);
   tft.setTextColor(TFT_WHITE);
@@ -110,6 +116,7 @@ void updateWeather() {
   posX = ((int32_t)101 - tft.textWidth(weatherTemperature)) >> 1;
   tft.drawString(weatherTemperature, posX + 2, 10);
   tft.unloadFont();
+*/
 }
 
 // Возврат: указатель на последний обработанный символ, мелкая оптимизация,

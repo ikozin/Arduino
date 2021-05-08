@@ -1,6 +1,9 @@
 //https://tsibrov.blogspot.com/2019/11/rda5807m-part1.html
 //https://tsibrov.blogspot.com/2020/01/rda5807m-part2-rds.html
 
+//#define USE_TFT_ESPI
+#define USE_ADAFUIT_ST7789
+
 #include <Arduino.h>
 #include <Wire.h>
 #include <WiFi.h>
@@ -9,15 +12,50 @@
 #include <SPIFFS.h>
 #include <HTTPClient.h>
 #include <Button2.h>
-#include <TFT_eSPI.h>
 #include <ESP32Encoder.h>
-
-//ARDUINO_AVR_MINI
-//ARDUINO_AVR_NANO
-//ARDUINO_AVR_UNO
 
 #if !defined(ESP32)
   #error Select ESP32 DEV Board
+#endif
+
+#if (!defined(USE_TFT_ESPI) && !defined(USE_ADAFUIT_ST7789))
+  #error Select TFT Video Library
+#endif
+
+#if defined(USE_TFT_ESPI)
+  #include <TFT_eSPI.h>
+
+  TFT_eSPI tft = TFT_eSPI(TFT_WIDTH, TFT_HEIGHT); // 135x240
+  #define drawImage(x, y, w, h, bitmap) tft.pushImage(x, y, w, h, bitmap)
+
+  //Скетч использует 978518 байт (74%) памяти устройства. Всего доступно 1310720 байт.
+  //Глобальные переменные используют 57352 байт (19%) динамической памяти, оставляя 237560 байт для локальных переменных. Максимум: 294912 байт.
+
+#endif
+
+#if defined(USE_ADAFUIT_ST7789)
+  #include <Adafruit_GFX.h>    // Core graphics library
+  #include <Adafruit_ST7789.h> // Hardware-specific library for ST7789
+  #include <SPI.h>
+  
+  #define TFT_CS        5
+  #define TFT_RST       23
+  #define TFT_DC        16
+  #define TFT_MOSI      19
+  #define TFT_SCLK      18
+  #define TFT_BL        4
+
+  #define TFT_WIDTH     135
+  #define TFT_HEIGHT    240
+
+  #define TFT_BLACK     0x0000
+  #define TFT_GREEN     0x07E0
+  #define TFT_WHITE     0xFFFF
+  Adafruit_ST7789 tft = Adafruit_ST7789(TFT_CS, TFT_DC, TFT_MOSI, TFT_SCLK, TFT_RST);
+  #define drawImage(x, y, w, h, bitmap) tft.drawRGBBitmap(x, y, bitmap, w, h)
+
+  //Скетч использует 957318 байт (73%) памяти устройства. Всего доступно 1310720 байт.
+  //Глобальные переменные используют 57256 байт (19%) динамической памяти, оставляя 237656 байт для локальных переменных. Максимум: 294912 байт.
 #endif
 
 //#define DEBUG_CONSOLE
@@ -28,8 +66,6 @@
 #define debug_printf(...)
 #define listDir(...)
 #endif
-
-TFT_eSPI tft = TFT_eSPI(TFT_WIDTH, TFT_HEIGHT); // 135x240
 
 Preferences prefs;
 String ssid         = ""; // SSID WI-FI
@@ -116,30 +152,20 @@ void (*currentHandle)(int);
 void setup() {
 #if defined(DEBUG_CONSOLE)
   Serial.begin(115200);
+  debug_printf("\r\n");
+  debug_printf("\r\n");
 #endif
-  debug_printf("\r\n");
-  debug_printf("\r\n");
-
-  pinMode(TFT_BL, OUTPUT);                // Set backlight pin to output mode
-  digitalWrite(TFT_BL, TFT_BACKLIGHT_ON); // Turn backlight on. TFT_BACKLIGHT_ON has been set in the TFT_eSPI library in the User Setup file TTGO_T_Display.h
 
   if(SPIFFS.begin(true)) {
     listDir("/");
   }
   else {
     SPIFFS.format();
-    tft.printf("SPIFFS Formatting\r\n");
     debug_printf("SPIFFS Formatting\r\n");
   }
   //SPIFFS.format();
- 
   
-  tft.init();
-  tft.setRotation(1);
-  //tft.loadFont(FONT_CALIBRI);
-  //tft.loadFont(FONT_SANSERIF);
-  tft.fillScreen(TFT_BLACK);
-  tft.setTextColor(TFT_GREEN, TFT_BLACK);
+  initDisplayTFT();
 
   prefs.begin("WebRadio");
   ssid = prefs.getString("ssid", ssid);
@@ -270,5 +296,27 @@ void listDir(const char* dirname) {
     }
     file = root.openNextFile();
   }
+}
+#endif
+
+#if defined(USE_TFT_ESPI)
+void initDisplayTFT() {
+  pinMode(TFT_BL, OUTPUT);
+  digitalWrite(TFT_BL, HIGH);
+  tft.init();
+  tft.setRotation(1);
+  tft.fillScreen(TFT_BLACK);
+  tft.setTextColor(TFT_GREEN, TFT_BLACK);
+}
+#endif
+
+#if defined(USE_ADAFUIT_ST7789)
+void initDisplayTFT() {
+  pinMode(TFT_BL, OUTPUT);
+  digitalWrite(TFT_BL, HIGH);
+  tft.init(TFT_WIDTH, TFT_HEIGHT);
+  tft.setRotation(3);
+  tft.fillScreen(TFT_BLACK);
+  tft.setTextColor(TFT_GREEN, TFT_BLACK);
 }
 #endif
