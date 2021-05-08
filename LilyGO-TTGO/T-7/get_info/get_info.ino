@@ -28,7 +28,7 @@ void print_system_info()
   
   esp_chip_info(&chip_info);
   Serial.print("Chip Model:\t");
-  switch (chip_info.model)
+  switch ((int)chip_info.model)
   {
     case 1:
       Serial.println("ESP32");
