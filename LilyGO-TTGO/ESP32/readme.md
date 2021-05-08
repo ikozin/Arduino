@@ -22,6 +22,9 @@ https://github.com/me-no-dev/arduino-esp32fs-plugin/releases
 ## Выбор платы в Arduino IDE
 ![menu](./images/menu.png "menu")
 
+## Выбор платы T7 V1.3
+ESP32 Arduino->TTGO T7 V1.3 Mini32
+
 ## Библиотеки Arduino IDE
 Расположение: **"%USERPROFILE%\\Documents\\Arduino\\libraries\\"**
 

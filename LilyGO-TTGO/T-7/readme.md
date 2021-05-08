@@ -7,6 +7,8 @@ LILYGO® TTGO T7 V1.3 MINI 32 ESP32 WiFi Bluetooth Module Development Board
 ## Настройка Arduino IDE
 **Описание настройки и выбора платы: [ESP32](../ESP32/readme.md)**
 
+**ESP32 Arduino -> TTGO T7 V1.3 Mini32**
+
 ## Product Description
 
 | Hardware                | Specifications |
