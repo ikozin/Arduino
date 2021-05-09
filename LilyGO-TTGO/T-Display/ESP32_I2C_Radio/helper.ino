@@ -6,7 +6,7 @@ void printlnUInt32Hex(uint32_t data) {
   debug_printf("0x%08X\r\n", data);
 }
 
-void printlnStrHex(char* pdata) {
+void printlnStrHex(const char* pdata) {
   if (pdata == NULL) {
     debug_printf("NULL\r\n");
     return;
@@ -19,7 +19,7 @@ void printlnStrHex(char* pdata) {
   debug_printf("\r\n");
 }
 
-void printlnArrayHex(byte* pdata, size_t size) {
+void printlnArrayHex(const byte* pdata, size_t size) {
   if (pdata == NULL) {
     debug_printf("NULL\r\n");
     return;

@@ -76,24 +76,10 @@ void updateWeather() {
   _http.end();
 
   tft.fillScreen(0x4C7D); //ColorToRGB565(0x4D, 0x8D, 0xEE)
-  if (fileName != NULL) {
-    File f = SPIFFS.open(fileName);
-    if (f) {
-      size_t len = f.size();
-      f.read((uint8_t*)imageData, len);
-      f.close();
-      tft.pushImage(107, 0, iconSize, iconSize, imageData);
-    }
-  }
-  if (fileName != NULL) {
-    File f = SPIFFS.open(windFileName);
-    if (f) {
-      size_t len = f.size();
-      f.read((uint8_t*)imageData, len);
-      f.close();
-      tft.pushImage(192, 8, 32, 32, imageData);
-    }
-  }
+
+  if (fileName != NULL) drawImageFile(fileName, 107, 0, iconSize);
+  drawImageFile(windFileName, 192, 8, 32);
+  
   //strcpy(weatherType, "облачно с прояснениями, необльшой дождь");
   tft.loadFont(FONT_CALIBRI_32);
   tft.setTextColor(TFT_WHITE);
@@ -138,6 +124,16 @@ char* getMatch(char* text, char* pattern, char* value, size_t size, char first, 
   begin += strlen(pattern);
   *delimeter++ = '|';
   return getMatch(begin, delimeter, value, size, first, last);
+}
+
+void drawImageFile(const char* fileName, int32_t x, int32_t y, int32_t size) {
+    File f = SPIFFS.open(fileName);
+    if (f) {
+        size_t len = f.size();
+        f.read((uint8_t*)imageData, len);
+        f.close();
+        tft.pushImage(x, y, size, size, imageData);
+    }
 }
 
 uint16_t ColorToRGB565(uint8_t r, uint8_t g, uint8_t b)

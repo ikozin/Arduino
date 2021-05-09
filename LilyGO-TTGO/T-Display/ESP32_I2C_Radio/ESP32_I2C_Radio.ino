@@ -116,30 +116,27 @@ void (*currentHandle)(int);
 void setup() {
 #if defined(DEBUG_CONSOLE)
   Serial.begin(115200);
+  debug_printf("\r\n");
+  debug_printf("\r\n");
 #endif
-  debug_printf("\r\n");
-  debug_printf("\r\n");
 
   pinMode(TFT_BL, OUTPUT);                // Set backlight pin to output mode
   digitalWrite(TFT_BL, TFT_BACKLIGHT_ON); // Turn backlight on. TFT_BACKLIGHT_ON has been set in the TFT_eSPI library in the User Setup file TTGO_T_Display.h
-
-  if(SPIFFS.begin(true)) {
-    listDir("/");
-  }
-  else {
-    SPIFFS.format();
-    tft.printf("SPIFFS Formatting\r\n");
-    debug_printf("SPIFFS Formatting\r\n");
-  }
-  //SPIFFS.format();
- 
   
   tft.init();
   tft.setRotation(1);
-  //tft.loadFont(FONT_CALIBRI);
-  //tft.loadFont(FONT_SANSERIF);
   tft.fillScreen(TFT_BLACK);
   tft.setTextColor(TFT_GREEN, TFT_BLACK);
+
+  if (SPIFFS.begin(true)) {
+      listDir("/");
+  }
+  else {
+      SPIFFS.format();
+      tft.printf("SPIFFS Formatting\r\n");
+      debug_printf("SPIFFS Formatting\r\n");
+  }
+  //SPIFFS.format();
 
   prefs.begin("WebRadio");
   ssid = prefs.getString("ssid", ssid);

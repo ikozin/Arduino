@@ -104,7 +104,7 @@ uint16_t getRegister(uint8_t reg) {
   Wire.beginTransmission(RDA5807M_RANDOM_ACCESS_ADDRESS);
   Wire.write(reg);
   Wire.endTransmission(false);
-  Wire.requestFrom(RDA5807M_RANDOM_ACCESS_ADDRESS, 2, true);
+  Wire.requestFrom((uint16_t)RDA5807M_RANDOM_ACCESS_ADDRESS, (uint8_t)2, true);
   result = (uint16_t)Wire.read() << 8;
   result |= Wire.read();
   return result;
