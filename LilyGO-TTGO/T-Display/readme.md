@@ -107,7 +107,7 @@ https://www.sites.google.com/site/jmaathuis/arduino/lilygo-ttgo-t-display-esp32
 ```
 
 ### [Adafruit ST7735 and ST7789](https://github.com/adafruit/Adafruit-ST7735-Library)
-![TFT_ESPI](./images/st7789.png)
+![Adafruit ST7735 and ST7789](./images/st7789.png)
 Пример использования:
 ```C++
 #include <Adafruit_GFX.h>    // Core graphics library
