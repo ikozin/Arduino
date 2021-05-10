@@ -11,6 +11,8 @@
 #include <Button2.h>
 #include <TFT_eSPI.h>
 #include <ESP32Encoder.h>
+#include <AsyncTCP.h>
+#include <ESPAsyncWebServer.h>
 
 //ARDUINO_AVR_MINI
 //ARDUINO_AVR_NANO
@@ -20,7 +22,7 @@
   #error Select ESP32 DEV Board
 #endif
 
-//#define DEBUG_CONSOLE
+#define DEBUG_CONSOLE
 
 #if defined(DEBUG_CONSOLE)
 #define debug_printf(...)   Serial.printf(__VA_ARGS__)
@@ -30,6 +32,8 @@
 #endif
 
 TFT_eSPI tft = TFT_eSPI(TFT_WIDTH, TFT_HEIGHT); // 135x240
+
+AsyncWebServer server(80);
 
 Preferences prefs;
 String ssid         = ""; // SSID WI-FI
@@ -129,7 +133,7 @@ void setup() {
   tft.setTextColor(TFT_GREEN, TFT_BLACK);
 
   if (SPIFFS.begin(true)) {
-      listDir("/");
+      listDir("/", &Serial);
   }
   else {
       SPIFFS.format();
@@ -178,6 +182,11 @@ void setup() {
   logTime(Serial);
 #endif
   updateWeather();
+
+  debug_printf("WebServer\r\n");
+  server.on("/", HTTP_GET, pageIndex);
+  server.onNotFound(page404);
+  server.begin();  
 }
 
 void loop() {
@@ -244,26 +253,26 @@ void logTime(Print& prn) {
 }
 
 #if defined(DEBUG_CONSOLE)
-void listDir(const char* dirname) {
-  Serial.printf("Listing directory: %s\r\n", dirname);
+void listDir(const char* dirname, Print* p) {
+  p->printf("Listing directory: %s\r\n", dirname);
 
   File root = SPIFFS.open(dirname);
   if(!root) {
-    Serial.printf("- failed to open directory\r\n");
+    p->printf("- failed to open directory\r\n");
     return;
   }
   if(!root.isDirectory()) {
-    Serial.printf(" - not a directory\r\n");
+    p->printf(" - not a directory\r\n");
     return;
   }
 
   File file = root.openNextFile();
   while(file) {
     if(file.isDirectory()) {
-      Serial.printf("  DIR : %s\r\n", file.name());
-      listDir(file.name());
+      p->printf("  DIR : %s\r\n", file.name());
+      listDir(file.name(), p);
     } else {
-      Serial.printf("  FILE: %s\tSIZE: %d\r\n", file.name(), file.size());
+      p->printf("  FILE: %s\tSIZE: %d\r\n", file.name(), file.size());
     }
     file = root.openNextFile();
   }

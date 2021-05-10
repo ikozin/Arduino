@@ -136,7 +136,6 @@ void drawImageFile(const char* fileName, int32_t x, int32_t y, int32_t size) {
     }
 }
 
-uint16_t ColorToRGB565(uint8_t r, uint8_t g, uint8_t b)
-{
+uint16_t ColorToRGB565(uint8_t r, uint8_t g, uint8_t b) {
   return (uint16_t)(((r & 0b11111000) << 8) | ((g & 0b11111100) << 3) | (b >> 3));
 }

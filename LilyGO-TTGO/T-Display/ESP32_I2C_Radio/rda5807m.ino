@@ -1,10 +1,10 @@
 #include "rda5807m.h"
 
 void radioSetRadio(uint8_t index) {
-  char c;
   byte *pData = (byte *)(radioList + index);
   uint16_t band = pgm_read_word(pData);
 #if defined(DEBUG_CONSOLE)  
+  char c;
   Serial.print(band);
   Serial.print(':');
   pData += sizeof(uint16_t);
