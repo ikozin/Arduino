@@ -184,7 +184,8 @@ void setup() {
   updateWeather();
 
   debug_printf("WebServer\r\n");
-  server.on("/", HTTP_GET, pageIndex);
+  server.on("/", HTTP_GET, pageIndexGet);
+  server.on("/", HTTP_POST, pageIndexPost);
   server.onNotFound(page404);
   server.begin();  
 }
