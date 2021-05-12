@@ -27,6 +27,48 @@ int32_t posX;
 
 unsigned short imageData[8192];
 
+// Возврат: указатель на последний обработанный символ, мелкая оптимизация,
+// чтобы каждый раз не начинать с начала,
+// в связи с этим ВАЖЕН ПОРЯДОК ПОИСКА ЗНАЧЕНИЙ.
+char* getMatch(char* text, char* pattern, char* value, size_t size, char first, char last) {
+  if (text == NULL ) return NULL;
+  char* delimeter = strchr(pattern, '|');
+  if (delimeter == NULL) {
+    char* begin = strstr(text, pattern);
+    if (begin == NULL) return NULL;
+    begin += strlen(pattern);
+    while (*begin++ != first);
+    char* end = strchr(begin, last);
+    *end = '\0';
+    strncpy (value, begin, size);
+    *end = last;
+    return end + 1;
+  }
+  *delimeter = '\0';
+  char* begin = strstr(text, pattern);
+  if (begin == NULL) {
+    *delimeter = '|';
+    return NULL;
+  }
+  begin += strlen(pattern);
+  *delimeter++ = '|';
+  return getMatch(begin, delimeter, value, size, first, last);
+}
+
+void drawImageFile(const char* fileName, int32_t x, int32_t y, int32_t size) {
+    File f = SPIFFS.open(fileName);
+    if (f) {
+        size_t len = f.size();
+        f.read((uint8_t*)imageData, len);
+        f.close();
+        tft.pushImage(x, y, size, size, imageData);
+    }
+}
+
+uint16_t ColorToRGB565(uint8_t r, uint8_t g, uint8_t b) {
+  return (uint16_t)(((r & 0b11111000) << 8) | ((g & 0b11111100) << 3) | (b >> 3));
+}
+
 void updateWeather() {
   _http.begin("https://export.yandex.ru/bar/reginfo.xml?region=213");
   int httpCode = _http.GET();
@@ -96,46 +138,4 @@ void updateWeather() {
   posX = ((int32_t)101 - tft.textWidth(weatherTemperature)) >> 1;
   tft.drawString(weatherTemperature, posX + 2, 10);
   tft.unloadFont();
-}
-
-// Возврат: указатель на последний обработанный символ, мелкая оптимизация,
-// чтобы каждый раз не начинать с начала,
-// в связи с этим ВАЖЕН ПОРЯДОК ПОИСКА ЗНАЧЕНИЙ.
-char* getMatch(char* text, char* pattern, char* value, size_t size, char first, char last) {
-  if (text == NULL ) return NULL;
-  char* delimeter = strchr(pattern, '|');
-  if (delimeter == NULL) {
-    char* begin = strstr(text, pattern);
-    if (begin == NULL) return NULL;
-    begin += strlen(pattern);
-    while (*begin++ != first);
-    char* end = strchr(begin, last);
-    *end = '\0';
-    strncpy (value, begin, size);
-    *end = last;
-    return end + 1;
-  }
-  *delimeter = '\0';
-  char* begin = strstr(text, pattern);
-  if (begin == NULL) {
-    *delimeter = '|';
-    return NULL;
-  }
-  begin += strlen(pattern);
-  *delimeter++ = '|';
-  return getMatch(begin, delimeter, value, size, first, last);
-}
-
-void drawImageFile(const char* fileName, int32_t x, int32_t y, int32_t size) {
-    File f = SPIFFS.open(fileName);
-    if (f) {
-        size_t len = f.size();
-        f.read((uint8_t*)imageData, len);
-        f.close();
-        tft.pushImage(x, y, size, size, imageData);
-    }
-}
-
-uint16_t ColorToRGB565(uint8_t r, uint8_t g, uint8_t b) {
-  return (uint16_t)(((r & 0b11111000) << 8) | ((g & 0b11111100) << 3) | (b >> 3));
 }

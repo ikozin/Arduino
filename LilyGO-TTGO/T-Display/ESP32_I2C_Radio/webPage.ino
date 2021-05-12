@@ -1,24 +1,40 @@
-const char index_html[] PROGMEM = R"rawliteral(
-<!DOCTYPE HTML><html lang="ru">
+extern char trafficLevel[];
+extern char weatherType[];
+extern char weatherIcon[];
+extern char weatherWindSpeed[];
+extern char weatherWindType[];
+extern char weatherDampness[];
+extern char weatherPressure[];
+extern char weatherTemperature[];
+
+const char index_html[] PROGMEM = R"rawliteral(<!DOCTYPE HTML><html lang="ru">
 <head>
 <meta http-equiv="content-type" content="text/html; charset=utf-8">
 <meta http-equiv="Refresh" content="3660">
 <title>ESP32 TTGO T-Display</title>
 </head>
-<body><div><form method="post"><fieldset>
+<body>
+<div><form method="post"><fieldset>
   <label for="station">Станция: </label>
   <select id="station" name="station">
-%STATION%
-  </select>
+%STATION%  </select>
   <label for="volume">Громкость: </label>
   <input type="range" id="volume" name="volume" min="0" max="15" value="%VOLUME%"/>
   <input type="submit" />
-</fieldset></form></div></body>)rawliteral";
+</fieldset></form></div>
+<div>
+<div>%W_TEMP%</div>
+<div><img src="%W_ICON%"/></div>
+<div>%W_TYPE%</div>
+<div>%W_WIND%</div>
+<div>%W_WIND_SPEED%</div>
+</div>
+</body>)rawliteral";
 
 String processorIndex(const String& var) {
-  if(var == "VOLUME")
+  if (var == "VOLUME")
     return String(currentVolume);
-  if(var == "STATION") {
+  if (var == "STATION") {
     String text = String();
     text.reserve(4096);
     for (int i = 0; i < listSize; i++) {
@@ -28,9 +44,24 @@ String processorIndex(const String& var) {
       text.concat(i);
       text.concat("\">");
       text.concat(radioList[i].name);
-      text.concat("</option>");
+      text.concat("</option>\r\n");
     }
     return text;
+  }
+  if (var == "W_TEMP") {
+    return String(weatherTemperature);
+  }
+  if (var == "W_ICON") {
+    return String(weatherIcon);
+  }
+  if (var == "W_TYPE") {
+    return String(weatherType);
+  }
+  if (var == "W_WIND") {
+    return String(weatherWindType);
+  }
+  if (var == "W_WIND_SPEED") {
+    return String(weatherWindSpeed);
   }
   return String();
 }

@@ -125,12 +125,7 @@ namespace YandexWeather
             // 
             this.comboBoxApiKey.FormattingEnabled = true;
             this.comboBoxApiKey.Items.AddRange(new object[] {
-            "9694e17b-f0be-422b-90be-96878283bfb8",
-            "f9e3dc9a-9b5a-462e-9191-9ed177f37278",
-            "92656a0c-ba15-43d0-b4b4-a04d521e1873",
-            "d567f2b9-f12d-44a6-b582-a2b59c5321f5",
-            "ce09edeb-132e-40d6-a0ae-1c1026b2466e",
-            "77fe0b5d-a40d-4b1e-8dc8-b8cb22da49df"});
+            "ce09edeb-132e-40d6-a0ae-1c1026b2466e"});
             this.comboBoxApiKey.Location = new System.Drawing.Point(6, 60);
             this.comboBoxApiKey.Name = "comboBoxApiKey";
             this.comboBoxApiKey.Size = new System.Drawing.Size(683, 28);

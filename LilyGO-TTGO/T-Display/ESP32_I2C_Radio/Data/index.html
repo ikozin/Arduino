@@ -1,71 +1,75 @@
-<html lang="ru">
+
+<!DOCTYPE HTML><html lang="ru">
 <head>
 <meta http-equiv="content-type" content="text/html; charset=utf-8">
 <meta http-equiv="Refresh" content="3660">
 <title>ESP32 TTGO T-Display</title>
 </head>
 <body>
-    <div>
-		<form method="post">
-			<fieldset>
-				<label for="station">Станция: </label>
-				<select id="station" name="station">
-					<option value="875">БИЗНЕС-FM (87,50)</option>
-					<option value="879">Like FM (87,90)</option>
-					<option value="883">Радио Ретро FM (88,30)</option>
-					<option value="887">Юмор FM (88,70)</option>
-					<option value="891">Радио Джаз (89,10)</option>
-					<option value="895">Радио Мегаполис FM (89,50)</option>
-					<option value="899">Страна FM (89,90)</option>
-					<option value="903">Авто Радио (90,30)</option>
-					<option value="908">Relax-FM (90,80)</option>
-					<option value="912">Радио Эхо Москвы (91,20)</option>
-					<option value="916">Радио Культура (91,60)</option>
-					<option value="920">Москва ФМ (92,00)</option>
-					<option value="924">Радио Дача (92,40)</option>
-					<option value="928">Радио Карнавал ()</option>
-					<option value="932">STUDIO 21 ()</option>
-					<option value="936">Коммерсант ФМ ()</option>
-					<option value="940">Восток FM ()</option>
-					<option value="944">Весна FM ()</option>
-					<option value="948">Говорит Москва ()</option>
-					<option value="952">Рок ФМ ()</option>
-					<option value="956">Радио Звезда-FM ()</option>
-					<option value="960">Дорожное радио ()</option>
-					<option value="964">Такси FM ()</option>
-					<option value="968">Детское радио ()</option>
-					<option value="972">Радио Комсомольская правда ()</option>
-					<option value="976">Вести ФМ ()</option>
-					<option value="980">Радио Шоколад ()</option>
-					<option value="984">Новое Радио ()</option>
-					<option value="988">Радио Романтика ()</option>
-					<option value="992">Радио Орфей ()</option>
-					<option value="996">Радио Русский Хит ()</option>
-					<option value="1001">Радио Серебряный Дождь ()</option>
-					<option value="1005">Жара FM ()</option>
-					<option value="1009">Радио Вера ()</option>
-					<option value="1012">Радио DFM (101,20)</option>
-					<option selected value="1017">Наше Радио (101,70)</option>
-					<option value="1021">Радио Монте-Карлo (102,10)</option>
-					<option value="1025">Comedy FM ()</option>
-					<option value="1030">Радио Шансон ()</option>
-					<option value="1034">Радио Маяк ()</option>
-					<option value="1037">Радио Максимум ()</option>
-					<option value="1042">Радио Энергия FM ()</option>
-					<option value="1047">Радио 7 На Семи Хoлмах ()</option>
-					<option value="1050">Радио Книга ()</option>
-					<option value="1053">Capital FM ()</option>
-					<option value="1057">Русское Радио ()</option>
-					<option value="1062">Радио Европа Плюс ()</option>
-					<option value="1066">Love радио ()</option>
-					<option value="1070">звук IZ.RU ()</option>
-					<option value="1074">Радио Хит FM ()</option>
-					<option value="1078">Радио Новая Милицейская Волна ()</option>
-				</select>
-				<label for="volume">Громкость: </label>
-				<input type="range" id="volume" name="volume" min="0" max="15" value="2"/>
-				<input type="submit" />
-			</fieldset>
-		</form>
-    </div>
+<div><form method="post"><fieldset>
+  <label for="station">Станция: </label>
+  <select id="station" name="station">
+<option value="0">[87.5] БИЗНЕС-FM</option>
+<option value="1">[87.9] Like FM</option>
+<option value="2">[88.3] Радио Ретро FM</option>
+<option value="3">[88.7] Юмор FM</option>
+<option value="4">[89.1] Радио Джаз</option>
+<option value="5">[89.5] Радио Мегаполис FM</option>
+<option value="6">[89.9] Страна FM</option>
+<option value="7">[90.3] Авто Радио</option>
+<option value="8">[90.8] Relax-FM</option>
+<option value="9">[91.2] Радио Эхо Москвы</option>
+<option value="10">[91.6] Радио Культура</option>
+<option value="11">[92.0] Москва ФМ</option>
+<option value="12">[92.4] Радио Дача</option>
+<option value="13">[92.8] Радио Карнавал</option>
+<option value="14">[93.2] STUDIO 21</option>
+<option value="15">[93.6] Коммерсант ФМ</option>
+<option value="16">[94.0] Восток FM</option>
+<option value="17">[94.4] Весна FM</option>
+<option value="18">[94.8] Говорит Москва</option>
+<option value="19">[95.2] Рок ФМ</option>
+<option value="20">[95.6] Радио Звезда-FM</option>
+<option value="21">[96.0] Дорожное радио</option>
+<option value="22">[96.4] Такси FM</option>
+<option value="23">[96.8] Детское радио</option>
+<option value="24">[97.2] Радио Комсомольская правда</option>
+<option value="25">[97.6] Вести ФМ</option>
+<option value="26">[98.0] Радио Шоколад</option>
+<option value="27">[98.4] Новое Радио</option>
+<option value="28">[98.8] Радио Романтика</option>
+<option value="29">[99.2] Радио Орфей</option>
+<option value="30">[99.6] Радио Русский Хит</option>
+<option value="31">[100.1] Радио Серебряный Дождь</option>
+<option value="32">[100.5] Жара FM</option>
+<option value="33">[100.9] Радио Вера</option>
+<option value="34">[101.2] Радио DFM</option>
+<option selected value="35">[101.7] Наше Радио</option>
+<option value="36">[102.1] Радио Монте-Карлo</option>
+<option value="37">[102.5] Comedy FM</option>
+<option value="38">[103.0] Радио Шансон</option>
+<option value="39">[103.4] Радио Маяк</option>
+<option value="40">[103.7] Радио Максимум</option>
+<option value="41">[104.2] Радио Энергия FM</option>
+<option value="42">[104.7] Радио 7 На Семи Хoлмах</option>
+<option value="43">[105.0] Радио Книга</option>
+<option value="44">[105.3] Capital FM</option>
+<option value="45">[105.7] Русское Радио</option>
+<option value="46">[106.2] Радио Европа Плюс</option>
+<option value="47">[106.6] Love радио</option>
+<option value="48">[107.0] звук IZ.RU</option>
+<option value="49">[107.4] Радио Хит FM</option>
+<option value="50">[107.8] Радио Новая Милицейская Волна</option>
+  </select>
+  <label for="volume">Громкость: </label>
+  <input type="range" id="volume" name="volume" min="0" max="15" value="2"/>
+  <input type="submit" />
+</fieldset></form></div>
+<div>
+<div>+16°</div>
+<div><img src="https://yastatic.net/weather/i/icons/blueye/48/ovc.png"/></div>
+<div>облачно</div>
+<div>восток</div>
+<div>1</div>
+</div>
 </body>
