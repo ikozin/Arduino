@@ -1,6 +1,27 @@
 //https://tsibrov.blogspot.com/2019/11/rda5807m-part1.html
 //https://tsibrov.blogspot.com/2020/01/rda5807m-part2-rds.html
 
+/*
+                            T-Display
+                       ┌─────────┐
+                       ┤GND         3V3├ 
+                       ┤GND         SVP├ 
+     RDA5807           ┤21           37├
+     RDA5807           ┤22           38├
+                       ┤17     (39) SVN├
+                       ┤2            32├ 
+                       ┤15           33├
+ IR Remore Control     ┤13           25├
+                       ┤12           26├
+                       ┤GND          27├
+                       ┤GND         GND├
+                       ┤3V3          5V├
+                       └─────────┘
+
+
+*/
+
+
 #include <Arduino.h>
 #include <Wire.h>
 #include <WiFi.h>
