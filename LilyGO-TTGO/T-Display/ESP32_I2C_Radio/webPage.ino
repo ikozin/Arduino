@@ -1,35 +1,4 @@
-extern char trafficLevel[];
-extern char weatherType[];
-extern char weatherIcon[];
-extern char weatherWindSpeed[];
-extern char weatherWindType[];
-extern char weatherDampness[];
-extern char weatherPressure[];
-extern char weatherTemperature[];
-
-const char index_html[] PROGMEM = R"rawliteral(<!DOCTYPE HTML><html lang="ru">
-<head>
-<meta http-equiv="content-type" content="text/html; charset=utf-8">
-<meta http-equiv="Refresh" content="3660">
-<title>ESP32 TTGO T-Display</title>
-</head>
-<body>
-<div><form method="post"><fieldset>
-  <label for="station">Станция: </label>
-  <select id="station" name="station">
-%STATION%  </select>
-  <label for="volume">Громкость: </label>
-  <input type="range" id="volume" name="volume" min="0" max="15" value="%VOLUME%"/>
-  <input type="submit" />
-</fieldset></form></div>
-<div>
-<div>%W_TEMP%</div>
-<div><img src="%W_ICON%"/></div>
-<div>%W_TYPE%</div>
-<div>%W_WIND%</div>
-<div>%W_WIND_SPEED%</div>
-</div>
-</body>)rawliteral";
+//https://github.com/me-no-dev/ESPAsyncWebServer#body-data-handling
 
 String processorIndex(const String& var) {
   if (var == "VOLUME")
@@ -37,31 +6,45 @@ String processorIndex(const String& var) {
   if (var == "STATION") {
     String text = String();
     text.reserve(4096);
+    text.concat(F("\r\n"));
     for (int i = 0; i < listSize; i++) {
-      text.concat("<option ");
-      if (currentIndex == i) text.concat("selected ");
-      text.concat("value=\"");
+      text.concat(F("<option "));
+      if (currentIndex == i) text.concat(F("selected "));
+      text.concat(F("value=\""));
       text.concat(i);
-      text.concat("\">");
+      text.concat(F("\">"));
       text.concat(radioList[i].name);
-      text.concat("</option>\r\n");
+      text.concat(F("</option>\r\n"));
     }
     return text;
   }
+  if (var == "MUTE") {
+    String text = String();
+    if (isMute) {
+      text.concat(F(" checked"));
+    }
+    return text;    
+  }
   if (var == "W_TEMP") {
-    return String(weatherTemperature);
+    return weatherTemperature;
   }
   if (var == "W_ICON") {
-    return String(weatherIcon);
+    return weatherUrlIcon;
   }
   if (var == "W_TYPE") {
-    return String(weatherType);
+    return weatherDescription;
   }
   if (var == "W_WIND") {
-    return String(weatherWindType);
+    return weatherWindType;
   }
   if (var == "W_WIND_SPEED") {
-    return String(weatherWindSpeed);
+    return weatherWindSpeed;
+  }
+  if (var == "W_DAMPNESS") {
+    return weatherDampness;
+  }
+  if (var == "W_PRESSURE") {
+    return weatherPressure;
   }
   return String();
 }
@@ -71,14 +54,32 @@ void page404(AsyncWebServerRequest *request) {
 }
 
 void pageIndexGet(AsyncWebServerRequest *request) {
-  //AsyncResponseStream *response = request->beginResponseStream("text/plain");
-  //listDir("/", response);
-  //request->send(response);
-  //request->send(200, "text/plain", "Hello, world");
-  request->send_P(200, "text/html", index_html, processorIndex);
+  debug_printf("GET: Index\r\n");
+  request->send(SPIFFS, "/index.html", String(), false, processorIndex);
 }
 
 void pageIndexPost(AsyncWebServerRequest *request) {
+#if defined(DEBUG_CONSOLE)
+  debug_printf("POST: Index\r\n");
+  //List all parameters
+  int params = request->params();
+  for(int i=0;i<params;i++){
+    AsyncWebParameter* p = request->getParam(i);
+    if(p->isFile()){ //p->isPost() is also true
+      debug_printf("FILE[%s]: %s, size: %u\r\n", p->name().c_str(), p->value().c_str(), p->size());
+    } else if(p->isPost()){
+      debug_printf("POST[%s]: %s\r\n", p->name().c_str(), p->value().c_str());
+    } else {
+      debug_printf("GET[%s]: %s\r\n", p->name().c_str(), p->value().c_str());
+    }
+  }
+#endif
+
+  bool value = request->hasParam("mute", true);
+  if (isMute != value) {
+    isMute = !isMute;
+    radioSetMute(isMute);      
+  }
   if (request->hasParam("station", true)) {
     uint8_t index = request->getParam("station", true)->value().toInt();
     if (index < listSize && currentIndex != index) {
@@ -93,5 +94,5 @@ void pageIndexPost(AsyncWebServerRequest *request) {
       radioSetVolume(currentVolume);
     }
   }
-  request->send_P(200, "text/html", index_html, processorIndex);
+  request->send(SPIFFS, "/index.html", String(), false, processorIndex);
 }

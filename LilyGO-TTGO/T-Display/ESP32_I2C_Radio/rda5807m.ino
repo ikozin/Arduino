@@ -96,6 +96,7 @@ void waitTune() {
   rda_rega_t reg;
   do {
     reg.value = getRegister(RDA5807M_REGA);
+    if (reg.STC == 0) delay(1);
   } while (reg.STC == 0);
 }
 

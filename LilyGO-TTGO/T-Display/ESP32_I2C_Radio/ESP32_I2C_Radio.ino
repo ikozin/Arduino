@@ -14,22 +14,27 @@
 #include <AsyncTCP.h>
 #include <ESPAsyncWebServer.h>
 
+String trafficLevel        = String();
+String weatherDescription  = String();
+String weatherUrlIcon      = String();
+String weatherWindSpeed    = String();
+String weatherWindType     = String();
+String weatherDampness     = String();
+String weatherPressure     = String();
+String weatherTemperature  = String();
+String iconFileName        = String();
+String windFileName        = String();
+
 extern void page404(AsyncWebServerRequest *);
 extern void pageIndexGet(AsyncWebServerRequest *);
 extern void pageIndexPost(AsyncWebServerRequest *);
 extern void updateWeather();
 
-
-
-//ARDUINO_AVR_MINI
-//ARDUINO_AVR_NANO
-//ARDUINO_AVR_UNO
-
 #if !defined(ESP32)
   #error Select ESP32 DEV Board
 #endif
 
-#define DEBUG_CONSOLE
+//#define DEBUG_CONSOLE
 
 #if defined(DEBUG_CONSOLE)
 #define debug_printf(...)   Serial.printf(__VA_ARGS__)
@@ -46,7 +51,7 @@ Preferences prefs;
 String ssid         = ""; // SSID WI-FI
 String pswd         = "";
 
-long lastTime       = 0;
+long lastWeatherTime       = 0;
 //void updateWeather();
 
 ESP32Encoder encoder;
@@ -55,6 +60,7 @@ Button2 btnEncoder(ENCODER_BTN_L);
 
 uint8_t currentVolume = 2;    // 0..15
 uint8_t currentIndex = 35;
+bool    isMute = false;
 
 typedef struct _radioItem {
   uint16_t band;
@@ -188,6 +194,15 @@ void setup() {
 #if defined(DEBUG_CONSOLE)
   logTime(Serial);
 #endif
+
+  trafficLevel.reserve(8);
+  weatherDescription.reserve(128);
+  weatherUrlIcon.reserve(128);
+  weatherWindSpeed.reserve(16);
+  weatherWindType.reserve(64);
+  weatherDampness.reserve(16);
+  weatherPressure.reserve(16);
+  weatherTemperature.reserve(16);
   updateWeather();
 
   debug_printf("WebServer\r\n");
@@ -204,27 +219,27 @@ void loop() {
   currentHandle(dir);
 
   long curTime = millis();
-  if (curTime - lastTime > 20 * 60000) {
-    lastTime = curTime;
+  if (curTime - lastWeatherTime > 20 * 60000) {
+    lastWeatherTime = curTime;
     updateWeather();
   }  
 }
 
 void btnEncoderClick(Button2& b) {
   if (currentHandle == handleChannel) {
-      debug_printf("Volume Control\r\n");
-      currentHandle = handleVolume;
+    debug_printf("Volume Control\r\n");
+    currentHandle = handleVolume;
   }
   else {
-      debug_printf("Channel Control\r\n");
-      currentHandle = handleChannel;
+    debug_printf("Channel Control\r\n");
+    currentHandle = handleChannel;
   }
 }
 
 void btnEncoderLongClick(Button2& b) {
-  radioSetMute(!radioGetMute());
+  isMute = !isMute;
+  radioSetMute(isMute);
 }
-
 
 void handleChannel(int dir) {
   if (dir > 0) {
