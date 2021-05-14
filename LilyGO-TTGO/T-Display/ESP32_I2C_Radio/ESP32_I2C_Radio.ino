@@ -14,6 +14,14 @@
 #include <AsyncTCP.h>
 #include <ESPAsyncWebServer.h>
 
+#if !defined(ESP32)
+  #error Select ESP32 DEV Board
+#endif
+
+#define IR_INPUT_PIN        13
+#define DO_NOT_USE_FEEDBACK_LED
+#include "TinyIRReceiver.cpp.h"
+
 String trafficLevel        = String();
 String weatherDescription  = String();
 String weatherUrlIcon      = String();
@@ -29,11 +37,6 @@ extern void page404(AsyncWebServerRequest *);
 extern void pageIndexGet(AsyncWebServerRequest *);
 extern void pageIndexPost(AsyncWebServerRequest *);
 extern void updateWeather();
-
-#if !defined(ESP32)
-  #error Select ESP32 DEV Board
-#endif
-
 //#define DEBUG_CONSOLE
 
 #if defined(DEBUG_CONSOLE)
@@ -50,6 +53,10 @@ AsyncWebServer server(80);
 Preferences prefs;
 String ssid         = ""; // SSID WI-FI
 String pswd         = "";
+
+volatile uint8_t  ir_cmd;
+volatile bool     ir_repeat;
+SemaphoreHandle_t ir_event;
 
 long lastWeatherTime       = 0;
 //void updateWeather();
@@ -188,6 +195,9 @@ void setup() {
   radioSetVolume(currentVolume);
   //radioSetMute(!radioGetMute());
   
+  ir_event = xSemaphoreCreateBinary();
+  initPCIInterruptForTinyReceiver(); 
+
   delay(1000);  // Ожидаем установку времени по NTP
  
   logTime(tft);
@@ -217,6 +227,8 @@ void loop() {
   int dir = encoder.getCount();
   encoder.setCount(0);    
   currentHandle(dir);
+    
+  irCmdHandler();
 
   long curTime = millis();
   if (curTime - lastWeatherTime > 20 * 60000) {
@@ -274,6 +286,51 @@ void logTime(Print& prn) {
   strftime(strftime_buf, sizeof(strftime_buf), "%c", &timeinfo);
   prn.printf("%s\r\n", strftime_buf);
 }
+
+IRAM_ATTR void handleReceivedTinyIRData(uint16_t aAddress, uint8_t aCommand, bool isRepeat) {
+  ir_cmd = aCommand;
+  ir_repeat = isRepeat;
+  xSemaphoreGive(ir_event);
+}
+
+/*
+CarMP3
+0x45  0x46  0x47
+0x44  0x40  0x43
+0x07  0x15  0x09
+0x16  0x19  0x0D
+0x0C  0x18  0x5E
+0x08  0x1C  0x5A
+0x42  0x52  0x4A
+*/
+void irCmdHandler() {
+  if (xSemaphoreTake(ir_event, 0) == pdTRUE) {
+    debug_printf("C=0x%04X  R=%d\r\n", ir_cmd, ir_repeat);
+    if (!ir_repeat) {
+      switch (ir_cmd) {
+        case 0x45:
+          handleChannel(-1);
+          break;
+        case 0x47:
+          handleChannel(1);
+          break;
+        case 0x07:
+          handleVolume(-1);
+          break;
+        case 0x15:
+          handleVolume(1);
+          break;
+        case 0x09:
+          isMute = !isMute;
+          radioSetMute(isMute);
+          break;
+        default:
+          break;
+      }
+    }
+  }
+}
+
 
 #if defined(DEBUG_CONSOLE)
 void listDir(const char* dirname, Print* p) {
