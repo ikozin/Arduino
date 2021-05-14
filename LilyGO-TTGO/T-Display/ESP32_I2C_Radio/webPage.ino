@@ -73,6 +73,7 @@ void pageIndexPost(AsyncWebServerRequest *request) {
       debug_printf("GET[%s]: %s\r\n", p->name().c_str(), p->value().c_str());
     }
   }
+  debug_printf("\r\n");
 #endif
 
   bool value = request->hasParam("mute", true);
@@ -94,5 +95,5 @@ void pageIndexPost(AsyncWebServerRequest *request) {
       radioSetVolume(currentVolume);
     }
   }
-  request->send(SPIFFS, "/index.html", String(), false, processorIndex);
+  request->redirect("/");
 }
