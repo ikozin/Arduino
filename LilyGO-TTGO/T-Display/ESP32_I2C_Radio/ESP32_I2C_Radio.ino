@@ -34,9 +34,14 @@
 #include <ESP32Encoder.h>
 #include <AsyncTCP.h>
 #include <ESPAsyncWebServer.h>
+#include "IrRemote_CarMP3.h"
 
 #if !defined(ESP32)
   #error Select ESP32 DEV Board
+#endif
+
+#if !defined(ST7789_DRIVER) || TFT_WIDTH != 135 || TFT_HEIGHT != 240
+  #error Ошибка настройки TFT_eSPI
 #endif
 
 #define IR_INPUT_PIN        13
@@ -57,8 +62,9 @@ String windFileName        = String();
 extern void page404(AsyncWebServerRequest *);
 extern void pageIndexGet(AsyncWebServerRequest *);
 extern void pageIndexPost(AsyncWebServerRequest *);
-extern void updateWeather();
-//#define DEBUG_CONSOLE
+extern void displayWeather();
+
+#define DEBUG_CONSOLE
 
 #if defined(DEBUG_CONSOLE)
 #define debug_printf(...)   Serial.printf(__VA_ARGS__)
@@ -78,16 +84,29 @@ String pswd         = "";
 volatile uint8_t  ir_cmd;
 volatile bool     ir_repeat;
 SemaphoreHandle_t ir_event;
+TaskHandle_t      receiverTask;
 
-long lastWeatherTime       = 0;
-//void updateWeather();
+TaskHandle_t weatherTask;
+
+SemaphoreHandle_t displayWeatherEvent;
+SemaphoreHandle_t displayRadioEvent;
+SemaphoreHandle_t displayDeviceEvent;
+TaskHandle_t displayWeatherTask;
+TaskHandle_t displayRadioTask;
+TaskHandle_t displayDeviceTask;
+
+#define DISPLAY_WEATHER 1
+#define DISPLAY_RADIO   2
+#define DISPLAY_DEVICE  3
+
+int8_t currentPage  = 0;
 
 ESP32Encoder encoder;
 #define ENCODER_BTN_L 39
 Button2 btnEncoder(ENCODER_BTN_L);
 
-uint8_t currentVolume = 2;    // 0..15
-uint8_t currentIndex = 35;
+uint8_t currentVolume = 0;    // 0..15
+uint8_t currentIndex  = 0;
 bool    isMute = false;
 
 typedef struct _radioItem {
@@ -96,73 +115,79 @@ typedef struct _radioItem {
 } RadioItem_t;
 
 const RadioItem_t radioList[] PROGMEM = {
-  {  875, "[87.5] БИЗНЕС-FM" },
-  {  879, "[87.9] Like FM" },
-  {  883, "[88.3] Радио Ретро FM" },
-  {  887, "[88.7] Юмор FM" },
-  {  891, "[89.1] Радио Джаз" },
-  {  895, "[89.5] Радио Мегаполис FM" },
-  {  899, "[89.9] Страна FM" },
-  {  903, "[90.3] Авто Радио" },
-  {  908, "[90.8] Relax-FM" },
-  {  912, "[91.2] Радио Эхо Москвы" },
-  {  916, "[91.6] Радио Культура" },
-  {  920, "[92.0] Москва ФМ" },
-  {  924, "[92.4] Радио Дача" },
-  {  928, "[92.8] Радио Карнавал" },
-  {  932, "[93.2] STUDIO 21" },
-  {  936, "[93.6] Коммерсант ФМ" },
-  {  940, "[94.0] Восток FM" },
-  {  944, "[94.4] Весна FM" },
-  {  948, "[94.8] Говорит Москва" },
-  {  952, "[95.2] Рок ФМ" },
-  {  956, "[95.6] Радио Звезда-FM" },
-  {  960, "[96.0] Дорожное радио" },
-  {  964, "[96.4] Такси FM" },
-  {  968, "[96.8] Детское радио" },
-  {  972, "[97.2] Радио Комсомольская правда" },
-  {  976, "[97.6] Вести ФМ" },
-  {  980, "[98.0] Радио Шоколад" },
-  {  984, "[98.4] Новое Радио" },
-  {  988, "[98.8] Радио Романтика" },
-  {  992, "[99.2] Радио Орфей" },
-  {  996, "[99.6] Радио Русский Хит" },
-  { 1001, "[100.1] Радио Серебряный Дождь" },
-  { 1005, "[100.5] Жара FM" },
-  { 1009, "[100.9] Радио Вера" },
-  { 1012, "[101.2] Радио DFM" },
-  { 1017, "[101.7] Наше Радио" },
-  { 1021, "[102.1] Радио Монте-Карлo" },
-  { 1025, "[102.5] Comedy FM" },
-  { 1030, "[103.0] Радио Шансон" },
-  { 1034, "[103.4] Радио Маяк" },
-  { 1037, "[103.7] Радио Максимум" },
-  { 1042, "[104.2] Радио Энергия FM" },
-  { 1047, "[104.7] Радио 7 На Семи Хoлмах" },
-  { 1050, "[105.0] Радио Книга" },
-  { 1053, "[105.3] Capital FM" },
-  { 1057, "[105.7] Русское Радио" },
-  { 1062, "[106.2] Радио Европа Плюс" },
-  { 1066, "[106.6] Love радио" },
-  { 1070, "[107.0] звук IZ.RU" },
-  { 1074, "[107.4] Радио Хит FM" },
-  { 1078, "[107.8] Радио Новая Милицейская Волна" },
+  {  875, "БИЗНЕС-FM" },
+  {  879, "Like FM" },
+  {  883, "Радио Ретро FM" },
+  {  887, "Юмор FM" },
+  {  891, "Радио Джаз" },
+  {  895, "Радио Мегаполис FM" },
+  {  899, "Страна FM" },
+  {  903, "Авто Радио" },
+  {  908, "Relax-FM" },
+  {  912, "Радио Эхо Москвы" },
+  {  916, "Радио Культура" },
+  {  920, "Москва ФМ" },
+  {  924, "Радио Дача" },
+  {  928, "Радио Карнавал" },
+  {  932, "STUDIO 21" },
+  {  936, "Коммерсант ФМ" },
+  {  940, "Восток FM" },
+  {  944, "Весна FM" },
+  {  948, "Говорит Москва" },
+  {  952, "Рок ФМ" },
+  {  956, "Радио Звезда-FM" },
+  {  960, "Дорожное радио" },
+  {  964, "Такси FM" },
+  {  968, "Детское радио" },
+  {  972, "Радио Комсомольская правда" },
+  {  976, "Вести ФМ" },
+  {  980, "Радио Шоколад" },
+  {  984, "Новое Радио" },
+  {  988, "Радио Романтика" },
+  {  992, "Радио Орфей" },
+  {  996, "Радио Русский Хит" },
+  { 1001, "Радио Серебряный Дождь" },
+  { 1005, "Жара FM" },
+  { 1009, "Радио Вера" },
+  { 1012, "Радио DFM" },
+  { 1017, "Наше Радио" },
+  { 1021, "Радио Монте-Карло" },
+  { 1025, "Comedy FM" },
+  { 1030, "Радио Шансон" },
+  { 1034, "Радио Маяк" },
+  { 1037, "Радио Максимум" },
+  { 1042, "Радио Энергия FM" },
+  { 1047, "Радио 7 На Семи Холмах" },
+  { 1050, "Радио Книга" },
+  { 1053, "Capital FM" },
+  { 1057, "Русское Радио" },
+  { 1062, "Радио Европа Плюс" },
+  { 1066, "Love радио" },
+  { 1070, "звук IZ.RU" },
+  { 1074, "Радио Хит FM" },
+  { 1078, "Радио Новая Милицейская Волна" },
 };
 
 const int listSize = sizeof(radioList) / sizeof(RadioItem_t);
 
 void (*currentHandle)(int);
 
-//Для генерации шрифта использовать Create_font.pde (Processing)
+// Для генерации шрифта использовать Create_font.pde (Processing)
 // TFT_eSPI\Tools\Create_Smooth_Font\Create_font\Create_font.pde
-#define FONT_CALIBRI_32  "Calibri32"// unicodeBlocks = 0x0400, 0x0452, | specificUnicodes =  0x002B, 0x002C, 0x002D, 0x002E, 
-#define FONT_CALIBRI_56  "Calibri56"// unicodeBlocks =                 | specificUnicodes =  0x00B0, 0x002B, 0x002D, 0x002E, 0x0030, 0x0031, 0x0032, 0x0033, 0x0034, 0x0035, 0x0036, 0x0037, 0x0038, 0x0039,
-
+// Директория Tools
+#define FONT_CALIBRI_32  "Calibri32"
+#define FONT_CALIBRI_56  "Calibri56"
+#define FONT_SEGOE_32    "Segoe UI Symbol32"
+/*
+Скетч использует 1047854 байт (79%) памяти устройства. Всего доступно 1310720 байт.
+Глобальные переменные используют 58128 байт (19%) динамической памяти, оставляя 236784 байт для локальных переменных. Максимум: 294912 байт.
+*/
 void setup() {
 #if defined(DEBUG_CONSOLE)
   Serial.begin(115200);
   debug_printf("\r\n");
   debug_printf("\r\n");
+  debug_printf("Core = %d\r\n", xPortGetCoreID());
 #endif
 
   pinMode(TFT_BL, OUTPUT);                // Set backlight pin to output mode
@@ -174,12 +199,12 @@ void setup() {
   tft.setTextColor(TFT_GREEN, TFT_BLACK);
 
   if (SPIFFS.begin(true)) {
-      listDir("/", &Serial);
+    listDir("/", &Serial);
   }
   else {
-      SPIFFS.format();
-      tft.printf("SPIFFS Formatting\r\n");
-      debug_printf("SPIFFS Formatting\r\n");
+    SPIFFS.format();
+    tft.printf("SPIFFS Formatting\r\n");
+    debug_printf("SPIFFS Formatting\r\n");
   }
   //SPIFFS.format();
 
@@ -202,6 +227,13 @@ void setup() {
   tft.printf("\r\nconnected!\r\nip: %s\r\n", WiFi.localIP().toString().c_str());
   debug_printf("\r\nconnected!\r\nip: %s\r\n", WiFi.localIP().toString().c_str());
   
+  displayWeatherEvent = xSemaphoreCreateBinary();
+  displayRadioEvent = xSemaphoreCreateBinary();
+  displayDeviceEvent = xSemaphoreCreateBinary();
+  xTaskCreatePinnedToCore(displayWeatherHandler, "DisplayWeather", 4096, NULL, 1, &displayWeatherTask, 0);
+  xTaskCreatePinnedToCore(displayRadioHandler, "DisplayRadio", 4096, NULL, 1, &displayRadioTask, 0);
+  xTaskCreatePinnedToCore(displayDeviceHandler, "DisplayDevice", 4096, NULL, 1, &displayDeviceTask, 0);
+
   configTime(prefs.getInt("tz", 10800), 0, "pool.ntp.org");
 
   currentHandle = handleVolume;
@@ -210,14 +242,11 @@ void setup() {
   btnEncoder.setClickHandler(btnEncoderClick);
   btnEncoder.setLongClickTime(500);
   btnEncoder.setLongClickHandler(btnEncoderLongClick);
-
-  radioInit();
-  radioSetRadio(currentIndex);
-  radioSetVolume(currentVolume);
-  //radioSetMute(!radioGetMute());
   
-  ir_event = xSemaphoreCreateBinary();
-  initPCIInterruptForTinyReceiver(); 
+  radioInit();
+  handleSetRadio(prefs.getInt("station", 35));
+  handleSetVolume(prefs.getInt("volume", 2));
+  handleMute(prefs.getBool("mute", false));
 
   delay(1000);  // Ожидаем установку времени по NTP
  
@@ -225,7 +254,12 @@ void setup() {
 #if defined(DEBUG_CONSOLE)
   logTime(Serial);
 #endif
+  setDisplayPage(prefs.getInt("page", DISPLAY_WEATHER));
 
+  ir_event = xSemaphoreCreateBinary();
+  initPCIInterruptForTinyReceiver(); 
+  xTaskCreatePinnedToCore(receiverHandler, "IrReceiverTask", 2048, NULL, 1, &receiverTask, 0);
+ 
   trafficLevel.reserve(8);
   weatherDescription.reserve(128);
   weatherUrlIcon.reserve(128);
@@ -234,7 +268,7 @@ void setup() {
   weatherDampness.reserve(16);
   weatherPressure.reserve(16);
   weatherTemperature.reserve(16);
-  updateWeather();
+  xTaskCreatePinnedToCore(weatherHandler, "WeatherTask", 4096, NULL, 1, &weatherTask, 0);
 
   debug_printf("WebServer\r\n");
   server.on("/", HTTP_GET, pageIndexGet);
@@ -248,14 +282,6 @@ void loop() {
   int dir = encoder.getCount();
   encoder.setCount(0);    
   currentHandle(dir);
-    
-  irCmdHandler();
-
-  long curTime = millis();
-  if (curTime - lastWeatherTime > 20 * 60000) {
-    lastWeatherTime = curTime;
-    updateWeather();
-  }  
 }
 
 void btnEncoderClick(Button2& b) {
@@ -270,32 +296,67 @@ void btnEncoderClick(Button2& b) {
 }
 
 void btnEncoderLongClick(Button2& b) {
-  isMute = !isMute;
+  handleMute(!isMute);
+}
+
+void handleMute(bool mute) {
+  if (mute == isMute) return;
+  isMute = mute;
   radioSetMute(isMute);
+  prefs.putBool("mute", isMute);  
+  xSemaphoreGive(displayRadioEvent);
 }
 
-void handleChannel(int dir) {
-  if (dir > 0) {
+void handleSetRadio(uint8_t index) {
+  if (index >= listSize) index = 0;
+  currentIndex = index;
+  byte *pData = (byte *)(radioList + currentIndex);
+  uint16_t band = pgm_read_word(pData);
+#if defined(DEBUG_CONSOLE)  
+  char c;
+  debug_printf("%d:", band);
+  pData += sizeof(uint16_t);
+  while ((c = (char)pgm_read_byte(pData++)) != 0) {
+    Serial.print(c);
+  }
+  debug_printf("\r\n");
+#endif
+  radioSetChannel(band);
+  prefs.putInt("station", currentIndex);  
+  xSemaphoreGive(displayRadioEvent);
+}
+
+void handleChannel(int direction) {
+  if (direction > 0) {
     if (currentIndex < listSize - 1) {
-      radioSetRadio(++currentIndex);
+      handleSetRadio(currentIndex + 1);
     }
   }
-  if (dir < 0) {
+  if (direction < 0) {
     if (currentIndex > 0) {
-      radioSetRadio(--currentIndex);
+      handleSetRadio(currentIndex - 1);
     }
   }
 }
 
-void handleVolume(int dir) {
-  if (dir > 0) {
+void handleSetVolume(uint8_t value) {
+  if (value > 15) value = 0;
+  if (currentVolume == value) return; 
+  currentVolume = value;
+  radioSetVolume(currentVolume);
+  prefs.putInt("volume", currentVolume);
+  xSemaphoreGive(displayRadioEvent);
+}
+
+void handleVolume(int direction) {
+  if (direction > 0) {
     if (currentVolume < 15) {
-      radioSetVolume(++currentVolume);
+      handleSetVolume(currentVolume + 1);
     }
   }
-  if (dir < 0) {
+  if (direction < 0) {
     if (currentVolume > 0) {
-      radioSetVolume(--currentVolume);
+      handleSetVolume(currentVolume - 1);
     }
   }
 }
@@ -308,42 +369,185 @@ void logTime(Print& prn) {
   prn.printf("%s\r\n", strftime_buf);
 }
 
+void setDisplayPage(int8_t page) {
+  if (currentPage == page) return;
+  currentPage = page;
+  prefs.putInt("page", currentPage);
+  switch (currentPage) {
+    case DISPLAY_WEATHER:
+      xSemaphoreGive(displayWeatherEvent);
+      break;
+    case DISPLAY_RADIO:
+      xSemaphoreGive(displayRadioEvent);
+      break;
+    case DISPLAY_DEVICE:
+      xSemaphoreGive(displayDeviceEvent);
+      break;
+    default:
+      tft.fillScreen(TFT_RED);
+  }
+}
+
+void displayWeatherHandler(void* parameter) {
+  for (;;) {
+    xSemaphoreTake(displayWeatherEvent, portMAX_DELAY);
+    debug_printf("DisplayWeatherHandler Core = %d\r\n", xPortGetCoreID());
+    if (currentPage == DISPLAY_WEATHER) displayWeather();
+  }
+}
+
+void displayRadioHandler(void * parameter) {
+  for (;;) {
+    xSemaphoreTake(displayRadioEvent, portMAX_DELAY);
+    debug_printf("DisplayRadioHandler Core = %d\r\n", xPortGetCoreID());
+    if (currentPage == DISPLAY_RADIO) displayRadio();
+  }
+}
+
+void displayVolume() {
+  debug_printf("Volume = %d\r\n", currentVolume );
+  const char* text;
+  if (currentVolume < 1)       return;
+  else if (currentVolume < 3)  text = "▁";
+  else if (currentVolume < 5)  text = "▂";
+  else if (currentVolume < 7)  text = "▃";
+  else if (currentVolume < 9)  text = "▄";
+  else if (currentVolume < 11) text = "▅";
+  else if (currentVolume < 13) text = "▆";
+  else if (currentVolume < 15) text = "▇";
+  else                         text = "█";
+  tft.setTextDatum(MC_DATUM);
+  tft.drawString(text, 149, 21);
+}
+
+void displayMute() {
+  const char* text;
+  if (isMute) text = "";
+  else        text = "";
+  tft.setTextDatum(MC_DATUM);
+  tft.drawString(text, 185, 24);
+}
+
+void displayLevel() {
+  const char* text;
+  uint8_t rssi = radioGetRssi();
+  debug_printf("RSSI = %d\r\n", rssi);
+  if (rssi < 20)      text = "";
+  else if (rssi < 30) text = "";
+  else if (rssi < 50) text = "";
+  else if (rssi < 60) text = "";
+  else                text = "";
+  tft.setTextDatum(MC_DATUM);
+  tft.drawString(text, 221, 24);
+}
+
+void displayFreq() {
+  String freq;
+  freq.reserve(16);
+
+  byte *pData = (byte *)(radioList + currentIndex);
+  uint16_t band = pgm_read_word(pData);
+  freq.concat((uint16_t)(band / 10));
+  freq.concat('.');
+  freq.concat((uint16_t)(band % 10));
+  tft.setTextDatum(MC_DATUM);
+  tft.drawString(freq, 63, 26);
+}
+
+void displayRadio() {
+  debug_printf("DisplayRadio Core = %d\r\n", xPortGetCoreID());
+
+  tft.fillScreen(TFT_BLACK);
+  tft.setTextColor(TFT_MAGENTA);
+
+  tft.loadFont(FONT_SEGOE_32);
+  debug_printf("▁ %d\r\n", tft.textWidth("▁"));
+  debug_printf("▂ %d\r\n", tft.textWidth("▂"));
+  debug_printf("▃ %d\r\n", tft.textWidth("▃"));
+  debug_printf("▄ %d\r\n", tft.textWidth("▄"));
+  debug_printf("▅ %d\r\n", tft.textWidth("▅"));
+  debug_printf("▆ %d\r\n", tft.textWidth("▆"));
+  debug_printf("▇ %d\r\n", tft.textWidth("▇"));
+  debug_printf("█ %d\r\n", tft.textWidth("█"));
+  debug_printf(" %d\r\n", tft.textWidth(""));
+  debug_printf(" %d\r\n", tft.textWidth(""));
+  debug_printf(" %d\r\n", tft.textWidth(""));
+  debug_printf(" %d\r\n", tft.textWidth(""));
+  debug_printf(" %d\r\n", tft.textWidth(""));
+  debug_printf(" %d\r\n", tft.textWidth(""));
+  debug_printf(" %d\r\n", tft.textWidth(""));
+  debug_printf("Height = %d\r\n", tft.fontHeight());
+  displayVolume();
+  displayMute();
+  displayLevel();
+  tft.unloadFont();
+  
+  tft.loadFont(FONT_CALIBRI_56);
+  displayFreq();
+  tft.unloadFont();
+
+  tft.loadFont(FONT_CALIBRI_32);
+  uint16_t* pData = (uint16_t*)(radioList + currentIndex);
+  String text = (char*)++pData;
+  if (tft.textWidth(text) >=  239) {
+    tft.setTextDatum(TL_DATUM);
+    tft.drawString(text, 0, 70);
+  }
+  else {
+    tft.setTextDatum(TC_DATUM);
+    tft.drawString(text, 119, 70);
+  }
+  tft.unloadFont();
+}
+
+void displayDeviceHandler(void * parameter) {
+  for (;;) {
+    xSemaphoreTake(displayDeviceEvent, portMAX_DELAY);
+    debug_printf("DisplayDeviceHandler Core = %d\r\n", xPortGetCoreID());
+    if (currentPage == DISPLAY_DEVICE) displayDevice();
+  }
+}
+
+void displayDevice() {
+  debug_printf("DisplayDevice Core = %d\r\n", xPortGetCoreID());
+  tft.fillScreen(TFT_BLUE);
+}
+
 IRAM_ATTR void handleReceivedTinyIRData(uint16_t aAddress, uint8_t aCommand, bool isRepeat) {
   ir_cmd = aCommand;
   ir_repeat = isRepeat;
   xSemaphoreGive(ir_event);
 }
 
-/*
-CarMP3
-0x45  0x46  0x47
-0x44  0x40  0x43
-0x07  0x15  0x09
-0x16  0x19  0x0D
-0x0C  0x18  0x5E
-0x08  0x1C  0x5A
-0x42  0x52  0x4A
-*/
-void irCmdHandler() {
-  if (xSemaphoreTake(ir_event, 0) == pdTRUE) {
-    debug_printf("C=0x%04X  R=%d\r\n", ir_cmd, ir_repeat);
+void receiverHandler(void * parameter) {
+  for (;;) {
+    xSemaphoreTake(ir_event, portMAX_DELAY);
+    debug_printf("\r\nIR Receiver Core = %d, CMD=0x%04X R=%d\n\r\n", xPortGetCoreID(), ir_cmd, ir_repeat);
     if (!ir_repeat) {
       switch (ir_cmd) {
-        case 0x45:
+        case CARMP3_CH_MINUS:
           handleChannel(-1);
           break;
-        case 0x47:
+        case CARMP3_CH_PLUS:
           handleChannel(1);
           break;
-        case 0x07:
+        case CARMP3_VOL_MINUS:
           handleVolume(-1);
           break;
-        case 0x15:
+        case CARMP3_VOL_PLUS:
           handleVolume(1);
           break;
-        case 0x09:
-          isMute = !isMute;
-          radioSetMute(isMute);
+        case CARMP3_EQ:
+          handleMute(!isMute);
+          break;
+        case CARMP3_1:
+          setDisplayPage(DISPLAY_WEATHER);
+          break;
+        case CARMP3_2:
+          setDisplayPage(DISPLAY_RADIO);
+          break;
+        case CARMP3_3:
+          setDisplayPage(DISPLAY_DEVICE);
           break;
         default:
           break;
@@ -351,7 +555,6 @@ void irCmdHandler() {
     }
   }
 }
-
 
 #if defined(DEBUG_CONSOLE)
 void listDir(const char* dirname, Print* p) {

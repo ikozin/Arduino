@@ -78,21 +78,18 @@ void pageIndexPost(AsyncWebServerRequest *request) {
 
   bool value = request->hasParam("mute", true);
   if (isMute != value) {
-    isMute = !isMute;
-    radioSetMute(isMute);      
+    handleMute(value);      
   }
   if (request->hasParam("station", true)) {
     uint8_t index = request->getParam("station", true)->value().toInt();
     if (index < listSize && currentIndex != index) {
-      currentIndex = index;
-      radioSetRadio(currentIndex);
+      handleSetRadio(index);
     }
   }
   if (request->hasParam("volume", true)) {
     uint8_t volume = request->getParam("volume", true)->value().toInt();
     if (volume <= 15 && currentVolume != volume) {
-      currentVolume = volume;
-      radioSetVolume(currentVolume);
+      handleSetVolume(volume);
     }
   }
   request->redirect("/");
