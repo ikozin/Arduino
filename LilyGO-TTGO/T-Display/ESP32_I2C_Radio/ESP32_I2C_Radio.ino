@@ -6,9 +6,9 @@
                        ┌─────────┐
                        ┤GND         3V3├ 
                        ┤GND         SVP├ 
-     RDA5807           ┤21           37├
-     RDA5807           ┤22           38├
-                       ┤17     (39) SVN├
+     RDA5807           ┤21           37├  Encoder
+     RDA5807           ┤22           38├  Encoder
+                       ┤17     (39) SVN├  Encoder Button
                        ┤2            32├ 
                        ┤15           33├
  IR Remore Control     ┤13           25├
@@ -20,7 +20,6 @@
 
 
 */
-
 
 #include <Arduino.h>
 #include <Wire.h>
@@ -41,7 +40,7 @@
 #endif
 
 #if !defined(ST7789_DRIVER) || TFT_WIDTH != 135 || TFT_HEIGHT != 240
-  #error Ошибка настройки TFT_eSPI
+  #error Ошибка настройки TFT_eSPI, необходимо подключить "User_Setups/Setup25_TTGO_T_Display.h"
 #endif
 
 #define IR_INPUT_PIN        13
@@ -182,12 +181,17 @@ void (*currentHandle)(int);
 Скетч использует 1047854 байт (79%) памяти устройства. Всего доступно 1310720 байт.
 Глобальные переменные используют 58128 байт (19%) динамической памяти, оставляя 236784 байт для локальных переменных. Максимум: 294912 байт.
 */
+
 void setup() {
 #if defined(DEBUG_CONSOLE)
   Serial.begin(115200);
   debug_printf("\r\n");
   debug_printf("\r\n");
-  debug_printf("Core = %d\r\n", xPortGetCoreID());
+  debug_printf("Model: %s, Rev: %d, Core: %d\r\n", ESP.getChipModel(), ESP.getChipRevision(), ESP.getChipCores());
+  debug_printf("SDK: %s\r\n", ESP.getSdkVersion());
+  debug_printf("Flash: %d\r\n", ESP.getFlashChipSize());
+  debug_printf("NVS Free Entries: %d\r\n", prefs.freeEntries());
+  debug_printf("Current Core = %d\r\n", xPortGetCoreID());
 #endif
 
   pinMode(TFT_BL, OUTPUT);                // Set backlight pin to output mode
@@ -274,7 +278,7 @@ void setup() {
   server.on("/", HTTP_GET, pageIndexGet);
   server.on("/", HTTP_POST, pageIndexPost);
   server.onNotFound(page404);
-  server.begin();  
+  server.begin();
 }
 
 void loop() {
