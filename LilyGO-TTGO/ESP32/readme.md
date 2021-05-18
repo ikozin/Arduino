@@ -41,3 +41,7 @@ https://github.com/madhephaestus/ESP32Encoder/
 
 https://github.com/earlephilhower/ESP8266Audio
 
+https://github.com/adafruit/TinyXML
+
+https://github.com/Bodmer/TFT_eSPI
+
