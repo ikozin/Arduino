@@ -1,1 +1,0 @@
-rmdir "%USERPROFILE%\Documents\Arduino\libraries\TFT_eSPI\" /S /Q
