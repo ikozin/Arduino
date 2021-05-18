@@ -8,6 +8,8 @@ https://www.sites.google.com/site/jmaathuis/arduino/lilygo-ttgo-t-display-esp32
 
 ## Настройка Arduino IDE
 **Описание настройки и выбора платы: [ESP32](../ESP32/readme.md)**
+## Выбор платы в Arduino IDE (TTGO LoRa32-OLED V1)
+![TTGO LoRa32-OLED V1](./images/board.png "TTGO LoRa32-OLED V1")
 
 ## Product  Description
 
