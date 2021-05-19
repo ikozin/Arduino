@@ -18,22 +18,22 @@ void pageAlarmGet(AsyncWebServerRequest *request) {
   logRequest(request);
 #endif
   
-  String alert = String();
   String templ = String();
+  String alert = String();
   String list = String();
   String html = String();
-  alert.reserve(2048);
   templ.reserve(2048);
+  alert.reserve(4096);
   list.reserve(16384);
-  html.reserve(16384);
+  html.reserve(32768);
   loadFile("/alarm.ttt", templ);
   loadFile("/alarm.html", html);
-  if (templ.length() == 0 || html.length() == 0) return page404(request);
+  if (templ.isEmpty() || html.isEmpty()) return page404(request);
   
   for (int i = 0; i < settingsCount; i++) {
-    alarm_t setting = settings[i];
+    alert.concat(templ);
 
-    alert = String(templ);
+    alarm_t setting = settings[i];
     alert.replace("%index%", String(i));
     sprintf((char *)fileData, "%02d:%02d", setting.Hour, setting.Minute);
     String time = (char *)fileData;
