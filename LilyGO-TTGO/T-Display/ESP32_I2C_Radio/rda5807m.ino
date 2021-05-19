@@ -42,7 +42,7 @@ uint16_t radioGetChannel() {
   return reg.CHAN + RADIO_BAND_MIN;
 }
 
-void radioSetVolume(uint8_t value) {
+void radioSetVolume(uint16_t value) {
   debug_printf("Volume = %d\r\n", value);
 
   xSemaphoreTake(_mutexRadio, portMAX_DELAY);

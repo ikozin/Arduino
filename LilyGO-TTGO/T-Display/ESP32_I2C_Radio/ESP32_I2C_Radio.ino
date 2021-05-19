@@ -34,6 +34,7 @@
 #include <AsyncTCP.h>
 #include <ESPAsyncWebServer.h>
 #include "IrRemote_CarMP3.h"
+#include "alarm.h"
 
 #if !defined(ESP32)
   #error Select ESP32 DEV Board
@@ -58,9 +59,11 @@ String weatherTemperature  = String();
 String iconFileName        = String();
 String windFileName        = String();
 
-extern void page404(AsyncWebServerRequest *);
-extern void pageIndexGet(AsyncWebServerRequest *);
-extern void pageIndexPost(AsyncWebServerRequest *);
+extern void page404(AsyncWebServerRequest*);
+extern void pageIndexGet(AsyncWebServerRequest*);
+extern void pageIndexPost(AsyncWebServerRequest*);
+extern void pageAlarmGet(AsyncWebServerRequest*);
+extern void pageAlarmPost(AsyncWebServerRequest*);
 extern void displayWeather();
 
 #define DEBUG_CONSOLE
@@ -80,7 +83,7 @@ Preferences prefs;
 String ssid         = ""; // SSID WI-FI
 String pswd         = "";
 
-volatile uint8_t  ir_cmd;
+volatile uint16_t  ir_cmd;
 volatile bool     ir_repeat;
 SemaphoreHandle_t ir_event;
 TaskHandle_t      receiverTask;
@@ -98,14 +101,20 @@ TaskHandle_t displayDeviceTask;
 #define DISPLAY_RADIO   2
 #define DISPLAY_DEVICE  3
 
-int8_t currentPage  = 0;
+int16_t currentPage  = 0;
+
+alarm_t settings[16] = { {.value = 0},  {.value = 0},  {.value = 0},  {.value = 0}, {.value = 0},  {.value = 0},  {.value = 0},  {.value = 0}, {.value = 0},  {.value = 0},  {.value = 0},  {.value = 0}, {.value = 0},  {.value = 0},  {.value = 0},  {.value = 0} };
+#define MaxSettingsCount  (sizeof(settings) / sizeof(settings[0]))
+uint16_t settingsCount = 0;
+
 
 ESP32Encoder encoder;
 #define ENCODER_BTN_L 39
 Button2 btnEncoder(ENCODER_BTN_L);
 
-uint8_t currentVolume = 0;    // 0..15
-uint8_t currentIndex  = 0;
+#define VOLUME_MAX      15
+uint16_t currentVolume = 0;    // 0..15
+uint16_t currentIndex  = 0;
 bool    isMute = false;
 
 typedef struct _radioItem {
@@ -167,7 +176,7 @@ const RadioItem_t radioList[] PROGMEM = {
   { 1078, "Радио Новая Милицейская Волна" },
 };
 
-const int listSize = sizeof(radioList) / sizeof(RadioItem_t);
+const uint16_t listSize = sizeof(radioList) / sizeof(RadioItem_t);
 
 void (*currentHandle)(int);
 
@@ -178,9 +187,10 @@ void (*currentHandle)(int);
 #define FONT_CALIBRI_56  "Calibri56"
 #define FONT_SEGOE_32    "Segoe UI Symbol32"
 /*
-Скетч использует 1047854 байт (79%) памяти устройства. Всего доступно 1310720 байт.
-Глобальные переменные используют 58128 байт (19%) динамической памяти, оставляя 236784 байт для локальных переменных. Максимум: 294912 байт.
+Скетч использует 1053006 байт (80%) памяти устройства. Всего доступно 1310720 байт.
+Глобальные переменные используют 58184 байт (19%) динамической памяти, оставляя 236728 байт для локальных переменных. Максимум: 294912 байт.
 */
+uint16_t fileData[8192];
 
 void setup() {
 #if defined(DEBUG_CONSOLE)
@@ -204,6 +214,7 @@ void setup() {
 
   if (SPIFFS.begin(true)) {
     listDir("/", &Serial);
+    debug_printf("Total: %d, Free: %d\r\n", SPIFFS.totalBytes(), SPIFFS.totalBytes() - SPIFFS.usedBytes());
   }
   else {
     SPIFFS.format();
@@ -277,8 +288,18 @@ void setup() {
   debug_printf("WebServer\r\n");
   server.on("/", HTTP_GET, pageIndexGet);
   server.on("/", HTTP_POST, pageIndexPost);
+  server.on("/index.html", HTTP_GET, pageIndexGet);
+  server.on("/index.html", HTTP_POST, pageIndexPost);
+
+  server.on("/alarm.html", HTTP_GET, pageAlarmGet);
+  server.on("/alarm.html", HTTP_POST, pageAlarmPost);
+  
   server.onNotFound(page404);
   server.begin();
+
+#if defined(DEBUG_CONSOLE)
+  //vTaskGetRunTimeStats();
+#endif
 }
 
 void loop() {
@@ -311,7 +332,7 @@ void handleMute(bool mute) {
   xSemaphoreGive(displayRadioEvent);
 }
 
-void handleSetRadio(uint8_t index) {
+void handleSetRadio(uint16_t index) {
   if (index >= listSize) index = 0;
   currentIndex = index;
   byte *pData = (byte *)(radioList + currentIndex);
@@ -343,8 +364,8 @@ void handleChannel(int direction) {
   }
 }
 
-void handleSetVolume(uint8_t value) {
-  if (value > 15) value = 0;
+void handleSetVolume(uint16_t value) {
+  if (value > VOLUME_MAX) value = VOLUME_MAX;
   if (currentVolume == value) return; 
   currentVolume = value;
   radioSetVolume(currentVolume);
@@ -354,7 +375,7 @@ void handleSetVolume(uint8_t value) {
 
 void handleVolume(int direction) {
   if (direction > 0) {
-    if (currentVolume < 15) {
+    if (currentVolume < VOLUME_MAX) {
       handleSetVolume(currentVolume + 1);
     }
   }
@@ -373,7 +394,7 @@ void logTime(Print& prn) {
   prn.printf("%s\r\n", strftime_buf);
 }
 
-void setDisplayPage(int8_t page) {
+void setDisplayPage(int16_t page) {
   if (currentPage == page) return;
   currentPage = page;
   prefs.putInt("page", currentPage);
@@ -504,7 +525,7 @@ void displayRadio() {
   tft.unloadFont();
 }
 
-void displayDeviceHandler(void * parameter) {
+void displayDeviceHandler(void* parameter) {
   for (;;) {
     xSemaphoreTake(displayDeviceEvent, portMAX_DELAY);
     debug_printf("DisplayDeviceHandler Core = %d\r\n", xPortGetCoreID());
@@ -585,4 +606,45 @@ void listDir(const char* dirname, Print* p) {
     file = root.openNextFile();
   }
 }
+
+void vTaskGetRunTimeStats() {
+  TaskStatus_t* pxTaskStatusArray;
+  volatile UBaseType_t uxArraySize, x;
+  uint32_t ulTotalRunTime, ulStatsAsPercentage;
+  // Take a snapshot of the number of tasks in case it changes while this
+  // function is executing.
+  uxArraySize = uxTaskGetNumberOfTasks();
+  // Allocate a TaskStatus_t structure for each task.  An array could be
+  // allocated statically at compile time.
+  pxTaskStatusArray = (TaskStatus_t *)pvPortMalloc(uxArraySize * sizeof(TaskStatus_t));
+  if (pxTaskStatusArray != NULL) {
+    // Generate raw status information about each task.
+    uxArraySize = uxTaskGetSystemState(pxTaskStatusArray, uxArraySize, &ulTotalRunTime);
+    // For percentage calculations.
+    ulTotalRunTime /= 100UL;
+    // Avoid divide by zero errors.
+    if (ulTotalRunTime > 0) {
+      // For each populated position in the pxTaskStatusArray array,
+      // format the raw data as human readable ASCII data
+      for (x = 0; x < uxArraySize; x++)
+      {
+        // What percentage of the total run time has the task used?
+        // This will always be rounded down to the nearest integer.
+        // ulTotalRunTimeDiv100 has already been divided by 100.
+        ulStatsAsPercentage = pxTaskStatusArray[x].ulRunTimeCounter / ulTotalRunTime;
+        if (ulStatsAsPercentage > 0UL) {
+          debug_printf("%s\t\t%u\t\t%u%%\r\n", pxTaskStatusArray[x].pcTaskName, pxTaskStatusArray[x].ulRunTimeCounter, ulStatsAsPercentage);
+        }
+        else {
+          // If the percentage is zero here then the task has
+          // consumed less than 1% of the total run time.
+          debug_printf("%s\t\t%u\t\t<1%%\r\n", pxTaskStatusArray[x].pcTaskName, pxTaskStatusArray[x].ulRunTimeCounter);
+        }
+      }
+    }
+    // The array is no longer needed, free the memory it consumes.
+    vPortFree(pxTaskStatusArray);
+  }
+}
+
 #endif

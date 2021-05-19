@@ -16,8 +16,6 @@ char _pressurePattern[]    = "<pressure";
 char _temperaturePattern[] = "<temperature";
 char _windPattern[]        = "<info|<weather|<day_part|<wind_direction|id=";
 
-unsigned short imageData[8192];
-
 // Возврат: указатель на последний обработанный символ, мелкая оптимизация,
 // чтобы каждый раз не начинать с начала,
 // в связи с этим ВАЖЕН ПОРЯДОК ПОИСКА ЗНАЧЕНИЙ.
@@ -50,16 +48,18 @@ void drawImageFile(const char* fileName, const int32_t x, const int32_t y, const
   File f = SPIFFS.open(fileName);
   if (f) {
     size_t len = f.size();
-    f.read((uint8_t*)imageData, len);
+    if (len <= sizeof(fileData)) {
+      f.read((uint8_t*)fileData, len);
+      tft.pushImage(x, y, size, size, fileData);
+    }
     f.close();
-    tft.pushImage(x, y, size, size, imageData);
   }
 }
-
+/*
 uint16_t ColorToRGB565(const uint8_t r, const uint8_t g, const uint8_t b) {
   return (uint16_t)(((r & 0b11111000) << 8) | ((g & 0b11111100) << 3) | (b >> 3));
 }
-
+*/
 void weatherHandler(void* parameter) {
   for (;;) {
     debug_printf("\r\nYandex Weather Core = %d\r\n", xPortGetCoreID());
