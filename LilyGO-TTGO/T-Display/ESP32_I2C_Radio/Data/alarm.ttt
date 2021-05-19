@@ -1,43 +1,43 @@
 <li class="list-group-item">
-        <form method="post">
-          <div class="row">
-            <div class="col-auto">
-              <input type="time" class="form-control" name="time" value="%time%">
-            </div>            
-            <div class="col-auto">
-              <div class="form-check">
-                <input class="form-check-input" type="checkbox" name="day1"%day1%/>
-                <label class="form-check-label" for="1">Понедельник</label>
-              </div>            
-              <div class="form-check">
-                <input class="form-check-input" type="checkbox" name="day2"%day2%/>
-                <label class="form-check-label" for="2">Вторник</label>
-              </div>            
-              <div class="form-check">
-                <input class="form-check-input" type="checkbox" name="day3"%day3%/>
-                <label class="form-check-label" for="3">Среда</label>
-              </div>            
-              <div class="form-check">
-                <input class="form-check-input" type="checkbox" name="day4"%day4%/>
-                <label class="form-check-label" for="4">Четверг</label>
-              </div>            
-              <div class="form-check">
-                <input class="form-check-input" type="checkbox" name="day5"%day5%/>
-                <label class="form-check-label" for="5">Пятница</label>
-              </div>            
-              <div class="form-check">
-                <input class="form-check-input" type="checkbox" name="day6"%day6%/>
-                <label class="form-check-label" for="6">Суббота</label>
-              </div>            
-              <div class="form-check">
-                <input class="form-check-input" type="checkbox" name="day7"%day7%/>
-                <label class="form-check-label" for="7">Восресение</label>
-              </div>            
-            </div>            
-            <div class="col-auto">
-              <button type="submit" class="btn btn-primary" name="edit" value="%index%">Изменить</button>
-              <button type="submit" class="btn btn-primary" name="del" value="%index%">Удалить</button>
-            </div>
-          </div>
-        </form>
-      </li>
+  <form method="post">
+    <div class="row">
+      <div class="col-auto">
+        <input type="time" class="form-control" name="time" value="%time%">
+      </div>            
+      <div class="col-auto">
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" name="day1"%day1%/>
+          <label class="form-check-label" for="day1">Понедельник</label>
+        </div>            
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" name="day2"%day2%/>
+          <label class="form-check-label" for="day2">Вторник</label>
+        </div>            
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" name="day3"%day3%/>
+          <label class="form-check-label" for="day3">Среда</label>
+        </div>            
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" name="day4"%day4%/>
+          <label class="form-check-label" for="day4">Четверг</label>
+        </div>            
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" name="day5"%day5%/>
+          <label class="form-check-label" for="day5">Пятница</label>
+        </div>            
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" name="day6"%day6%/>
+          <label class="form-check-label" for="day6">Суббота</label>
+        </div>            
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" name="day7"%day7%/>
+          <label class="form-check-label" for="day7">Восресение</label>
+        </div>            
+      </div>            
+      <div class="col-auto">
+        <button type="submit" class="btn btn-primary" name="edit" value="%index%">Сохранить</button>
+        <button type="submit" class="btn btn-primary" name="del" value="%index%">Удалить</button>
+      </div>
+    </div>
+  </form>
+</li>
