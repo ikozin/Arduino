@@ -22,13 +22,14 @@ void pageAlarmGet(AsyncWebServerRequest *request) {
   String alert = String();
   String list = String();
   String html = String();
-  templ.reserve(2048);
-  alert.reserve(4096);
-  list.reserve(16384);
-  html.reserve(32768);
+  if (!templ.reserve(2048)) return page507(request);
+  if (!alert.reserve(4096)) return page507(request);
+  if (!list.reserve(16384)) return page507(request);
+  if (!html.reserve(32768)) return page507(request);
   loadFile("/alarm.ttt", templ);
   loadFile("/alarm.html", html);
-  if (templ.isEmpty() || html.isEmpty()) return page404(request);
+  if (templ.isEmpty()) return request->send(500, "text/plain", "File \"/alarm.ttt\" not found or too large");
+  if (html.isEmpty()) return request->send(500, "text/plain", "File \"/alarm.html\" not found or too large");
   
   for (int i = 0; i < settingsCount; i++) {
     alert.concat(templ);
@@ -74,26 +75,32 @@ void pageAlarmPost(AsyncWebServerRequest *request) {
   debug_printf("Post: Alarm\r\n");
   logRequest(request);
 #endif
+
+  // INSERT
   if (request->hasParam("add", true)) {
-    if (settingsCount >= MaxSettingsCount) return request->redirect("/");
+    if (settingsCount >= MaxSettingsCount) return page507(request);
     // Вставляем в начало
     for (uint16_t i = MaxSettingsCount - 1; i > 0; i--) settings[i].value = settings[i - 1].value;
     settings[0].value = 0x0800007F;
     settingsCount++;
     return request->redirect("/alarm.html");
   }
+
+  // DELETE
   if (request->hasParam("del", true)) {
     uint16_t index = request->getParam("del", true)->value().toInt();
-    if (settingsCount == 0 || index >= settingsCount)  return request->redirect("/");
+    if (settingsCount == 0 || index >= settingsCount)  return page400(request);
     // Сдвигаем на место удаленного
     for (uint16_t i = index; i < MaxSettingsCount - 1; i++) settings[i].value = settings[i + 1].value;
     settings[MaxSettingsCount - 1].value = 0;
     settingsCount--;
     return request->redirect("/alarm.html");
   }
+
+  // EDIT
   if (request->hasParam("edit", true)) {
     uint16_t index = request->getParam("edit", true)->value().toInt();
-    if (index >= settingsCount)  return request->redirect("/");
+    if (index >= settingsCount)  return page400(request);
 
     alarm_t& setting = settings[index];
     parseTime(setting, request);

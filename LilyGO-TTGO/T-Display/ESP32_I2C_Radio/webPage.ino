@@ -18,8 +18,16 @@ void logRequest(AsyncWebServerRequest *request) {
 }
 #endif
 
+void page400(AsyncWebServerRequest *request) {
+  request->send(404, "text/plain", "Bad Request");
+}
+
 void page404(AsyncWebServerRequest *request) {
   request->send(404, "text/plain", "Not found");
+}
+
+void page507(AsyncWebServerRequest *request) {
+  request->send(507, "text/plain", "Not enough memory");
 }
 
 String checkedString = String(" checked");
