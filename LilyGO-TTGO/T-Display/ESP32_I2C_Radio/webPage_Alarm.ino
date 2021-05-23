@@ -22,10 +22,10 @@ void pageAlarmGet(AsyncWebServerRequest *request) {
   String alert = String();
   String list = String();
   String html = String();
-  if (!templ.reserve(2048)) return page507(request);
+  if (!templ.reserve(4096)) return page507(request);
   if (!alert.reserve(4096)) return page507(request);
   if (!list.reserve(16384)) return page507(request);
-  if (!html.reserve(32768)) return page507(request);
+  if (!html.reserve(16384)) return page507(request);
   loadFile("/alarm.ttt", templ);
   loadFile("/alarm.html", html);
   if (templ.isEmpty()) return request->send(500, "text/plain", "File \"/alarm.ttt\" not found or too large");
@@ -46,11 +46,19 @@ void pageAlarmGet(AsyncWebServerRequest *request) {
     alert.replace("%day3%", setting.Wednesday  ? checkedString: emptyString);
     alert.replace("%day2%", setting.Tuesday    ? checkedString: emptyString);
     alert.replace("%day1%", setting.Monday     ? checkedString: emptyString);
-
+    alert.replace("%station%", (setting.Index == -1) ? "--- Не выбрано ---": radioList[setting.Index].name);
+    alert.replace("%volume%", String(setting.Volume));
+    alert.replace("%mute%", setting.IsMute     ? checkedString: emptyString);
     list.concat(alert);
     alert.clear();
   }
   html.replace("%list%", list);
+
+  //debug_printf("templ capacity = %d\r\n", templ.capacity());  // WString.h - capacity сделать public
+  //debug_printf("alert capacity = %d\r\n", alert.capacity());  // WString.h - capacity сделать public
+  //debug_printf("list capacity = %d\r\n", list.capacity());    // WString.h - capacity сделать public
+  //debug_printf("html capacity = %d\r\n", html.capacity());    // WString.h - capacity сделать public
+
   request->send(200, "text/html", html);
 }
 
@@ -81,9 +89,9 @@ void pageAlarmPost(AsyncWebServerRequest *request) {
     if (settingsCount >= MaxSettingsCount) return page507(request);
     // Вставляем в начало
     for (uint16_t i = MaxSettingsCount - 1; i > 0; i--) settings[i].value = settings[i - 1].value;
-    settings[0].value = 0x0800007F;
+    settings[0].value = 0xFFFFFFFF0800007F;
     settingsCount++;
-    return request->redirect("/alarm.html");
+    return request->redirect("/setalarm.html?index=0");
   }
 
   // DELETE
@@ -94,24 +102,6 @@ void pageAlarmPost(AsyncWebServerRequest *request) {
     for (uint16_t i = index; i < MaxSettingsCount - 1; i++) settings[i].value = settings[i + 1].value;
     settings[MaxSettingsCount - 1].value = 0;
     settingsCount--;
-    return request->redirect("/alarm.html");
-  }
-
-  // EDIT
-  if (request->hasParam("edit", true)) {
-    uint16_t index = request->getParam("edit", true)->value().toInt();
-    if (index >= settingsCount)  return page400(request);
-
-    alarm_t& setting = settings[index];
-    parseTime(setting, request);
-    setting.Sunday     = request->hasParam("day7", true);
-    setting.Saturday   = request->hasParam("day6", true);
-    setting.Friday     = request->hasParam("day5", true);
-    setting.Thursday   = request->hasParam("day4", true);
-    setting.Wednesday  = request->hasParam("day3", true);
-    setting.Tuesday    = request->hasParam("day2", true);
-    setting.Monday     = request->hasParam("day1", true);
-
     return request->redirect("/alarm.html");
   }
   return request->redirect("/");

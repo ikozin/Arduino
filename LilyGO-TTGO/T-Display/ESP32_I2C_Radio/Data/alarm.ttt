@@ -1,43 +1,56 @@
 <li class="list-group-item">
-  <form method="post">
     <div class="row">
       <div class="col-auto">
-        <input type="time" class="form-control" name="time" value="%time%">
+        <input type="time" class="form-control" name="time" value="%time%" disabled="disabled">
       </div>            
       <div class="col-auto">
         <div class="form-check">
-          <input class="form-check-input" type="checkbox" name="day1"%day1%/>
+          <input class="form-check-input" type="checkbox" name="day1" disabled="disabled"%day1%/>
           <label class="form-check-label" for="day1">Понедельник</label>
         </div>            
         <div class="form-check">
-          <input class="form-check-input" type="checkbox" name="day2"%day2%/>
+          <input class="form-check-input" type="checkbox" name="day2" disabled="disabled"%day2%/>
           <label class="form-check-label" for="day2">Вторник</label>
         </div>            
         <div class="form-check">
-          <input class="form-check-input" type="checkbox" name="day3"%day3%/>
+          <input class="form-check-input" type="checkbox" name="day3" disabled="disabled"%day3%/>
           <label class="form-check-label" for="day3">Среда</label>
         </div>            
         <div class="form-check">
-          <input class="form-check-input" type="checkbox" name="day4"%day4%/>
+          <input class="form-check-input" type="checkbox" name="day4" disabled="disabled"%day4%/>
           <label class="form-check-label" for="day4">Четверг</label>
         </div>            
         <div class="form-check">
-          <input class="form-check-input" type="checkbox" name="day5"%day5%/>
+          <input class="form-check-input" type="checkbox" name="day5" disabled="disabled"%day5%/>
           <label class="form-check-label" for="day5">Пятница</label>
         </div>            
         <div class="form-check">
-          <input class="form-check-input" type="checkbox" name="day6"%day6%/>
+          <input class="form-check-input" type="checkbox" name="day6" disabled="disabled"%day6%/>
           <label class="form-check-label" for="day6">Суббота</label>
         </div>            
         <div class="form-check">
-          <input class="form-check-input" type="checkbox" name="day7"%day7%/>
+          <input class="form-check-input" type="checkbox" name="day7" disabled="disabled"%day7%/>
           <label class="form-check-label" for="day7">Восресение</label>
         </div>            
       </div>            
       <div class="col-auto">
-        <button type="submit" class="btn btn-primary" name="edit" value="%index%">Сохранить</button>
-        <button type="submit" class="btn btn-primary" name="del" value="%index%">Удалить</button>
+        <div>
+          <label for="station" class="form-label">Станция:</label>
+          <input type="text" name="station" id="station" value="%station%" disabled="disabled"/>
+        </div>
+        <div>
+          <label for="volume" class="form-label">Громкость:</label>
+          <input type="range" class="form-range" name="volume" min="-1" max="15" value="%volume%" disabled="disabled"/>
+          <output>%volume%</output>
+        </div>
+        <div class="form-check form-switch">
+          <input class="form-check-input" type="checkbox" id="mute" name="mute" disabled="disabled"%mute%/>
+          <label class="form-check-label" for="mute">Mute</label>
+        </div>
+        <form method="post">
+          <a href="setalarm.html?index=%index%" class="btn btn-primary" role="button">Изменить</a>
+          <button type="submit" class="btn btn-primary" name="del" value="%index%">Удалить</button>
+        </form>
       </div>
     </div>
-  </form>
 </li>

@@ -30,4 +30,5 @@ void page507(AsyncWebServerRequest *request) {
   request->send(507, "text/plain", "Not enough memory");
 }
 
-String checkedString = String(" checked");
+String checkedString = String(" checked=\"checked\"");
+String selectedString = String(" selected=\"selected\"");

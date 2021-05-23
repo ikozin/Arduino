@@ -1,26 +1,28 @@
 <!DOCTYPE HTML>
 <html lang="ru">
 <head>
-  <meta http-equiv="content-type" content="text/html; charset=utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>ESP32 TTGO T-Display</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css"/>
-  <style>
-  </style>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>ESP32 TTGO T-Display</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" crossorigin="anonymous" />
+    <style>
+    </style>
 </head>
 <body>
-  <br/>
-  <div class="container">
-    <div class="row">
-      <form method="post">
-          <button type="submit" class="btn btn-primary" name="add">Добавить новый</button>
-      </form>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.slim.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+    <br />
+    <div class="container">
+        <div class="row">
+            <form method="post">
+                <button type="submit" class="btn btn-primary" name="add">Добавить новый</button>
+            </form>
+        </div>
+        <br />
+        <ul class="list-group">
+            %list%
+        </ul>
+        <br />
     </div>
-    <br/>
-    <ul class="list-group">
-		%list%
-	</ul>
-    <br/>
-  </div>
 </body>
 </html>

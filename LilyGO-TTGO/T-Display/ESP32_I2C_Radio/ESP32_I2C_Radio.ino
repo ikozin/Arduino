@@ -64,6 +64,8 @@ extern void pageIndexGet(AsyncWebServerRequest*);
 extern void pageIndexPost(AsyncWebServerRequest*);
 extern void pageAlarmGet(AsyncWebServerRequest*);
 extern void pageAlarmPost(AsyncWebServerRequest*);
+extern void pageSetAlarmGet(AsyncWebServerRequest*);
+extern void pageSetAlarmPost(AsyncWebServerRequest*);
 extern void displayWeather();
 
 #define DEBUG_CONSOLE
@@ -122,7 +124,7 @@ typedef struct _radioItem {
   char name[79];
 } RadioItem_t;
 
-const RadioItem_t radioList[] PROGMEM = {
+const RadioItem_t radioList[] = {
   {  875, "БИЗНЕС-FM" },
   {  879, "Like FM" },
   {  883, "Радио Ретро FM" },
@@ -293,6 +295,9 @@ void setup() {
 
   server.on("/alarm.html", HTTP_GET, pageAlarmGet);
   server.on("/alarm.html", HTTP_POST, pageAlarmPost);
+
+  server.on("/setalarm.html", HTTP_GET, pageSetAlarmGet);
+  server.on("/setalarm.html", HTTP_POST, pageSetAlarmPost);
   
   server.onNotFound(page404);
   server.begin();
@@ -335,17 +340,9 @@ void handleMute(bool mute) {
 void handleSetRadio(uint16_t index) {
   if (index >= listSize) index = 0;
   currentIndex = index;
-  byte *pData = (byte *)(radioList + currentIndex);
-  uint16_t band = pgm_read_word(pData);
-#if defined(DEBUG_CONSOLE)  
-  char c;
-  debug_printf("%d:", band);
-  pData += sizeof(uint16_t);
-  while ((c = (char)pgm_read_byte(pData++)) != 0) {
-    Serial.print(c);
-  }
-  debug_printf("\r\n");
-#endif
+  RadioItem_t rec = radioList[currentIndex];
+  uint16_t band = rec.band;
+  debug_printf("%d:%s\r\n", band, rec.name);
   radioSetChannel(band);
   prefs.putInt("station", currentIndex);  
   xSemaphoreGive(displayRadioEvent);
@@ -470,8 +467,8 @@ void displayFreq() {
   String freq;
   freq.reserve(16);
 
-  byte *pData = (byte *)(radioList + currentIndex);
-  uint16_t band = pgm_read_word(pData);
+  RadioItem_t rec = radioList[currentIndex];
+  uint16_t band = rec.band;
   freq.concat((uint16_t)(band / 10));
   freq.concat('.');
   freq.concat((uint16_t)(band % 10));
@@ -512,8 +509,9 @@ void displayRadio() {
   tft.unloadFont();
 
   tft.loadFont(FONT_CALIBRI_32);
-  uint16_t* pData = (uint16_t*)(radioList + currentIndex);
-  String text = (char*)++pData;
+  
+  RadioItem_t rec = radioList[currentIndex];
+  String text = rec.name;
   if (tft.textWidth(text) >=  239) {
     tft.setTextDatum(TL_DATUM);
     tft.drawString(text, 0, 70);
