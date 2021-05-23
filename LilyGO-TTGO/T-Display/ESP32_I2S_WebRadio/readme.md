@@ -18,7 +18,7 @@ https://github.com/LilyGO/ESP32_OLED_webradio
 Подробнее: https://habr.com/ru/post/483280/
 
 #### Графика
-Используется локальная копия библиотеки TFT_eSPI https://github.com/Bodmer/TFT_eSPI, для устанвки выполнить **deploy_TFT_eSPI.cmd** (находится уровнем выше)
+Используется библиотека TFT_eSPI https://github.com/Bodmer/TFT_eSPI, [ОПИСАНИЕ УСТАНОВКИ](..//readme.md)
 
 #### Кнопки
 Библиотека https://github.com/LennartHennigs/Button2
@@ -29,6 +29,9 @@ https://github.com/LilyGO/ESP32_OLED_webradio
 #### Время
 Установка времени осуществляется через функцию **configTime**, она использует API ESP32 для работы с SNTP: 
 https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/system/system_time.html
+```C++
+configTime(10800, 0, "pool.ntp.org");
+```
 
 #### Энкодеры
 Библиотека https://github.com/madhephaestus/ESP32Encoder/ основана на API ESP32
