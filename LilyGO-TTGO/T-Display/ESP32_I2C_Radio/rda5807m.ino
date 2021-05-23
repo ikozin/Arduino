@@ -3,6 +3,7 @@
 SemaphoreHandle_t _mutexRadio;
 
 void radioInit() {
+  debug_printf("radioInit\r\n");
   Wire.begin();
   _mutexRadio = xSemaphoreCreateMutex();
   xSemaphoreTake(_mutexRadio, portMAX_DELAY);
@@ -24,6 +25,7 @@ void radioInit() {
 }
 
 void radioSetChannel(uint16_t value) {
+  debug_printf("radioSetChannel\r\n");
   xSemaphoreTake(_mutexRadio, portMAX_DELAY);
   rda_reg3_t reg = { .value = 0 };
   reg.CHAN = value - RADIO_BAND_MIN;
@@ -36,6 +38,7 @@ void radioSetChannel(uint16_t value) {
 }
 
 uint16_t radioGetChannel() {
+  debug_printf("radioGetChannel\r\n");
   xSemaphoreTake(_mutexRadio, portMAX_DELAY);
   rda_reg3_t reg = { .value = getRegister(RDA5807M_REG3) };
   xSemaphoreGive(_mutexRadio);
@@ -43,7 +46,7 @@ uint16_t radioGetChannel() {
 }
 
 void radioSetVolume(uint16_t value) {
-  debug_printf("Volume = %d\r\n", value);
+  debug_printf("radioSetVolume\r\nVolume = %d\r\n", value);
 
   xSemaphoreTake(_mutexRadio, portMAX_DELAY);
   rda_reg5_t reg = { .value = getRegister(RDA5807M_REG5) };
@@ -54,6 +57,7 @@ void radioSetVolume(uint16_t value) {
 }
 
 uint8_t radioGetVolume() {
+  debug_printf("radioGetVolume\r\n");
   xSemaphoreTake(_mutexRadio, portMAX_DELAY);
   rda_reg5_t reg = { .value = getRegister(RDA5807M_REG5) };
   xSemaphoreGive(_mutexRadio);
@@ -61,6 +65,7 @@ uint8_t radioGetVolume() {
 }
 
 void radioSetMute(bool value) {
+  debug_printf("radioSetMute\r\n");
   xSemaphoreTake(_mutexRadio, portMAX_DELAY);
   rda_reg2_t reg = { .value = getRegister(RDA5807M_REG2) };
   reg.DMUTE = !value;
@@ -69,6 +74,7 @@ void radioSetMute(bool value) {
 }
 
 bool radioGetMute() {
+  debug_printf("radioGetMute\r\n");
   xSemaphoreTake(_mutexRadio, portMAX_DELAY);
   rda_reg2_t reg = { .value = getRegister(RDA5807M_REG2) };
   xSemaphoreGive(_mutexRadio);
@@ -76,6 +82,7 @@ bool radioGetMute() {
 }
 
 void radioSetHardMute(bool value) {
+  debug_printf("radioSetHardMute\r\n");
   xSemaphoreTake(_mutexRadio, portMAX_DELAY);
   rda_reg2_t reg = { .value = getRegister(RDA5807M_REG2) };
   reg.DHIZ = !value;
@@ -84,6 +91,7 @@ void radioSetHardMute(bool value) {
 }
 
 bool radioGetHardMute() {
+  debug_printf("radioGetHardMute\r\n");
   xSemaphoreTake(_mutexRadio, portMAX_DELAY);
   rda_reg2_t reg = { .value = getRegister(RDA5807M_REG2) };
   xSemaphoreGive(_mutexRadio);
@@ -91,6 +99,7 @@ bool radioGetHardMute() {
 }
 
 uint8_t radioGetRssi() {
+  debug_printf("radioGetRssi\r\n");
   xSemaphoreTake(_mutexRadio, portMAX_DELAY);
   rda_regb_t reg = { .value = getRegister(RDA5807M_REGB) };
   xSemaphoreGive(_mutexRadio);
