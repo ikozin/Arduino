@@ -339,6 +339,7 @@ void handleMute(bool mute) {
 
 void handleSetRadio(uint16_t index) {
   if (index >= listSize) index = 0;
+  if (currentIndex == index) return;
   currentIndex = index;
   RadioItem_t rec = radioList[currentIndex];
   uint16_t band = rec.band;
