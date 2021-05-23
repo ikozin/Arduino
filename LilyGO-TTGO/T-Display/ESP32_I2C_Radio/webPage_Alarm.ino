@@ -30,7 +30,8 @@ void pageAlarmGet(AsyncWebServerRequest *request) {
   loadFile("/alarm.html", html);
   if (templ.isEmpty()) return request->send(500, "text/plain", "File \"/alarm.ttt\" not found or too large");
   if (html.isEmpty()) return request->send(500, "text/plain", "File \"/alarm.html\" not found or too large");
-  
+
+  list = "\r\n";
   for (int i = 0; i < settingsCount; i++) {
     alert.concat(templ);
 
