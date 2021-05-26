@@ -573,6 +573,16 @@ void receiverHandler(void * parameter) {
         case CARMP3_3:
           setDisplayPage(DISPLAY_DEVICE);
           break;
+        case CARMP3_7:
+          debug_printf("%d\r\n", radioGetChannel()) ;
+          radioSeek(false);
+          debug_printf("%d\r\n", radioGetChannel());
+          break;
+        case CARMP3_9:
+          debug_printf("%d\r\n", radioGetChannel()) ;
+          radioSeek(true);
+          debug_printf("%d\r\n", radioGetChannel()) ;
+          break;
         default:
           break;
       }
