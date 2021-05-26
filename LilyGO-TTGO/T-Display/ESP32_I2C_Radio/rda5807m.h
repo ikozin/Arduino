@@ -6,17 +6,17 @@
 #endif
 
 #if defined(RADIO_BAND_WIDTH_0)
-  #define RADIO_BAND_WIDTH  0
+  #define RADIO_BAND_WIDTH  0x00
   #define RADIO_BAND_MIN    870
   #define RADIO_BAND_MAX    1080
 #endif
-#if !defined(RADIO_BAND_WIDTH_1)
-  #define RADIO_BAND_WIDTH  1
+#if defined(RADIO_BAND_WIDTH_1)
+  #define RADIO_BAND_WIDTH  0x01
   #define RADIO_BAND_MIN    760
   #define RADIO_BAND_MAX    910
 #endif
-#if !defined(RADIO_BAND_WIDTH_2)
-  #define RADIO_BAND_WIDTH  2
+#if defined(RADIO_BAND_WIDTH_2)
+  #define RADIO_BAND_WIDTH  0x02
   #define RADIO_BAND_MIN    760
   #define RADIO_BAND_MAX    1080
 #endif
@@ -26,7 +26,9 @@
 // регистры
 #define RDA5807M_REG2 0x02
 #define RDA5807M_REG3 0x03
+#define RDA5807M_REG4 0x04
 #define RDA5807M_REG5 0x05
+#define RDA5807M_REG7 0x07
 #define RDA5807M_REGA 0x0A
 #define RDA5807M_REGB 0x0B
 
