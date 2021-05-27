@@ -1,7 +1,7 @@
 //https://github.com/me-no-dev/ESPAsyncWebServer#body-data-handling
 
 #if defined(DEBUG_CONSOLE)
-void logRequest(AsyncWebServerRequest *request) {
+void logRequest(AsyncWebServerRequest* request) {
   //List all parameters
   int params = request->params();
   for(int i=0;i<params;i++){
@@ -18,15 +18,15 @@ void logRequest(AsyncWebServerRequest *request) {
 }
 #endif
 
-void page400(AsyncWebServerRequest *request) {
+void page400(AsyncWebServerRequest* request) {
   request->send(404, "text/plain", "Bad Request");
 }
 
-void page404(AsyncWebServerRequest *request) {
+void page404(AsyncWebServerRequest* request) {
   request->send(404, "text/plain", "Not found");
 }
 
-void page507(AsyncWebServerRequest *request) {
+void page507(AsyncWebServerRequest* request) {
   request->send(507, "text/plain", "Not enough memory");
 }
 

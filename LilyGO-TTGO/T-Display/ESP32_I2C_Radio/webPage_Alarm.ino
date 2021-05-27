@@ -12,7 +12,7 @@ void loadFile(const char* fileName, String& text) {
   }
 }
 
-void pageAlarmGet(AsyncWebServerRequest *request) {
+void pageAlarmGet(AsyncWebServerRequest* request) {
 #if defined(DEBUG_CONSOLE)
   debug_printf("GET: Alarm\r\n");
   logRequest(request);
@@ -63,7 +63,7 @@ void pageAlarmGet(AsyncWebServerRequest *request) {
   request->send(200, "text/html", html);
 }
 
-void parseTime(alarm_t& setting, AsyncWebServerRequest *request) {
+void parseTime(alarm_t& setting, AsyncWebServerRequest* request) {
   if (request->hasParam("time", true)) {
     String text = request->getParam("time", true)->value();
     setting.Hour = text.toInt();
@@ -79,7 +79,7 @@ void parseTime(alarm_t& setting, AsyncWebServerRequest *request) {
   }
 }
 
-void pageAlarmPost(AsyncWebServerRequest *request) {
+void pageAlarmPost(AsyncWebServerRequest* request) {
 #if defined(DEBUG_CONSOLE)
   debug_printf("Post: Alarm\r\n");
   logRequest(request);

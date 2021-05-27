@@ -28,7 +28,7 @@ String processorIndex(const String& var) {
   return emptyString;
 }
 
-void pageIndexGet(AsyncWebServerRequest *request) {
+void pageIndexGet(AsyncWebServerRequest* request) {
 #if defined(DEBUG_CONSOLE)
   debug_printf("GET: Index\r\n");
   logRequest(request);
@@ -37,7 +37,7 @@ void pageIndexGet(AsyncWebServerRequest *request) {
   request->send(SPIFFS, "/index.html", emptyString, false, processorIndex);
 }
 
-void pageIndexPost(AsyncWebServerRequest *request) {
+void pageIndexPost(AsyncWebServerRequest* request) {
 #if defined(DEBUG_CONSOLE)
   debug_printf("Post: Index\r\n");
   logRequest(request);

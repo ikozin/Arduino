@@ -1,3 +1,4 @@
+
 void printlnUint16Hex(uint16_t data) {
   debug_printf("0x%04X\r\n", data);
 }

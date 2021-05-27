@@ -66,6 +66,8 @@ extern void pageAlarmGet(AsyncWebServerRequest*);
 extern void pageAlarmPost(AsyncWebServerRequest*);
 extern void pageSetAlarmGet(AsyncWebServerRequest*);
 extern void pageSetAlarmPost(AsyncWebServerRequest*);
+extern void pageSearchGet(AsyncWebServerRequest*);
+extern void pageSearchPost(AsyncWebServerRequest*);
 extern void displayWeather();
 
 #define DEBUG_CONSOLE
@@ -292,13 +294,12 @@ void setup() {
   server.on("/", HTTP_POST, pageIndexPost);
   server.on("/index.html", HTTP_GET, pageIndexGet);
   server.on("/index.html", HTTP_POST, pageIndexPost);
-
   server.on("/alarm.html", HTTP_GET, pageAlarmGet);
   server.on("/alarm.html", HTTP_POST, pageAlarmPost);
-
   server.on("/setalarm.html", HTTP_GET, pageSetAlarmGet);
   server.on("/setalarm.html", HTTP_POST, pageSetAlarmPost);
-  
+  server.on("/rda5807m.html", HTTP_GET, pageSearchGet);
+  server.on("/rda5807m.html", HTTP_POST, pageSearchPost);
   server.onNotFound(page404);
   server.begin();
 
@@ -574,14 +575,14 @@ void receiverHandler(void * parameter) {
           setDisplayPage(DISPLAY_DEVICE);
           break;
         case CARMP3_7:
-          debug_printf("%d\r\n", radioGetChannel()) ;
-          radioSeek(false);
-          debug_printf("%d\r\n", radioGetChannel());
+          //debug_printf("%d\r\n", radioGetChannel()) ;
+          //radioSeek(false);
+          //debug_printf("%d\r\n", radioGetChannel());
           break;
         case CARMP3_9:
-          debug_printf("%d\r\n", radioGetChannel()) ;
-          radioSeek(true);
-          debug_printf("%d\r\n", radioGetChannel()) ;
+          //debug_printf("%d\r\n", radioGetChannel()) ;
+          //radioSeek(true);
+          //debug_printf("%d\r\n", radioGetChannel()) ;
           break;
         default:
           break;

@@ -1,3 +1,4 @@
+
 typedef union alarm {
   struct {
     uint8_t Monday    : 1;  // 0

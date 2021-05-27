@@ -1,3 +1,4 @@
+
 #include "rda5807m.h"
 
 SemaphoreHandle_t _mutexRadio;
@@ -117,8 +118,35 @@ uint8_t radioGetRssi() {
   return regb.RSSI;  
 }
 
-void radioSeek(bool seekUp) {
+uint16_t radioGetSeekTh() {
+  debug_printf("radioGetSeekTh\r\n");
+  xSemaphoreTake(_mutexRadio, portMAX_DELAY);
+  rda_reg5_t reg5 = { .value = getRegister(RDA5807M_REG5) };
+  xSemaphoreGive(_mutexRadio);
+  return reg5.SEEKTH;  
+}
+
+uint16_t radioGetSoftBlend() {
+  debug_printf("radioGetSoftBlend\r\n");
+  xSemaphoreTake(_mutexRadio, portMAX_DELAY);
+  rda_reg7_t reg7 = { .value = getRegister(RDA5807M_REG7) };
+  xSemaphoreGive(_mutexRadio);
+  return reg7.TH_SOFRBLEND;  
+}
+
+void radioSeek(uint16_t seekth, uint16_t softblend, bool seekUp) {
   debug_printf("radioSeek\r\n");
+  rda_reg5_t reg5 = { .value = getRegister(RDA5807M_REG5) };
+  rda_reg7_t reg7 = { .value = getRegister(RDA5807M_REG7) };
+  if (reg5.SEEKTH != seekth) {
+    reg5.SEEKTH = seekth;
+    setRegister(RDA5807M_REG5, reg5.value);
+  }
+  if (reg7.TH_SOFRBLEND != softblend) {
+    reg7.TH_SOFRBLEND = softblend;
+    setRegister(RDA5807M_REG7, reg7.value);
+  }
+ 
   xSemaphoreTake(_mutexRadio, portMAX_DELAY);
   rda_reg2_t reg2 = { .value = getRegister(RDA5807M_REG2) };
   reg2.SKMODE = 1;
