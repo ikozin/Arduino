@@ -115,7 +115,7 @@ import java.awt.Desktop; // Required to allow sketch to open file windows
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
 //                       >>>>>>>>>> USER CONFIGURED PARAMETERS START HERE <<<<<<<<<<
-int fontNumber = 371;  // Segue UI Symbol
+int fontNumber = 355;  // Segoe MDL2 Assets
 String fontName = "";  // Manually crop the filename length later after creation if needed
                        // Note: SPIFFS does NOT accept underscore in a filename!
 String fontType = ".ttf";
@@ -136,17 +136,31 @@ static final int[] unicodeBlocks = {
   // Block range,   //Block name, Code points, Assigned characters, Scripts
   // First, last,   //Range is inclusive of first and last codes
 
-  0x0030, 0x0039,  // Example custom range (numbers 0-9)
-  0x2190, 0x2199,  // Стрелки
-  0x2581, 0x2588,  // Столбик (8 шт)
   0xE1E5, 0xE1E9,  // Уровень сигнала (5 шт)
-  0xE284, 0xE28D,  // Погода
+  0xE850, 0xE859,  // Батарейка
+  0xE85A, 0xE862,  // Батарейка на заряде
+  0xE904, 0xE908,  // Уровень сигнала (5 шт)
+  0xEBA0, 0xEBAA,  // Батарейка
+  0xEBAB, 0xEBB5,  // Батарейка на заряде
+  0xECB9, 0xECBF,  // Батарейка
+  0xF5F2, 0xF5FC,  // Батарейка
+  0xF5FD, 0xF607,  // Батарейка на заряде
 };
 
 // Here we specify particular individual Unicodes to be included (appended at end of selected range)
 static final int[] specificUnicodes = {
-   0x002B, 0x002C, 0x002D, 0x002E, 0x005B, 0x005D,  // + , - . [ ]
-   0xE246, 0xE247, // mute, unmute
+   0xE15D,    // Громко
+   0xE198,    // Без звука
+   0xE74F,    // Без звука
+   0xE767,    // Громко
+   0xE83E,    // Батарейка на заряде (полная)
+   0xE83F,    // Батарейка (полная)
+   0xE992,    // Тихо (0)
+   0xE993,    // Слабо (1)
+   0xE994,    // Хорошо (2)
+   0xE995,    // Громко (3)
+   0xE996,    // Батарейка хана
+   0xEA93,    // Батарейка на заряде (полная)
 };
 
 //                       >>>>>>>>>> USER CONFIGURED PARAMETERS END HERE <<<<<<<<<<
