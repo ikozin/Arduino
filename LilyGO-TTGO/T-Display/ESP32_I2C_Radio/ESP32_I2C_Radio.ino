@@ -33,6 +33,7 @@
 #include <ESP32Encoder.h>
 #include <AsyncTCP.h>
 #include <ESPAsyncWebServer.h>
+#include <Pangodream_18650_CL.h>
 #include "IrRemote_CarMP3.h"
 #include "alarm.h"
 
@@ -115,6 +116,14 @@ uint16_t settingsCount = 0;
 ESP32Encoder encoder;
 #define ENCODER_BTN_L 39
 Button2 btnEncoder(ENCODER_BTN_L);
+
+#define MIN_USB_VOL   4.9
+#define PIN_ADC_POWER 14
+#define PIN_ADC_IN    34
+#define CONV_FACTOR   1.8
+#define READS         20
+Pangodream_18650_CL BL(PIN_ADC_IN, CONV_FACTOR, READS);
+TaskHandle_t batteryTask;
 
 #define VOLUME_MAX      15
 uint16_t currentVolume = 0;    // 0..15
@@ -208,6 +217,9 @@ void setup() {
   debug_printf("Current Core = %d\r\n", xPortGetCoreID());
 #endif
 
+  pinMode(PIN_ADC_POWER, OUTPUT);
+  digitalWrite(PIN_ADC_POWER, HIGH);
+
   pinMode(TFT_BL, OUTPUT);                // Set backlight pin to output mode
   digitalWrite(TFT_BL, TFT_BACKLIGHT_ON); // Turn backlight on. TFT_BACKLIGHT_ON has been set in the TFT_eSPI library in the User Setup file TTGO_T_Display.h
   
@@ -288,6 +300,8 @@ void setup() {
   weatherPressure.reserve(16);
   weatherTemperature.reserve(16);
   xTaskCreatePinnedToCore(weatherHandler, "WeatherTask", 4096, NULL, 1, &weatherTask, 0);
+
+  xTaskCreatePinnedToCore(batteryHandler, "BatteryTask", 4096, NULL, 1, &batteryTask, 0);
 
   debug_printf("WebServer\r\n");
   server.on("/", HTTP_GET, pageIndexGet);
@@ -409,6 +423,19 @@ void setDisplayPage(int16_t page) {
       break;
     default:
       tft.fillScreen(TFT_RED);
+  }
+}
+
+void batteryHandler(void* parameter) {
+  for (;;) {
+    debug_printf("BatteryHandler Core = %d\r\n", xPortGetCoreID());
+    if (BL.getBatteryVolts() >= MIN_USB_VOL) {
+      debug_printf("Battery Charging\r\n");
+    } else {
+      int batteryLevel = BL.getBatteryChargeLevel();
+      debug_printf("Battary Level = %d\r\n", batteryLevel);
+    } 
+    vTaskDelay(5000 / portTICK_RATE_MS);
   }
 }
 

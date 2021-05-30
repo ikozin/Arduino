@@ -131,6 +131,9 @@ digitalWrite(TFT_BL, HIGH); // Включаем подсветку
 tft.init(135, 240);         // Init ST7789 240x135
 ```
 
+### [18650CL](https://github.com/pangodream/18650CL)
+ESP32TTGO - Battery Indicator - https://www.youtube.com/watch?v=osAOdmZuvDc
+
 
 ### Заводской тест ###
 Перед компиляцией необходимо установить локальную библиотеку **TFT_eSPI** : [FactoryTest](./TFT_eSPI/examples/FactoryTest/FactoryTest.ino)
@@ -174,3 +177,4 @@ TTGO T-Display Board (ESP32) BRAKEOUT Game - https://www.youtube.com/watch?v=N6V
 
 TTGO T Display (ESP32) - Space Shooter game- free code - https://www.youtube.com/watch?v=KZMkGDyGjxQ&t=0s
 
+ESP32TTGO - Battery Indicator - https://www.youtube.com/watch?v=osAOdmZuvDc
