@@ -32,3 +32,16 @@ void page507(AsyncWebServerRequest* request) {
 
 String checkedString = String(" checked=\"checked\"");
 String selectedString = String(" selected=\"selected\"");
+
+void loadFile(const char* fileName, String& text) {
+  File f = SPIFFS.open(fileName);
+  if (f) {
+    size_t len = f.size();
+    if (len <= sizeof(fileData)) {
+      f.read((uint8_t*)fileData, len);
+      ((uint8_t*)fileData)[len] = 0;
+      text = (char*)fileData;
+    }
+    f.close();
+  }
+}

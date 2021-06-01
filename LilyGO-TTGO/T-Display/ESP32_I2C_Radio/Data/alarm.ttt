@@ -1,7 +1,7 @@
 <li class="list-group-item">
     <div class="row">
       <div class="col-auto">
-        <input type="time" class="form-control" name="time" value="%time%" disabled="disabled">
+        <input type="time" class="form-control" name="time" value="%time%" disabled="disabled"/>
       </div>            
       <div class="col-auto">
         <div class="form-check">

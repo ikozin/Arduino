@@ -130,12 +130,14 @@ uint16_t currentVolume = 0;    // 0..15
 uint16_t currentIndex  = 0;
 bool    isMute = false;
 
+#define RADIO_MAX   64
+
 typedef struct _radioItem {
   uint16_t band;
   char name[79];
 } RadioItem_t;
 
-const RadioItem_t radioList[] = {
+const RadioItem_t radioList[RADIO_MAX] = {
   {  875, "БИЗНЕС-FM" },
   {  879, "Like FM" },
   {  883, "Радио Ретро FM" },
@@ -189,7 +191,7 @@ const RadioItem_t radioList[] = {
   { 1078, "Радио Новая Милицейская Волна" },
 };
 
-const uint16_t listSize = sizeof(radioList) / sizeof(RadioItem_t);
+uint16_t listSize = 51;
 
 void (*currentHandle)(int);
 
@@ -301,7 +303,7 @@ void setup() {
   weatherTemperature.reserve(16);
   xTaskCreatePinnedToCore(weatherHandler, "WeatherTask", 4096, NULL, 1, &weatherTask, 0);
 
-  xTaskCreatePinnedToCore(batteryHandler, "BatteryTask", 4096, NULL, 1, &batteryTask, 0);
+  xTaskCreatePinnedToCore(batteryHandler, "BatteryTask", 4096, NULL, 1, &batteryTask, 1);
 
   debug_printf("WebServer\r\n");
   server.on("/", HTTP_GET, pageIndexGet);
@@ -428,12 +430,12 @@ void setDisplayPage(int16_t page) {
 
 void batteryHandler(void* parameter) {
   for (;;) {
-    debug_printf("BatteryHandler Core = %d\r\n", xPortGetCoreID());
+    //debug_printf("BatteryHandler Core = %d\r\n", xPortGetCoreID());
     if (BL.getBatteryVolts() >= MIN_USB_VOL) {
-      debug_printf("Battery Charging\r\n");
+      //debug_printf("Battery Charging\r\n");
     } else {
       int batteryLevel = BL.getBatteryChargeLevel();
-      debug_printf("Battary Level = %d\r\n", batteryLevel);
+      //debug_printf("Battary Level = %d\r\n", batteryLevel);
     } 
     vTaskDelay(5000 / portTICK_RATE_MS);
   }
