@@ -134,7 +134,7 @@ bool    isMute = false;
 
 typedef struct _radioItem {
   uint16_t band;
-  char name[79];
+  char name[80];
 } RadioItem_t;
 
 const RadioItem_t radioList[RADIO_MAX] = {
