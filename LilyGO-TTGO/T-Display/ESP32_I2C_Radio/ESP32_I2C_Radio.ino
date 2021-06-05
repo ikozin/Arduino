@@ -69,6 +69,7 @@ extern void pageSetAlarmGet(AsyncWebServerRequest*);
 extern void pageSetAlarmPost(AsyncWebServerRequest*);
 extern void pageSearchGet(AsyncWebServerRequest*);
 extern void pageSearchPost(AsyncWebServerRequest*);
+extern void pageRadioListGet(AsyncWebServerRequest*);
 extern void displayWeather();
 
 #define DEBUG_CONSOLE
@@ -130,11 +131,13 @@ uint16_t currentVolume = 0;    // 0..15
 uint16_t currentIndex  = 0;
 bool    isMute = false;
 
+const char* fileRadio = "/radiolist.dat";
+
 #define RADIO_MAX   64
 
 typedef struct _radioItem {
   uint16_t band;
-  char name[80];
+  char name[78];
 } RadioItem_t;
 
 const RadioItem_t radioList[RADIO_MAX] = {
@@ -310,12 +313,19 @@ void setup() {
   server.on("/", HTTP_POST, pageIndexPost);
   server.on("/index.html", HTTP_GET, pageIndexGet);
   server.on("/index.html", HTTP_POST, pageIndexPost);
+
   server.on("/alarm.html", HTTP_GET, pageAlarmGet);
   server.on("/alarm.html", HTTP_POST, pageAlarmPost);
+
   server.on("/setalarm.html", HTTP_GET, pageSetAlarmGet);
   server.on("/setalarm.html", HTTP_POST, pageSetAlarmPost);
+
   server.on("/rda5807m.html", HTTP_GET, pageSearchGet);
   server.on("/rda5807m.html", HTTP_POST, pageSearchPost);
+
+  server.on(fileRadio, HTTP_GET, pageRadioListGet);
+  //server.serveStatic(fileRadio, SPIFFS, fileRadio);
+
   server.onNotFound(page404);
   server.begin();
 
