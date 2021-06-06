@@ -84,11 +84,15 @@ https://www.sites.google.com/site/jmaathuis/arduino/lilygo-ttgo-t-display-esp32
 
 ## Необходимые библиотеки
 
-### [ESP32FS](https://github.com/me-no-dev/arduino-esp32fs-plugin/releases)
+### [ESP32FS (SPIFFS)](https://github.com/me-no-dev/arduino-esp32fs-plugin/releases)
 Плагин для Arduino IDE, загружает файлы из директории Data в ESP32 flash memory
 
 ### [Button2](https://github.com/LennartHennigs/Button2)
 ![button2](./images/button2.png "Button2")
+
+### [ESP32Encoder](https://github.com/madhephaestus/ESP32Encoder/)
+Основана на API ESP32
+![ESP32Encoder](./images/esp32encoder.png "ESP32Encoder")
 
 ### [TFT_eSPI](https://github.com/Bodmer/TFT_eSPI)
 ![TFT_ESPI](./images/tft_espi.png)
@@ -132,8 +136,15 @@ tft.init(135, 240);         // Init ST7789 240x135
 ```
 
 ### [18650CL](https://github.com/pangodream/18650CL)
+Необходимо скачать [архив](https://github.com/pangodream/18650CL/archive/refs/heads/master.zip) и установить вручную.
+
 ESP32TTGO - Battery Indicator - https://www.youtube.com/watch?v=osAOdmZuvDc
 
+### [ESP32-audioI2S](https://github.com/schreibfaul1/ESP32-audioI2S)
+Необходимо скачать [архив](https://github.com/schreibfaul1/ESP32-audioI2S/archive/refs/heads/master.zip) и установить вручную
+
+### [IRremote](https://github.com/Arduino-IRremote/Arduino-IRremote)
+![IRremote](./images/irremote.png)
 
 ### Заводской тест ###
 Перед компиляцией необходимо установить локальную библиотеку **TFT_eSPI** : [FactoryTest](./TFT_eSPI/examples/FactoryTest/FactoryTest.ino)
