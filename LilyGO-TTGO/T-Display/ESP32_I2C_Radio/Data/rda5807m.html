@@ -46,7 +46,17 @@
             </form>
         </div>
         <br />
-        <a href="radiolist.dat">Файл со списком радиостанций</a>
+        <div class="row">
+            <div class="col-6">
+                <a href="radiolist.dat">Файл со списком радиостанций</a>
+            </div>
+            <div class="col-6">
+                <form action="/upload" method="post" enctype="multipart/form-data">
+                    <input type="file" class="form-control" name="file" placeholder="radiolist.dat" accept=".dat" />
+                    <button type="submit" class="btn btn-success">Загрузить</button>
+                </form>
+            </div>
+        </div>
     </div>
 </body>
 </html>

@@ -70,6 +70,9 @@ extern void pageSetAlarmPost(AsyncWebServerRequest*);
 extern void pageSearchGet(AsyncWebServerRequest*);
 extern void pageSearchPost(AsyncWebServerRequest*);
 extern void pageRadioListGet(AsyncWebServerRequest*);
+extern void pageUploadPost(AsyncWebServerRequest*);
+extern void handleUpload(AsyncWebServerRequest*, String, size_t, uint8_t*, size_t, bool);
+
 extern void displayWeather();
 
 #define DEBUG_CONSOLE
@@ -140,7 +143,7 @@ typedef struct _radioItem {
   char name[78];
 } RadioItem_t;
 
-const RadioItem_t radioList[RADIO_MAX] = {
+RadioItem_t radioList[RADIO_MAX] = {
   {  875, "БИЗНЕС-FM" },
   {  879, "Like FM" },
   {  883, "Радио Ретро FM" },
@@ -244,6 +247,17 @@ void setup() {
   }
   //SPIFFS.format();
 
+  File f = SPIFFS.open(fileRadio);
+  if (f) {
+    f.read((uint8_t*)radioList, sizeof(radioList));
+    f.close();
+    for (listSize = 0; listSize < RADIO_MAX; listSize++) {
+      if (radioList[listSize].band == 0) break;
+    }
+  } else {
+    debug_printf("Error loading %s\r\n", fileRadio);
+  }
+
   prefs.begin("WebRadio");
   ssid = prefs.getString("ssid", ssid);
   pswd = prefs.getString("pswd", pswd);
@@ -322,9 +336,11 @@ void setup() {
 
   server.on("/rda5807m.html", HTTP_GET, pageSearchGet);
   server.on("/rda5807m.html", HTTP_POST, pageSearchPost);
-
+  server.on("/upload", HTTP_POST, pageUploadPost, handleUpload);
   server.on(fileRadio, HTTP_GET, pageRadioListGet);
+    
   //server.serveStatic(fileRadio, SPIFFS, fileRadio);
+  //server.onFileUpload(handleUpload);
 
   server.onNotFound(page404);
   server.begin();
