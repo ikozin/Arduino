@@ -84,6 +84,7 @@ void weatherHandler(void* parameter) {
         if (!windFileName.isEmpty())
           windFileName = "/" + windFileName;
         iconFileName = strrchr(weatherUrlIcon.c_str(), '/');
+        iconFileName = "/icon" + iconFileName;
   
         float windSpeed = weatherWindSpeed.toFloat();
         if (windSpeed > 3.0 && windSpeed < 10.0)
@@ -91,10 +92,10 @@ void weatherHandler(void* parameter) {
         else if (windSpeed >= 10)
           windFileName.concat(F("3"));
         windFileName.concat(F(".png"));
+        windFileName = "/icon" + windFileName;
         
 #if defined(DEBUG_CONSOLE)
         debug_printf("Yandex Weather Core = %d\r\n", xPortGetCoreID());
-        //Serial.println(payload);
         debug_printf("Трафик:        %s\r\n" ,trafficLevel.c_str());
         debug_printf("Погода:        %s\r\n" ,weatherDescription.c_str());
         debug_printf("Url:           %s\r\n" ,weatherUrlIcon.c_str());

@@ -34,7 +34,7 @@ void pageIndexGet(AsyncWebServerRequest* request) {
   logRequest(request);
 #endif
 
-  request->send(SPIFFS, "/index.html", emptyString, false, processorIndex);
+  request->send(SPIFFS, "/html/index.html", emptyString, false, processorIndex);
 }
 
 void pageIndexPost(AsyncWebServerRequest* request) {

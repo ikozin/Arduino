@@ -1,2 +1,2 @@
-xcopy "*.vlw" "..\Data\" /Y
+xcopy "*.vlw" "..\Data\font\" /Y
 pause

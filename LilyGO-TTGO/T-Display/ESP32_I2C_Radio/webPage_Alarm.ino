@@ -13,8 +13,8 @@ void pageAlarmGet(AsyncWebServerRequest* request) {
   if (!alert.reserve(4096)) return page507(request);
   if (!list.reserve(16384)) return page507(request);
   if (!html.reserve(16384)) return page507(request);
-  loadFile("/alarm.ttt", templ);
-  loadFile("/alarm.html", html);
+  loadFile("/html/alarm.ttt", templ);
+  loadFile("/html/alarm.html", html);
   if (templ.isEmpty()) return request->send(500, "text/plain", "File \"/alarm.ttt\" not found or too large");
   if (html.isEmpty()) return request->send(500, "text/plain", "File \"/alarm.html\" not found or too large");
 

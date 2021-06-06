@@ -204,12 +204,12 @@ void (*currentHandle)(int);
 // Для генерации шрифта использовать Create_font.pde (Processing)
 // TFT_eSPI\Tools\Create_Smooth_Font\Create_font\Create_font.pde
 // Директория Tools
-#define FONT_CALIBRI_32  "Calibri32"
-#define FONT_CALIBRI_56  "Calibri56"
-#define FONT_SEGOE_32    "Segoe UI Symbol32"
+#define FONT_CALIBRI_32  "font/Calibri32"
+#define FONT_CALIBRI_56  "font/Calibri56"
+#define FONT_SEGOE_32    "font/Segoe UI Symbol32"
 /*
-Скетч использует 1053006 байт (80%) памяти устройства. Всего доступно 1310720 байт.
-Глобальные переменные используют 58184 байт (19%) динамической памяти, оставляя 236728 байт для локальных переменных. Максимум: 294912 байт.
+Скетч использует 1070250 байт (81%) памяти устройства. Всего доступно 1310720 байт.
+Глобальные переменные используют 64304 байт (21%) динамической памяти, оставляя 230608 байт для локальных переменных. Максимум: 294912 байт.
 */
 uint16_t fileData[8192];
 

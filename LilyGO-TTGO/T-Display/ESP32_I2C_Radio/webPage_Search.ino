@@ -12,7 +12,7 @@ void pageSearchGet(AsyncWebServerRequest* request) {
   logRequest(request);
 #endif
 
-  return request->send(SPIFFS, "/rda5807m.html", emptyString, false, processorSearch);
+  return request->send(SPIFFS, "/html/rda5807m.html", emptyString, false, processorSearch);
 }
 
 void pageSearchPost(AsyncWebServerRequest* request) {

@@ -17,7 +17,7 @@ void pageSetAlarmGet(AsyncWebServerRequest *request) {
   String html = String();
   if (!station.reserve(4096)) return page507(request);
   if (!html.reserve(8192)) return page507(request);
-  loadFile("/setalarm.html", html);
+  loadFile("/html/setalarm.html", html);
 
   html.replace("%index%", String(index));
   sprintf((char *)fileData, "%02d:%02d", setting.Hour, setting.Minute);
