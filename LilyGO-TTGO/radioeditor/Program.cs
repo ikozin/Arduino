@@ -127,6 +127,12 @@ namespace radioeditor
                 Array.Copy(data, buffer, size);
                 writer.Write(buffer);
             }
+            buffer = new byte[MaxNameSize + 2];
+            Array.Clear(buffer, 0, buffer.Length);
+            while (count++ < MaxListSize)
+            {
+                writer.Write(buffer);
+            }
         }
     }
 }
