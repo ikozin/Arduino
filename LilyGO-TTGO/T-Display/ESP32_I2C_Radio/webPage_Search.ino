@@ -30,6 +30,9 @@ void pageSearchPost(AsyncWebServerRequest* request) {
     uint16_t band = request->getParam("band", true)->value().toFloat() * 10;
     radioSetChannel(band);
   }
+  else if (request->hasParam("reboot", true)) {
+    esp_restart();
+  }
 
   return request->redirect("/rda5807m.html");
 }

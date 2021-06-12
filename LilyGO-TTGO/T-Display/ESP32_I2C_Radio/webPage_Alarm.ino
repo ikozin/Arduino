@@ -79,6 +79,7 @@ void pageAlarmPost(AsyncWebServerRequest* request) {
     for (uint16_t i = MaxSettingsCount - 1; i > 0; i--) settings[i].value = settings[i - 1].value;
     settings[0].value = 0xFFFFFFFF0800007F;
     settingsCount++;
+    setTimers(settingsCount);
     return request->redirect("/setalarm.html?index=0");
   }
 
@@ -90,6 +91,7 @@ void pageAlarmPost(AsyncWebServerRequest* request) {
     for (uint16_t i = index; i < MaxSettingsCount - 1; i++) settings[i].value = settings[i + 1].value;
     settings[MaxSettingsCount - 1].value = 0;
     settingsCount--;
+    setTimers(settingsCount);
     return request->redirect("/alarm.html");
   }
   return request->redirect("/");

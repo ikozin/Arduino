@@ -1,3 +1,4 @@
+#define WEEK_MASK     0x7F
 
 typedef union alarm {
   struct {
@@ -13,7 +14,6 @@ typedef union alarm {
     uint8_t Reserv;         // 8-15
 
     uint8_t Minute;         // 16-23
-
     uint8_t Hour;           // 24-31
 
     int16_t Index;          // 32-47

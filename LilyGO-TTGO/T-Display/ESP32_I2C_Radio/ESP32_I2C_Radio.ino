@@ -94,14 +94,14 @@ String pswd         = "";
 
 volatile uint16_t  ir_cmd;
 volatile bool     ir_repeat;
-SemaphoreHandle_t ir_event;
+volatile SemaphoreHandle_t ir_event;
 TaskHandle_t      receiverTask;
 
 TaskHandle_t weatherTask;
 
-SemaphoreHandle_t displayWeatherEvent;
-SemaphoreHandle_t displayRadioEvent;
-SemaphoreHandle_t displayDeviceEvent;
+volatile SemaphoreHandle_t displayWeatherEvent;
+volatile SemaphoreHandle_t displayRadioEvent;
+volatile SemaphoreHandle_t displayDeviceEvent;
 TaskHandle_t displayWeatherTask;
 TaskHandle_t displayRadioTask;
 TaskHandle_t displayDeviceTask;
@@ -112,10 +112,9 @@ TaskHandle_t displayDeviceTask;
 
 int16_t currentPage  = 0;
 
-alarm_t settings[16] = { {.value = 0},  {.value = 0},  {.value = 0},  {.value = 0}, {.value = 0},  {.value = 0},  {.value = 0},  {.value = 0}, {.value = 0},  {.value = 0},  {.value = 0},  {.value = 0}, {.value = 0},  {.value = 0},  {.value = 0},  {.value = 0} };
+alarm_t settings[5] = { {.value = 0xFFFFFFFF170000FF},  {.value = 0},  {.value = 0},  {.value = 0}, {.value = 0} };
 #define MaxSettingsCount  (sizeof(settings) / sizeof(settings[0]))
-uint16_t settingsCount = 0;
-
+uint16_t settingsCount = 1;
 
 ESP32Encoder encoder;
 #define ENCODER_BTN_L 39
@@ -259,6 +258,8 @@ void setup() {
   }
 
   prefs.begin("WebRadio");
+  //prefs.putString("ssid", "");
+  //prefs.putString("pswd", "");
   ssid = prefs.getString("ssid", ssid);
   pswd = prefs.getString("pswd", pswd);
 
@@ -345,6 +346,8 @@ void setup() {
   server.onNotFound(page404);
   server.begin();
 
+  setTimers(settingsCount);
+ 
 #if defined(DEBUG_CONSOLE)
   //vTaskGetRunTimeStats();
 #endif
@@ -456,14 +459,13 @@ void setDisplayPage(int16_t page) {
 
 void batteryHandler(void* parameter) {
   for (;;) {
-    //debug_printf("BatteryHandler Core = %d\r\n", xPortGetCoreID());
     if (BL.getBatteryVolts() >= MIN_USB_VOL) {
-      //debug_printf("Battery Charging\r\n");
+      //debug_printf("BatteryHandler Core = %d, Battery Charging\r\n", xPortGetCoreID());
     } else {
       int batteryLevel = BL.getBatteryChargeLevel();
-      //debug_printf("Battary Level = %d\r\n", batteryLevel);
+      debug_printf("BatteryHandler Core = %d, Battary Level = %d\r\n", xPortGetCoreID(), batteryLevel);
     } 
-    vTaskDelay(5000 / portTICK_RATE_MS);
+    vTaskDelay(10000 / portTICK_RATE_MS);
   }
 }
 
@@ -628,16 +630,6 @@ void receiverHandler(void * parameter) {
           break;
         case CARMP3_3:
           setDisplayPage(DISPLAY_DEVICE);
-          break;
-        case CARMP3_7:
-          //debug_printf("%d\r\n", radioGetChannel()) ;
-          //radioSeek(false);
-          //debug_printf("%d\r\n", radioGetChannel());
-          break;
-        case CARMP3_9:
-          //debug_printf("%d\r\n", radioGetChannel()) ;
-          //radioSeek(true);
-          //debug_printf("%d\r\n", radioGetChannel()) ;
           break;
         default:
           break;
