@@ -1,0 +1,33 @@
+100u/16v						C1, C2
+100	нФ/0.1uf					C3, C23, C24, C66
+1	нФ							C5, C22
+10	нФ (1000V)					C6, C7, C20
+270	пФ							C21
+1N4937 (Diode)					D1, D2, D3
+3mm LED							D23, D24
+DIP8 (chip holder)				IC1, IC2, U80
+2.54 мм * 2 pin					J1, J4, P100
+2.54 мм * 3 pin					P3
+100uH							L1
+10mH							L3
+Beep							LS1
+5.08 мм Port					P2
+5.5 * 2.1 мм (Power Input)		P4
+S8050 (NPN Transistor)			Q1, Q3, Q4
+KSP42 (NPN Transistor)			Q2
+33	кОм							R1, R2
+1	кОм							R3, R23
+3	кОм							R4
+100	кОм							R5
+10	кОм							R7, R8, R9, R10, R11, R33
+10	кОм							R16, R24
+470	кОм							R17, R19, R20
+47	кОм							R18
+5.1	кОм							R32
+100	Ом (Potentiometer-3296W)	R100, 
+Switch (Power On Off)			S1
+Tube Hold						U1
+3.5mm Headphone jack			U110
+NE555							UC1, UC2
+LM358							U80
+Geiger Tube J305

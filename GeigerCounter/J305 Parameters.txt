@@ -1,0 +1,19 @@
+J305 Geiger Tube Specification:
+(Figure it out with figure: J305 slope spscification)
+Tin oxide Cathode, Coaxial cylindrical thin shell structure(Wall density 50 +/- 10cg/cm2),
+Application of pulse type halogen tube
+1) Application temperature:-40C ~ 55C
+2) Could be used for :yRay 20mR/h ~120mR/h
+and bRay in range  100~1800 ChangingIndex/minutes CM2 soft bRay
+Both beta and gamma radiation detetion.
+3) Working Voltage: 380-450V
+4) Working Current: 0,015-0,02 mA
+5) Sensivity to Gamma Radiation: 0.1 MeV
+6) Length:  92mm
+7) Diameter: 10mm
+8) start voltage <350V
+9) suggested working voltage:380V
+    maximum working voltage:550V
+10)The minimum length of Plateau:80V
+11)The largest plateau slope: 10%/80V
+12)Own Background: 25 pulse/minutes
