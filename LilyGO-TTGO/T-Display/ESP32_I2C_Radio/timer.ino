@@ -49,12 +49,11 @@ void startTimer(int index) {
 void timerCallback(TimerHandle_t pxTimer) {
   int32_t index = (int32_t)pvTimerGetTimerID(pxTimer);
   xTimerDelete(pxTimer, 0);
-  debug_printf("timerCallback[%d]\r\n", index);
-
   alarm_t alarm = settings[index];
+  debug_printf("timerCallback[%d], alarm[%d]=0x%llX\r\n", index, index, alarm.value);
   if (alarm.IsMute)   handleMute(true);
   if (alarm.Index != -1)  handleSetRadio(alarm.Index);
-  if (alarm.Volume != -1) handleSetRadio(alarm.Volume);
+  if (alarm.Volume != -1) handleSetVolume(alarm.Volume);
   if (!alarm.IsMute)  handleMute(false);
   startTimer(index);
 }
