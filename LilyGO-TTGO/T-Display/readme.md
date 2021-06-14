@@ -146,6 +146,12 @@ ESP32TTGO - Battery Indicator - https://www.youtube.com/watch?v=osAOdmZuvDc
 ### [IRremote](https://github.com/Arduino-IRremote/Arduino-IRremote)
 ![IRremote](./images/irremote.png)
 
+### [AsyncTCP](https://github.com/me-no-dev/AsyncTCP)
+Для ESP32 необходимо скачать [архив](https://github.com/me-no-dev/AsyncTCP/archive/refs/heads/master.zip) и установить вручную
+
+### [ESPAsyncWebServer](https://github.com/me-no-dev/ESPAsyncWebServer)
+Необходимо скачать [архив](https://github.com/me-no-dev/ESPAsyncWebServer/archive/refs/heads/master.zip) и установить вручную
+
 ### Заводской тест ###
 Перед компиляцией необходимо установить локальную библиотеку **TFT_eSPI** : [FactoryTest](./TFT_eSPI/examples/FactoryTest/FactoryTest.ino)
 
