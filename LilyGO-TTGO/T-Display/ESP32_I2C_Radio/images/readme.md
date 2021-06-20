@@ -1,5 +1,5 @@
-# Картинки взяты с Yandex.Weather
-## Svg (64x64) с заменой цвета фона
+# РљР°СЂС‚РёРЅРєРё РІР·СЏС‚С‹ СЃ Yandex.Weather
+## Svg (64x64) СЃ Р·Р°РјРµРЅРѕР№ С†РІРµС‚Р° С„РѕРЅР° (https://yastatic.net/weather/i/icons/funky/light/)
 ![](./svg/bkn_d.png)
 ![](./svg/bkn_n.png)
 ![](./svg/bkn_-ra_d.png)

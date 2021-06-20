@@ -88,16 +88,13 @@ namespace YandexWeather
             this.comboBoxPngUrl.FormattingEnabled = true;
             this.comboBoxPngUrl.Items.AddRange(new object[] {
             "https://yastatic.net/weather/i/icons/blueye/48/*.png",
-            "https://yastatic.net/weather/i/icons/blueye/64/*.png",
             "",
             "https://yastatic.net/weather/i/icons/funky/png/black/48/*.png",
             "https://yastatic.net/weather/i/icons/funky/png/dark/48/*.png",
             "https://yastatic.net/weather/i/icons/funky/png/flat/48/*.png",
             "https://yastatic.net/weather/i/icons/funky/png/light/48/*.png",
             "",
-            "https://yastatic.net/weather/i/icons/funky/png/black/64/*.png",
             "https://yastatic.net/weather/i/icons/funky/png/dark/64/*.png",
-            "https://yastatic.net/weather/i/icons/funky/png/flat/64/*.png",
             "https://yastatic.net/weather/i/icons/funky/png/light/64/*.png"});
             this.comboBoxPngUrl.Location = new System.Drawing.Point(6, 26);
             this.comboBoxPngUrl.Name = "comboBoxPngUrl";
