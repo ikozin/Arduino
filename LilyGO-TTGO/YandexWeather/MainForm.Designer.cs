@@ -38,6 +38,8 @@ namespace YandexWeather
             this.comboBoxPngUrl = new System.Windows.Forms.ComboBox();
             this.comboBoxApiKey = new System.Windows.Forms.ComboBox();
             this.comboBoxApiUrl = new System.Windows.Forms.ComboBox();
+            this.labelBackColor = new System.Windows.Forms.Label();
+            this.labelSize = new System.Windows.Forms.Label();
             this.numericUpDownSvgSize = new System.Windows.Forms.NumericUpDown();
             this.textBoxSvgColor = new System.Windows.Forms.TextBox();
             this.comboBoxSvgUrl = new System.Windows.Forms.ComboBox();
@@ -87,12 +89,16 @@ namespace YandexWeather
             this.comboBoxPngUrl.Items.AddRange(new object[] {
             "https://yastatic.net/weather/i/icons/blueye/48/*.png",
             "https://yastatic.net/weather/i/icons/blueye/64/*.png",
-            "https://yastatic.net/weather/i/icons/funky/png/light/48/*.png",
+            "",
+            "https://yastatic.net/weather/i/icons/funky/png/black/48/*.png",
             "https://yastatic.net/weather/i/icons/funky/png/dark/48/*.png",
             "https://yastatic.net/weather/i/icons/funky/png/flat/48/*.png",
-            "https://yastatic.net/weather/i/icons/funky/png/light/64/*.png",
+            "https://yastatic.net/weather/i/icons/funky/png/light/48/*.png",
+            "",
+            "https://yastatic.net/weather/i/icons/funky/png/black/64/*.png",
             "https://yastatic.net/weather/i/icons/funky/png/dark/64/*.png",
-            "https://yastatic.net/weather/i/icons/funky/png/flat/64/*.png"});
+            "https://yastatic.net/weather/i/icons/funky/png/flat/64/*.png",
+            "https://yastatic.net/weather/i/icons/funky/png/light/64/*.png"});
             this.comboBoxPngUrl.Location = new System.Drawing.Point(6, 26);
             this.comboBoxPngUrl.Name = "comboBoxPngUrl";
             this.comboBoxPngUrl.Size = new System.Drawing.Size(683, 28);
@@ -145,6 +151,8 @@ namespace YandexWeather
             // 
             // groupBoxSvg
             // 
+            groupBoxSvg.Controls.Add(this.labelBackColor);
+            groupBoxSvg.Controls.Add(this.labelSize);
             groupBoxSvg.Controls.Add(this.numericUpDownSvgSize);
             groupBoxSvg.Controls.Add(this.textBoxSvgColor);
             groupBoxSvg.Controls.Add(btnSvg);
@@ -157,9 +165,27 @@ namespace YandexWeather
             groupBoxSvg.TabStop = false;
             groupBoxSvg.Text = "SVG download";
             // 
+            // labelBackColor
+            // 
+            this.labelBackColor.AutoSize = true;
+            this.labelBackColor.Location = new System.Drawing.Point(12, 63);
+            this.labelBackColor.Name = "labelBackColor";
+            this.labelBackColor.Size = new System.Drawing.Size(82, 20);
+            this.labelBackColor.TabIndex = 5;
+            this.labelBackColor.Text = "Цвет фона";
+            // 
+            // labelSize
+            // 
+            this.labelSize.AutoSize = true;
+            this.labelSize.Location = new System.Drawing.Point(239, 62);
+            this.labelSize.Name = "labelSize";
+            this.labelSize.Size = new System.Drawing.Size(60, 20);
+            this.labelSize.TabIndex = 4;
+            this.labelSize.Text = "Размер";
+            // 
             // numericUpDownSvgSize
             // 
-            this.numericUpDownSvgSize.Location = new System.Drawing.Point(137, 60);
+            this.numericUpDownSvgSize.Location = new System.Drawing.Point(305, 60);
             this.numericUpDownSvgSize.Maximum = new decimal(new int[] {
             240,
             0,
@@ -176,7 +202,7 @@ namespace YandexWeather
             // 
             // textBoxSvgColor
             // 
-            this.textBoxSvgColor.Location = new System.Drawing.Point(6, 60);
+            this.textBoxSvgColor.Location = new System.Drawing.Point(100, 59);
             this.textBoxSvgColor.Name = "textBoxSvgColor";
             this.textBoxSvgColor.Size = new System.Drawing.Size(125, 27);
             this.textBoxSvgColor.TabIndex = 2;
@@ -200,8 +226,13 @@ namespace YandexWeather
             | System.Windows.Forms.AnchorStyles.Right)));
             this.comboBoxSvgUrl.FormattingEnabled = true;
             this.comboBoxSvgUrl.Items.AddRange(new object[] {
+            "https://yastatic.net/weather/i/icons/svg/*.svg",
+            "",
+            "https://yastatic.net/weather/i/icons/funky/black/*.svg",
             "https://yastatic.net/weather/i/icons/funky/light/*.svg",
             "https://yastatic.net/weather/i/icons/funky/dark/*.svg",
+            "",
+            "https://yastatic.net/weather/i/icons/blueye/black/svg/*.svg",
             "https://yastatic.net/weather/i/icons/blueye/color/svg/*.svg"});
             this.comboBoxSvgUrl.Location = new System.Drawing.Point(6, 26);
             this.comboBoxSvgUrl.Name = "comboBoxSvgUrl";
@@ -256,6 +287,8 @@ namespace YandexWeather
         private System.Windows.Forms.NumericUpDown numericUpDownSvgSize;
         private System.Windows.Forms.TextBox textBoxSvgColor;
         private System.Windows.Forms.ColorDialog colorDialog;
+        private System.Windows.Forms.Label labelSize;
+        private System.Windows.Forms.Label labelBackColor;
     }
 }
 

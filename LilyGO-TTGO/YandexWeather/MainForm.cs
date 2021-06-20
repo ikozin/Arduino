@@ -29,7 +29,9 @@ namespace YandexWeather
             if (folderBrowserDialog.ShowDialog(this) != DialogResult.OK)
                 return;
 
-            (string url, string fileExt, string[] list) = GetLoadParam(comboBoxPngUrl.Text);
+            ClearLog();
+
+            (string url, string fileExt, string[] list) = GetLoadParam(comboBoxPngUrl.Text, ".png");
 
             WriteLog("Загрузка файлов PNG");
             using (HttpClient client = new())
@@ -62,6 +64,9 @@ namespace YandexWeather
                 return;
             if (folderBrowserDialog.ShowDialog(this) != DialogResult.OK)
                 return;
+
+            ClearLog();
+
             if (!String.IsNullOrEmpty(textBoxSvgColor.Text))
             {
                 try
@@ -80,7 +85,7 @@ namespace YandexWeather
             }
             //textBoxSvgColor.Text = ColorTranslator.ToHtml(colorDialog.Color);
 
-            (string url, string fileExt, string[] list) = GetLoadParam(comboBoxSvgUrl.Text);
+            (string url, string fileExt, string[] list) = GetLoadParam(comboBoxSvgUrl.Text, ".svg");
 
             WriteLog("Загрузка файлов SVG");
             using (HttpClient client = new())
@@ -105,6 +110,11 @@ namespace YandexWeather
                 }
             }
             WriteLog("");
+        }
+
+        private void ClearLog()
+        {
+            textBoxLog.Text = String.Empty;
         }
 
         private void WriteLog(string message)
@@ -133,12 +143,11 @@ namespace YandexWeather
             return true;
         }
 
-        private static (string url, string fileExt, string[] list) GetLoadParam(string param)
+        private static (string url, string fileExt, string[] list) GetLoadParam(string param, string fileExt = null)
         {
             int index = param.IndexOf("*.");
-
-            string fileExt = param[(index + 1)..];
-            string url = param.Substring(0, index);
+            if (String.IsNullOrEmpty(fileExt)) fileExt = param[(index + 1)..];
+            string url = (index > 0) ? param.Substring(0, index) : param;
             string lines = File.ReadAllText("imagelist.json");
             var list = JsonConvert.DeserializeObject<string[]>(lines);
 
@@ -159,6 +168,8 @@ namespace YandexWeather
             }
             try
             {
+                ClearLog();
+
                 using HttpClient client = new();
                 client.DefaultRequestHeaders.Add("X-Yandex-API-Key", comboBoxApiKey.Text);
                 var data = client.GetStringAsync(comboBoxApiUrl.Text).GetAwaiter().GetResult();
