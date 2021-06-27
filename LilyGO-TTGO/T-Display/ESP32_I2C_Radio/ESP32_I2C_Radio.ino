@@ -291,6 +291,7 @@ void setup() {
   
   encoder.attachSingleEdge(37, 38);
   btnEncoder.setClickHandler(btnEncoderClick);
+  btnEncoder.setDoubleClickHandler(btnEncoderDoubleClick);
   btnEncoder.setLongClickTime(500);
   btnEncoder.setLongClickHandler(btnEncoderLongClick);
   
@@ -358,6 +359,19 @@ void loop() {
   int dir = encoder.getCount();
   encoder.setCount(0);    
   currentHandle(dir);
+  if(WiFi.status() != WL_CONNECTED) {
+    debug_printf("\r\n---RECONNNECT---\r\n");
+    server.end();
+    WiFi.disconnect();
+    WiFi.reconnect();
+    while (WiFi.status() != WL_CONNECTED) {
+      tft.printf(".");
+      debug_printf(".");
+      delay(500);
+      yield();
+    }
+    server.begin();
+  }
 }
 
 void btnEncoderClick(Button2& b) {
@@ -369,6 +383,10 @@ void btnEncoderClick(Button2& b) {
     debug_printf("Channel Control\r\n");
     currentHandle = handleChannel;
   }
+}
+
+void btnEncoderDoubleClick(Button2& b) {
+  setDisplayPage(currentPage + 1);
 }
 
 void btnEncoderLongClick(Button2& b) {
@@ -439,6 +457,8 @@ void logTime(Print& prn) {
 }
 
 void setDisplayPage(int16_t page) {
+  if (page != DISPLAY_WEATHER && page != DISPLAY_RADIO && page != DISPLAY_DEVICE)
+    page = DISPLAY_WEATHER;
   if (currentPage == page) return;
   currentPage = page;
   prefs.putInt("page", currentPage);
