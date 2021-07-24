@@ -7,17 +7,6 @@ https://arduinka.pro/blog/wp-content/uploads/2017/09/mega2560-pinout-1024x724.pn
 AT28C256
 https://docs-europe.electrocomponents.com/webdocs/1596/0900766b815963c9.pdf
 
-Комплектация:
-
-1) Arduino MEGA
-2) Макетная плата
-3) Micro SD
-4) Провод 18x2 -> папа, для подключения Arduino MEGA
-	14x1 - папа, для подключения AT28C256, выводы  1 - 14
-	14x1 - папа, для подключения AT28C256, выводы 15 - 28
-	 4x1 - мама, для подключения Arduino MEGA к Micro SD
-	 2x1 - мама, для подключения питания к Micro SD
-
 Распиновка подключения к ATMEGA2560
             -------                                                          -------
            | POWER |                                                        |  USB  |
@@ -60,22 +49,23 @@ https://docs-europe.electrocomponents.com/webdocs/1596/0900766b815963c9.pdf
      | GND| 53 | 51 | 49 | 47 | 45 | 43 | 41 | 39 | 37 | 35 | 33 | 31 | 29 | 27 | 25 | 23 | +5V|
                                                                                             ^
                                                                                            ключ
-
-    -----------------------------            https://static.chipdip.ru/lib/248/DOC000248438.pdf
-   |                             |                  Распиновка AT28C256
+     SS  SCK  MOSI MISO +5V  GND
+     |    |    |    |    |    |
+    -----------------------------           https://static.chipdip.ru/lib/248/DOC000248438.pdf
+   |                             |                   Распиновка AT28C256
    |                             |                      -------------
     -----------------------------                   1 -| A14     +5V |- 28
-     |    |    |    |    |    |                     2 -| A12     ~WE |- 27
-   ------------------------------                   3 -| A7      A13 |- 26
-   |SC  SCK  MOSI MISO  +5V  GND|                   4 -| A6       A8 |- 25
-   |                            |                   5 -| A5       A9 |- 24
-   |    --------------------    |                   6 -| A4      A11 |- 23
-   |   |                    |   |                   7 -| A3      ~OE |- 22
-   |   |                    |   |                   8 -| A2      A10 |- 21
-   |   |   MICRO SD CARD    |   |                   9 -| A1      ~CE |- 20
-   |   |                    |   |                  10 -| A0       D7 |- 19
-   |   |                    |   |                  11 -| D0       D6 |- 18
-   ------------------------------                  12 -| D1       D5 |- 17
+     |    |    |    |    |    |    |    |           2 -| A12     ~WE |- 27
+   ----------------------------------------         3 -| A7      A13 |- 26
+   |GND  MISO SCK  MOSI  CS  +5V  3V3  GND|         4 -| A6       A8 |- 25
+   |                                      |         5 -| A5       A9 |- 24
+   |       ------------------------       |         6 -| A4      A11 |- 23
+   |      |                        |      |         7 -| A3      ~OE |- 22
+   |      |                        |      |         8 -| A2      A10 |- 21
+   |      |        SD CARD         |      |         9 -| A1      ~CE |- 20
+   |      |                        |      |        10 -| A0       D7 |- 19
+   |      |                        |      |        11 -| D0       D6 |- 18
+   ----------------------------------------        12 -| D1       D5 |- 17
                                                    13 -| D2       D4 |- 16
                                                    14 -| GND      D3 |- 15
                                                         -------------
@@ -135,7 +125,8 @@ https://docs-europe.electrocomponents.com/webdocs/1596/0900766b815963c9.pdf
 uint8_t dataRow[BLOCK_SIZE];
 char text[TEXT_SIZE];
 
-char fileName[] = "X_DUMP.TXT";
+const char fileChip[] = "dump.txt";
+char fileBlock[] = "X_dump.txt";
 
 void enableWE() { digitalWrite(WE, LOW); }
 void disableWE() { digitalWrite(WE, HIGH); }
@@ -159,7 +150,7 @@ void  setup() {
 
   // Initialize Serial
   Serial.begin(57600);
-  while (!Serial) {}
+  while (!Serial);
   // Initialize SD
   if (!SD.begin(SD_CS)) {
     Serial.println(F("Initialization failed!"));
@@ -385,16 +376,16 @@ void loopFileAction(void (*help)(void), void (*action)(uint16_t, uint16_t, char*
     cmd = toUpperCase(cmd);
     if (cmd == '*') {
         displayInfo(0, CHIP_SIZE);
-        action(0, CHIP_SIZE, "DUMP.TXT");
+        action(0, CHIP_SIZE, fileChip);
         continue;
     } else if (isAlphaNumeric(cmd)) { // '0'-'9','A'-'F'
       byte block = cmd >= 'A' ? cmd -'A' + 10 : cmd - '0';
       if (block >= 0 && block <= 16) {
-        fileName[0] = cmd;
-        Serial.println(fileName);        
+        fileBlock[0] = toLowerCase(cmd);
+        Serial.println(fileBlock);        
         uint16_t addr = block * CHIP_BLOCK_SIZE;
         displayInfo(addr, CHIP_BLOCK_SIZE);
-        action(addr, CHIP_BLOCK_SIZE, fileName);
+        action(addr, CHIP_BLOCK_SIZE, fileBlock);
         continue;
       }
     }
@@ -562,6 +553,8 @@ void checkMemory(uint16_t address, uint16_t size, char* pFileName) {
       Serial.print(F("Address: "));
       bin2hex(text, address);
       Serial.println(text);
+    } else {
+      Serial.println(F("\nOK!"));
     }
   }
   else {
@@ -579,6 +572,7 @@ void writeMemory(uint16_t address, uint16_t size, char* pFileName) {
       int result;
       result = readLine(&dataFile, text, TEXT_SIZE);
       if (result == 0) break;
+      Serial.println(text);
       int addr, hex0, hex1, hex2, hex3, hex4, hex5, hex6, hex7, hex8, hex9, hexA, hexB, hexC, hexD, hexE, hexF;
       result = sscanf(text, "%04X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X",
         &addr, &hex0, &hex1, &hex2, &hex3, &hex4, &hex5, &hex6, &hex7, &hex8, &hex9, &hexA, &hexB, &hexC, &hexD, &hexE, &hexF);
@@ -614,7 +608,9 @@ void writeMemory(uint16_t address, uint16_t size, char* pFileName) {
       Serial.print(F("Address: "));
       bin2hex(text, address);
       Serial.println(text);
-    }        
+    } else {
+      Serial.println(F("\nOK!"));
+    }
   }
   else {
     Serial.print(F("Error open file: "));
