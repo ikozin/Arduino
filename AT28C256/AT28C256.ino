@@ -153,10 +153,10 @@ void  setup() {
   while (!Serial);
   // Initialize SD
   if (!SD.begin(SD_CS)) {
-    Serial.println(F("Initialization failed!"));
+    Serial.println(F("\nInitialization failed!"));
     for (;;);
   }
-  Serial.println(F("SD card initialized."));
+  Serial.println(F("\nSD card initialized."));
   displayHelp();
 }
 
