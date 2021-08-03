@@ -16,7 +16,7 @@ void tube_impulse() {
 }
 
 void setup() {
-  Serial.begin(9600);
+  //Serial.begin(9600);
 
   counts = 0;
   cpm = 0;
@@ -29,7 +29,7 @@ void setup() {
   lcd.setCursor(0, 1);
   for (int i = 0; i < 16; i++) {
     lcd.write(0xff);
-    delay(250);
+    delay(900);
   }
 }
 
