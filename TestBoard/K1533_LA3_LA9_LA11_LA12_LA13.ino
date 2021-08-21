@@ -9,6 +9,7 @@ void info_1533la39111213(void) {
   Serial.println(F("КР1533ЛА12 - повышеннаая нагрузка    "));
   Serial.println(F("КР1533ЛА13 - открытый коллектор,     "));
   Serial.println(F("             повышеннаая нагрузка    "));
+  Serial.println(F("КР1533ТЛ3  - триггер Шмитта          "));
   Serial.println(F("4 элемента 2И-НЕ                     "));
   Serial.println(F("DIP14                                "));
 #ifdef DETAIL_GRAPHIC

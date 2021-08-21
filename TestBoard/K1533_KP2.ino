@@ -33,58 +33,67 @@ bool test_K1533_KP2() {
   info_1533kp2();
   K1533KP2_PA_t pa = { .value = 0x00 };
   K1533KP2_PL_t pl = { .value = 0x00 };
-  //K15533KP2_PC_t pc;
 
-#ifdef DETAIL_INFO
-    Serial.print(F("Проверка, шаг 1 из 7"));
-#endif
   pl.S_0 = 1;
   pl.S_1 = 1;
   pa.value = 0xFF;
   PORTA = pa.value;
-  if (!test_KP2_check_0(&pl)) return false;
 
 #ifdef DETAIL_INFO
-    Serial.print(F("Проверка, шаг 2 из 7"));
+  Serial.println(F("Проверка, шаг 1 из 7"));
+  Serial.print(F("PA="));
+  printBin(pa.value);
+  Serial.println();
 #endif
+  if (!test_KP2_check_0(&pl)) return false;
+
   pl.S_0 = 1;
   pl.S_1 = 1;
   pa.value = 0x00;
   PORTA = pa.value;
+#ifdef DETAIL_INFO
+  Serial.println(F("Проверка, шаг 2 из 7"));
+  Serial.print(F("PA="));
+  printBin(pa.value);
+  Serial.println();
+#endif
   if (!test_KP2_check_0(&pl)) return false;
 
-#ifdef DETAIL_INFO
-    Serial.print(F("Проверка, шаг 3 из 7"));
-#endif
   pl.S_0 = 0;
   pl.S_1 = 0;
   pa.value = 0x00;
   PORTA = pa.value;
+#ifdef DETAIL_INFO
+  Serial.println(F("Проверка, шаг 3 из 7"));
+  Serial.print(F("PA="));
+  printBin(pa.value);
+  Serial.println();
+#endif
   if (!test_KP2_check_0(&pl)) return false;
 
 #ifdef DETAIL_INFO
-    Serial.print(F("Проверка, шаг 4 из 7"));
+  Serial.println(F("Проверка, шаг 4 из 7"));
 #endif
   pl.S_0 = 0;
   pl.S_1 = 0;
   if (!test_KP2_check_1(&pl, 0)) return false;
 
 #ifdef DETAIL_INFO
-    Serial.print(F("Проверка, шаг 5 из 7"));
+  Serial.println(F("Проверка, шаг 5 из 7"));
 #endif
   pl.S_0 = 0;
   pl.S_1 = 0;
   if (!test_KP2_check_1(&pl, 1)) return false;
 
 #ifdef DETAIL_INFO
-    Serial.print(F("Проверка, шаг 6 из 7"));
+  Serial.println(F("Проверка, шаг 6 из 7"));
 #endif
   pl.S_0 = 0;
   pl.S_1 = 0;
   if (!test_KP2_check_1(&pl, 2)) return false;
 
 #ifdef DETAIL_INFO
-    Serial.print(F("Проверка, шаг 7 из 7"));
+  Serial.println(F("Проверка, шаг 7 из 7"));
 #endif
   pl.S_0 = 0;
   pl.S_1 = 0;
@@ -100,6 +109,14 @@ bool test_KP2_check_0(K1533KP2_PL_t* pl) {
     PORTL = pl->value;
     _NOP();
     pc.value = PINC;
+#ifdef DETAIL_INFO
+    Serial.print(F("PL="));
+    printBin(pl->value);
+    Serial.print(F(", "));
+    Serial.print(F("PC="));
+    printBin(pc.value & K1533KP2_PC_MASK);
+    Serial.println();
+#endif
     if (pc.Data_0 != 0) return false;
     if (pc.Data_1 != 0) return false;
   }
@@ -113,37 +130,57 @@ bool test_KP2_check_1(K1533KP2_PL_t* pl, int data) {
   pa.value = 1 << data;
   PORTA = pa.value;
 
-  sprintf(text, "PORTA = %02X", pa.value);
-  Serial.print(text);
+#ifdef DETAIL_INFO
+  Serial.print(F("PA="));
+  printBin(pa.value);
+  Serial.println();
+#endif
   
   for (int i = 0; i < 4; i++) {
     pl->Addr = i;
-
-    sprintf(text, "PORTL = %02X", pl->value);
-    Serial.print(text);
-    
     PORTL = pl->value;
     _NOP();
     pc.value = PINC;
 
-    sprintf(text, "PINC = %02X", pc.value);
-    Serial.print(text);
+#ifdef DETAIL_INFO
+    Serial.print(F("PL="));
+    printBin(pl->value);
+    Serial.print(F(", PC="));
+    printBin(pc.value & K1533KP2_PC_MASK);
+    Serial.println();
+#endif
     
     if (i == data && pc.Data_0 != 1) return false;
-    else if (pc.Data_0 != 0) return false;
-    if (pc.Data_1 != 0) return false;
+    if (i != data && pc.Data_0 != 0) return false;
+    //if (pc.Data_1 != 0) return false;
   }
   
   pa.value = (1 << data) << 4;
   PORTA = pa.value;
+
+#ifdef DETAIL_INFO
+  Serial.print(F("PA="));
+  printBin(pa.value);
+  Serial.println();
+#endif
+
   for (int i = 0; i < 4; i++) {
     pl->Addr = i;
     PORTL = pl->value;
     _NOP();
     pc.value = PINC;
-    if (pc.Data_0 != 0) return false;
+
+#ifdef DETAIL_INFO
+    Serial.print(F("PL="));
+    printBin(pl->value);
+    Serial.print(F(", PC="));
+    printBin(pc.value & K1533KP2_PC_MASK);
+    Serial.println();
+#endif
+
     if (i == data && pc.Data_1 != 1) return false;
-    else if (pc.Data_1 != 0) return false;
+    if (i != data && pc.Data_1 != 0) return false;
+    //if (pc.Data_0 != 0) return false;
   }
   
   return true;

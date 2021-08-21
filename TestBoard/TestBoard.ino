@@ -2,7 +2,7 @@
 #include "bindef.h"
 #include "K565_RU5.h"
 #include "K1533_KP2.h"
-
+#include "K1533_TM2.h"
 
 #ifndef __AVR_ATmega2560__
 #error Select board ATMEGA2560
@@ -28,7 +28,7 @@ void  setup() {
   DDRL = B11111111;   // Set output mode
   DDRC = B00000000;   // Set input mode
 
-  //PORTC = B11111111;   // Set pullup mode
+  PORTC = B11111111;   // Set pullup mode
   PORTA = B11111111;   // Set high level
   PORTL = B11111111;   // Set high level
 
@@ -47,7 +47,9 @@ void  loop() {
   //if (!test_K1553_LI1_LI2()) while (true);
   //if (!test_K1553_LN1_LN2_LN3_LN5_LN8()) while (true);
   
-  if (!test_K1533_KP2()) while (true);
+  //if (!test_K1533_KP2()) while (true);
+  if (!test_K1533_TM2()) while (true);
+  
   //if (!test_K565_RU5()) delay(1000);
   Serial.println(F("\nТЕСТИРОВАНИЕ ПРОЙДЕНО!"));
   delay(1000);

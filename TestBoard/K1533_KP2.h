@@ -3,12 +3,12 @@
 
 typedef union K1533KP2_PL {
   struct {
-    uint8_t S_0    : 1;  // 0
-    uint8_t S_1    : 1;  // 1
+    uint8_t S_0     : 1;  // 0
+    uint8_t S_1     : 1;  // 1
     uint8_t Addr    : 2;  // 2-3
     uint8_t Reserv  : 4;  // 4-7
   };
-  uint16_t value;
+  uint8_t value;
 } K1533KP2_PL_t;
 
 typedef union {
@@ -22,8 +22,10 @@ typedef union {
     uint8_t D2_1 : 1; // 6
     uint8_t D3_1 : 1; // 7
   };
-  uint16_t value;
+  uint8_t value;
 } K1533KP2_PA_t;
+
+#define K1533KP2_PC_MASK  B11
 
 typedef union {
   struct {
@@ -31,7 +33,7 @@ typedef union {
     uint8_t Data_1  : 1;  // 1
     uint8_t Reverv  : 6;  // 2-7
   };
-  uint16_t value;
+  uint8_t value;
 } K1533KP2_PC_t;
 
 #endif

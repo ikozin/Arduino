@@ -17,7 +17,7 @@ typedef union {
     uint8_t WE : 1;     // 3
     uint8_t Reserv : 4; // 4-7
   };
-  uint16_t value;
+  uint8_t value;
 } K565RU5_PL_t;
 
 typedef union {
@@ -31,7 +31,7 @@ typedef union {
     uint8_t A6 : 1; // 6
     uint8_t A7 : 1; // 7
   };
-  uint16_t value;
+  uint8_t value;
 } K565RU5_PA_t;
 
 typedef union {
@@ -39,7 +39,7 @@ typedef union {
     uint8_t DO : 1; // 0
     uint8_t Reverv : 7; // 1-7
   };
-  uint16_t value;
+  uint8_t value;
 } K565RU5_PC_t;
 
 #endif
