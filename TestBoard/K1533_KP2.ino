@@ -107,15 +107,10 @@ bool test_KP2_check_0(K1533KP2_PL_t* pl) {
   for (int i = 0; i < 4; i++) {
     pl->Addr = i;
     PORTL = pl->value;
-    _NOP();
+    delay(1);
     pc.value = PINC;
 #ifdef DETAIL_INFO
-    Serial.print(F("PL="));
-    printBin(pl->value);
-    Serial.print(F(", "));
-    Serial.print(F("PC="));
-    printBin(pc.value & K1533KP2_PC_MASK);
-    Serial.println();
+    println_PL_PC(pl->value, pc.value & K1533KP2_PC_MASK);
 #endif
     if (pc.Data_0 != 0) return false;
     if (pc.Data_1 != 0) return false;
@@ -139,15 +134,11 @@ bool test_KP2_check_1(K1533KP2_PL_t* pl, int data) {
   for (int i = 0; i < 4; i++) {
     pl->Addr = i;
     PORTL = pl->value;
-    _NOP();
+    delay(1);
     pc.value = PINC;
 
 #ifdef DETAIL_INFO
-    Serial.print(F("PL="));
-    printBin(pl->value);
-    Serial.print(F(", PC="));
-    printBin(pc.value & K1533KP2_PC_MASK);
-    Serial.println();
+    println_PL_PC(pl->value, pc.value & K1533KP2_PC_MASK);
 #endif
     
     if (i == data && pc.Data_0 != 1) return false;
@@ -167,15 +158,11 @@ bool test_KP2_check_1(K1533KP2_PL_t* pl, int data) {
   for (int i = 0; i < 4; i++) {
     pl->Addr = i;
     PORTL = pl->value;
-    _NOP();
+    delay(1);
     pc.value = PINC;
 
 #ifdef DETAIL_INFO
-    Serial.print(F("PL="));
-    printBin(pl->value);
-    Serial.print(F(", PC="));
-    printBin(pc.value & K1533KP2_PC_MASK);
-    Serial.println();
+    println_PL_PC(pl->value, pc.value & K1533KP2_PC_MASK);
 #endif
 
     if (i == data && pc.Data_1 != 1) return false;

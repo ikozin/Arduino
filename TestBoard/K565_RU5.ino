@@ -148,10 +148,10 @@ bool test_K565_RU5() {
   info_565ru5();  
   delay(50);
   if (!test_565ru5_fill(0)) return false;
-  if (!test_565ru5_fill(1)) return false;
-  if (!test_565ru5_flipflop(0)) return false;
-  if (!test_565ru5_flipflop(1)) return false;
-  if (!test_565ru5_random(0x55)) return false;
-  if (!test_565ru5_random(0xAA)) return false;
+  //if (!test_565ru5_fill(1)) return false;
+  //if (!test_565ru5_flipflop(0)) return false;
+  //if (!test_565ru5_flipflop(1)) return false;
+  //if (!test_565ru5_random(0x55)) return false;
+  //if (!test_565ru5_random(0xAA)) return false;
   return false;
 }

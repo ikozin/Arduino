@@ -3,6 +3,7 @@
 #include "K565_RU5.h"
 #include "K1533_KP2.h"
 #include "K1533_TM2.h"
+#include "K1533_IE5.h"
 
 #ifndef __AVR_ATmega2560__
 #error Select board ATMEGA2560
@@ -30,6 +31,7 @@ void  setup() {
 
   PORTC = B11111111;   // Set pullup mode
   PORTA = B11111111;   // Set high level
+  //PORTA = B00000000;   // Set high level
   PORTL = B11111111;   // Set high level
 
 
@@ -37,7 +39,6 @@ void  setup() {
   Serial.begin(57600);
   while (!Serial);
   Serial.println(F("\nСтарт"));
-
 }
 
 void  loop() {
@@ -48,9 +49,10 @@ void  loop() {
   //if (!test_K1553_LN1_LN2_LN3_LN5_LN8()) while (true);
   
   //if (!test_K1533_KP2()) while (true);
-  if (!test_K1533_TM2()) while (true);
+  //if (!test_K1533_TM2()) while (true);
+  //if (!test_K1533_IE5()) while (true);
   
-  //if (!test_K565_RU5()) delay(1000);
+  if (!test_K565_RU5()) delay(1000);
   Serial.println(F("\nТЕСТИРОВАНИЕ ПРОЙДЕНО!"));
   delay(1000);
 }
@@ -135,6 +137,23 @@ void printBin(byte data) {
   sprintf(text, " [%02X]", data);
   Serial.print(text);
 }
+
+void println_PA_PC(uint8_t pa, uint8_t pc) {
+  Serial.print(F("PA="));
+  printBin(pa);
+  Serial.print(F(", PC="));
+  printBin(pc);
+  Serial.println();
+}
+
+void println_PL_PC(uint8_t pl, uint8_t pc) {
+  Serial.print(F("PL="));
+  printBin(pl);
+  Serial.print(F(", PC="));
+  printBin(pc);
+  Serial.println();
+}
+
 /*
 void setDataInMode() {
   DDRL = B00000000;

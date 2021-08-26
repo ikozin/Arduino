@@ -31,7 +31,7 @@ typedef union {
   struct {
     uint8_t Data_0  : 1;  // 0
     uint8_t Data_1  : 1;  // 1
-    uint8_t Reverv  : 6;  // 2-7
+    uint8_t Reserv  : 6;  // 2-7
   };
   uint8_t value;
 } K1533KP2_PC_t;
