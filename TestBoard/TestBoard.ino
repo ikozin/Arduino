@@ -4,6 +4,7 @@
 #include "K1533_KP2.h"
 #include "K1533_TM2.h"
 #include "K1533_IE5.h"
+#include "K1533_ID4.h"
 
 #ifndef __AVR_ATmega2560__
 #error Select board ATMEGA2560
@@ -51,8 +52,9 @@ void  loop() {
   //if (!test_K1533_KP2()) while (true);
   //if (!test_K1533_TM2()) while (true);
   //if (!test_K1533_IE5()) while (true);
+  //if (!test_K1533_ID4()) while (true);
   
-  if (!test_K565_RU5()) delay(1000);
+  if (!test_K565_RU5()) while (true);
   Serial.println(F("\nТЕСТИРОВАНИЕ ПРОЙДЕНО!"));
   delay(1000);
 }

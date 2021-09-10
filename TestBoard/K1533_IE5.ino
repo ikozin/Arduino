@@ -12,9 +12,9 @@ void info_1533ie5(void) {
   Serial.println(F("              XXXXXXXXXXXXXXXXXX              "));
   Serial.println(F("                --------------                "));
   Serial.println(F("PA0(22) <->14 -\\ C1 | CT2 | 1 |- 12<-> PC0(37)"));
-  Serial.println(F("PA1(23) <-> 1 -\\ C2 |     | 2 |- 9 <-> PC0(36)"));
-  Serial.println(F("               |----|     | 4 |- 8 <-> PC0(35)"));
-  Serial.println(F("PA2(24) <-> 2 -| &  |     | 8 |-11 <-> PC0(34)"));
+  Serial.println(F("PA1(23) <-> 1 -\\ C2 |     | 2 |- 9 <-> PC1(36)"));
+  Serial.println(F("               |----|     | 4 |- 8 <-> PC2(35)"));
+  Serial.println(F("PA2(24) <-> 2 -| &  |     | 8 |-11 <-> PC3(34)"));
   Serial.println(F("PA3(25) <-> 3 -| R  |     |   |               "));
   Serial.println(F("                --------------                "));
 #endif

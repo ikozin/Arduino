@@ -39,9 +39,9 @@ static inline void writeRamFast(int row, int col, byte value) {
   PORTA = row;
   PORTL = value | K565RU5_PL_CAS_MASK | K565RU5_PL_WE_MASK;
   PORTA = col;
-  PORTL = value | K565RU5_PL_CAS_MASK;
+  //PORTL = value | K565RU5_PL_CAS_MASK;
   PORTL = value;
-  _NOP();
+  //_NOP();
   PORTL = value | K565RU5_PL_RAS_MASK | K565RU5_PL_CAS_MASK | K565RU5_PL_WE_MASK;
 }
 
@@ -50,39 +50,40 @@ static inline uint8_t readRamFast(int row, int col, int value) {
   PORTL = (!value) | K565RU5_PL_CAS_MASK | K565RU5_PL_WE_MASK;
   PORTA = col;
   PORTL = (!value) | K565RU5_PL_WE_MASK;
-  _NOP();
+  //_NOP();
   byte result = PINC;
   PORTL = (!value) | K565RU5_PL_RAS_MASK | K565RU5_PL_CAS_MASK | K565RU5_PL_WE_MASK;
-  _NOP();
+  //_NOP();
   return result & 1;
 }
 
 bool test_565ru5_fill(uint8_t data) {
 #ifdef DETAIL_INFO
   Serial.print("Проверка на ");
-  Serial.println(data);
+  Serial.print(data);
+  Serial.flush();
 #endif
 
-  noInterrupts();
+  long errorCount = 0;
   uint8_t value;
+  noInterrupts();
   value = data;
   for (int col = 0; col < 256; col++) {
     for (int row = 0; row < 256; row++) {
       writeRamFast(row, col, value);
-    }
-  }
-  for (int col = 0; col < 256; col++) {
-    for (int row = 0; row < 256; row++) {
       uint8_t result = readRamFast(row, col, value);
       if (result != data) {
-        interrupts();
-        sprintf(text, "Ошибка row=%02X col=%02X %d", row, col, result);
-        Serial.println(text);
-        return false;
+        errorCount++;
       }
     }
   }
   interrupts();
+  if (errorCount > 0) {
+    sprintf(text, " - Ошибок %ld", errorCount);
+    Serial.println(text);
+    return false;
+  }
+  Serial.println(" - Завершено");
   return true;
 }
 
@@ -91,39 +92,42 @@ bool test_565ru5_flipflop(uint8_t data) {
   Serial.print("Запись, чередование ");
   Serial.print((int)data);
   Serial.print(" и ");
-  Serial.println((int)!data);
+  Serial.print((int)!data);
+  Serial.flush();
 #endif
 
-  noInterrupts();
+  long errorCount = 0;
   uint8_t value;
+  noInterrupts();
   value = data;
   for (int col = 0; col < 256; col++) {
     for (int row = 0; row < 256; row++) {
       writeRamFast(row, col, value);
-    }
-  }
-  for (int col = 0; col < 256; col++) {
-    for (int row = 0; row < 256; row++) {
       uint8_t result = readRamFast(row, col, value);
       if (result != value) {
-        interrupts();
-        sprintf(text, "Ошибка row=%02X col=%02X %d", row, col, result);
-        Serial.println(text);
-        return false;
+        errorCount++;
       }
-      value = !value;
+      value = (~value) & 1;
     }
   }
   interrupts();
+  if (errorCount > 0) {
+    sprintf(text, " - Ошибок %ld", errorCount);
+    Serial.println(text);
+    return false;
+  }
+  Serial.println(" - Завершено");
   return true;
 }
 
 bool test_565ru5_random(int seed) {
 #ifdef DETAIL_INFO
   Serial.print("Запись, random seed = ");
-  Serial.println(seed);
+  Serial.print(seed);
+  Serial.flush();
 #endif
 
+  long errorCount = 0;
   uint8_t value;
   randomSeed(seed);
   noInterrupts();
@@ -133,25 +137,47 @@ bool test_565ru5_random(int seed) {
       writeRamFast(row, col, value);
       uint8_t result = readRamFast(row, col, value);
       if (result != value) {
-        interrupts();
-        sprintf(text, "Ошибка row=%02X col=%02X value=%d", row, col, result);
-        Serial.println(text);
-        return false;
+        errorCount++;
       }
     }
   }  
   interrupts();
+  if (errorCount > 0) {
+    sprintf(text, " - Ошибок %ld", errorCount);
+    Serial.println(text);
+    return false;
+  }
+  Serial.println(" - Завершено");
   return true;
 }
 
 bool test_K565_RU5() {
   info_565ru5();  
   delay(50);
-  if (!test_565ru5_fill(0)) return false;
-  //if (!test_565ru5_fill(1)) return false;
-  //if (!test_565ru5_flipflop(0)) return false;
-  //if (!test_565ru5_flipflop(1)) return false;
-  //if (!test_565ru5_random(0x55)) return false;
-  //if (!test_565ru5_random(0xAA)) return false;
-  return false;
+  
+  bool result = true;
+  result &= test_565ru5_fill(0);
+  result &= test_565ru5_fill(1);
+  result &= test_565ru5_flipflop(0);
+  result &= test_565ru5_flipflop(1);
+  result &= test_565ru5_random(0x55);
+  result &= test_565ru5_random(0xAA);
+/*  
+  noInterrupts();
+
+  PORTL = 0xFF;
+  for (int i = 0; i < 256; i++) {
+    PORTA = i;
+    PORTL = 0;
+    PORTL |= 1;
+    PORTL |= K565RU5_PL_RAS_MASK;
+    PORTL |= K565RU5_PL_CAS_MASK;
+    PORTL |= K565RU5_PL_WE_MASK;
+  }
+  PORTL = 0;
+ 
+  interrupts();
+*/
+  
+  return result;
 }
