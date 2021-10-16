@@ -1,11 +1,12 @@
 /*
 Arduino MEGA
 https://www.arduino.cc/en/Main/arduinoBoardMega/
+https://www.arduino.cc/en/Reference/PortManipulation
 Подключение к Arduino MEGA
 https://arduinka.pro/blog/wp-content/uploads/2017/09/mega2560-pinout-1024x724.png
 
 AT28C256
-https://docs-europe.electrocomponents.com/webdocs/1596/0900766b815963c9.pdf
+https://static.chipdip.ru/lib/160/DOC011160426.pdf
 
 Распиновка подключения к ATMEGA2560
             -------                                                          -------
@@ -120,13 +121,13 @@ https://docs-europe.electrocomponents.com/webdocs/1596/0900766b815963c9.pdf
 #define CHIP_SIZE       32768
 #define CHIP_BLOCK_SIZE 2048
 #define BLOCK_SIZE      16
-#define TEXT_SIZE       64
+#define TEXT_SIZE       1024
 
 uint8_t dataRow[BLOCK_SIZE];
 char text[TEXT_SIZE];
 
-const char fileChip[] = "dump.txt";
-char fileBlock[] = "X_dump.txt";
+const char fileChip[] = "DUMP.TXT";
+char fileBlock[] = "X_DUMP.TXT";
 
 void enableWE() { digitalWrite(WE, LOW); }
 void disableWE() { digitalWrite(WE, HIGH); }
@@ -153,190 +154,95 @@ void  setup() {
   while (!Serial);
   // Initialize SD
   if (!SD.begin(SD_CS)) {
-    Serial.println(F("\nInitialization failed!"));
+    Serial.println(F("\r\nОшибка инициализации SD карты!"));
     for (;;);
   }
-  Serial.println(F("\nSD card initialized."));
+  Serial.println(F("\r\nSD карта инициализирована."));
   displayHelp();
 }
 
-void displayHelp() {
-  Serial.println();
-  Serial.println(F("Reset Arduino after insert SD card"));
-  Serial.println(F("List commnad:"));
-  Serial.println(F("1 - Dump on screen  32 KB [AT28C256]"));
-  Serial.println(F("2 - Read to file    32 KB [AT28C256]"));
-  Serial.println(F("3 - Compare         32 KB [AT28C256]"));
-  Serial.println(F("4 - Write from file 32 KB [AT28C256]"));
-  Serial.println(F("5 - Clear           32 KB [AT28C256]"));
-  Serial.println(F("6 - Check clearing  32 KB [AT28C256]"));
-  Serial.println(F("7 - Disable Protect Mode"));
-  Serial.println(F("8 - ERASE CHIP"));
-  Serial.println(F("0 - TEST"));
-  Serial.println();
-  Serial.print(F("Enter commnad:"));
+static void displayHelp() {
+  Serial.println(F("\r\n\r\n------------------------------------------------------------\r\nПерезагрузите Arduino после вставки SD карты"));
+  Serial.println(F("Список команд [AT28C256]:"));
+  Serial.println(F("1 - Вывести содержимое EEPROM на экран"));
+  Serial.println(F("2 - Записать содержимое EEPROM в файл на SD карте"));
+  Serial.println(F("3 - Сравнить содержимое EEPROM с файлом на SD карте"));
+  Serial.println(F("4 - Записать содержимое файла SD карты в EEPROM"));
+  Serial.println(F("5 - Заполнить содержимое EEPROM байтом 0xFF"));
+  Serial.println(F("6 - Проверить содержимое EEPROM на заполненость байтом 0xFF"));
+  Serial.println(F("7 - ОТКЛЮЧИТЬ защиту от записи"));
+  Serial.println(F("8 - ВКЛЮЧИТЬ защиту от записи"));
+  Serial.println(F("9 - СТЕРЕТЬ содержимое EEPROM"));
+  Serial.println(F("0 - TEST (запускать без EEPROM)"));
+  Serial.print(F("\r\n------------------------------------------------------------\r\nВведите команду:"));
 }
 
-void displayInfo(uint16_t addr, uint16_t size) {
-  Serial.print(F("Address: "));
-  bin2hex(text, addr);
-  Serial.print(text);
-  Serial.print(F(" Size: "));
-  bin2hex(text, size);
+static void displayInfo(uint16_t addr, uint16_t size) {
+  sprintf(text, "Адрес (HEX): %04X, Размер (HEX): %04X\r\n", addr, size);
   Serial.println(text);
 }
 
-void displayDumpHelp() {
-  Serial.println();
-  Serial.println(F("Dump from EEPROM to Screen"));
-  Serial.println(F("Dump  commnad:"));
-  Serial.println(F("* - Dump  32 KB"));
-  Serial.println(F("0 - Dump   2 KB [0000]"));
-  Serial.println(F("1 - Dump   2 KB [0001]"));
-  Serial.println(F("2 - Dump   2 KB [0010]"));
-  Serial.println(F("3 - Dump   2 KB [0011]"));
-  Serial.println(F("4 - Dump   2 KB [0100]"));
-  Serial.println(F("5 - Dump   2 KB [0101]"));
-  Serial.println(F("6 - Dump   2 KB [0110]"));
-  Serial.println(F("7 - Dump   2 KB [0111]"));
-  Serial.println(F("8 - Dump   2 KB [1000]"));
-  Serial.println(F("9 - Dump   2 KB [1001]"));
-  Serial.println(F("A - Dump   2 KB [1010]"));
-  Serial.println(F("B - Dump   2 KB [1011]"));
-  Serial.println(F("C - Dump   2 KB [1100]"));
-  Serial.println(F("D - Dump   2 KB [1101]"));
-  Serial.println(F("E - Dump   2 KB [1110]"));
-  Serial.println(F("F - Dump   2 KB [1111]"));
-  Serial.println();
-  Serial.print(F("Enter Dump  command:"));
+static void displayDumpHelp() {
+  Serial.println(F("\r\nВывести содержимое EEPROM на экран\r\nСписок команд:"));
+  Serial.println(F("* - Вывести\t32 KB"));
+  for (int i = 0; i < 16; i++) {
+    sprintf(text, "%X - Вывести\t 2 KB [%d%d%d%d]", i, bitRead(i, 3), bitRead(i, 2), bitRead(i, 1), bitRead(i, 0));
+    Serial.println(text);
+  }
+  Serial.print(F("\r\nВведите команду:"));
 }
 
-void displayReadHelp() {
-  Serial.println();
-  Serial.println(F("Read from EEPROM to File"));
-  Serial.println(F("Read  commnad:"));
-  Serial.println(F("* - Read  32 KB (DUMP.TXT)"));
-  Serial.println(F("0 - Read   2 KB [0000] (0_DUMP.TXT)"));
-  Serial.println(F("1 - Read   2 KB [0001] (1_DUMP.TXT)"));
-  Serial.println(F("2 - Read   2 KB [0010] (2_DUMP.TXT)"));
-  Serial.println(F("3 - Read   2 KB [0011] (3_DUMP.TXT)"));
-  Serial.println(F("4 - Read   2 KB [0100] (4_DUMP.TXT)"));
-  Serial.println(F("5 - Read   2 KB [0101] (5_DUMP.TXT)"));
-  Serial.println(F("6 - Read   2 KB [0110] (6_DUMP.TXT)"));
-  Serial.println(F("7 - Read   2 KB [0111] (7_DUMP.TXT)"));
-  Serial.println(F("8 - Read   2 KB [1000] (8_DUMP.TXT)"));
-  Serial.println(F("9 - Read   2 KB [1001] (9_DUMP.TXT)"));
-  Serial.println(F("A - Read   2 KB [1010] (A_DUMP.TXT)"));
-  Serial.println(F("B - Read   2 KB [1011] (B_DUMP.TXT)"));
-  Serial.println(F("C - Read   2 KB [1100] (C_DUMP.TXT)"));
-  Serial.println(F("D - Read   2 KB [1101] (D_DUMP.TXT)"));
-  Serial.println(F("E - Read   2 KB [1110] (E_DUMP.TXT)"));
-  Serial.println(F("F - Read   2 KB [1111] (F_DUMP.TXT)"));
-  Serial.println();
-  Serial.print(F("Enter Read  command:"));
+static void displayReadHelp() {
+  Serial.println(F("\r\nЗаписать содержимое EEPROM в файл на SD карте\r\nСписок команд:"));
+  Serial.println(F("* - Записать\t32 KB (DUMP.TXT)"));
+  for (int i = 0; i < 16; i++) {
+    sprintf(text, "%X - Записать\t 2 KB [%d%d%d%d] (%X_DUMP.TXT)", i, bitRead(i, 3), bitRead(i, 2), bitRead(i, 1), bitRead(i, 0), i);
+    Serial.println(text);
+  }
+  Serial.print(F("\r\nВведите команду:"));
 }
 
-void displayCheckHelp() {
-  Serial.println();
-  Serial.println(F("Check EEPROM from File"));
-  Serial.println(F("Check commnad:"));
-  Serial.println(F("* - Check 32 KB (DUMP.TXT)"));
-  Serial.println(F("0 - Check  2 KB [0000] (0_DUMP.TXT)"));
-  Serial.println(F("1 - Check  2 KB [0001] (1_DUMP.TXT)"));
-  Serial.println(F("2 - Check  2 KB [0010] (2_DUMP.TXT)"));
-  Serial.println(F("3 - Check  2 KB [0011] (3_DUMP.TXT)"));
-  Serial.println(F("4 - Check  2 KB [0100] (4_DUMP.TXT)"));
-  Serial.println(F("5 - Check  2 KB [0101] (5_DUMP.TXT)"));
-  Serial.println(F("6 - Check  2 KB [0110] (6_DUMP.TXT)"));
-  Serial.println(F("7 - Check  2 KB [0111] (7_DUMP.TXT)"));
-  Serial.println(F("8 - Check  2 KB [1000] (8_DUMP.TXT)"));
-  Serial.println(F("9 - Check  2 KB [1001] (9_DUMP.TXT)"));
-  Serial.println(F("A - Check  2 KB [1010] (A_DUMP.TXT)"));
-  Serial.println(F("B - Check  2 KB [1011] (B_DUMP.TXT)"));
-  Serial.println(F("C - Check  2 KB [1100] (C_DUMP.TXT)"));
-  Serial.println(F("D - Check  2 KB [1101] (D_DUMP.TXT)"));
-  Serial.println(F("E - Check  2 KB [1110] (E_DUMP.TXT)"));
-  Serial.println(F("F - Check  2 KB [1111] (F_DUMP.TXT)"));
-  Serial.println();
-  Serial.print(F("Enter Check command:"));
+static void displayCheckHelp() {
+  Serial.println(F("\r\nСравнить содержимое EEPROM с файлом на SD карте\r\nСписок команд:"));
+  Serial.println(F("* - Сравнить\t32 KB (DUMP.TXT)"));
+  for (int i = 0; i < 16; i++) {
+    sprintf(text, "%X - Сравнить\t 2 KB [%d%d%d%d] (%X_DUMP.TXT)", i, bitRead(i, 3), bitRead(i, 2), bitRead(i, 1), bitRead(i, 0), i);
+    Serial.println(text);
+  }
+  Serial.print(F("\r\nВведите команду:"));
 }
 
-void displayWriteHelp() {
-  Serial.println();
-  Serial.println(F("Write from File to EEPROM"));
-  Serial.println(F("Write commnad:"));
-  Serial.println(F("* - Write 32 KB (DUMP.TXT)"));
-  Serial.println(F("0 - Write  2 KB [0000] (0_DUMP.TXT)"));
-  Serial.println(F("1 - Write  2 KB [0001] (1_DUMP.TXT)"));
-  Serial.println(F("2 - Write  2 KB [0010] (2_DUMP.TXT)"));
-  Serial.println(F("3 - Write  2 KB [0011] (3_DUMP.TXT)"));
-  Serial.println(F("4 - Write  2 KB [0100] (4_DUMP.TXT)"));
-  Serial.println(F("5 - Write  2 KB [0101] (5_DUMP.TXT)"));
-  Serial.println(F("6 - Write  2 KB [0110] (6_DUMP.TXT)"));
-  Serial.println(F("7 - Write  2 KB [0111] (7_DUMP.TXT)"));
-  Serial.println(F("8 - Write  2 KB [1000] (8_DUMP.TXT)"));
-  Serial.println(F("9 - Write  2 KB [1001] (9_DUMP.TXT)"));
-  Serial.println(F("A - Write  2 KB [1010] (A_DUMP.TXT)"));
-  Serial.println(F("B - Write  2 KB [1011] (B_DUMP.TXT)"));
-  Serial.println(F("C - Write  2 KB [1100] (C_DUMP.TXT)"));
-  Serial.println(F("D - Write  2 KB [1101] (D_DUMP.TXT)"));
-  Serial.println(F("E - Write  2 KB [1110] (E_DUMP.TXT)"));
-  Serial.println(F("F - Write  2 KB [1111] (F_DUMP.TXT)"));
-  Serial.println();
-  Serial.print(F("Enter Write command:"));
+static void displayWriteHelp() {
+  Serial.println(F("\r\nЗаписать содержимое файла SD карты в EEPROM\r\nСписок команд:"));
+  Serial.println(F("* - Записать\t32 KB (DUMP.TXT)"));
+  for (int i = 0; i < 16; i++) {
+    sprintf(text, "%X - Записать\t 2 KB [%d%d%d%d] (%X_DUMP.TXT)", i, bitRead(i, 3), bitRead(i, 2), bitRead(i, 1), bitRead(i, 0), i);
+    Serial.println(text);
+  }
+  Serial.print(F("\r\nВведите команду:"));
 }
 
-void displayClearHelp() {
-  Serial.println();
-  Serial.println(F("Clear EEPROM"));
-  Serial.println(F("Clear commnad:"));
-  Serial.println(F("* - Clear 32 KB"));
-  Serial.println(F("0 - Clear  2 KB [0000]"));
-  Serial.println(F("1 - Clear  2 KB [0001]"));
-  Serial.println(F("2 - Clear  2 KB [0010]"));
-  Serial.println(F("3 - Clear  2 KB [0011]"));
-  Serial.println(F("4 - Clear  2 KB [0100]"));
-  Serial.println(F("5 - Clear  2 KB [0101]"));
-  Serial.println(F("6 - Clear  2 KB [0110]"));
-  Serial.println(F("7 - Clear  2 KB [0111]"));
-  Serial.println(F("8 - Clear  2 KB [1000]"));
-  Serial.println(F("9 - Clear  2 KB [1001]"));
-  Serial.println(F("A - Clear  2 KB [1010]"));
-  Serial.println(F("B - Clear  2 KB [1011]"));
-  Serial.println(F("C - Clear  2 KB [1100]"));
-  Serial.println(F("D - Clear  2 KB [1101]"));
-  Serial.println(F("E - Clear  2 KB [1110]"));
-  Serial.println(F("F - Clear  2 KB [1111]"));
-  Serial.println();
-  Serial.print(F("Enter Clear command:"));
+static void displayClearHelp() {
+  Serial.println(F("\r\nЗаполнить содержимое EEPROM байтом 0xFF\r\nСписок команд:"));
+  Serial.println(F("* - Заполнить\t32 KB"));
+  for (int i = 0; i < 16; i++) {
+    sprintf(text, "%X - Заполнить\t 2 KB [%d%d%d%d]", i, bitRead(i, 3), bitRead(i, 2), bitRead(i, 1), bitRead(i, 0));
+    Serial.println(text);
+  }
+  Serial.print(F("\r\nВведите команду:"));
 }
 
-void displayFillHelp() {
-  Serial.println();
-  Serial.println(F("Checking filling EEPROM for 0FFH"));
-  Serial.println(F("Checking filling commnad:"));
-  Serial.println(F("* - Checking filling 32 KB"));
-  Serial.println(F("0 - Checking filling  2 KB [0000]"));
-  Serial.println(F("1 - Checking filling  2 KB [0001]"));
-  Serial.println(F("2 - Checking filling  2 KB [0010]"));
-  Serial.println(F("3 - Checking filling  2 KB [0011]"));
-  Serial.println(F("4 - Checking filling  2 KB [0100]"));
-  Serial.println(F("5 - Checking filling  2 KB [0101]"));
-  Serial.println(F("6 - Checking filling  2 KB [0110]"));
-  Serial.println(F("7 - Checking filling  2 KB [0111]"));
-  Serial.println(F("8 - Checking filling  2 KB [1000]"));
-  Serial.println(F("9 - Checking filling  2 KB [1001]"));
-  Serial.println(F("A - Checking filling  2 KB [1010]"));
-  Serial.println(F("B - Checking filling  2 KB [1011]"));
-  Serial.println(F("C - Checking filling  2 KB [1100]"));
-  Serial.println(F("D - Checking filling  2 KB [1101]"));
-  Serial.println(F("E - Checking filling  2 KB [1110]"));
-  Serial.println(F("F - Checking filling  2 KB [1111]"));
-  Serial.println();
-  Serial.print(F("Enter Fill command:"));
+static void displayFillHelp() {
+  Serial.println(F("\r\nПроверить содержимое EEPROM на заполненость байтом 0xFF\r\nСписок команд:"));
+  Serial.println(F("* - Проверить\t32 KB"));
+  for (int i = 0; i < 16; i++) {
+    sprintf(text, "%X - Проверить\t 2 KB [%d%d%d%d]", i, bitRead(i, 3), bitRead(i, 2), bitRead(i, 1), bitRead(i, 0));
+    Serial.println(text);
+  }
+  Serial.print(F("\r\nВведите команду:"));
 }
 
-char readChar() {
+static char readChar() {
   for (;;) {
       while (!Serial.available());
       char cmd = Serial.read();
@@ -347,20 +253,18 @@ char readChar() {
   }
 }
 
-void loopAction(void (*help)(void), void (*action)(uint16_t, uint16_t, Stream*)) {
+static void loopAction(void (*help)(void), void (*action)(uint16_t, uint16_t, Stream*)) {
   for (;;) {
     help();
     char cmd = readChar();
     cmd = toUpperCase(cmd);
     if (cmd == '*') {
-        displayInfo(0, CHIP_SIZE);
         action(0, CHIP_SIZE, &Serial);
         continue;
     } else if (isAlphaNumeric(cmd)) { // '0'-'9','A'-'F'
       cmd -= cmd >= 'A' ? 'A' - 10 : '0';
-      if (cmd >= 0 && cmd <= 16) {
+      if (cmd >= 0 && cmd <= 15) {
         uint16_t addr = cmd * CHIP_BLOCK_SIZE;
-        displayInfo(addr, CHIP_BLOCK_SIZE);
         action(addr, CHIP_BLOCK_SIZE, &Serial);
         continue;
       }
@@ -369,22 +273,20 @@ void loopAction(void (*help)(void), void (*action)(uint16_t, uint16_t, Stream*))
   }
 }
 
-void loopFileAction(void (*help)(void), void (*action)(uint16_t, uint16_t, char*)) {
+static void loopFileAction(void (*help)(void), void (*action)(uint16_t, uint16_t, char*)) {
   for (;;) {
     help();
     char cmd = readChar();
     cmd = toUpperCase(cmd);
     if (cmd == '*') {
-        displayInfo(0, CHIP_SIZE);
         action(0, CHIP_SIZE, fileChip);
         continue;
     } else if (isAlphaNumeric(cmd)) { // '0'-'9','A'-'F'
       byte block = cmd >= 'A' ? cmd -'A' + 10 : cmd - '0';
-      if (block >= 0 && block <= 16) {
-        fileBlock[0] = toLowerCase(cmd);
+      if (block >= 0 && block <= 15) {
+        fileBlock[0] = cmd;
         Serial.println(fileBlock);        
         uint16_t addr = block * CHIP_BLOCK_SIZE;
-        displayInfo(addr, CHIP_BLOCK_SIZE);
         action(addr, CHIP_BLOCK_SIZE, fileBlock);
         continue;
       }
@@ -417,39 +319,41 @@ void  loop() {
     case '7':         // 7 - Disable Protect Mode
       disableProtectMode();
       break;
-    case '8':         // 8 - Erase Chip
+    case '8':         // 8 - Enable Protect Mode
+      enableProtectMode();
+      break;
+    case '9':         // 9 - Erase Chip
       eraseChip();
       break;
-    case '0':          // 0 - TEST
+    case '0':         // 0 - TEST
       loopTest();
       break;
   }
   displayHelp();
 }
 
-void setDataInMode() {
+inline void setDataInMode() {
 	DDRL = B00000000;
 }
 
-void setDataOutMode() {
+inline void setDataOutMode() {
 	DDRL = B11111111;
 }
 
-
-void setDataPort(byte data) {
+inline void setDataPort(byte data) {
   PORTL = data;
 }
 
-byte getDataPort() {
+inline byte getDataPort() {
   return PINL;
 }
 
-void setAddress(uint16_t addr) {
+inline void setAddress(uint16_t addr) {
   PORTA = lowByte(addr);
   PORTC = highByte(addr);
 }
 
-byte readData(uint16_t addr) {
+static byte readData(uint16_t addr) {
   setAddress(addr);
   enableCE();
   enableOE();
@@ -461,53 +365,79 @@ byte readData(uint16_t addr) {
   return data;
 }
 
-void writeData(uint16_t addr, byte data) {
+static void writeData(uint16_t addr, byte data, int delayMs = 1) {
   setAddress(addr);
   setDataPort(data);
   enableCE();
   enableWE();
-  delayMicroseconds(1);
-  disableWE();
+  delayMicroseconds(delayMs);
   disableCE();
-  delayMicroseconds(2);
+  disableWE();
+  delayMicroseconds(delayMs);
 }
 
-void dumpMemory(uint16_t address, uint16_t size, Stream* pStream) {
+static void writeDataBlock(uint16_t addr, byte *pdata, byte size) {
+  disableOE();
+  for (int i = 0; i < size; i++) {
+    setAddress(addr);
+    setDataPort(*pdata);
+    enableCE();
+    enableWE();
+    addr++;
+    pdata++;
+    delayMicroseconds(1);
+    disableCE();
+    disableWE();
+    delayMicroseconds(1);
+  }
+  enableOE();
+}
+
+static void dumpMemory(uint16_t address, uint16_t size, Stream* pStream) {
+  displayInfo(address, size);
+
   uint16_t addr = 0;
   setDataInMode();
   size /= BLOCK_SIZE;
   // Читаем блоками по 16 байт (BLOCK_SIZE)
   for (uint16_t n = 0; n < size; n++) {
-    bin2hex(text, addr);
+    sprintf(text, "%04X", addr);
     pStream->print(text);
+    pStream->flush();
+    noInterrupts();
     for (int i = 0; i < BLOCK_SIZE; i++) {
       dataRow[i] = readData(address);
       address++;
       addr++;
     }
-    char* pdata = text;
+    interrupts();
     for (int i = 0; i < BLOCK_SIZE; i++) {
-      *pdata++ = ' ';
-      pdata = bin2hex(pdata, dataRow[i]);
+      sprintf(text, " %02X", dataRow[i]);
+      pStream->print(text);
     }
-    pStream->println(text);
+    pStream->println();
+    pStream->flush();
   }
 }
 
-void readMemory(uint16_t addrress, uint16_t size, char* pFileName) {
+static void readMemory(uint16_t address, uint16_t size, char* pFileName) {
+  displayInfo(address, size);
+
   SD.remove(pFileName);
   File dataFile = SD.open(pFileName, FILE_WRITE);
   if (dataFile) {
-    dumpMemory(addrress, size, &dataFile);
+    dumpMemory(address, size, &dataFile);
     dataFile.close();
   }
   else {
-    Serial.print(F("Error create file: "));
+    Serial.print(F("\r\nОшибка создания файла: "));
     Serial.println(pFileName);
   }
 }
 
-void checkMemory(uint16_t address, uint16_t size, char* pFileName) {
+static void checkMemory(uint16_t address, uint16_t size, char* pFileName) {
+  displayInfo(address, size);
+
   File dataFile = SD.open(pFileName);
   if (dataFile) {
     bool error = false;
@@ -538,6 +468,7 @@ void checkMemory(uint16_t address, uint16_t size, char* pFileName) {
       dataRow[0x0D] = hexD;// & 0xFF;
       dataRow[0x0E] = hexE;// & 0xFF;
       dataRow[0x0F] = hexF;// & 0xFF;
+      noInterrupts();
       for (int i = 0; i < BLOCK_SIZE; i++) {
         error = readData(address + addr) != dataRow[i];
         if (error) {
@@ -546,33 +477,36 @@ void checkMemory(uint16_t address, uint16_t size, char* pFileName) {
         }
         addr++;
       }
+      interrupts();
     }
     dataFile.close();
     if (error) {
-      Serial.println(F("\nError!"));
-      Serial.print(F("Address: "));
-      bin2hex(text, address);
+      sprintf(text, "\r\n--- ОШИБКА ---\r\nАдрес (HEX): %04X", address);
       Serial.println(text);
     } else {
-      Serial.println(F("\nOK!"));
+      Serial.println(F("\r\nOK!"));
     }
   }
   else {
-    Serial.print(F("Error open file: "));
+    Serial.print(F("\r\nОшибка открытия файла: "));
     Serial.println(pFileName);
   }
 }
 
-void writeMemory(uint16_t address, uint16_t size, char* pFileName) {
+static void writeMemory(uint16_t address, uint16_t size, char* pFileName) {
+  displayInfo(address, size);
+
   File dataFile = SD.open(pFileName);
   if (dataFile) {
     setDataOutMode();
+    disableOE();
     bool error = false;
     while (!error) {
       int result;
       result = readLine(&dataFile, text, TEXT_SIZE);
       if (result == 0) break;
       Serial.println(text);
+      Serial.flush();
       int addr, hex0, hex1, hex2, hex3, hex4, hex5, hex6, hex7, hex8, hex9, hexA, hexB, hexC, hexD, hexE, hexF;
       result = sscanf(text, "%04X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X",
         &addr, &hex0, &hex1, &hex2, &hex3, &hex4, &hex5, &hex6, &hex7, &hex8, &hex9, &hexA, &hexB, &hexC, &hexD, &hexE, &hexF);
@@ -580,73 +514,95 @@ void writeMemory(uint16_t address, uint16_t size, char* pFileName) {
         error = true;
         break;
       }
-      dataRow[0x00] = hex0;// & 0xFF;
-      dataRow[0x01] = hex1;// & 0xFF;
-      dataRow[0x02] = hex2;// & 0xFF;
-      dataRow[0x03] = hex3;// & 0xFF;
-      dataRow[0x04] = hex4;// & 0xFF;
-      dataRow[0x05] = hex5;// & 0xFF;
-      dataRow[0x06] = hex6;// & 0xFF;
-      dataRow[0x07] = hex7;// & 0xFF;
-      dataRow[0x08] = hex8;// & 0xFF;
-      dataRow[0x09] = hex9;// & 0xFF;
-      dataRow[0x0A] = hexA;// & 0xFF;
-      dataRow[0x0B] = hexB;// & 0xFF;
-      dataRow[0x0C] = hexC;// & 0xFF;
-      dataRow[0x0D] = hexD;// & 0xFF;
-      dataRow[0x0E] = hexE;// & 0xFF;
-      dataRow[0x0F] = hexF;// & 0xFF;
+      dataRow[0x00] = hex0 & 0xFF;
+      dataRow[0x01] = hex1 & 0xFF;
+      dataRow[0x02] = hex2 & 0xFF;
+      dataRow[0x03] = hex3 & 0xFF;
+      dataRow[0x04] = hex4 & 0xFF;
+      dataRow[0x05] = hex5 & 0xFF;
+      dataRow[0x06] = hex6 & 0xFF;
+      dataRow[0x07] = hex7 & 0xFF;
+      dataRow[0x08] = hex8 & 0xFF;
+      dataRow[0x09] = hex9 & 0xFF;
+      dataRow[0x0A] = hexA & 0xFF;
+      dataRow[0x0B] = hexB & 0xFF;
+      dataRow[0x0C] = hexC & 0xFF;
+      dataRow[0x0D] = hexD & 0xFF;
+      dataRow[0x0E] = hexE & 0xFF;
+      dataRow[0x0F] = hexF & 0xFF;
+      noInterrupts();
+      writeDataBlock(address + addr, dataRow, BLOCK_SIZE);
+      addr += BLOCK_SIZE;
+/*
       for (int i = 0; i < BLOCK_SIZE; i++) {
         writeData(address + addr, dataRow[i]);
         addr++;
       }
+*/
+      interrupts();
     }
+    enableOE();
     setDataInMode();
     dataFile.close();
     if (error) {
-      Serial.println(F("\nError!"));
-      Serial.print(F("Address: "));
-      bin2hex(text, address);
+      sprintf(text, "\r\n--- ОШИБКА ---\r\nАдрес (HEX): %04X", address);
       Serial.println(text);
     } else {
-      Serial.println(F("\nOK!"));
+      Serial.println(F("\r\nOK!"));
     }
   }
   else {
-    Serial.print(F("Error open file: "));
+    Serial.print(F("\r\nОшибка открытия файла: "));
     Serial.println(pFileName);
   }
 }
 
-void clearMemory(uint16_t address, uint16_t size) {
+static void clearMemory(uint16_t address, uint16_t size) {
+  displayInfo(address, size);
+
   setDataOutMode();
+  disableOE();
+  
   for (int i = 0; i < BLOCK_SIZE; i++) {
     dataRow[i] = 0xFF;
   }
   size /= BLOCK_SIZE;
+  noInterrupts();
   for (uint16_t n = 0; n < size; n++) {
     for (int i = 0; i < BLOCK_SIZE; i++) {
       writeData(address, dataRow[i]);
       address++;
     }
   }
+  interrupts();
+  enableOE();
   setDataInMode();
 }
 
-void checkFillMemory(uint16_t address, uint16_t size) {
+static void checkFillMemory(uint16_t address, uint16_t size) {
+  displayInfo(address, size);
+
   setDataInMode();
+  noInterrupts();
   for (int i = 0; i < size; i++) {
     if (readData(address) != 0xFF) {
-      Serial.print(F("\nError in Address: "));
-      bin2hex(text, address);
-      Serial.print(text);
+      interrupts();
+
+      sprintf(text, "\r\n--- ОШИБКА ---\r\nАдрес (HEX): %04X", address);
+      Serial.println(text);
+      Serial.flush();
+      
+      noInterrupts();
     }
     address++;
   }
+  interrupts();
   Serial.println();
 }
 
-void disableProtectMode() {
+static void disableProtectMode() {
+  noInterrupts();
+  disableOE();
   setDataOutMode();
   writeData(0x5555, 0xAA);
   writeData(0x2AAA, 0x55);
@@ -655,31 +611,39 @@ void disableProtectMode() {
   writeData(0x2AAA, 0x55);
   writeData(0x5555, 0x20);
   setDataInMode();
+  enableOE();
+  interrupts();
 }
 
-void eraseChip() {
+static void eraseChip() {
+  noInterrupts();
+  disableOE();
   setDataOutMode();
   writeData(0x5555, 0xAA);
   writeData(0x2AAA, 0x55);
   writeData(0x5555, 0x80);
   writeData(0x5555, 0xAA);
   writeData(0x2AAA, 0x55);
-  writeData(0x5555, 0x10);
+  writeData(0x5555, 0x10, 20);
   setDataInMode();
+  enableOE();
+  interrupts();
 }
-/*
-void enableProtectMode() {
+
+static void enableProtectMode() {
+  noInterrupts();
+  disableOE();
   setDataOutMode();
   writeData(0x5555, 0xAA);
   writeData(0x2AAA, 0x55);
   writeData(0x5555, 0xA0);
-  writeData(0x0000, 0xFF);
-  readData(0x0000);
   setDataInMode();
+  enableOE();
+  interrupts();
 }
-*/
 
-int readLine(File* pFile, char* pText, int maxSize) {
+
+static int readLine(File* pFile, char* pText, int maxSize) {
   maxSize--;
   int i = 0;
   while (i < maxSize) {
@@ -699,7 +663,7 @@ int readLine(File* pFile, char* pText, int maxSize) {
   return i;
 }
 
-char* bin2hex(char* pText, uint8_t value) {
+static char* bin2hex(char* pText, uint8_t value) {
   for (int i = 0; i < 2; i++) {
     byte v = (byte)((value & 0xF0) >> 4);
     v = (v > 9) ? v + 55 : v + 48;
@@ -710,14 +674,16 @@ char* bin2hex(char* pText, uint8_t value) {
   return pText;
 }
 
-char* bin2hex(char* pText, uint16_t value) {
+static char* bin2hex(char* pText, uint16_t value) {
   pText = bin2hex(pText, highByte(value));
   pText = bin2hex(pText, lowByte(value));
   return pText;
 }
 
-void loopTest() {
-  Serial.println(F("TEST"));
+static void loopTest() {
+  Serial.println(F("ТЕСТИРОВАНИЕ"));
+  Serial.flush();
+  
   testAllOn();
   while (1) {
     loopTestCrtl();
@@ -737,16 +703,24 @@ void loopTest() {
   }
 }
 
-void testAllOn() {
+static void testAllOn() {
+  noInterrupts();
+
   disableCE();
   disableOE();
   disableWE();
   setDataPort(0xFF); 
   setAddress(0xFFFF); 
+  
+  interrupts();
 }
 
-void loopTestCrtl() {
-  Serial.println(F("Control TEST: CE, OE, WE"));
+static void loopTestCrtl() {
+  Serial.println(F("Тест сигналов управления: CE, OE, WE"));
+  Serial.flush();
+
+  noInterrupts();
+  
   disableCE();
   disableOE();
   disableWE();
@@ -757,10 +731,16 @@ void loopTestCrtl() {
   delay(1000);
   enableWE();
   delay(1000);
+
+  interrupts();
 }
 
-void loopTestData() {
-  Serial.println(F("Data TEST"));
+static void loopTestData() {
+  Serial.println(F("Тест ШД (Шины Данных)"));
+  Serial.flush();
+  
+  noInterrupts();
+
   setDataOutMode();
 
   setDataPort(0xFF); 
@@ -785,10 +765,16 @@ void loopTestData() {
   delay(200);
   setDataPort(0x00);
   delay(1000);
+
+  interrupts();
 }
 
-void loopTestAddress() {
-  Serial.println(F("Address TEST"));
+static void loopTestAddress() {
+  Serial.println(F("Тест ША (Шины Адреса)"));
+  Serial.flush();
+  
+  noInterrupts();
+
   setAddress(0xFFFF); 
   delay(1000);
   setAddress(0x0000); 
@@ -827,4 +813,6 @@ void loopTestAddress() {
   delay(200);
   setAddress(0x0000);
   delay(1000);
+  
+  interrupts();
 }
