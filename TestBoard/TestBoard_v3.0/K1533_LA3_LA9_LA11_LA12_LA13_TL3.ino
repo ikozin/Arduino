@@ -1,20 +1,20 @@
 #ifdef K1533_LA3_LA9_LA11_LA12_LA13_TL3
-#include "Input8Out1Device.h"
+#include "Input8Out8Device.h"
 
-Input8Out1DevPin pin_map_1533_la3_la9_la11_la12_la13_tl3[4] =
+Input8Out8DevPin pin_map_1533_la3_la9_la11_la12_la13_tl3[4] =
 {
-  { {37, 36, 0, 0, 0, 0, 0, 0 }, 35},
-  { {34, 33, 0, 0, 0, 0, 0, 0 }, 32},
-  { {26, 25, 0, 0, 0, 0, 0, 0 }, 27},
-  { {23, 22, 0, 0, 0, 0, 0, 0 }, 24},
+  { .Input = { 37, 36, 0, 0, 0, 0, 0, 0 }, .Output = { 35, 0, 0, 0, 0, 0, 0, 0 }},
+  { .Input = { 34, 33, 0, 0, 0, 0, 0, 0 }, .Output = { 32, 0, 0, 0, 0, 0, 0, 0 }},
+  { .Input = { 26, 25, 0, 0, 0, 0, 0, 0 }, .Output = { 27, 0, 0, 0, 0, 0, 0, 0 }},
+  { .Input = { 23, 22, 0, 0, 0, 0, 0, 0 }, .Output = { 24, 0, 0, 0, 0, 0, 0, 0 }},
 };
 
-Input8Out1DevVal values_1533_la3_la9_la11_la12_la13_tl3[4] =
+Input8Out8DevVal values_1533_la3_la9_la11_la12_la13_tl3[4] =
 {
-  { { .value = 0 }, .Result = 1 },
-  { { .value = 1 }, .Result = 1 },
-  { { .value = 2 }, .Result = 1 },
-  { { .value = 3 }, .Result = 0 },
+  { { .value = 0 }, { .result = 1 } },
+  { { .value = 1 }, { .result = 1 } },
+  { { .value = 2 }, { .result = 1 } },
+  { { .value = 3 }, { .result = 0 } },
 };
 
 void info_1533_la3_la9_la11_la12_la13_tl3(void) {
@@ -54,8 +54,8 @@ void info_1533_la3_la9_la11_la12_la13_tl3(void) {
 
 void test_1533_la3_la9_la11_la12_la13_tl3(void) {
   info_1533_la3_la9_la11_la12_la13_tl3();
-  init_Input8Out1Dev(pin_map_1533_la3_la9_la11_la12_la13_tl3, 4);
-  int result = check_Input8Out1Dev(pin_map_1533_la3_la9_la11_la12_la13_tl3, 4, values_1533_la3_la9_la11_la12_la13_tl3, 4);
+  init_Input8Out8Dev(pin_map_1533_la3_la9_la11_la12_la13_tl3, 4);
+  int result = check_Input8Out8Dev(pin_map_1533_la3_la9_la11_la12_la13_tl3, 4, values_1533_la3_la9_la11_la12_la13_tl3, 4);
   if (result == 0) {
     Serial.println(F("\nТЕСТ ПРОЙДЕН"));
   }
@@ -64,7 +64,7 @@ void test_1533_la3_la9_la11_la12_la13_tl3(void) {
     Serial.print(F("Кол-во ошибок = "));
     Serial.println(result);
   }
-  done_Input8Out1Dev();
+  done_Input8Out8Dev();
 }
 
 #endif

@@ -10,23 +10,26 @@
 
 
 /*
-    PC0   VCC       PC0   VCC       PL0   VCC
-    PC1   PA0       PC1   PA0       PC0   PL1
-    PC2   PA1       PC2   PA1       PC1   PA0
-    PC3   PA2       PC3   PA2       PC2   PA1
-    PC4   PA3       PC4   PA3       PC3   PA2
-    PC5   PA4       PC5   PA4       PC4   PA3
-    GND   PA5       PC6   PA5       PC5   PA4
-                    GND   PA6       PC6   PA5
-                                    PC7   PA6
-                                    GND   PA7
+    PC0(37)[ 1]   [14]  VCC         PC0(37)[ 1]   [16]  VCC         PL0(40)[ 1]   [20]  VCC
+    PC1(36)[ 2]   [13]PA0(22)       PC1(36)[ 2]   [15]PA0(22)       PC0(37)[ 2]   [19]PL1(48)
+    PC2(35)[ 3]   [12]PA1(23)       PC2(35)[ 3]   [14]PA1(23)       PC1(36)[ 3]   [18]PA0(22)
+    PC3(34)[ 4]   [11]PA2(24)       PC3(34)[ 4]   [13]PA2(24)       PC2(35)[ 4]   [17]PA1(23)
+    PC4(33)[ 5]   [10]PA3(25)       PC4(33)[ 5]   [12]PA3(25)       PC3(34)[ 5]   [16]PA2(24)
+    PC5(32)[ 6]   [ 9]PA4(26)       PC5(32)[ 6]   [11]PA4(26)       PC4(33)[ 6]   [15]PA3(25)
+      GND  [ 7]   [ 8]PA5(27)       PC6(31)[ 7]   [10]PA5(27)       PC5(32)[ 7]   [14]PA4(26)
+                                      GND  [ 8]   [ 9]PA6(28)       PC6(31)[ 8]   [13]PA5(27)
+                                                                    PC7(30)[ 9]   [12]PA6(28)
+                                                                      GND  [10]   [11]PA7(29)
 */
 
-#include "Input8Out1Device.h"
+#include "Input8Out8Device.h"
 #define DEBUG
 
+//#define K1533_LN1_LN2_LN3_LN5_LN8
 //#define K1533_LA3_LA9_LA11_LA12_LA13_TL3
-#define K1533_LA3_LI1_LI2
+//#define K1533_LA3_LI1_LI2
+//#define K1533_KP2
+#define K1533_ID4
 
 
 void setup() {
@@ -63,11 +66,20 @@ void setup() {
 }
 
 void loop() {
+#ifdef K1533_LN1_LN2_LN3_LN5_LN8
+  test_1533_ln1_ln2_ln3_ln5_ln8();
+#endif
 #ifdef K1533_LA3_LA9_LA11_LA12_LA13_TL3
   test_1533_la3_la9_la11_la12_la13_tl3();
 #endif
 #ifdef K1533_LA3_LI1_LI2
   test_1533_li1_li2();
+#endif
+#ifdef K1533_KP2
+  test_1533_kp2();
+#endif
+#ifdef K1533_ID4
+  test_1533_id4();
 #endif
   //testPortAPortC();
   while (digitalRead(PIN_BUTTON) != LOW);
