@@ -585,7 +585,8 @@ static void checkFillMemory(uint16_t address, uint16_t size) {
   setDataInMode();
   noInterrupts();
   for (int i = 0; i < size; i++) {
-    if (readData(address) != 0xFF) {
+    byte data = readData(address++);
+    if (data != 0xFF) {
       interrupts();
 
       sprintf(text, "\r\n--- ОШИБКА ---\r\nАдрес (HEX): %04X", address);
@@ -594,7 +595,6 @@ static void checkFillMemory(uint16_t address, uint16_t size) {
       
       noInterrupts();
     }
-    address++;
   }
   interrupts();
   Serial.println();
