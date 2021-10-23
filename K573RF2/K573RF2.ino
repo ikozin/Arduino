@@ -10,60 +10,6 @@ https://www.arduino.cc/en/Main/arduinoBoardMega/
 Подключение к Arduino MEGA
 https://arduinka.pro/blog/wp-content/uploads/2017/09/mega2560-pinout-1024x724.png
 
-1) Arduino MEGA
-2) плата К573РФ2
-3) SD CARD
-4) Провод 18x2 -> папа, для подключения Arduino MEGA
-  11x1 - мама, для подключения линий адреса к плате К573РФ2
-   8x1 - мама, для подключения линий данных к плате К573РФ2
-   2x1 - мама, для подключения линий управления к плате К573РФ2
-   2x1 - мама, для подключения питания к плате К573РФ2
-   8x1 - мама, для подключения Arduino MEGA к SD CARD
-
-
-Распиновка платы SD CARD
-    ------------------- -------------------
-   |ключ                                   |
-   | ^                                     |
-    ------------------- -------------------
-     |    |    |    |    |    |    X    X
-   ----------------------------------------
-   |GND MISO  SCK MOSI  CS   +5V  +3V  GND|
-   |                                      |
-   |    ------------------------------    |
-   |   |                              |   |
-   |   |                              |   |
-   |   |           SD CARD            |   |
-   |   |                              |   |
-   |   |                              |   |
-   ----------------------------------------
-
-Распиновка платы К573РФ2
-                     -----
-                    | ключ|
-                    |   ^ |
-                     -----
-                     CE OE
-                     |  |
- ------         ------------------------
-|      | A10 --|                        |
-|      | A9  --|                        |
-|      | A8  --|                        |
-|      | A7  --|                        |        ------
-|      | A6  --|                        |-- GND |      |
-|      | A5  --|                        |-- VCC |<-ключ|
-|      | A4  --|                        |        ------
-|      | A3  --|                        |
-|      | A2  --|                        |
-|      | A1  --|                        |
-|ключ->| A0  --|                        |
- ------         ------------------------
-                 |  |  |   |   |   |  |
-                 D0 D1 D2 D3 D4 D5 D6 D7
-                ------------------------
-               | ^                      |
-               |ключ                    |
-                ------------------------               
 ------------------------------------------------------------------------
 Входы                      Выходы     Режим работы
 ------------------------------------------------------------------------
@@ -129,14 +75,16 @@ A0...A10  -CE  -OE  Vpp    D0...D7
   ---|                                                                                         |
      | GND| 52 | 50 | 48 | 46 | 44 | 42 | 40 | 38 | 36 | 34 | 32 | 30 | 28 | 26 | 24 | 22 | +5V|
       -----------------------------------------------------------------------------------------
-     | GND| SCK|MISO| D1 | D3 | D5 | D7 |~CE |    | A9 |    |    |    | A6 | A4 | A2 | A0 | +5V|
-     | GND| SS |MOSI| D0 | D2 | D4 | D6 |~OE |    | A8 | A10|    |    | A7 | A5 | A3 | A1 | +5V|
+     | GND| SCK|MISO| D1 | D3 | D5 | D7 | ~CE|    | A9 |    |    |    | A6 | A4 | A2 | A0 | +5V|
+     | GND| SS |MOSI| D0 | D2 | D4 | D6 | ~OE| VPP| A8 | A10|    |    | A7 | A5 | A3 | A1 | +5V|
       -----------------------------------------------------------------------------------------
      | GND| 53 | 51 | 49 | 47 | 45 | 43 | 41 | 39 | 37 | 35 | 33 | 31 | 29 | 27 | 25 | 23 | +5V|
-                                                                                            ^
-                                                                                           ключ
 
-
+A0-A10 = PA0-PA7, PC0-PC2
+D0-D7 = PL0-PL7
+~OE~ = PG0
+~CE~ = PG1
+UPR = PG2
  */
 
 #include <SPI.h>
@@ -147,6 +95,7 @@ A0...A10  -CE  -OE  Vpp    D0...D7
 #error Select board ATMEG2560
 #endif
 
+/*
 #define ADDR0   (22)  //PA0
 #define ADDR1   (23)  //PA1
 #define ADDR2   (24)  //PA2
@@ -167,34 +116,45 @@ A0...A10  -CE  -OE  Vpp    D0...D7
 #define D5      (44)  //PL5
 #define D6      (43)  //PL6
 #define D7      (42)  //PL7
-
+*/
+#define VPP     (39)  //PG2
 #define CE      (40)  //PG1
 #define OE      (41)  //PG0
+
 #define SD_CS   (53)  //
 
 #define CHIP_SIZE   2048
 #define BLOCK_SIZE  16
 #define TEXT_SIZE   64
 
+#define REPEAT_COUNT  10
+
 uint8_t dataRow[BLOCK_SIZE];
 char text[TEXT_SIZE];
-char fileName[] = "DUMP.TXT";
+char fileNameDump[] = "DUMP.TXT";
+char fileNameBin[]  = "DUMP.BIN";
 
 void setup() {
   // Адрес, контакты 22-29, 35-37, порты A и C
-  DDRA  = B11111111;
-  DDRC  = B11111111;
+  DDRA  = B11111111;   // Настраиваем на вывод данных, Шина Адреса (ША)
+  DDRC  = B11111111;   // Настраиваем на вывод данных, Шина Адреса (ША)
   // Данные, контакты 42-49, порт L
-  DDRL  = B00000000;
+  DDRL  = B00000000;   // Настраиваем на ввод данных, Шина Данных (ШД)
 
-  // К573РФ2
-  pinMode(CE, OUTPUT);
-  pinMode(OE, OUTPUT);
-  SetDisableMode();
-  setDataInMode();
+  // Изначально выставим необходимые уровни
+  // это нужно для выводов подтянутых к +5V,
+  // так как если не выставить до переключения вывода на выход,
+  // то изначально он будет низким,
+  // таким образом исключаем передергивание уровней
+  digitalWrite(CE, HIGH);   // На плате подтянут к +5V
+  digitalWrite(OE, HIGH);   // На плате подтянут к +5V
+  digitalWrite(VPP, LOW);   // На плате подтянут к земле
+  pinMode(CE, OUTPUT);      // CE   H HHL L   █ ... █
+  pinMode(OE, OUTPUT);      // OE   H HLL L   █ ... █
+  pinMode(VPP, OUTPUT);     // VPP  L LLL L   ▄ ... ▄
 
   // Serial
-  Serial.begin(9600);
+  Serial.begin(57600);
   while (!Serial) {}
   Serial.println(F("Start"));
 
@@ -207,48 +167,73 @@ void setup() {
   Serial.println(F("SD card initialized."));
 }
 
-void showMenu() {
+static void showMenu() {
   Serial.println();
+  Serial.println(F("При замене SD карты перезагрузите устройство"));
+  Serial.println(F("1 - Вывести дамп EEPROM на экран"));
+  Serial.println(F("2 - Записать дамп EEPROM в файл DUMP.TXT"));
+  Serial.println(F("3 - Записать данные EEPROM в файл DUMP.BIN"));
+  Serial.println(F("4 - Записать файл DUMP.TXT в EEPROM"));
+  Serial.println(F("5 - Записать файл DUMP.BIN в EEPROM"));
+  Serial.println(F("6 - Проверить EEPROM на 0xFF"));
+  Serial.println(F("7 - Сравнить EEPROM с файлом DUMP.TXT"));
+  Serial.println(F("8 - Сравнить EEPROM с файлом DUMP.BIN"));
+  Serial.println(F("9 - List SD"));
+ 
   Serial.println(F("0 - TEST"));
-  Serial.println(F("1 - Check               (EEPROM value compare with 0xFF)"));
-  Serial.println(F("2 - Dump                (Read EEPROM value into Console)"));
-  Serial.println(F("3 - Read    [DUMP.TXT]  (Read EEPROM value into DUMP.TXT)"));
-  Serial.println(F("4 - Write   [DUMP.TXT]  (Write from DUMP.TXT into EEPROM)"));
-  Serial.println(F("5 - Comapre [DUMP.TXT[  (EEPROM value compare with DUMP.TXT)"));
-  Serial.println();
+  Serial.println(F("Введите команду: "));
 }
 
-char getCommand() {
-  while (!Serial.available());
-  return Serial.read();
+static char readChar() {
+  for (;;) {
+      while (!Serial.available());
+      char cmd = Serial.read();
+      if (cmd == '\r') continue;
+      if (cmd == '\n') continue;
+      Serial.println(cmd);
+      return cmd;
+  }
 }
 
 void loop() {
   showMenu();
-  char cmd = getCommand();
+  char cmd = readChar();
   switch (cmd) {
-    case '0': // TEST
+    case '0':	// TEST
       loopTest();
       break;
-    case '1': // Check
-      checkClear();
-      break;
-    case '2': // Dump
+    case '1':	// 1 - Вывести дамп EEPROM на экран
       dumpMemory(&Serial);
       break;
-    case '3': // Read
-      readMemory(fileName);
+    case '2': // 2 - Записать дамп EEPROM в файл DUMP.TXT
+      readMemoryDump();
       break;
-    case '4': // Write
-      writeMemory(fileName);
+    case '3': // 3 - Записать данные EEPROM в файл DUMP.BIN
+      readMemoryBin();
       break;
-    case '5': // Comapre
-      checkMemory(fileName);
+    case '4':	// 4 - Записать файл DUMP.TXT в EEPROM
+      writeMemoryDump();
+      break;
+    case '5': // 5 - Записать файл DUMP.BIN в EEPROM
+      writeMemoryBin();
+      break;
+    case '6': // 6 - Проверить EEPROM на 0xFF
+      checkClear();
+      break;
+    case '7': // 7 - Сравнить EEPROM с файлом DUMP.TXT"));
+      checkMemoryDump();
+      break;
+    case '8': // 8 - Сравнить EEPROM с файлом DUMP.BIN"));
+      checkMemoryBin();
+      break;
+    case '9':  // 9 - List SD
+      listSD();
       break;
   }
 }
 
-void readMemory(char *pFileName){
+static void readMemoryDump() {
+  char* pFileName = fileNameDump;
   SD.remove(pFileName);
   File dataFile = SD.open(pFileName, FILE_WRITE);
   if (dataFile) {
@@ -261,10 +246,11 @@ void readMemory(char *pFileName){
   }
 }
 
-void writeMemory(char *pFileName){
+static void writeMemoryDump() {
+  char* pFileName = fileNameDump;
   File dataFile = SD.open(pFileName);
   if (dataFile) {
-    setDataOutMode();
+    writeBegin();
     bool error = false;
     while (!error) {
       int result = readLine(&dataFile, text, TEXT_SIZE);
@@ -292,11 +278,17 @@ void writeMemory(char *pFileName){
       dataRow[0x0D] = hexD;// & 0xFF;
       dataRow[0x0E] = hexE;// & 0xFF;
       dataRow[0x0F] = hexF;// & 0xFF;
+      
+      noInterrupts();
       for (int i = 0; i < BLOCK_SIZE; i++) {
-        writeData(addr, dataRow[i]);
+        for (int k = 0; k < REPEAT_COUNT; k++) {
+          writeData(addr, dataRow[i]);
+        }
         addr++;
       }
+      interrupts();
     }
+    writeEnd();
     dataFile.close();
     if (error) {
       Serial.println(F("\nError!"));
@@ -308,10 +300,11 @@ void writeMemory(char *pFileName){
   }
 }
 
-void checkMemory(char* pFileName) {
+static void checkMemoryDump() {
+  char* pFileName = fileNameDump;
   File dataFile = SD.open(pFileName);
   if (dataFile) {
-    setDataInMode();
+    readBegin();
     bool error = false;
     while (true) {
       int result = readLine(&dataFile, text, TEXT_SIZE);
@@ -340,9 +333,11 @@ void checkMemory(char* pFileName) {
       dataRow[0x0E] = hexE;// & 0xFF;
       dataRow[0x0F] = hexF;// & 0xFF;
       
+      noInterrupts();
       for (int i = 0; i < BLOCK_SIZE; i++) {
         byte data = readData(addr);
         if (data != dataRow[i]) {
+          interrupts();
           error = true;
           char* pdata = bin2hex(text, addr);
           *pdata++ = ' ';
@@ -350,10 +345,14 @@ void checkMemory(char* pFileName) {
           *pdata++ = ' ';
           bin2hex(pdata, dataRow[i]);
           Serial.println(text);
+          Serial.flush();
+          noInterrupts();
         }
         addr++;
       }
+      interrupts();
     }
+    readEnd();
     dataFile.close();
     if (error) {
       Serial.println(F("\nError!"));
@@ -365,18 +364,23 @@ void checkMemory(char* pFileName) {
   }
 }
 
-void dumpMemory(Stream* pStream) {
+static void dumpMemory(Stream* pStream) {
   uint16_t addr = 0;
-  setDataInMode();
+  readBegin();
   uint16_t size = CHIP_SIZE / BLOCK_SIZE;
   // Читаем блоками по 16 байт (BLOCK_SIZE)
   for (uint16_t n = 0; n < size; n++) {
     bin2hex(text, addr);
     pStream->print(text);
+	  pStream->flush();
+
+    noInterrupts();
     for (int i = 0; i < BLOCK_SIZE; i++) {
       dataRow[i] = readData(addr);
       addr++;
     }
+    interrupts();
+
     char* pdata = text;
     for (int i = 0; i < BLOCK_SIZE; i++) {
       *pdata++ = ' ';
@@ -384,92 +388,280 @@ void dumpMemory(Stream* pStream) {
     }
     pStream->println(text);
   }
+  readEnd();
 }
 
-void checkClear() {
-  setDataInMode();
+static void checkClear() {
+  noInterrupts();
+  readBegin();
   bool error = false;
   for (uint16_t addr = 0; addr < CHIP_SIZE; addr++) {
     byte data = readData(addr);
     if (data != 0xFF) {
+      interrupts();
       error = true;
       char* pdata = bin2hex(text, addr);
       *pdata++ = ' ';
       bin2hex(pdata, data);
       Serial.println(text);
+      Serial.flush();
+      noInterrupts();
     }
   }
+  readEnd();
+  interrupts();
   if (error) Serial.println("\nError!");  
 }
 
-byte readData(uint16_t addr) {
-  setAddress(addr);
-  SetReadMode();
-  delayMicroseconds(1);
-  byte data = getDataPort();
-  SetDisableMode();
-  return data;
+static void readMemoryBin() {
+  char* pFileName = fileNameBin;
+  SD.remove(pFileName);
+  File dataFile = SD.open(pFileName, FILE_WRITE);
+  if (dataFile) {
+    uint16_t addr = 0;
+    readBegin();
+    uint16_t size = CHIP_SIZE / BLOCK_SIZE;
+    // Читаем блоками по 16 байт (BLOCK_SIZE)
+    for (uint16_t n = 0; n < size; n++) {
+      noInterrupts();
+      for (int i = 0; i < BLOCK_SIZE; i++) {
+        dataRow[i] = readData(addr);
+        addr++;
+      }
+      interrupts();
+      dataFile.write(dataRow, BLOCK_SIZE);
+    }
+    readEnd();
+    dataFile.close();
+  }
+  else {
+    Serial.print(F("Error create file: "));
+    Serial.println(pFileName);
+  }
 }
 
-void writeData(uint16_t addr, byte data) {
-  setAddress(addr);
-  setDataPort(data);
-  SetWriteMode();
-  delayMicroseconds(100);
-  SetDisableMode();
+static void writeMemoryBin() {
+  char* pFileName = fileNameBin;
+  File dataFile = SD.open(pFileName);
+  if (dataFile) {
+    writeBegin();
+    uint16_t addr = 0;
+    bool error = false;
+    while (!error) {
+      int result = dataFile.read(dataRow, BLOCK_SIZE);      
+      if (result == 0) break;
+      if (result != BLOCK_SIZE) {
+        error = true;
+        break;
+      }
+      
+      noInterrupts();
+      for (int i = 0; i < BLOCK_SIZE; i++) {
+        for (int k = 0; k < REPEAT_COUNT; k++) {
+          writeData(addr, dataRow[i]);
+        }
+        addr++;
+      }
+      interrupts();
+    }
+    writeEnd();
+    dataFile.close();
+    if (error) {
+      Serial.println(F("\nError!"));
+    }        
+  }
+  else {
+    Serial.print(F("Error open file: "));
+    Serial.println(pFileName);
+  }
 }
 
-void setAddress(uint16_t addr) {
+static void checkMemoryBin() {
+  char* pFileName = fileNameBin;
+  File dataFile = SD.open(pFileName);
+  if (dataFile) {
+    readBegin();
+    uint16_t addr = 0;
+    bool error = false;
+    while (true) {
+      int result = dataFile.read(dataRow, BLOCK_SIZE);
+      if (result == 0) break;
+      if (result != BLOCK_SIZE) {
+        error = true;
+        break;
+      }      
+      noInterrupts();
+      for (int i = 0; i < BLOCK_SIZE; i++) {
+        byte data = readData(addr);
+        if (data != dataRow[i]) {
+          interrupts();
+          error = true;
+          char* pdata = bin2hex(text, addr);
+          *pdata++ = ' ';
+          pdata = bin2hex(pdata, data);
+          *pdata++ = ' ';
+          bin2hex(pdata, dataRow[i]);
+          Serial.println(text);
+          Serial.flush();
+          noInterrupts();
+        }
+        addr++;
+      }
+      interrupts();
+    }
+    readEnd();
+    dataFile.close();
+    if (error) {
+      Serial.println(F("\nError!"));
+    }        
+  }
+  else {
+    Serial.print(F("Error open file: "));
+    Serial.println(pFileName);
+  }
+}
+
+static void listSD() {
+  File root = SD.open("/");
+  printDirectory(root, 0);
+  Serial.println();
+}
+
+static void printDirectory(File dir, int numTabs) {
+  while (true) {
+    File entry =  dir.openNextFile();
+    if (! entry) {
+      // no more files
+      break;
+    }
+    for (uint8_t i = 0; i < numTabs; i++) {
+      Serial.print('\t');
+    }
+    Serial.print(entry.name());
+    if (entry.isDirectory()) {
+      Serial.println("/");
+      printDirectory(entry, numTabs + 1);
+    } else {
+      // files have sizes, directories do not
+      Serial.print("\t\t");
+      Serial.println(entry.size(), DEC);
+    }
+    entry.close();
+  }
+}
+
+inline byte getDataPort() {
+  return PINL;
+}
+
+inline void setDataPort(byte data) {
+  PORTL = data;
+}
+
+inline void setAddress(uint16_t addr) {
   PORTA = lowByte(addr);
   PORTC = highByte(addr);
 }
 
-// Хранение(пониженная мощность) К573РФ2
-void SetDisableMode() {
-	digitalWrite(OE, LOW);
-	digitalWrite(CE, HIGH);
+/*
+------------------------------------------------------------------------
+A0...A10  -CE  -OE  Vpp    D0...D7   
+------------------------------------------------------------------------
+  L/H      L    L    5v      Out      Считывание
+  L/H      H    H   24v      L/H      Запись
+   X       L    H    5v       Z       Невыбор
+   X       H    X    5v       Z       Хранение(пониженная мощность)
+   X       L    H   24v       Z       Запрет записи
+  L/H      L    L   24v      Out      Проверка записи
+------------------------------------------------------------------------
+*/
+
+static void readBegin() {
+  setDataInMode();
+  digitalWrite(VPP, LOW);   // CE   H HHL L   █ ██▄ ▄ ... ▄
+  digitalWrite(OE, LOW);    // OE   H HLL L   █ ██▄ ▄ ... ▄
+  digitalWrite(CE, LOW);    // VPP  L LLL L   ▄ ▄▄▄ ▄ ... ▄
 }
 
-// Считывание К573РФ2
-void SetReadMode() {
-	digitalWrite(OE, LOW);
-	digitalWrite(CE, LOW);
+static byte readData(uint16_t addr) {
+  setAddress(addr);
+  delayMicroseconds(2);     // CE   L L       ▄ ... ▄
+  byte data = getDataPort();// OE   L L       ▄ ... ▄
+  return data;              // VPP  L L       ▄ ... ▄
 }
 
-// Запись К573РФ2
-void SetWriteMode() {
-	digitalWrite(OE, HIGH);
-	digitalWrite(CE, HIGH);
+static void readEnd() {
+  digitalWrite(VPP, LOW);   // CE   L LLH H   ▄ ▄▄█ █ ... █
+  digitalWrite(OE, HIGH);   // OE   L LHH H   ▄ ▄██ █ ... █
+  digitalWrite(CE, HIGH);   // VPP  L LLL L   ▄ ▄▄▄ ▄ ... ▄
 }
 
-void setDataInMode() {
+/*
+------------------------------------------------------------------------
+A0...A10  -CE  -OE  Vpp    D0...D7   
+------------------------------------------------------------------------
+  L/H      L    L    5v      Out      Считывание
+  L/H      H    H   24v      L/H      Запись
+   X       L    H    5v       Z       Невыбор
+   X       H    X    5v       Z       Хранение(пониженная мощность)
+   X       L    H   24v       Z       Запрет записи
+  L/H      L    L   24v      Out      Проверка записи
+------------------------------------------------------------------------
+*/
+
+static void writeBegin() {
+  setDataOutMode();
+  digitalWrite(CE, LOW);    // CE   H LLL L   █ ▄▄▄ ▄ ... ▄
+  digitalWrite(OE, HIGH);   // OE   H HHH H   █ ███ █ ... █
+  digitalWrite(VPP, HIGH);  // VPP  L LLH H   ▄ ▄▄█ █ ... █
+  delayMicroseconds(1);
+}
+
+static bool writeData(uint16_t addr, byte data) {
+  setAddress(addr);
+  setDataPort(data);
+  delayMicroseconds(10);
+  digitalWrite(CE, HIGH);   // CE   L HL L    ▄ █50ms█▄ ▄ ... ▄
+  delayMicroseconds(50);    // OE   H HH H    █ █50ms██ █ ... █
+  digitalWrite(CE, LOW);    // VPP  H HH H    █ █50ms██ █ ... █
+  delayMicroseconds(1);
+}
+
+static void writeEnd() {
+  digitalWrite(VPP, LOW);   // CE   L LH H    ▄ ▄█ █ ... █
+  delayMicroseconds(1);     // OE   H HH H    █ ██ █ ... █
+  digitalWrite(CE, HIGH);   // VPP  H LL L    █ ▄▄ ▄ ... ▄
+  delayMicroseconds(1);
+}
+
+
+inline void setDataInMode() {
   DDRL = B00000000;
+  PORTL = B11111111;
 }
 
-void setDataOutMode() {
+inline void setDataOutMode() {
   DDRL = B11111111;
-}
-
-byte getDataPort() {
-  return PINL;
-}
-
-void setDataPort(byte data) {
-  PORTL = data;
 }
 
 //////////////////////////////////////////
 void loopTest() {
   for (;;) {
     showTestMenu();
-    char cmd = getCommand();
+    char cmd = readChar();
     switch (cmd) {
       case '1': // Address
-        while (1) loopTestAddress();
+        while (true) loopTestAddress();
       case '2': // Data
-        while (1) loopTestData();
+        while (true) loopTestData();
       case '3': // Control
-        while (1) loopTestControl();
+        while (true) loopTestControl();
+      case '4': //
+        while (true) loopTestVpp();
+      case '5': //
+        while (true) analizeReading();
+      case '6': //
+        while (true) analizeWriting();
     }
   }
 }
@@ -490,14 +682,17 @@ void showTestMenu() {
   Serial.println(F(" 12 -| GND      D3 |- 13"));
   Serial.println(F("      -------------     "));
   Serial.println();
-  Serial.println(F("1 - Address TEST"));
-  Serial.println(F("2 - Data TEST"));
-  Serial.println(F("3 - Control TEST (WARNING +25V)"));
-  Serial.println();
+  Serial.println(F("1 - ТЕСТ ША (Шины Адреса)"));
+  Serial.println(F("2 - ТЕСТ ШД (Шины Данных)"));
+  Serial.println(F("3 - ТЕСТ Линий управления (ВНИМАНИЕ +24V)"));
+  Serial.println(F("4 - ТЕСТ VPP ВНИМАНИЕ +24V"));
+  Serial.println(F("5 - Анилиз сигналов чтения данных (ВНИМАНИЕ +24V)"));
+  Serial.println(F("6 - Анилиз сигналов записи данных (ВНИМАНИЕ +24V)"));
+  Serial.println(F("Введите команду: "));
 }
 
 void loopTestAddress() {
-  Serial.println(F("Address TEST"));
+  Serial.println(F("ТЕСТ ША (Шины Адреса)"));
 
   setAddress(0xFFFF); 
   delay(1000);
@@ -541,7 +736,7 @@ void loopTestAddress() {
 
 void loopTestData() {
   setDataOutMode();
-  Serial.println(F("Data TEST"));
+  Serial.println(F("ТЕСТ ШД (Шины Данных)"));
 
   setDataPort(0xFF); 
   delay(1000);
@@ -568,23 +763,62 @@ void loopTestData() {
 }
 
 void loopTestControl() {
-  Serial.println(F("Control TEST: CE, OE, VPP"));
+  Serial.println(F("ТЕСТ Линий управления (ВНИМАНИЕ +24V)"));
 
   digitalWrite(OE, HIGH);
   digitalWrite(CE, HIGH);
-  delay(5000);
+  digitalWrite(VPP, HIGH);
+  delay(1000);
   digitalWrite(OE, LOW);
   digitalWrite(CE, HIGH);
-  delay(5000);
+  digitalWrite(VPP, HIGH);
+  delay(1000);
   digitalWrite(OE, HIGH);
   digitalWrite(CE, LOW);
-  delay(5000);
+  digitalWrite(VPP, HIGH);
+  delay(1000);
+  digitalWrite(OE, HIGH);
+  digitalWrite(CE, HIGH);
+  digitalWrite(VPP, LOW);
+  delay(1000);
   digitalWrite(OE, LOW);
   digitalWrite(CE, LOW);
+  digitalWrite(VPP, LOW);
+  delay(1000);
+}
+
+void loopTestVpp() {
+  Serial.println(F("ТЕСТ VPP ВНИМАНИЕ +24V"));
+  digitalWrite(VPP, HIGH);
+  delay(5000);
+  digitalWrite(VPP, LOW);
   delay(5000);
 }
 
-int readLine(File* pFile, char* pText, int maxSize) {
+#define ANALIZE_SIZE  16
+static void analizeReading() {
+  noInterrupts();
+  readBegin();
+  for (uint16_t addr = 0; addr < ANALIZE_SIZE; addr++) {
+    readData(addr);
+  }
+  readEnd();
+  interrupts();
+  delay(10);
+}
+
+static void analizeWriting() {
+  noInterrupts();
+  writeBegin();
+  for (uint16_t addr = 0; addr < ANALIZE_SIZE; addr++) {
+    writeData(addr, 0xFF);
+  }
+  writeEnd();
+  interrupts();
+  delay(10);
+}
+
+static int readLine(File* pFile, char* pText, int maxSize) {
   maxSize--;
   int i = 0;
   while (i < maxSize) {
@@ -604,9 +838,8 @@ int readLine(File* pFile, char* pText, int maxSize) {
   return i;
 }
 
-char* bin2hex(char* pText, uint8_t value) {
-  for (int i = 0; i < 2; i++)
-  {
+static char* bin2hex(char* pText, uint8_t value) {
+  for (int i = 0; i < 2; i++) {
     byte v = (byte)((value & 0xF0) >> 4);
     v = (v > 9) ? v + 55 : v + 48;
     *pText++ = (char)v;
@@ -616,7 +849,7 @@ char* bin2hex(char* pText, uint8_t value) {
   return pText;
 }
 
-char* bin2hex(char* pText, uint16_t value) {
+static char* bin2hex(char* pText, uint16_t value) {
   pText = bin2hex(pText, highByte(value));
   pText = bin2hex(pText, lowByte(value));
   return pText;
