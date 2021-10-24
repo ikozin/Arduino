@@ -26,33 +26,33 @@ K1533LE1LE5LE6::K1533LE1LE5LE6() {
 }
 
 void K1533LE1LE5LE6::info(void) {
-  Serial.println(F("КР1533ЛЕ1                         "));
-  Serial.println(F("КР1533ЛЕ5  - повышеннаая нагрузка "));
-  Serial.println(F("КР1533ЛЕ6  - повышеннаая нагрузка "));
-  Serial.println(F("4 элемента 2ИЛИ-НЕ                "));
-  Serial.println(F("DIP14                             "));
-  Serial.println(F("              14 - +5V            "));
-  Serial.println(F("               7 - GND            "));
-  Serial.println(F("                -----             "));
-  Serial.println(F("            2 -| 1   |            "));
-  Serial.println(F("               |     o- 1         "));
-  Serial.println(F("            3 -|     |            "));
-  Serial.println(F("                -----             "));
-  Serial.println(F("                -----             "));
-  Serial.println(F("            5 -| 1   |            "));
-  Serial.println(F("               |     o- 4         "));
-  Serial.println(F("            6 -|     |            "));
-  Serial.println(F("                -----             "));
-  Serial.println(F("                -----             "));
-  Serial.println(F("            8 -| 1   |            "));
-  Serial.println(F("               |     o- 10        "));
-  Serial.println(F("            9 -|     |            "));
-  Serial.println(F("                -----             "));
-  Serial.println(F("                -----             "));
-  Serial.println(F("            11-| 1   |            "));
-  Serial.println(F("               |     o- 13        "));
-  Serial.println(F("            12-|     |            "));
-  Serial.println(F("                -----             "));
+  Serial.println(F("КР1533ЛЕ1"));
+  Serial.println(F("КР1533ЛЕ5  - повышеннаая нагрузка"));
+  Serial.println(F("КР1533ЛЕ6  - повышеннаая нагрузка"));
+  Serial.println(F("4 элемента 2ИЛИ-НЕ"));
+  Serial.println(F("DIP14"));
+  Serial.println(F("\t    14 - +5V     "));
+  Serial.println(F("\t     7 - GND     "));
+  Serial.println(F("\t      -----      "));
+  Serial.println(F("\t  2 -| 1   |     "));
+  Serial.println(F("\t     |     o- 1  "));
+  Serial.println(F("\t  3 -|     |     "));
+  Serial.println(F("\t      -----      "));
+  Serial.println(F("\t      -----      "));
+  Serial.println(F("\t  5 -| 1   |     "));
+  Serial.println(F("\t     |     o- 4  "));
+  Serial.println(F("\t  6 -|     |     "));
+  Serial.println(F("\t      -----      "));
+  Serial.println(F("\t      -----      "));
+  Serial.println(F("\t  8 -| 1   |     "));
+  Serial.println(F("\t     |     o- 10 "));
+  Serial.println(F("\t  9 -|     |     "));
+  Serial.println(F("\t      -----      "));
+  Serial.println(F("\t      -----      "));
+  Serial.println(F("\t  11-| 1   |     "));
+  Serial.println(F("\t     |     o- 13 "));
+  Serial.println(F("\t  12-|     |     "));
+  Serial.println(F("\t      -----      "));
   Serial.println();
 }
 

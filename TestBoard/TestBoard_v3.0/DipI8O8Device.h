@@ -39,4 +39,13 @@ class Dip16I8O8DeviceExt: public TInput8Out8DevExt {
     }
 };
 
+class Dip20I8O8Device: public TInput8Out8Dev {
+  private:
+    const int _map[21] = {  0, 40, 37, 36, 35, 34, 33, 32, 31, 30,  0, 29, 28, 27, 26, 25, 24, 23, 22, 48,  0};
+  protected:
+    virtual int getPin(int value) const {
+      return Dip20I8O8Device::_map[value];
+    }
+};
+
 #endif

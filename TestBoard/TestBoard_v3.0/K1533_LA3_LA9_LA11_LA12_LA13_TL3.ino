@@ -26,37 +26,37 @@ K1533LA3LA9LA11LA12LA13TL3::K1533LA3LA9LA11LA12LA13TL3() {
 }
 
 void K1533LA3LA9LA11LA12LA13TL3::info(void) {
-  Serial.println(F("КР1533ЛА3                            "));
-  Serial.println(F("КР1533ЛА9                            "));
-  Serial.println(F("КР1533ЛА11 - открытый коллектор      "));
-  Serial.println(F("КР1533ЛА12 - повышеннаая нагрузка    "));
-  Serial.println(F("КР1533ЛА13 - открытый коллектор,     "));
-  Serial.println(F("             повышеннаая нагрузка    "));
-  Serial.println(F("КР1533ТЛ3  - триггер Шмитта          "));
-  Serial.println(F("4 элемента 2И-НЕ                     "));
-  Serial.println(F("DIP14                                "));
-  Serial.println(F("              14 - +5V               "));
-  Serial.println(F("               7 - GND               "));
-  Serial.println(F("                -----                "));
-  Serial.println(F("     (37)   1 -| &   |               "));
-  Serial.println(F("               |     o- 3   (35)     "));
-  Serial.println(F("     (36)   2 -|     |               "));
-  Serial.println(F("                -----                "));
-  Serial.println(F("                -----                "));
-  Serial.println(F("     (34)   4 -| &   |               "));
-  Serial.println(F("               |     o- 6   (32)     "));
-  Serial.println(F("     (33)   5 -|     |               "));
-  Serial.println(F("                -----                "));
-  Serial.println(F("                -----                "));
-  Serial.println(F("     (26)   9 -| &   |               "));
-  Serial.println(F("               |     o- 8   (27)     "));
-  Serial.println(F("     (25)   10-|     |               "));
-  Serial.println(F("                -----                "));
-  Serial.println(F("                -----                "));
-  Serial.println(F("     (23)   12-| &   |               "));
-  Serial.println(F("               |     o- 11  (24)     "));
-  Serial.println(F("     (22)   13-|     |               "));
-  Serial.println(F("                -----                "));
+  Serial.println(F("КР1533ЛА3"));
+  Serial.println(F("КР1533ЛА9"));
+  Serial.println(F("КР1533ЛА11 - открытый коллектор"));
+  Serial.println(F("КР1533ЛА12 - повышеннаая нагрузка"));
+  Serial.println(F("КР1533ЛА13 - открытый коллектор,"));
+  Serial.println(F("             повышеннаая нагрузка"));
+  Serial.println(F("КР1533ТЛ3  - триггер Шмитта"));
+  Serial.println(F("4 элемента 2И-НЕ   "));
+  Serial.println(F("DIP14              "));
+  Serial.println(F("\t    14 - +5V     "));
+  Serial.println(F("\t     7 - GND     "));
+  Serial.println(F("\t      -----      "));
+  Serial.println(F("\t  1 -| &   |     "));
+  Serial.println(F("\t     |     o- 3  "));
+  Serial.println(F("\t  2 -|     |     "));
+  Serial.println(F("\t      -----      "));
+  Serial.println(F("\t      -----      "));
+  Serial.println(F("\t  4 -| &   |     "));
+  Serial.println(F("\t     |     o- 6  "));
+  Serial.println(F("\t  5 -|     |     "));
+  Serial.println(F("\t      -----      "));
+  Serial.println(F("\t      -----      "));
+  Serial.println(F("\t  9 -| &   |     "));
+  Serial.println(F("\t     |     o- 8  "));
+  Serial.println(F("\t  10-|     |     "));
+  Serial.println(F("\t      -----      "));
+  Serial.println(F("\t      -----      "));
+  Serial.println(F("\t  12-| &   |     "));
+  Serial.println(F("\t     |     o- 11 "));
+  Serial.println(F("\t  13-|     |     "));
+  Serial.println(F("\t      -----      "));
   Serial.println();
 }
 

@@ -1,0 +1,17 @@
+#ifdef K1533_TM8
+
+#ifndef _K1533_TM8_
+#define _K1533_TM8_
+
+#include "DipI8O8Device.h"
+
+class K1533TM8: public Dip16I8O8Device {
+  public:
+    K1533TM8();
+  protected:
+    virtual void info(void);
+};
+
+#endif
+
+#endif

@@ -28,6 +28,7 @@
 #define K1533_LE1_LE5_LE6
 #define K1533_KP2
 #define K1533_TM2
+#define K1533_TM8
 #define K1533_ID4
 
 #include "DipI8O8Device.h"
@@ -38,6 +39,7 @@
 #include "K1533_LE1_LE5_LE6.h"
 #include "K1533_KP2.h"
 #include "K1533_TM2.h"
+#include "K1533_TM8.h"
 #include "K1533_ID4.h"
 
 #define DEBUG
@@ -78,14 +80,16 @@ void setup() {
   showMenu();
 }
 
+// Не стандартная разводка питания: ИЕ5, ТМ5, ТМ7
 void showMenu() {
   Serial.println(F("1 - ЛН1 ЛН2 ЛН3 ЛН5 ЛН8 (6 элементов НЕ)"));
   Serial.println(F("2 - ЛА3 ЛА9 ЛА11 ЛА12 ЛА13 ТЛ3 (4 элемента 2И-НЕ)"));
   Serial.println(F("3 - ЛИ1 ЛИ2 (4 элемента 2И)"));
   Serial.println(F("4 - ЛЕ1 ЛЕ5 ЛЕ6 (4 элемента 2ИЛИ-НЕ)"));
-  Serial.println(F("5 - ТМ2 (2 D-триггера)"));
-  Serial.println(F("6 - КП2 (2 Мультиплексора)"));
-  Serial.println(F("7 - ИД4 (2 Дешифратора)"));
+  Serial.println(F("5 - ТМ2 (2 D-Триггера)"));
+  Serial.println(F("6 - ТМ8 (Регистр)"));
+  Serial.println(F("7 - КП2 (2 Мультиплексора)"));
+  Serial.println(F("8 - ИД4 (2 Дешифратора)"));
   Serial.print(F("Ввведите команду:"));
 
   while (!Serial.available());
@@ -109,9 +113,12 @@ void showMenu() {
       device = new K1533TM2();
       break;
     case '6':
-      device = new K1533KP2();
+      device = new K1533TM8();
       break;
     case '7':
+      device = new K1533KP2();
+      break;
+    case '8':
       device = new K1533ID4();
       break;
   }

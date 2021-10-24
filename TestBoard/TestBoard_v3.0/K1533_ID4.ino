@@ -78,22 +78,22 @@ Input8Out8DevVal values_1533_id4_2[16] =
 };
 
 void K1533ID4::info(void) {
-  Serial.println(F("КР1533ИД4                              "));
-  Serial.println(F("2 дешифратора                          "));
-  Serial.println(F("DIP16                                  "));
-  Serial.println(F("                 16 - +5V              "));
-  Serial.println(F("                  8 - GND              "));
-  Serial.println(F("              --------------           "));
-  Serial.println(F("    (23) 14 -o &  | DC |  0 o- 9  (28) "));
-  Serial.println(F("    (22) 15 -o S0 |    |  1 o-10  (27) "));
-  Serial.println(F("             |----|    |  2 o-11  (26) "));
-  Serial.println(F("    (24) 13 -| 1  |    |  3 o-12  (25) "));
-  Serial.println(F("    (35)  3 -| 2  |    |----|          "));
-  Serial.println(F("             |----|    |  0 o- 7  (31) "));
-  Serial.println(F("    (37)  1 -| &  |    |  1 o- 6  (32) "));
-  Serial.println(F("    (36)  2 -o S1 |    |  2 o- 5  (33) "));
-  Serial.println(F("             |    |    |  3 o- 4  (34) "));
-  Serial.println(F("              --------------           "));
+  Serial.println(F("КР1533ИД4"));
+  Serial.println(F("2 Дешифратора"));
+  Serial.println(F("DIP16"));
+  Serial.println(F("\t         16 - +5V              "));
+  Serial.println(F("\t          8 - GND              "));
+  Serial.println(F("\t      --------------           "));
+  Serial.println(F("\t 14 -o &  | DC |  0 o- 9  (28) "));
+  Serial.println(F("\t 15 -o S0 |    |  1 o-10  (27) "));
+  Serial.println(F("\t     |----|    |  2 o-11  (26) "));
+  Serial.println(F("\t 13 -| 1  |    |  3 o-12  (25) "));
+  Serial.println(F("\t  3 -| 2  |    |----|          "));
+  Serial.println(F("\t     |----|    |  0 o- 7  (31) "));
+  Serial.println(F("\t  1 -| &  |    |  1 o- 6  (32) "));
+  Serial.println(F("\t  2 -o S1 |    |  2 o- 5  (33) "));
+  Serial.println(F("\t     |    |    |  3 o- 4  (34) "));
+  Serial.println(F("\t      --------------           "));
   Serial.println();
 }
 

@@ -62,27 +62,27 @@ K1533TM2::K1533TM2() {
 }
 
 void K1533TM2::info(void) {
-  Serial.println(F("КР1533ТМ2                             "));
-  Serial.println(F("2 D-триггера                          "));
-  Serial.println(F("DIP14                                 "));
-  Serial.println(F("               14 - +5V               "));
-  Serial.println(F("                7 - GND               "));
-  Serial.println(F("                --------              "));
-  Serial.println(F("    (37)    1 -o R | TT |- 5  (33)    "));
-  Serial.println(F("               |---|    |             "));
-  Serial.println(F("    (36)    2 -| D |    |             "));
-  Serial.println(F("    (35)    3 -/ С |    |             "));
-  Serial.println(F("               |---|    |             "));
-  Serial.println(F("    (34)    4 -o S |    o- 6  (32)    "));
-  Serial.println(F("                --------              "));
-  Serial.println(F("                --------              "));
-  Serial.println(F("    (22)   13 -o R | TT |- 9  (26)    "));
-  Serial.println(F("               |---|    |             "));
-  Serial.println(F("    (23)   12 -| D |    |             "));
-  Serial.println(F("    (24)   11 -/ С |    |             "));
-  Serial.println(F("               |---|    |             "));
-  Serial.println(F("    (25)   10 -o S |    o- 8  (27)    "));
-  Serial.println(F("                --------              "));
+  Serial.println(F("КР1533ТМ2             "));
+  Serial.println(F("2 D-триггера          "));
+  Serial.println(F("DIP14                 "));
+  Serial.println(F("\t      14 - +5V      "));
+  Serial.println(F("\t       7 - GND      "));
+  Serial.println(F("\t      --------      "));
+  Serial.println(F("\t  1 -o R | TT |- 5  "));
+  Serial.println(F("\t     |---|    |     "));
+  Serial.println(F("\t  2 -| D |    |     "));
+  Serial.println(F("\t  3 -/ С |    |     "));
+  Serial.println(F("\t     |---|    |     "));
+  Serial.println(F("\t  4 -o S |    o- 6  "));
+  Serial.println(F("\t      --------      "));
+  Serial.println(F("\t      --------      "));
+  Serial.println(F("\t 13 -o R | TT |- 9  "));
+  Serial.println(F("\t     |---|    |     "));
+  Serial.println(F("\t 12 -| D |    |     "));
+  Serial.println(F("\t 11 -/ С |    |     "));
+  Serial.println(F("\t     |---|    |     "));
+  Serial.println(F("\t 10 -o S |    o- 8  "));
+  Serial.println(F("\t      --------      "));
   Serial.println();
 }
 
