@@ -129,7 +129,8 @@ void loop() {
     device->test();
   }
   else {
-    testPortAPortC();
+    //testPortAPortC();
+    testLed();
   }
   while (digitalRead(PIN_BUTTON) != LOW);
 }
