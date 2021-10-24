@@ -70,13 +70,13 @@
 #define B_1_1_1110    B111110
 #define B_1_1_1111    B111111
 
-Input16Out16DevPin pin_map_1533_tm8[] =
+TDevicePin pin_map_1533_tm8[] =
 {
   // Входы     D1  D2  D3  D4   C   R             Выходы      1       2       3       4
   { .Input = {  4,  5, 12, 13,  9,  1,  0,  0 }, .Output = {  2,  3,  7,  6, 10, 11, 15, 14 }},
 };
 
-Input16Out16DevVal values_1533_tm8[] =
+TDeviceVal values_1533_tm8[] =
 {  
   { .value = (uint16_t)B_0_0_0000, .result = (uint16_t)B10101010 },
   { .value = (uint16_t)B_0_0_0001, .result = (uint16_t)B10101010 },

@@ -2,14 +2,14 @@
 
 void TDevice::init() {
   for (size_t i = 0; i < _devices_count; i++) {
-    for (int n = 0; n < 16; n++) {
+    for (int n = 0; n < PIN_SIZE; n++) {
       int pin = getPin(_devices[i].Input[n]);
       if (pin == 0) break;
       pinMode(pin, OUTPUT);
       debug_printf("%d(%d) - OUTPUT ", _devices[i].Input[n], pin);
     }
     debug_println();
-    for (int n = 0; n < 16; n++) {
+    for (int n = 0; n < PIN_SIZE; n++) {
       int pin = getPin(_devices[i].Output[n]);
       if (pin == 0) break;
       pinMode(pin, INPUT_PULLUP);
@@ -26,9 +26,9 @@ void TDevice::done(void) {
   PORTC = B11111111;  // Подтягиваем выводы к +5V
 }
 
-int TDevice::test_device(Input16Out16DevPin *device, Input16Out16DevVal *data) {
+int TDevice::test_device(TDevicePin *device, TDeviceVal *data) {
   debug_println("\nInput:");
-  for (int n = 0; n < 16; n++) {
+  for (int n = 0; n < PIN_SIZE; n++) {
     int pin = getPin(device->Input[n]);
     if (pin == 0) break;
     int value = bitRead(data->value, n);
@@ -39,7 +39,7 @@ int TDevice::test_device(Input16Out16DevPin *device, Input16Out16DevVal *data) {
   delay(1);
   debug_println("Output:");
   int errorCount = 0;
-  for (int n = 0; n < 16; n++) {
+  for (int n = 0; n < PIN_SIZE; n++) {
     int pin = getPin(device->Output[n]);
     if (pin == 0) break;
     int result = digitalRead(pin);
@@ -79,7 +79,7 @@ int TDevice::test(void) {
 
 void TDeviceExt::set_input(int value) {
   for (size_t i = 0; i < _devices_count; i++) {
-    for (int n = 0; n < 16; n++) {
+    for (int n = 0; n < PIN_SIZE; n++) {
       int pin = getPin(_devices[i].Input[n]);
       if (pin == 0) break;
       digitalWrite(pin, value);

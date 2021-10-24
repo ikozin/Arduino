@@ -7,7 +7,7 @@
 
 class K1533ID4_SubDev: public TDeviceExt {
   public:
-    K1533ID4_SubDev(Input16Out16DevPin *device, size_t device_count, Input16Out16DevVal *value, size_t value_count);
+    K1533ID4_SubDev(TDevicePin *device, size_t device_count, TDeviceVal *value, size_t value_count);
   protected:
     void info(void) {};
   friend class K1533ID4;

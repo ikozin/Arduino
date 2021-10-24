@@ -14,24 +14,26 @@ char text[128];
 #define debug_printf(...)
 #endif
 
+#define PIN_SIZE  16
+
 typedef struct {
-  byte Input[16];
-  byte Output[16];
-} Input16Out16DevPin;
+  byte Input[PIN_SIZE];
+  byte Output[PIN_SIZE];
+} TDevicePin;
 
 typedef struct {
   uint16_t value;
   uint16_t result;
-} Input16Out16DevVal;
+} TDeviceVal;
 
 class TDevice {
   protected:
-    Input16Out16DevPin * _devices;
-    Input16Out16DevVal * _values;  
+    TDevicePin * _devices;
+    TDeviceVal * _values;  
     size_t _devices_count;
     size_t _values_count;
 
-    int test_device(Input16Out16DevPin *device, Input16Out16DevVal *value);
+    int test_device(TDevicePin *device, TDeviceVal *value);
 
     virtual int check_devices();
     virtual void info(void) = 0;

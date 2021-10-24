@@ -139,14 +139,14 @@
 #define B_11_1_1110		B1111110
 #define B_11_1_1111		B1111111
 
-Input16Out16DevPin pin_map_1533_kp2[2] =
+TDevicePin pin_map_1533_kp2[2] =
 {
   // Входы     D0  D1  D2  D3   S   1   2
   { .Input = {  6,  5,  4,  3,  1, 14,  2,  0 }, .Output = {  7,  0,  0,  0,  0,  0,  0,  0 }},
   { .Input = { 10, 11, 12, 13, 15, 14,  2,  0 }, .Output = {  9,  0,  0,  0,  0,  0,  0,  0 }},
 };
 
-Input16Out16DevVal values_1533_kp2[128] =
+TDeviceVal values_1533_kp2[128] =
 {	
   { .value = (uint16_t)B_00_0_0000, .result = (uint16_t)0 },
   { .value = (uint16_t)B_00_0_0001, .result = (uint16_t)1 },

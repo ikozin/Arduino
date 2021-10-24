@@ -2,7 +2,7 @@
 
 #include "K1533_LA3_LA9_LA11_LA12_LA13_TL3.h"
 
-Input16Out16DevPin pin_map_1533_la3_la9_la11_la12_la13_tl3[4] =
+TDevicePin pin_map_1533_la3_la9_la11_la12_la13_tl3[4] =
 {
   { .Input = {  1,  2,  0,  0,  0,  0,  0,  0 }, .Output = {  3,  0,  0,  0,  0,  0,  0,  0 }},
   { .Input = {  4,  5,  0,  0,  0,  0,  0,  0 }, .Output = {  6,  0,  0,  0,  0,  0,  0,  0 }},
@@ -10,7 +10,7 @@ Input16Out16DevPin pin_map_1533_la3_la9_la11_la12_la13_tl3[4] =
   { .Input = { 12, 13,  0,  0,  0,  0,  0,  0 }, .Output = { 11,  0,  0,  0,  0,  0,  0,  0 }},
 };
 
-Input16Out16DevVal values_1533_la3_la9_la11_la12_la13_tl3[4] =
+TDeviceVal values_1533_la3_la9_la11_la12_la13_tl3[4] =
 {
   { .value = (uint16_t)0, .result = (uint16_t)1 },
   { .value = (uint16_t)1, .result = (uint16_t)1 },

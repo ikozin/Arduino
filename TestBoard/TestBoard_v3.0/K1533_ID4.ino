@@ -25,19 +25,19 @@
 #define B_0111    7
 #define B_1111    15
 
-Input16Out16DevPin pin_map_1533_id4_1[1] =
+TDevicePin pin_map_1533_id4_1[1] =
 {
   // Входы      1   2   &   &                 Выходы      0   1   2   3
   { .Input = { 24, 35, 23, 22, 0, 0, 0, 0 }, .Output = { 28, 27, 26, 25, 0, 0, 0, 0 }},
 };
 
-Input16Out16DevPin pin_map_1533_id4_2[1] =
+TDevicePin pin_map_1533_id4_2[1] =
 {
   // Входы      1   2   &   &                 Выходы      0   1   2   3
   { .Input = { 24, 35, 37, 36, 0, 0, 0, 0 }, .Output = { 31, 32, 33, 34, 0, 0, 0, 0 }},
 };
 
-Input16Out16DevVal values_1533_id4_1[16] =
+TDeviceVal values_1533_id4_1[16] =
 {  
   { .value = (uint16_t)B_00_00, .result = (uint16_t)B_1110 },
   { .value = (uint16_t)B_00_01, .result = (uint16_t)B_1101 },
@@ -57,7 +57,7 @@ Input16Out16DevVal values_1533_id4_1[16] =
   { .value = (uint16_t)B_11_11, .result = (uint16_t)B_1111 },
 };
 
-Input16Out16DevVal values_1533_id4_2[16] =
+TDeviceVal values_1533_id4_2[16] =
 {  
   { .value = (uint16_t)B_00_00, .result = (uint16_t)B_1111 },
   { .value = (uint16_t)B_00_01, .result = (uint16_t)B_1111 },
@@ -97,7 +97,7 @@ void K1533ID4::info(void) {
   Serial.println();
 }
 
-K1533ID4_SubDev::K1533ID4_SubDev(Input16Out16DevPin *device, size_t device_count, Input16Out16DevVal *value, size_t value_count) {
+K1533ID4_SubDev::K1533ID4_SubDev(TDevicePin *device, size_t device_count, TDeviceVal *value, size_t value_count) {
   _devices = device;
   _values = value;
   _devices_count = device_count;
