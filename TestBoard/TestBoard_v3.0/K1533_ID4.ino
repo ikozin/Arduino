@@ -1,5 +1,6 @@
 #ifdef K1533_ID4
-#include "Input8Out8Device.h"
+
+#include "K1533_ID4.h"
 
 #define B_00_00   0
 #define B_00_01   1
@@ -76,9 +77,9 @@ Input8Out8DevVal values_1533_id4_2[16] =
   { { .value = B_11_11 }, { .result = B_1111 } },
 };
 
-void info_1533_id4(void) {
+void K1533ID4::info(void) {
   Serial.println(F("КР1533ИД4                              "));
-  Serial.println(F("Два дешифратора                        "));
+  Serial.println(F("2 дешифратора                          "));
   Serial.println(F("DIP16                                  "));
   Serial.println(F("                 16 - +5V              "));
   Serial.println(F("                  8 - GND              "));
@@ -96,26 +97,40 @@ void info_1533_id4(void) {
   Serial.println();
 }
 
-void test_1533_id4() {
-  info_1533_id4();
+K1533ID4_SubDev::K1533ID4_SubDev(Input8Out8DevPin *device, size_t device_count, Input8Out8DevVal *value, size_t value_count) {
+  _devices = device;
+  _values = value;
+  _devices_count = device_count;
+  _values_count = value_count;
+}
 
-  init_Input8Out8Dev(pin_map_1533_id4_1, 1);
-  int result_1 = check_Input8Out8Dev(pin_map_1533_id4_1, 1, values_1533_id4_1, 16);
-  done_Input8Out8Dev();
+K1533ID4::K1533ID4() {
+  _devices_count = 0;
+  _values_count = 0;    
+}
+
+
+int K1533ID4::test(void) {
+  int result = 0;
+  K1533ID4_SubDev dev1(pin_map_1533_id4_1, 1, values_1533_id4_1, 16);
+  K1533ID4_SubDev dev2(pin_map_1533_id4_2, 1, values_1533_id4_2, 16);
+
+  info();
+  dev1.init();
+  dev2.init();
+  result += dev1.check_devices();
+  result += dev2.check_devices();
+  dev1.done();
+  dev2.done();
   
-  init_Input8Out8Dev(pin_map_1533_id4_2, 1);
-  int result_2 = check_Input8Out8Dev(pin_map_1533_id4_2, 1, values_1533_id4_2, 16);
-  done_Input8Out8Dev();
-
-  int result = result_1 + result_2;
   if (result == 0) {
-    Serial.println(F("\nТЕСТ ПРОЙДЕН"));
+    debug_println(F("\r\nТЕСТ ПРОЙДЕН"));
   }
   else {
-    Serial.println(F("\n!!! ОШИБКА !!!"));
-    Serial.print(F("Кол-во ошибок = "));
-    Serial.println(result);
+    sprintf(text, "\r\nОШИБКА!\r\nКол-во ошибок = %d\r\n", result);
+    debug_println(result);
   }
+  return result;
 }
 
 

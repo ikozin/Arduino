@@ -1,12 +1,13 @@
-#ifdef K1533_LA3_LI1_LI2
-#include "Input8Out8Device.h"
+#ifdef K1533_LI1_LI2
+
+#include "K1533_LI1_LI2.h"
 
 Input8Out8DevPin pin_map_1533_li1_li2[4] =
 {
-  { .Input = { 37, 36, 0, 0, 0, 0, 0, 0 }, .Output = { 35, 0, 0, 0, 0, 0, 0, 0 }},
-  { .Input = { 34, 33, 0, 0, 0, 0, 0, 0 }, .Output = { 32, 0, 0, 0, 0, 0, 0, 0 }},
-  { .Input = { 26, 25, 0, 0, 0, 0, 0, 0 }, .Output = { 27, 0, 0, 0, 0, 0, 0, 0 }},
-  { .Input = { 23, 22, 0, 0, 0, 0, 0, 0 }, .Output = { 24, 0, 0, 0, 0, 0, 0, 0 }},
+  { .Input = {  1,  2,  0,  0,  0,  0,  0,  0 }, .Output = {  3,  0,  0,  0,  0,  0,  0,  0 }},
+  { .Input = {  4,  5,  0,  0,  0,  0,  0,  0 }, .Output = {  6,  0,  0,  0,  0,  0,  0,  0 }},
+  { .Input = {  9, 10,  0,  0,  0,  0,  0,  0 }, .Output = {  8,  0,  0,  0,  0,  0,  0,  0 }},
+  { .Input = { 12, 13,  0,  0,  0,  0,  0,  0 }, .Output = { 11,  0,  0,  0,  0,  0,  0,  0 }},
 };
 
 Input8Out8DevVal values_1533_li1_li2[4] =
@@ -17,7 +18,14 @@ Input8Out8DevVal values_1533_li1_li2[4] =
   { { .value = 3 }, { .result = 1 } },
 };
 
-void info_1533_li1_li2(void) {
+K1533LI1LI2::K1533LI1LI2(){
+  _devices = pin_map_1533_li1_li2;
+  _values = values_1533_li1_li2;
+  _devices_count = sizeof(pin_map_1533_li1_li2)/sizeof(pin_map_1533_li1_li2[0]);
+  _values_count = sizeof(values_1533_li1_li2)/sizeof(values_1533_li1_li2[0]);
+}
+
+void K1533LI1LI2::info(void) {
   Serial.println(F("КР1533ЛИ1                            "));
   Serial.println(F("КР1533ЛИ2  - открытый коллектор      "));
   Serial.println(F("4 элемента 2И                        "));
@@ -47,18 +55,4 @@ void info_1533_li1_li2(void) {
   Serial.println();
 }
 
-void test_1533_li1_li2(void) {
-  info_1533_li1_li2();
-  init_Input8Out8Dev(pin_map_1533_li1_li2, 4);
-  int result = check_Input8Out8Dev(pin_map_1533_li1_li2, 4, values_1533_li1_li2, 4);
-  if (result == 0) {
-    Serial.println(F("\nТЕСТ ПРОЙДЕН"));
-  }
-  else {
-    Serial.println(F("\n!!! ОШИБКА !!!"));
-    Serial.print(F("Кол-во ошибок = "));
-    Serial.println(result);
-  }
-  done_Input8Out8Dev();
-}
 #endif

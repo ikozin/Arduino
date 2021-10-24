@@ -1,110 +1,108 @@
 #include "Input8Out8Device.h"
 
-char text[128];
-
-void init_Input8Out8Dev(Input8Out8DevPin *pmap, size_t size) {
-  for (size_t i = 0; i < size; i++) {
-
+void TInput8Out8Dev::init() {
+  for (size_t i = 0; i < _devices_count; i++) {
     for (int n = 0; n < 8; n++) {
-      if (pmap->Input[n] == 0U) break;
-      pinMode(pmap->Input[n], OUTPUT);
-#ifdef DEBUG
-      sprintf(text, "%d - OUTPUT ", pmap->Input[n]);
-      Serial.print(text);
-#endif
+      int pin = getPin(_devices[i].Input[n]);
+      if (pin == 0) break;
+      pinMode(pin, OUTPUT);
+      debug_printf("%d(%d) - OUTPUT ", _devices[i].Input[n], pin);
     }
-    Serial.println();
-
+    debug_println();
     for (int n = 0; n < 8; n++) {
-      if (pmap->Output[n] == 0U) break;
-      pinMode(pmap->Output[n], INPUT_PULLUP);
-#ifdef DEBUG
-      sprintf(text, "%d - INPUT ", pmap->Output[n]);
-      Serial.print(text);
-#endif
+      int pin = getPin(_devices[i].Output[n]);
+      if (pin == 0) break;
+      pinMode(pin, INPUT_PULLUP);
+      debug_printf("%d(%d) - INPUT ", _devices[i].Output[n], pin);
     }
-    Serial.println();
-   
-    pmap++;
+    debug_println();
   }
 }
 
-void done_Input8Out8Dev(void) {
+void TInput8Out8Dev::done(void) {
   DDRA = B00000000;   // Set input mode
   DDRC = B00000000;   // Set input mode
-
-  PORTA = B11111111;  // Set pullup mode
-  PORTC = B11111111;  // Set pullup mode
+  PORTA = B11111111;  // Подтягиваем выводы к +5V
+  PORTC = B11111111;  // Подтягиваем выводы к +5V
 }
 
-int test_Input8Out8Dev(Input8Out8DevPin *pmap, Input8Out8DevVal *pvalue) {
-#ifdef DEBUG
-  Serial.println("\nInput:");
-#endif
+int TInput8Out8Dev::test_device(Input8Out8DevPin *device, Input8Out8DevVal *data) {
+  debug_println("\nInput:");
   for (int n = 0; n < 8; n++) {
-    int pin = pmap->Input[n];
+    int pin = getPin(device->Input[n]);
     if (pin == 0) break;
-    int value = bitRead(pvalue->value, n);
-#ifdef DEBUG
-    sprintf(text, "%d = %d", pin, value);
-    Serial.println(text);
-#endif
+    int value = bitRead(data->value, n);
+    debug_printf("%d(%d) = %d\r\n", device->Input[n], pin, value);
     digitalWrite(pin, value);
   }
   
   delay(1);
-#ifdef DEBUG
-  Serial.println("Output:");
-#endif
+  debug_println("Output:");
   int errorCount = 0;
   for (int n = 0; n < 8; n++) {
-    int pin = pmap->Output[n];
+    int pin = getPin(device->Output[n]);
     if (pin == 0) break;
     int result = digitalRead(pin);
-    int expected = bitRead(pvalue->result, n);
+    int expected = bitRead(data->result, n);
     errorCount += (result != expected) ? 1 : 0;
-#ifdef DEBUG
-    sprintf(text, "%d = %d,%d", pin, result, expected);
-    Serial.print(text);
-    if (result != expected) Serial.print(" - ОШИБКА");
-    Serial.println();
-#endif
+    debug_printf("%d(%d) = %d,%d%s\r\n", device->Output[n], pin, result, expected, (result == expected) ? "" : " - ОШИБКА");
   }
   return errorCount;
 }
 
-void set_Input8Out8Dev(Input8Out8DevPin *pmap, size_t size, int value) {
-  for (size_t i = 0; i < size; i++) {
-    for (int n = 0; n < 8; n++) {
-      if (pmap->Input[n] == 0) break;
-      digitalWrite(pmap->Input[n], value);
+int TInput8Out8Dev::check_devices() {
+  int errorCount = 0;
+  debug_println("----------");
+  for (size_t i = 0; i < _devices_count; i++) {
+    for (size_t n = 0; n < _values_count; n++) {
+      debug_printf("\r\nDevice[%d], Test[%d]\r\n", i, n);
+      errorCount += test_device(&_devices[i], &_values[n]);
     }
-    pmap++;
   }
+  debug_println("----------");
+  return errorCount;
 }
 
-int check_Input8Out8Dev(Input8Out8DevPin *pmap, size_t map_size, Input8Out8DevVal *pvalue, size_t value_size) {
+int TInput8Out8Dev::test(void) {
+  info();
+  init();
+  int result = check_devices();
+  done();
+  if (result == 0) {
+    debug_println(F("\r\nТЕСТ ПРОЙДЕН"));
+  }
+  else {
+    debug_printf("\r\nОШИБКА!\r\nКол-во ошибок = %d\r\n\r\n", result);
+  }
+  return result;
+}
+
+void TInput8Out8DevExt::set_input(int value) {
+  for (size_t i = 0; i < _devices_count; i++) {
+    for (int n = 0; n < 8; n++) {
+      int pin = getPin(_devices[i].Input[n]);
+      if (pin == 0) break;
+      digitalWrite(pin, value);
+    }
+  }  
+}
+
+int TInput8Out8DevExt::check_devices() {
   int errorCount = 0;
-#ifdef DEBUG
-  Serial.println("----------");
-#endif
-  for (size_t i = 0; i < map_size; i++) {
-    set_Input8Out8Dev(pmap, map_size, LOW);
-    for (size_t n = 0; n < value_size; n++) {
-      errorCount += test_Input8Out8Dev(&pmap[i], &pvalue[n]);
+  debug_println("----------");
+  for (size_t i = 0; i < _devices_count; i++) {
+    set_input(LOW);
+    for (size_t n = 0; n < _values_count; n++) {
+      errorCount += test_device(&_devices[i], &_values[n]);
     }
   }
-#ifdef DEBUG
-  Serial.println("----------");
-#endif
-  for (size_t i = 0; i < map_size; i++) {
-    set_Input8Out8Dev(pmap, map_size, HIGH);
-    for (size_t n = 0; n < value_size; n++) {
-      errorCount += test_Input8Out8Dev(&pmap[i], &pvalue[n]);
+  debug_println("----------");
+  for (size_t i = 0; i < _devices_count; i++) {
+    set_input(HIGH);
+    for (size_t n = 0; n < _values_count; n++) {
+      errorCount += test_device(&_devices[i], &_values[n]);
     }
   }
-#ifdef DEBUG
-  Serial.println("----------");
-#endif
+  debug_println("----------");
   return errorCount;
 }

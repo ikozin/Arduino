@@ -1,5 +1,6 @@
 #ifdef K1533_KP2
-#include "Input8Out8Device.h"
+
+#include "K1533_KP2.h"
 
 #define B_00_0_0000		B0000000
 #define B_00_0_0001		B0000001
@@ -141,8 +142,8 @@
 Input8Out8DevPin pin_map_1533_kp2[2] =
 {
   // Входы     D0  D1  D2  D3   S   1   2
-  { .Input = { 32, 33, 34, 35, 37, 23, 36, 0 }, .Output = { 31, 0, 0, 0, 0, 0, 0, 0 }},
-  { .Input = { 27, 26, 25, 24, 22, 23, 36, 0 }, .Output = { 28, 0, 0, 0, 0, 0, 0, 0 }},
+  { .Input = {  6,  5,  4,  3,  1, 14,  2,  0 }, .Output = {  7,  0,  0,  0,  0,  0,  0,  0 }},
+  { .Input = { 10, 11, 12, 13, 15, 14,  2,  0 }, .Output = {  9,  0,  0,  0,  0,  0,  0,  0 }},
 };
 
 Input8Out8DevVal values_1533_kp2[128] =
@@ -284,9 +285,16 @@ Input8Out8DevVal values_1533_kp2[128] =
   { { .value = B_11_1_1111 }, { .result = 0 } },
 	};
 
-void info_1533_kp2(void) {
+K1533KP2::K1533KP2() {
+  _devices = pin_map_1533_kp2;
+  _values = values_1533_kp2;  
+  _devices_count = sizeof(pin_map_1533_kp2)/sizeof(pin_map_1533_kp2[0]);
+  _values_count = sizeof(values_1533_kp2)/sizeof(values_1533_kp2[0]);
+}
+
+void K1533KP2::info(void) {
   Serial.println(F("КР1533КП2                            "));
-  Serial.println(F("Мультиплексор                        "));
+  Serial.println(F("2 мультиплексора                     "));
   Serial.println(F("DIP16                                "));
   Serial.println(F("              16 - +5V               "));
   Serial.println(F("               8 - GND               "));
@@ -309,21 +317,6 @@ void info_1533_kp2(void) {
   Serial.println(F("    (36)  2 -| 2  |    |             "));
   Serial.println(F("              ---------              "));
   Serial.println();
-}
-
-void test_1533_kp2(void) {
-  info_1533_kp2();
-  init_Input8Out8Dev(pin_map_1533_kp2, 2);
-  int result = check_Input8Out8Dev(pin_map_1533_kp2, 2, values_1533_kp2, 128);
-  if (result == 0) {
-    Serial.println(F("\nТЕСТ ПРОЙДЕН"));
-  }
-  else {
-    Serial.println(F("\n!!! ОШИБКА !!!"));
-    Serial.print(F("Кол-во ошибок = "));
-    Serial.println(result);
-  }
-  done_Input8Out8Dev();
 }
 
 #endif

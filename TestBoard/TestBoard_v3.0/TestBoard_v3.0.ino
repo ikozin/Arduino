@@ -22,15 +22,28 @@
                                                                       GND  [10]   [11]PA7(29)
 */
 
-#include "Input8Out8Device.h"
-#define DEBUG
-
-//#define K1533_LN1_LN2_LN3_LN5_LN8
-//#define K1533_LA3_LA9_LA11_LA12_LA13_TL3
-//#define K1533_LA3_LI1_LI2
-//#define K1533_KP2
+#define K1533_LN1_LN2_LN3_LN5_LN8
+#define K1533_LA3_LA9_LA11_LA12_LA13_TL3
+#define K1533_LI1_LI2
+#define K1533_LE1_LE5_LE6
+#define K1533_KP2
+#define K1533_TM2
 #define K1533_ID4
 
+#include "DipI8O8Device.h"
+
+#include "K1533_LN1_LN2_LN3_LN5_LN8.h"
+#include "K1533_LA3_LA9_LA11_LA12_LA13_TL3.h"
+#include "K1533_LI1_LI2.h"
+#include "K1533_LE1_LE5_LE6.h"
+#include "K1533_KP2.h"
+#include "K1533_TM2.h"
+#include "K1533_ID4.h"
+
+#define DEBUG
+
+
+TInput8Out8Dev * device = NULL;
 
 void setup() {
   //Serial.println("!!!");  //ЭТО БАГ Aduino Mega, ПРИ НАЛИЧИИ СТРОКИ "!!!" ВЫЗЫВАЕТ ОШИБКУ ЗАГРУЗКИ, НАПРИМЕР: char text[128] = "!!!";
@@ -62,26 +75,55 @@ void setup() {
   Serial.begin(57600);
   while (!Serial);
   Serial.println(F("\nСтарт"));
+  showMenu();
+}
 
+void showMenu() {
+  Serial.println(F("1 - ЛН1 ЛН2 ЛН3 ЛН5 ЛН8 (6 элементов НЕ)"));
+  Serial.println(F("2 - ЛА3 ЛА9 ЛА11 ЛА12 ЛА13 ТЛ3 (4 элемента 2И-НЕ)"));
+  Serial.println(F("3 - ЛИ1 ЛИ2 (4 элемента 2И)"));
+  Serial.println(F("4 - ЛЕ1 ЛЕ5 ЛЕ6 (4 элемента 2ИЛИ-НЕ)"));
+  Serial.println(F("5 - ТМ2 (2 D-триггера)"));
+  Serial.println(F("6 - КП2 (2 Мультиплексора)"));
+  Serial.println(F("7 - ИД4 (2 Дешифратора)"));
+  Serial.print(F("Ввведите команду:"));
+
+  while (!Serial.available());
+  char cmd = Serial.read();
+  Serial.println(cmd);
+  
+  switch (cmd) {
+    case '1':
+      device = new K1533LN1LN2LN3LN5LN8();
+      break;
+    case '2':
+      device = new K1533LA3LA9LA11LA12LA13TL3();
+      break;
+    case '3':
+      device = new K1533LI1LI2();
+      break;
+    case '4':
+      device = new K1533LE1LE5LE6();
+      break;
+    case '5':
+      device = new K1533TM2();
+      break;
+    case '6':
+      device = new K1533KP2();
+      break;
+    case '7':
+      device = new K1533ID4();
+      break;
+  }
 }
 
 void loop() {
-#ifdef K1533_LN1_LN2_LN3_LN5_LN8
-  test_1533_ln1_ln2_ln3_ln5_ln8();
-#endif
-#ifdef K1533_LA3_LA9_LA11_LA12_LA13_TL3
-  test_1533_la3_la9_la11_la12_la13_tl3();
-#endif
-#ifdef K1533_LA3_LI1_LI2
-  test_1533_li1_li2();
-#endif
-#ifdef K1533_KP2
-  test_1533_kp2();
-#endif
-#ifdef K1533_ID4
-  test_1533_id4();
-#endif
-  //testPortAPortC();
+  if (device != NULL) {
+    device->test();
+  }
+  else {
+    testPortAPortC();
+  }
   while (digitalRead(PIN_BUTTON) != LOW);
 }
 

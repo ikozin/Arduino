@@ -1,14 +1,15 @@
 #ifdef K1533_LN1_LN2_LN3_LN5_LN8
-#include "Input8Out8Device.h"
+
+#include "K1533_LN1_LN2_LN3_LN5_LN8.h"
 
 Input8Out8DevPin pin_map_1533_ln1_ln2_ln3_ln5_ln8[6] =
 {
-  { .Input = { 37, 0, 0, 0, 0, 0, 0, 0 }, .Output = { 36, 0, 0, 0, 0, 0, 0, 0 }},
-  { .Input = { 35, 0, 0, 0, 0, 0, 0, 0 }, .Output = { 34, 0, 0, 0, 0, 0, 0, 0 }},
-  { .Input = { 33, 0, 0, 0, 0, 0, 0, 0 }, .Output = { 32, 0, 0, 0, 0, 0, 0, 0 }},
-  { .Input = { 26, 0, 0, 0, 0, 0, 0, 0 }, .Output = { 27, 0, 0, 0, 0, 0, 0, 0 }},
-  { .Input = { 24, 0, 0, 0, 0, 0, 0, 0 }, .Output = { 25, 0, 0, 0, 0, 0, 0, 0 }},
-  { .Input = { 22, 0, 0, 0, 0, 0, 0, 0 }, .Output = { 23, 0, 0, 0, 0, 0, 0, 0 }},
+  { .Input = {  1,  0,  0,  0,  0,  0,  0,  0 }, .Output = {  2,  0,  0,  0,  0,  0,  0,  0 }},
+  { .Input = {  3,  0,  0,  0,  0,  0,  0,  0 }, .Output = {  4,  0,  0,  0,  0,  0,  0,  0 }},
+  { .Input = {  5,  0,  0,  0,  0,  0,  0,  0 }, .Output = {  6,  0,  0,  0,  0,  0,  0,  0 }},
+  { .Input = {  9,  0,  0,  0,  0,  0,  0,  0 }, .Output = {  8,  0,  0,  0,  0,  0,  0,  0 }},
+  { .Input = { 11,  0,  0,  0,  0,  0,  0,  0 }, .Output = { 10,  0,  0,  0,  0,  0,  0,  0 }},
+  { .Input = { 13,  0,  0,  0,  0,  0,  0,  0 }, .Output = { 12,  0,  0,  0,  0,  0,  0,  0 }},
 };
 
 Input8Out8DevVal values_1533_ln1_ln2_ln3_ln5_ln8[4] =
@@ -17,7 +18,14 @@ Input8Out8DevVal values_1533_ln1_ln2_ln3_ln5_ln8[4] =
   { { .value = 1 }, { .result = 0 } },
 };
 
-void info_1533_ln1_ln2_ln3_ln5_ln8(void) {
+K1533LN1LN2LN3LN5LN8::K1533LN1LN2LN3LN5LN8() {
+  _devices = pin_map_1533_ln1_ln2_ln3_ln5_ln8;
+  _values = values_1533_ln1_ln2_ln3_ln5_ln8;  
+  _devices_count = sizeof(pin_map_1533_ln1_ln2_ln3_ln5_ln8)/sizeof(pin_map_1533_ln1_ln2_ln3_ln5_ln8[0]);
+  _values_count = sizeof(values_1533_ln1_ln2_ln3_ln5_ln8)/sizeof(values_1533_ln1_ln2_ln3_ln5_ln8[0]);
+}
+
+void K1533LN1LN2LN3LN5LN8::info(void) {
   Serial.println(F("КР1533ЛН1                            "));
   Serial.println(F("КР1533ЛН2  - открытый коллектор      "));
   Serial.println(F("КР1533ЛН3  - открытый коллектор      "));
@@ -61,18 +69,4 @@ void info_1533_ln1_ln2_ln3_ln5_ln8(void) {
   Serial.println();
 }
 
-bool test_1533_ln1_ln2_ln3_ln5_ln8() {
-  info_1533_ln1_ln2_ln3_ln5_ln8();
-  init_Input8Out8Dev(pin_map_1533_ln1_ln2_ln3_ln5_ln8, 6);
-  int result = check_Input8Out8Dev(pin_map_1533_ln1_ln2_ln3_ln5_ln8, 6, values_1533_ln1_ln2_ln3_ln5_ln8, 2);
-  if (result == 0) {
-    Serial.println(F("\nТЕСТ ПРОЙДЕН"));
-  }
-  else {
-    Serial.println(F("\n!!! ОШИБКА !!!"));
-    Serial.print(F("Кол-во ошибок = "));
-    Serial.println(result);
-  }
-  done_Input8Out8Dev();
-}
 #endif
