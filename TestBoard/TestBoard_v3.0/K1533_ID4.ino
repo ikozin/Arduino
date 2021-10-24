@@ -25,56 +25,56 @@
 #define B_0111    7
 #define B_1111    15
 
-Input8Out8DevPin pin_map_1533_id4_1[1] =
+Input16Out16DevPin pin_map_1533_id4_1[1] =
 {
   // Входы      1   2   &   &                 Выходы      0   1   2   3
   { .Input = { 24, 35, 23, 22, 0, 0, 0, 0 }, .Output = { 28, 27, 26, 25, 0, 0, 0, 0 }},
 };
 
-Input8Out8DevPin pin_map_1533_id4_2[1] =
+Input16Out16DevPin pin_map_1533_id4_2[1] =
 {
   // Входы      1   2   &   &                 Выходы      0   1   2   3
   { .Input = { 24, 35, 37, 36, 0, 0, 0, 0 }, .Output = { 31, 32, 33, 34, 0, 0, 0, 0 }},
 };
 
-Input8Out8DevVal values_1533_id4_1[16] =
+Input16Out16DevVal values_1533_id4_1[16] =
 {  
-  { { .value = B_00_00 }, { .result = B_1110 } },
-  { { .value = B_00_01 }, { .result = B_1101 } },
-  { { .value = B_00_10 }, { .result = B_1011 } },
-  { { .value = B_00_11 }, { .result = B_0111 } },
-  { { .value = B_01_00 }, { .result = B_1111 } },
-  { { .value = B_01_01 }, { .result = B_1111 } },
-  { { .value = B_01_10 }, { .result = B_1111 } },
-  { { .value = B_01_11 }, { .result = B_1111 } },
-  { { .value = B_10_00 }, { .result = B_1111 } },
-  { { .value = B_10_01 }, { .result = B_1111 } },
-  { { .value = B_10_10 }, { .result = B_1111 } },
-  { { .value = B_10_11 }, { .result = B_1111 } },
-  { { .value = B_11_00 }, { .result = B_1111 } },
-  { { .value = B_11_01 }, { .result = B_1111 } },
-  { { .value = B_11_10 }, { .result = B_1111 } },
-  { { .value = B_11_11 }, { .result = B_1111 } },
+  { .value = (uint16_t)B_00_00, .result = (uint16_t)B_1110 },
+  { .value = (uint16_t)B_00_01, .result = (uint16_t)B_1101 },
+  { .value = (uint16_t)B_00_10, .result = (uint16_t)B_1011 },
+  { .value = (uint16_t)B_00_11, .result = (uint16_t)B_0111 },
+  { .value = (uint16_t)B_01_00, .result = (uint16_t)B_1111 },
+  { .value = (uint16_t)B_01_01, .result = (uint16_t)B_1111 },
+  { .value = (uint16_t)B_01_10, .result = (uint16_t)B_1111 },
+  { .value = (uint16_t)B_01_11, .result = (uint16_t)B_1111 },
+  { .value = (uint16_t)B_10_00, .result = (uint16_t)B_1111 },
+  { .value = (uint16_t)B_10_01, .result = (uint16_t)B_1111 },
+  { .value = (uint16_t)B_10_10, .result = (uint16_t)B_1111 },
+  { .value = (uint16_t)B_10_11, .result = (uint16_t)B_1111 },
+  { .value = (uint16_t)B_11_00, .result = (uint16_t)B_1111 },
+  { .value = (uint16_t)B_11_01, .result = (uint16_t)B_1111 },
+  { .value = (uint16_t)B_11_10, .result = (uint16_t)B_1111 },
+  { .value = (uint16_t)B_11_11, .result = (uint16_t)B_1111 },
 };
 
-Input8Out8DevVal values_1533_id4_2[16] =
+Input16Out16DevVal values_1533_id4_2[16] =
 {  
-  { { .value = B_00_00 }, { .result = B_1111 } },
-  { { .value = B_00_01 }, { .result = B_1111 } },
-  { { .value = B_00_10 }, { .result = B_1111 } },
-  { { .value = B_00_11 }, { .result = B_1111 } },
-  { { .value = B_01_00 }, { .result = B_1110 } },
-  { { .value = B_01_01 }, { .result = B_1101 } },
-  { { .value = B_01_10 }, { .result = B_1011 } },
-  { { .value = B_01_11 }, { .result = B_0111 } },
-  { { .value = B_10_00 }, { .result = B_1111 } },
-  { { .value = B_10_01 }, { .result = B_1111 } },
-  { { .value = B_10_10 }, { .result = B_1111 } },
-  { { .value = B_10_11 }, { .result = B_1111 } },
-  { { .value = B_11_00 }, { .result = B_1111 } },
-  { { .value = B_11_01 }, { .result = B_1111 } },
-  { { .value = B_11_10 }, { .result = B_1111 } },
-  { { .value = B_11_11 }, { .result = B_1111 } },
+  { .value = (uint16_t)B_00_00, .result = (uint16_t)B_1111 },
+  { .value = (uint16_t)B_00_01, .result = (uint16_t)B_1111 },
+  { .value = (uint16_t)B_00_10, .result = (uint16_t)B_1111 },
+  { .value = (uint16_t)B_00_11, .result = (uint16_t)B_1111 },
+  { .value = (uint16_t)B_01_00, .result = (uint16_t)B_1110 },
+  { .value = (uint16_t)B_01_01, .result = (uint16_t)B_1101 },
+  { .value = (uint16_t)B_01_10, .result = (uint16_t)B_1011 },
+  { .value = (uint16_t)B_01_11, .result = (uint16_t)B_0111 },
+  { .value = (uint16_t)B_10_00, .result = (uint16_t)B_1111 },
+  { .value = (uint16_t)B_10_01, .result = (uint16_t)B_1111 },
+  { .value = (uint16_t)B_10_10, .result = (uint16_t)B_1111 },
+  { .value = (uint16_t)B_10_11, .result = (uint16_t)B_1111 },
+  { .value = (uint16_t)B_11_00, .result = (uint16_t)B_1111 },
+  { .value = (uint16_t)B_11_01, .result = (uint16_t)B_1111 },
+  { .value = (uint16_t)B_11_10, .result = (uint16_t)B_1111 },
+  { .value = (uint16_t)B_11_11, .result = (uint16_t)B_1111 },
 };
 
 void K1533ID4::info(void) {
@@ -97,7 +97,7 @@ void K1533ID4::info(void) {
   Serial.println();
 }
 
-K1533ID4_SubDev::K1533ID4_SubDev(Input8Out8DevPin *device, size_t device_count, Input8Out8DevVal *value, size_t value_count) {
+K1533ID4_SubDev::K1533ID4_SubDev(Input16Out16DevPin *device, size_t device_count, Input16Out16DevVal *value, size_t value_count) {
   _devices = device;
   _values = value;
   _devices_count = device_count;

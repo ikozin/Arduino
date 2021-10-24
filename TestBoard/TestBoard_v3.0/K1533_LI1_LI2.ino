@@ -2,7 +2,7 @@
 
 #include "K1533_LI1_LI2.h"
 
-Input8Out8DevPin pin_map_1533_li1_li2[4] =
+Input16Out16DevPin pin_map_1533_li1_li2[4] =
 {
   { .Input = {  1,  2,  0,  0,  0,  0,  0,  0 }, .Output = {  3,  0,  0,  0,  0,  0,  0,  0 }},
   { .Input = {  4,  5,  0,  0,  0,  0,  0,  0 }, .Output = {  6,  0,  0,  0,  0,  0,  0,  0 }},
@@ -10,12 +10,12 @@ Input8Out8DevPin pin_map_1533_li1_li2[4] =
   { .Input = { 12, 13,  0,  0,  0,  0,  0,  0 }, .Output = { 11,  0,  0,  0,  0,  0,  0,  0 }},
 };
 
-Input8Out8DevVal values_1533_li1_li2[4] =
+Input16Out16DevVal values_1533_li1_li2[4] =
 {
-  { { .value = 0 }, { .result = 0 } },
-  { { .value = 1 }, { .result = 0 } },
-  { { .value = 2 }, { .result = 0 } },
-  { { .value = 3 }, { .result = 1 } },
+  { .value = (uint16_t)0, .result = (uint16_t)0 },
+  { .value = (uint16_t)1, .result = (uint16_t)0 },
+  { .value = (uint16_t)2, .result = (uint16_t)0 },
+  { .value = (uint16_t)3, .result = (uint16_t)1 },
 };
 
 K1533LI1LI2::K1533LI1LI2(){

@@ -2,7 +2,7 @@
 
 #include "K1533_LE1_LE5_LE6.h"
 
-Input8Out8DevPin pin_map_1533_le1_le5_le6[4] =
+Input16Out16DevPin pin_map_1533_le1_le5_le6[4] =
 {
   { .Input = {  2,  3,  0,  0,  0,  0,  0,  0 }, .Output = {  1,  0,  0,  0,  0,  0,  0,  0 }},
   { .Input = {  5,  6,  0,  0,  0,  0,  0,  0 }, .Output = {  4,  0,  0,  0,  0,  0,  0,  0 }},
@@ -10,12 +10,12 @@ Input8Out8DevPin pin_map_1533_le1_le5_le6[4] =
   { .Input = { 11, 12,  0,  0,  0,  0,  0,  0 }, .Output = { 13,  0,  0,  0,  0,  0,  0,  0 }},
 };
 
-Input8Out8DevVal values_1533_le1_le5_le6[4] =
+Input16Out16DevVal values_1533_le1_le5_le6[4] =
 {
-  { { .value = 0 }, { .result = 1 } },
-  { { .value = 1 }, { .result = 0 } },
-  { { .value = 2 }, { .result = 0 } },
-  { { .value = 3 }, { .result = 0 } },
+  { .value = (uint16_t)0, .result = (uint16_t)1 },
+  { .value = (uint16_t)1, .result = (uint16_t)0 },
+  { .value = (uint16_t)2, .result = (uint16_t)0 },
+  { .value = (uint16_t)3, .result = (uint16_t)0 },
 };
 
 K1533LE1LE5LE6::K1533LE1LE5LE6() {

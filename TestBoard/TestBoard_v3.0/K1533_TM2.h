@@ -3,9 +3,9 @@
 #ifndef _K1533_TM2_
 #define _K1533_TM2_
 
-#include "DipI8O8Device.h"
+#include "DipDevice.h"
 
-class K1533TM2: public Dip14I8O8Device {
+class K1533TM2: public Dip14 {
   public:
     K1533TM2();
   protected:

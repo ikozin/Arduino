@@ -31,7 +31,7 @@
 #define K1533_TM8
 #define K1533_ID4
 
-#include "DipI8O8Device.h"
+#include "DipDevice.h"
 
 #include "K1533_LN1_LN2_LN3_LN5_LN8.h"
 #include "K1533_LA3_LA9_LA11_LA12_LA13_TL3.h"
@@ -45,7 +45,7 @@
 #define DEBUG
 
 
-TInput8Out8Dev * device = NULL;
+TDevice * device = NULL;
 
 void setup() {
   //Serial.println("!!!");  //ЭТО БАГ Aduino Mega, ПРИ НАЛИЧИИ СТРОКИ "!!!" ВЫЗЫВАЕТ ОШИБКУ ЗАГРУЗКИ, НАПРИМЕР: char text[128] = "!!!";

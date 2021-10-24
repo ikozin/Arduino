@@ -1,15 +1,15 @@
-#include "Input8Out8Device.h"
+#include "Device.h"
 
-void TInput8Out8Dev::init() {
+void TDevice::init() {
   for (size_t i = 0; i < _devices_count; i++) {
-    for (int n = 0; n < 8; n++) {
+    for (int n = 0; n < 16; n++) {
       int pin = getPin(_devices[i].Input[n]);
       if (pin == 0) break;
       pinMode(pin, OUTPUT);
       debug_printf("%d(%d) - OUTPUT ", _devices[i].Input[n], pin);
     }
     debug_println();
-    for (int n = 0; n < 8; n++) {
+    for (int n = 0; n < 16; n++) {
       int pin = getPin(_devices[i].Output[n]);
       if (pin == 0) break;
       pinMode(pin, INPUT_PULLUP);
@@ -19,16 +19,16 @@ void TInput8Out8Dev::init() {
   }
 }
 
-void TInput8Out8Dev::done(void) {
+void TDevice::done(void) {
   DDRA = B00000000;   // Set input mode
   DDRC = B00000000;   // Set input mode
   PORTA = B11111111;  // Подтягиваем выводы к +5V
   PORTC = B11111111;  // Подтягиваем выводы к +5V
 }
 
-int TInput8Out8Dev::test_device(Input8Out8DevPin *device, Input8Out8DevVal *data) {
+int TDevice::test_device(Input16Out16DevPin *device, Input16Out16DevVal *data) {
   debug_println("\nInput:");
-  for (int n = 0; n < 8; n++) {
+  for (int n = 0; n < 16; n++) {
     int pin = getPin(device->Input[n]);
     if (pin == 0) break;
     int value = bitRead(data->value, n);
@@ -39,7 +39,7 @@ int TInput8Out8Dev::test_device(Input8Out8DevPin *device, Input8Out8DevVal *data
   delay(1);
   debug_println("Output:");
   int errorCount = 0;
-  for (int n = 0; n < 8; n++) {
+  for (int n = 0; n < 16; n++) {
     int pin = getPin(device->Output[n]);
     if (pin == 0) break;
     int result = digitalRead(pin);
@@ -50,7 +50,7 @@ int TInput8Out8Dev::test_device(Input8Out8DevPin *device, Input8Out8DevVal *data
   return errorCount;
 }
 
-int TInput8Out8Dev::check_devices() {
+int TDevice::check_devices() {
   int errorCount = 0;
   debug_println("----------");
   for (size_t i = 0; i < _devices_count; i++) {
@@ -63,7 +63,7 @@ int TInput8Out8Dev::check_devices() {
   return errorCount;
 }
 
-int TInput8Out8Dev::test(void) {
+int TDevice::test(void) {
   info();
   init();
   int result = check_devices();
@@ -77,9 +77,9 @@ int TInput8Out8Dev::test(void) {
   return result;
 }
 
-void TInput8Out8DevExt::set_input(int value) {
+void TDeviceExt::set_input(int value) {
   for (size_t i = 0; i < _devices_count; i++) {
-    for (int n = 0; n < 8; n++) {
+    for (int n = 0; n < 16; n++) {
       int pin = getPin(_devices[i].Input[n]);
       if (pin == 0) break;
       digitalWrite(pin, value);
@@ -87,7 +87,7 @@ void TInput8Out8DevExt::set_input(int value) {
   }  
 }
 
-int TInput8Out8DevExt::check_devices() {
+int TDeviceExt::check_devices() {
   int errorCount = 0;
   debug_println("----------");
   for (size_t i = 0; i < _devices_count; i++) {

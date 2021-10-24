@@ -3,9 +3,9 @@
 #ifndef _K1533_LN1_LN2_LN3_LN5_LN8_H_
 #define _K1533_LN1_LN2_LN3_LN5_LN8_H_
 
-#include "DipI8O8Device.h"
+#include "DipDevice.h"
 
-class K1533LN1LN2LN3LN5LN8: public Dip14I8O8DeviceExt {
+class K1533LN1LN2LN3LN5LN8: public Dip14Ext {
   public:
     K1533LN1LN2LN3LN5LN8();
   protected:
