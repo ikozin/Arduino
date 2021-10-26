@@ -31,6 +31,7 @@
 #define K1533_TM8
 #define K1533_ID4
 #define K1533_AP6
+#define K1533_IR33
 
 #include "DipDevice.h"
 
@@ -43,6 +44,7 @@
 #include "K1533_TM8.h"
 #include "K1533_ID4.h"
 #include "K1533_AP6.h"
+#include "K1533_IR33.h"
 
 #define DEBUG
 
@@ -93,13 +95,14 @@ void showMenu() {
   Serial.println(F("7 - КП2 (2 Мультиплексора)"));
   Serial.println(F("8 - ИД4 (2 Дешифратора)"));
   Serial.println(F("9 - АП6 (Буфер)"));
+  Serial.println(F("A - ИР33 (Регистр)"));
   
   Serial.print(F("Ввведите команду:"));
 
   while (!Serial.available());
   char cmd = Serial.read();
   Serial.println(cmd);
-  
+  cmd = toLowerCase(cmd);
   switch (cmd) {
     case '1':
       device = new K1533LN1LN2LN3LN5LN8();
@@ -127,6 +130,9 @@ void showMenu() {
       break;
     case '9':
       device = new K1533AP6();
+      break;
+    case 'a':
+      device = new K1533IR33();
       break;
   }
 }
