@@ -283,7 +283,7 @@ TDeviceVal values_1533_kp2[128] =
   { .value = (uint16_t)B_11_1_1101, .result = (uint16_t)0 },
   { .value = (uint16_t)B_11_1_1110, .result = (uint16_t)0 },
   { .value = (uint16_t)B_11_1_1111, .result = (uint16_t)0 },
-	};
+};
 
 K1533KP2::K1533KP2() {
   _devices = pin_map_1533_kp2;

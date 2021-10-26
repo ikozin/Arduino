@@ -52,6 +52,8 @@ int TDevice::test_device(TDevicePin *device, TDeviceVal *data) {
 
 int TDevice::check_devices() {
   int errorCount = 0;
+  info();
+  init();
   debug_println("----------");
   for (size_t i = 0; i < _devices_count; i++) {
     for (size_t n = 0; n < _values_count; n++) {
@@ -60,14 +62,12 @@ int TDevice::check_devices() {
     }
   }
   debug_println("----------");
+  done();
   return errorCount;
 }
 
 int TDevice::test(void) {
-  info();
-  init();
   int result = check_devices();
-  done();
   if (result == 0) {
     debug_println(F("\r\nТЕСТ ПРОЙДЕН"));
   }
@@ -89,6 +89,8 @@ void TDeviceExt::set_input(int value) {
 
 int TDeviceExt::check_devices() {
   int errorCount = 0;
+  info();
+  init();
   debug_println("----------");
   for (size_t i = 0; i < _devices_count; i++) {
     set_input(LOW);
@@ -104,5 +106,6 @@ int TDeviceExt::check_devices() {
     }
   }
   debug_println("----------");
+  done();
   return errorCount;
 }

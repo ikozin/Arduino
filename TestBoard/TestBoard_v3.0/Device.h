@@ -26,7 +26,12 @@ typedef struct {
   uint16_t result;
 } TDeviceVal;
 
-class TDevice {
+class IDevice {
+  public:
+    virtual int test(void) = 0;
+};
+
+class TDevice : public IDevice {
   protected:
     TDevicePin * _devices;
     TDeviceVal * _values;  
@@ -35,22 +40,44 @@ class TDevice {
 
     int test_device(TDevicePin *device, TDeviceVal *value);
 
-    virtual int check_devices();
     virtual void info(void) = 0;
+    virtual void init(void);
+    virtual void done(void);
 
     virtual int getPin(int value) const {
       return value;
     }
   public:
-    virtual void init(void);
+    virtual int check_devices();
     virtual int test(void);
-    virtual void done(void);
 };
 
 class TDeviceExt: public TDevice {
   protected:
     void set_input(int value);
     int check_devices();
+};
+
+class TDeviceComposite: public TDevice {
+  protected:
+    size_t _count;
+    TDevice ** _composite;
+  public:
+    TDeviceComposite(TDevice ** composite, size_t count)  {
+      _devices_count = 0;
+      _values_count = 0;
+      _composite = composite;
+      _count = count;
+    }
+    virtual int check_devices() {
+      int errorCount = 0;
+      info();
+      for (size_t i = 0; i < _count; i++) {
+        TDevice * current = _composite[i];
+        errorCount += current->check_devices();
+      }
+      return errorCount;
+    }
 };
 
 #endif

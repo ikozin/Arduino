@@ -28,13 +28,13 @@
 TDevicePin pin_map_1533_id4_1[1] =
 {
   // Входы      1   2   &   &                 Выходы      0   1   2   3
-  { .Input = { 24, 35, 23, 22, 0, 0, 0, 0 }, .Output = { 28, 27, 26, 25, 0, 0, 0, 0 }},
+  { .Input = { 13,  3, 14, 15, 0, 0, 0, 0 }, .Output = {  9, 10, 11, 12, 0, 0, 0, 0 }},
 };
 
 TDevicePin pin_map_1533_id4_2[1] =
 {
   // Входы      1   2   &   &                 Выходы      0   1   2   3
-  { .Input = { 24, 35, 37, 36, 0, 0, 0, 0 }, .Output = { 31, 32, 33, 34, 0, 0, 0, 0 }},
+  { .Input = { 13,  3,  1,  2, 0, 0, 0, 0 }, .Output = { 7 ,  6,  5,  4, 0, 0, 0, 0 }},
 };
 
 TDeviceVal values_1533_id4_1[16] =
@@ -97,41 +97,10 @@ void K1533ID4::info(void) {
   Serial.println();
 }
 
-K1533ID4_SubDev::K1533ID4_SubDev(TDevicePin *device, size_t device_count, TDeviceVal *value, size_t value_count) {
-  _devices = device;
-  _values = value;
-  _devices_count = device_count;
-  _values_count = value_count;
-}
-
-K1533ID4::K1533ID4() {
-  _devices_count = 0;
-  _values_count = 0;    
-}
-
-
-int K1533ID4::test(void) {
-  int result = 0;
-  K1533ID4_SubDev dev1(pin_map_1533_id4_1, 1, values_1533_id4_1, 16);
-  K1533ID4_SubDev dev2(pin_map_1533_id4_2, 1, values_1533_id4_2, 16);
-
-  info();
-  dev1.init();
-  dev2.init();
-  result += dev1.check_devices();
-  result += dev2.check_devices();
-  dev1.done();
-  dev2.done();
-  
-  if (result == 0) {
-    debug_println(F("\r\nТЕСТ ПРОЙДЕН"));
-  }
-  else {
-    sprintf(text, "\r\nОШИБКА!\r\nКол-во ошибок = %d\r\n", result);
-    debug_println(result);
-  }
-  return result;
-}
+K1533ID4_SubDev sub_1533_id4_dev1(pin_map_1533_id4_1, values_1533_id4_1, 16);
+K1533ID4_SubDev sub_1533_id4_dev2(pin_map_1533_id4_2, values_1533_id4_2, 16);
+TDevice * composite_1533_id4[] { &sub_1533_id4_dev1, &sub_1533_id4_dev2 };
+K1533ID4::K1533ID4(): TDeviceComposite(composite_1533_id4, sizeof(composite_1533_id4)/sizeof(composite_1533_id4[0])) {}
 
 
 #endif

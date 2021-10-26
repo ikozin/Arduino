@@ -41,7 +41,7 @@ class Dip16Ext: public TDeviceExt {
 
 class Dip20: public TDevice {
   private:
-    const int _map[21] = {  0, 40, 37, 36, 35, 34, 33, 32, 31, 30,  0, 29, 28, 27, 26, 25, 24, 23, 22, 48,  0};
+    const int _map[21] = {  0, 49, 37, 36, 35, 34, 33, 32, 31, 30,  0, 29, 28, 27, 26, 25, 24, 23, 22, 48,  0};
   protected:
     virtual int getPin(int value) const {
       return Dip20::_map[value];

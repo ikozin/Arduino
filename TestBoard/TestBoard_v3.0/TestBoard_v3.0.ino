@@ -30,6 +30,7 @@
 #define K1533_TM2
 #define K1533_TM8
 #define K1533_ID4
+#define K1533_AP6
 
 #include "DipDevice.h"
 
@@ -41,11 +42,12 @@
 #include "K1533_TM2.h"
 #include "K1533_TM8.h"
 #include "K1533_ID4.h"
+#include "K1533_AP6.h"
 
 #define DEBUG
 
 
-TDevice * device = NULL;
+IDevice * device = NULL;
 
 void setup() {
   //Serial.println("!!!");  //ЭТО БАГ Aduino Mega, ПРИ НАЛИЧИИ СТРОКИ "!!!" ВЫЗЫВАЕТ ОШИБКУ ЗАГРУЗКИ, НАПРИМЕР: char text[128] = "!!!";
@@ -90,6 +92,8 @@ void showMenu() {
   Serial.println(F("6 - ТМ8 (Регистр)"));
   Serial.println(F("7 - КП2 (2 Мультиплексора)"));
   Serial.println(F("8 - ИД4 (2 Дешифратора)"));
+  Serial.println(F("9 - АП6 (Буфер)"));
+  
   Serial.print(F("Ввведите команду:"));
 
   while (!Serial.available());
@@ -120,6 +124,9 @@ void showMenu() {
       break;
     case '8':
       device = new K1533ID4();
+      break;
+    case '9':
+      device = new K1533AP6();
       break;
   }
 }
