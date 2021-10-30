@@ -33,6 +33,9 @@
 #define K1533_AP6
 #define K1533_IR33
 
+#define K580_VA86
+#define K580_IR82
+
 #include "DipDevice.h"
 
 #include "K1533_LN1_LN2_LN3_LN5_LN8.h"
@@ -45,6 +48,9 @@
 #include "K1533_ID4.h"
 #include "K1533_AP6.h"
 #include "K1533_IR33.h"
+
+#include "K580_VA86.h"
+#include "K580_IR82.h"
 
 #define DEBUG
 
@@ -86,6 +92,7 @@ void setup() {
 
 // Не стандартная разводка питания: ИЕ5, ТМ5, ТМ7
 void showMenu() {
+  Serial.println(F("К1533"));
   Serial.println(F("1 - ЛН1 ЛН2 ЛН3 ЛН5 ЛН8 (6 элементов НЕ)"));
   Serial.println(F("2 - ЛА3 ЛА9 ЛА11 ЛА12 ЛА13 ТЛ3 (4 элемента 2И-НЕ)"));
   Serial.println(F("3 - ЛИ1 ЛИ2 (4 элемента 2И)"));
@@ -96,6 +103,9 @@ void showMenu() {
   Serial.println(F("8 - ИД4 (2 Дешифратора)"));
   Serial.println(F("9 - АП6 (Буфер)"));
   Serial.println(F("A - ИР33 (Регистр)"));
+  Serial.println(F("К580"));
+  Serial.println(F("B - ВА86 (Буфер)"));
+  Serial.println(F("C - ИР82 (Регистр)"));
   
   Serial.print(F("Ввведите команду:"));
 
@@ -133,6 +143,12 @@ void showMenu() {
       break;
     case 'a':
       device = new K1533IR33();
+      break;
+    case 'b':
+      device = new K580VA86();
+      break;
+    case 'c':
+      device = new K580IR82();
       break;
   }
 }
