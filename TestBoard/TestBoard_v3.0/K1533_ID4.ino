@@ -2,29 +2,6 @@
 
 #include "K1533_ID4.h"
 
-#define B_00_00   0
-#define B_00_01   1
-#define B_00_10   2
-#define B_00_11   3
-#define B_01_00   4
-#define B_01_01   5
-#define B_01_10   6
-#define B_01_11   7
-#define B_10_00   8
-#define B_10_01   9
-#define B_10_10   10
-#define B_10_11   11
-#define B_11_00   12
-#define B_11_01   13
-#define B_11_10   14
-#define B_11_11   15
-
-#define B_1110    14
-#define B_1101    13
-#define B_1011    11
-#define B_0111    7
-#define B_1111    15
-
 TDevicePin pin_map_1533_id4_1[1] =
 {
   // Входы      1   2   &   &                 Выходы      0   1   2   3

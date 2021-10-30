@@ -1,6 +1,8 @@
 #ifndef _TDevice_
 #define _TDevice_
 
+#include "binaries.h"
+
 #define DEBUG_CONSOLE
 
 #if defined(DEBUG_CONSOLE)

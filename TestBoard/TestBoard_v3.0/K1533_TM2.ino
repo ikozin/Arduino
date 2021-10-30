@@ -2,23 +2,6 @@
 
 #include "K1533_TM2.h"
 
-#define B_0_0_0_0   B0000
-#define B_0_0_0_1   B0001
-#define B_0_0_1_0   B0010
-#define B_0_0_1_1   B0011
-#define B_0_1_0_0   B0100
-#define B_0_1_0_1   B0101
-#define B_0_1_1_0   B0110
-#define B_0_1_1_1   B0111
-#define B_1_0_0_0   B1000
-#define B_1_0_0_1   B1001
-#define B_1_0_1_0   B1010
-#define B_1_0_1_1   B1011
-#define B_1_1_0_0   B1100
-#define B_1_1_0_1   B1101
-#define B_1_1_1_0   B1110
-#define B_1_1_1_1   B1111
-
 TDevicePin pin_map_1533_tm2[2] =
 {
   // Входы      R   S   D   C                     Выходы      0   1
