@@ -2,7 +2,7 @@
 
 #include "K1533_LI1_LI2.h"
 
-TDevicePin pin_map_1533_li1_li2[4] =
+TDevicePin pin_map_1533_li1_li2[] =
 {
   { .Input = {  1,  2,  0,  0,  0,  0,  0,  0 }, .Output = {  3,  0,  0,  0,  0,  0,  0,  0 }},
   { .Input = {  4,  5,  0,  0,  0,  0,  0,  0 }, .Output = {  6,  0,  0,  0,  0,  0,  0,  0 }},
@@ -10,7 +10,7 @@ TDevicePin pin_map_1533_li1_li2[4] =
   { .Input = { 12, 13,  0,  0,  0,  0,  0,  0 }, .Output = { 11,  0,  0,  0,  0,  0,  0,  0 }},
 };
 
-TDeviceVal values_1533_li1_li2[4] =
+TDeviceVal values_1533_li1_li2[] =
 {
   { .value = (uint16_t)0, .result = (uint16_t)0 },
   { .value = (uint16_t)1, .result = (uint16_t)0 },

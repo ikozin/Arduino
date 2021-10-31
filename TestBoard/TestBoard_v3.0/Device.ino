@@ -95,6 +95,7 @@ int TDeviceExt::check_devices() {
   for (size_t i = 0; i < _devices_count; i++) {
     set_input(LOW);
     for (size_t n = 0; n < _values_count; n++) {
+      debug_printf("\r\nDevice[%d], Test[%d]\r\n", i, n);
       errorCount += test_device(&_devices[i], &_values[n]);
     }
   }
@@ -102,6 +103,7 @@ int TDeviceExt::check_devices() {
   for (size_t i = 0; i < _devices_count; i++) {
     set_input(HIGH);
     for (size_t n = 0; n < _values_count; n++) {
+      debug_printf("\r\nDevice[%d], Test[%d]\r\n", i, n);
       errorCount += test_device(&_devices[i], &_values[n]);
     }
   }

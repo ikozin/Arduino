@@ -5,7 +5,7 @@
 
 #include "DipDevice.h"
 
-class K1533KP2: public Dip16Ext {
+class K1533KP2: public Dip16 {
   public:
     K1533KP2();
   protected:

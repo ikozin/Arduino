@@ -2,7 +2,7 @@
 
 #include "K1533_LN1_LN2_LN3_LN5_LN8.h"
 
-TDevicePin pin_map_1533_ln1_ln2_ln3_ln5_ln8[6] =
+TDevicePin pin_map_1533_ln1_ln2_ln3_ln5_ln8[] =
 {
   { .Input = {  1,  0,  0,  0,  0,  0,  0,  0 }, .Output = {  2,  0,  0,  0,  0,  0,  0,  0 }},
   { .Input = {  3,  0,  0,  0,  0,  0,  0,  0 }, .Output = {  4,  0,  0,  0,  0,  0,  0,  0 }},
@@ -12,7 +12,7 @@ TDevicePin pin_map_1533_ln1_ln2_ln3_ln5_ln8[6] =
   { .Input = { 13,  0,  0,  0,  0,  0,  0,  0 }, .Output = { 12,  0,  0,  0,  0,  0,  0,  0 }},
 };
 
-TDeviceVal values_1533_ln1_ln2_ln3_ln5_ln8[4] =
+TDeviceVal values_1533_ln1_ln2_ln3_ln5_ln8[] =
 {
   { .value = (uint16_t)0, .result = (uint16_t)1 },
   { .value = (uint16_t)1, .result = (uint16_t)0 },

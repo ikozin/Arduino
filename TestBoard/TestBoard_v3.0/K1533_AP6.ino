@@ -14,7 +14,7 @@ TDevicePin pin_map_1533_ap6_b[] =
   { .Input = { 18, 17, 16, 15, 14, 13, 12, 11, 19,  1,  0 }, .Output = {  2,  3,  4,  5,  6,  7,  8,  9,  0 }},
 };
 
-TDeviceVal values_1533_ap6_a[17] =
+TDeviceVal values_1533_ap6_a[] =
 {  
   { .value = (uint16_t)B_1_1_00000000, .result = (uint16_t)B11111111 },
   { .value = (uint16_t)B_1_0_00000000, .result = (uint16_t)B00000000 },
@@ -37,7 +37,7 @@ TDeviceVal values_1533_ap6_a[17] =
   
 };
 
-TDeviceVal values_1533_ap6_b[17] =
+TDeviceVal values_1533_ap6_b[] =
 {  
   { .value = (uint16_t)B_0_1_00000000, .result = (uint16_t)B11111111 },
   { .value = (uint16_t)B_0_0_00000000, .result = (uint16_t)B00000000 },
@@ -81,8 +81,8 @@ void K1533AP6::info(void) {
   Serial.println();
 }
 
-K1533AP6_SubDev sub_1533_ap6_dev1(pin_map_1533_ap6_a, values_1533_ap6_a, 17);
-K1533AP6_SubDev sub_1533_ap6_dev2(pin_map_1533_ap6_b, values_1533_ap6_b, 17);
+K1533AP6_SubDev sub_1533_ap6_dev1(pin_map_1533_ap6_a, values_1533_ap6_a, sizeof(values_1533_ap6_a)/sizeof(values_1533_ap6_a[0]));
+K1533AP6_SubDev sub_1533_ap6_dev2(pin_map_1533_ap6_b, values_1533_ap6_b, sizeof(values_1533_ap6_b)/sizeof(values_1533_ap6_b[0]));
 TDevice * composite_1533_ap6[] { &sub_1533_ap6_dev1, &sub_1533_ap6_dev2 };
 K1533AP6::K1533AP6(): TDeviceComposite(composite_1533_ap6, sizeof(composite_1533_ap6)/sizeof(composite_1533_ap6[0])) {}
 

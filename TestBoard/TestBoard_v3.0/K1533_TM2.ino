@@ -2,14 +2,14 @@
 
 #include "K1533_TM2.h"
 
-TDevicePin pin_map_1533_tm2[2] =
+TDevicePin pin_map_1533_tm2[] =
 {
   // Входы      R   S   D   C                     Выходы      0   1
   { .Input = {  1,  4,  2,  3,  0,  0,  0,  0 }, .Output = {  5,  6,  0,  0,  0,  0,  0,  0 }},
   { .Input = { 13, 10, 12, 11,  0,  0,  0,  0 }, .Output = {  9,  8,  0,  0,  0,  0,  0,  0 }},
 };
 
-TDeviceVal values_1533_tm2[20] =
+TDeviceVal values_1533_tm2[] =
 {  
   //             C D S R
   { .value = (uint16_t)B_0_0_0_1, .result = (uint16_t)1 },

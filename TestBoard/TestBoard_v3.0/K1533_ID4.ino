@@ -2,19 +2,19 @@
 
 #include "K1533_ID4.h"
 
-TDevicePin pin_map_1533_id4_1[1] =
+TDevicePin pin_map_1533_id4_1[] =
 {
   // Входы      1   2   &   &                 Выходы      0   1   2   3
   { .Input = { 13,  3, 14, 15, 0, 0, 0, 0 }, .Output = {  9, 10, 11, 12, 0, 0, 0, 0 }},
 };
 
-TDevicePin pin_map_1533_id4_2[1] =
+TDevicePin pin_map_1533_id4_2[] =
 {
   // Входы      1   2   &   &                 Выходы      0   1   2   3
   { .Input = { 13,  3,  1,  2, 0, 0, 0, 0 }, .Output = { 7 ,  6,  5,  4, 0, 0, 0, 0 }},
 };
 
-TDeviceVal values_1533_id4_1[16] =
+TDeviceVal values_1533_id4_1[] =
 {  
   { .value = (uint16_t)B_00_00, .result = (uint16_t)B_1110 },
   { .value = (uint16_t)B_00_01, .result = (uint16_t)B_1101 },
@@ -34,7 +34,7 @@ TDeviceVal values_1533_id4_1[16] =
   { .value = (uint16_t)B_11_11, .result = (uint16_t)B_1111 },
 };
 
-TDeviceVal values_1533_id4_2[16] =
+TDeviceVal values_1533_id4_2[] =
 {  
   { .value = (uint16_t)B_00_00, .result = (uint16_t)B_1111 },
   { .value = (uint16_t)B_00_01, .result = (uint16_t)B_1111 },
@@ -74,8 +74,8 @@ void K1533ID4::info(void) {
   Serial.println();
 }
 
-K1533ID4_SubDev sub_1533_id4_dev1(pin_map_1533_id4_1, values_1533_id4_1, 16);
-K1533ID4_SubDev sub_1533_id4_dev2(pin_map_1533_id4_2, values_1533_id4_2, 16);
+K1533ID4_SubDev sub_1533_id4_dev1(pin_map_1533_id4_1, values_1533_id4_1, sizeof(values_1533_id4_1)/sizeof(values_1533_id4_1[0]));
+K1533ID4_SubDev sub_1533_id4_dev2(pin_map_1533_id4_2, values_1533_id4_2, sizeof(values_1533_id4_2)/sizeof(values_1533_id4_2[0]));
 TDevice * composite_1533_id4[] { &sub_1533_id4_dev1, &sub_1533_id4_dev2 };
 K1533ID4::K1533ID4(): TDeviceComposite(composite_1533_id4, sizeof(composite_1533_id4)/sizeof(composite_1533_id4[0])) {}
 

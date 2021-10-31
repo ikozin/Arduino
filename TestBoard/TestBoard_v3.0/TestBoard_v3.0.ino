@@ -23,9 +23,13 @@
 */
 
 #define K1533_LN1_LN2_LN3_LN5_LN8
+#define K1533_LA1_LA6_LA7_LA22
 #define K1533_LA3_LA9_LA11_LA12_LA13_TL3
+#define K1533_LA4_LA10_LA24
+#define K1533_LA8
 #define K1533_LI1_LI2
-#define K1533_LE1_LE5_LE6
+#define K1533_LE1_LE5_LE6_LE10_LE11
+#define K1533_LE4
 #define K1533_KP2
 #define K1533_TM2
 #define K1533_TM8
@@ -36,12 +40,18 @@
 #define K580_VA86
 #define K580_IR82
 
+#define K555_IR11A
+
 #include "DipDevice.h"
 
 #include "K1533_LN1_LN2_LN3_LN5_LN8.h"
+#include "K1533_LA1_LA6_LA7_LA22.h"
 #include "K1533_LA3_LA9_LA11_LA12_LA13_TL3.h"
+#include "K1533_LA4_LA10_LA24.h"
+#include "K1533_LA8.h"
 #include "K1533_LI1_LI2.h"
-#include "K1533_LE1_LE5_LE6.h"
+#include "K1533_LE1_LE5_LE6_LE10_LE11.h"
+#include "K1533_LE4.h"
 #include "K1533_KP2.h"
 #include "K1533_TM2.h"
 #include "K1533_TM8.h"
@@ -51,6 +61,8 @@
 
 #include "K580_VA86.h"
 #include "K580_IR82.h"
+
+#include "K555_IR11A.h"
 
 #define DEBUG
 
@@ -94,61 +106,83 @@ void setup() {
 void showMenu() {
   Serial.println(F("К1533"));
   Serial.println(F("1 - ЛН1 ЛН2 ЛН3 ЛН5 ЛН8 (6 элементов НЕ)"));
-  Serial.println(F("2 - ЛА3 ЛА9 ЛА11 ЛА12 ЛА13 ТЛ3 (4 элемента 2И-НЕ)"));
-  Serial.println(F("3 - ЛИ1 ЛИ2 (4 элемента 2И)"));
-  Serial.println(F("4 - ЛЕ1 ЛЕ5 ЛЕ6 (4 элемента 2ИЛИ-НЕ)"));
-  Serial.println(F("5 - ТМ2 (2 D-Триггера)"));
-  Serial.println(F("6 - ТМ8 (Регистр)"));
-  Serial.println(F("7 - КП2 (2 Мультиплексора)"));
-  Serial.println(F("8 - ИД4 (2 Дешифратора)"));
-  Serial.println(F("9 - АП6 (Буфер)"));
-  Serial.println(F("A - ИР33 (Регистр)"));
+  Serial.println(F("2 - ЛА1 ЛА6 ЛА7 ЛА22 (2 элемента 4И-НЕ)"));
+  Serial.println(F("3 - ЛА3 ЛА9 ЛА11 ЛА12 ЛА13 ТЛ3 (4 элемента 2И-НЕ)"));
+  Serial.println(F("4 - ЛА4 ЛА10 ЛА24 (3 элемента 3И-НЕ)"));
+  Serial.println(F("5 - ЛА8 (4 элемента 2И-НЕ)"));
+  Serial.println(F("6 - ЛИ1 ЛИ2 (4 элемента 2И)"));
+  Serial.println(F("7 - ЛЕ1 ЛЕ5 ЛЕ6 ЛЕ10 ЛЕ11 (4 элемента 2ИЛИ-НЕ)"));
+  Serial.println(F("8 - ЛЕ4 (3 элемента 3ИЛИ-НЕ)"));
+  Serial.println(F("9 - ТМ2 (2 D-Триггера)"));
+  Serial.println(F("A - ТМ8 (Регистр)"));
+  Serial.println(F("B - КП2 (2 Мультиплексора)"));
+  Serial.println(F("C - ИД4 (2 Дешифратора)"));
+  Serial.println(F("D - АП6 (Буфер)"));
+  Serial.println(F("E - ИР33 (Регистр)"));
   Serial.println(F("К580"));
-  Serial.println(F("B - ВА86 (Буфер)"));
-  Serial.println(F("C - ИР82 (Регистр)"));
+  Serial.println(F("F - ВА86 (Буфер)"));
+  Serial.println(F("G - ИР82 (Регистр)"));
+  Serial.println(F("К555"));
+  Serial.println(F("H - ИР11А (Регистр)"));
   
   Serial.print(F("Ввведите команду:"));
 
   while (!Serial.available());
   char cmd = Serial.read();
   Serial.println(cmd);
+  Serial.println();
   cmd = toLowerCase(cmd);
   switch (cmd) {
     case '1':
       device = new K1533LN1LN2LN3LN5LN8();
       break;
     case '2':
-      device = new K1533LA3LA9LA11LA12LA13TL3();
+      device = new K1533LA1LA6LA7LA22();
       break;
     case '3':
-      device = new K1533LI1LI2();
+      device = new K1533LA3LA9LA11LA12LA13TL3();
       break;
     case '4':
-      device = new K1533LE1LE5LE6();
+      device = new K1533LA4LA10LA24();
       break;
     case '5':
-      device = new K1533TM2();
+      device = new K1533LA8();
       break;
     case '6':
-      device = new K1533TM8();
+      device = new K1533LI1LI2();
       break;
     case '7':
-      device = new K1533KP2();
+      device = new K1533LE1LE5LE6LE10LE11();
       break;
     case '8':
-      device = new K1533ID4();
+      device = new K1533LE4();
       break;
     case '9':
-      device = new K1533AP6();
+      device = new K1533TM2();
       break;
     case 'a':
-      device = new K1533IR33();
+      device = new K1533TM8();
       break;
     case 'b':
-      device = new K580VA86();
+      device = new K1533KP2();
       break;
     case 'c':
+      device = new K1533ID4();
+      break;
+    case 'd':
+      device = new K1533AP6();
+      break;
+    case 'e':
+      device = new K1533IR33();
+      break;
+    case 'f':
+      device = new K580VA86();
+      break;
+    case 'g':
       device = new K580IR82();
+      break;
+    case 'h':
+      device = new K555IR11A();
       break;
   }
 }
