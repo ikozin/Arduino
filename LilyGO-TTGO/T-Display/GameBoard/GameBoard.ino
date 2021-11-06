@@ -1,9 +1,13 @@
+#define DEBUG_CONSOLE
+
 #include <Arduino.h>
 #include <Preferences.h>
 #include <FS.h>
 #include <SPIFFS.h>
-#include <Button2.h>
-#include <TFT_eSPI.h>
+#include "GameBoard.h"
+#include "TestBoard.h"
+#include "GameSnake.h"
+#include "GameTetris.h"
 
 #if !defined(ESP32)
   #error Select ESP32 DEV Board
@@ -12,17 +16,6 @@
 #if !defined(ST7789_DRIVER) || TFT_WIDTH != 135 || TFT_HEIGHT != 240
   #error Ошибка настройки TFT_eSPI, необходимо подключить "User_Setups/Setup25_TTGO_T_Display.h"
 #endif
-
-#define LED1          32
-#define LED2          33
-
-#define BUTTON_A      26
-#define BUTTON_B      27
-#define BUTTON_CENTER 2
-#define BUTTON_UP     15
-#define BUTTON_DOWN   12
-#define BUTTON_LEFT   17
-#define BUTTON_RIGHT  13
 
 TFT_eSPI tft = TFT_eSPI(TFT_WIDTH, TFT_HEIGHT); // 135x240
 
@@ -34,9 +27,15 @@ Button2 buttonD(BUTTON_DOWN);
 Button2 buttonL(BUTTON_LEFT);
 Button2 buttonR(BUTTON_RIGHT);
 
+TestBoard test(&tft);
+Snake  snake(&tft);
+Tetris  tetris(&tft);
+
+Game*  game = &tetris;
+
 void  setup() {
   Serial.begin(115200);
-  Serial.println("\r\nStart...");
+  Serial.println(F("\r\nStart..."));
 
   pinMode(TFT_BL, OUTPUT);                // Set backlight pin to output mode
   digitalWrite(TFT_BL, TFT_BACKLIGHT_ON); // Turn backlight on. TFT_BACKLIGHT_ON has been set in the TFT_eSPI library in the User Setup file TTGO_T_Display.h
@@ -48,52 +47,56 @@ void  setup() {
 
   if (!SPIFFS.begin(true)) {
     //SPIFFS.format();
-    Serial.printf("SPIFFS Formatting\r\n");
+    Serial.println(F("SPIFFS Formatting\r\n"));
   }
-
-  buttonA.setTapHandler(clickButtonA);
-  buttonB.setTapHandler(clickButtonB);
-  buttonC.setTapHandler(clickButtonC);
   buttonU.setTapHandler(clickButtonU);
   buttonD.setTapHandler(clickButtonD);
   buttonL.setTapHandler(clickButtonL);
   buttonR.setTapHandler(clickButtonR);
+  buttonA.setTapHandler(clickButtonA);
+  buttonB.setTapHandler(clickButtonB);
+  buttonC.setTapHandler(clickButtonC);
+  game->init();
 }
 
 void  loop() {
-  buttonA.loop();
-  buttonB.loop();
-  buttonC.loop();
   buttonU.loop();
   buttonD.loop();
   buttonL.loop();
   buttonR.loop();
+  buttonA.loop();
+  buttonB.loop();
+  buttonC.loop();
+  if (game != NULL) {
+    if (game->loop()) return;
+    game =  NULL;
+  }
 }
 
 void clickButtonA(Button2& btn) {
-  Serial.println("A");
+  if (game != NULL) game->clickButtonA();
 }
 
 void clickButtonB(Button2& btn) {
-  Serial.println("B");
+  if (game != NULL) game->clickButtonB();
 }
 
 void clickButtonC(Button2& btn) {
-  Serial.println("Center");
+  if (game != NULL) game->clickButtonC();
 }
 
 void clickButtonU(Button2& btn) {
-  Serial.println("Up");
+  if (game != NULL) game->clickButtonU();
 }
 
 void clickButtonD(Button2& btn) {
-  Serial.println("Down");
+  if (game != NULL) game->clickButtonD();
 }
 
 void clickButtonL(Button2& btn) {
-  Serial.println("Left");
+  if (game != NULL) game->clickButtonL();
 }
 
 void clickButtonR(Button2& btn) {
-  Serial.println("Right");
+  if (game != NULL) game->clickButtonR();
 }
