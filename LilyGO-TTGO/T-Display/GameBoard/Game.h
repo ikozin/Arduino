@@ -29,4 +29,40 @@ class Game {
     virtual void clickButtonR() = 0;
 };
 
+class GameArea : public Game {
+  public:
+    GameArea(TFT_eSPI* tft): Game(tft) {}
+  protected:
+    long _moveInterval;
+    long _lastMoveTime;
+
+    boolean _isGameRunning;
+    
+    virtual boolean interact() = 0;
+    virtual void displayScreen() = 0;
+  public:
+    virtual boolean loop(void) {
+      displayScreen();
+      if (_isGameRunning && interact()) return true;
+      debug_printf("stop\r\n");
+      return false;
+    }
+
+    virtual void clickButtonA() {
+      _isGameRunning = false;
+    }
+    
+    virtual void clickButtonB() {
+      _isGameRunning = false;
+    }
+
+    virtual boolean init(void) = 0;
+    virtual void clickButtonC() = 0;
+    virtual void clickButtonU() = 0;
+    virtual void clickButtonD() = 0;
+    virtual void clickButtonL() = 0;
+    virtual void clickButtonR() = 0;
+};
+
+
 #endif

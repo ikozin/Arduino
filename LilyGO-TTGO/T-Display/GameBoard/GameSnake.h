@@ -8,15 +8,11 @@ const int _snake_colCount = 40;
 
 const int _snakeCount = 50;
 
-class Snake : public Game {
+class Snake : public GameArea {
   public:
-    Snake(TFT_eSPI* tft): Game(tft) {}
+    Snake(TFT_eSPI* tft): GameArea(tft) {}
     
     virtual boolean init(void);
-    virtual boolean loop(void);  
-
-    virtual void clickButtonA();
-    virtual void clickButtonB();
     virtual void clickButtonC();
     virtual void clickButtonU();
     virtual void clickButtonD();
@@ -39,14 +35,10 @@ class Snake : public Game {
     TPoint _pos;
     TPoint _move;
 
-    int _moveInterval = 500;
-    int _lastMoveTime = 0;
-
-    int _eventInterval = 2000;
-    int _lastEventTime = 0;
+    long _eventInterval = 2000;
+    long _lastEventTime = 0;
 
     boolean _isWinner = false;
-    boolean _isGameRunning = false;
 
 private:
     void init_area();

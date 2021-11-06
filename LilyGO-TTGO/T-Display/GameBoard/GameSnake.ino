@@ -77,11 +77,6 @@ boolean Snake::nextMove() {
   return true;  
 }
 
-boolean Snake::interact() {
-  if (!nextMove()) return false;
-  return doEvent();
-}
-
 boolean Snake::doEvent() {
   if (millis() - _lastEventTime > _eventInterval) {
     _lastEventTime = millis();
@@ -103,6 +98,11 @@ void Snake::displayBody() {
     cur.y -=_snake[i].y;
   }
   _area[cur.x][cur.y] = ' ';
+}
+
+boolean Snake::interact() {
+  if (!nextMove()) return false;
+  return doEvent();
 }
 
 void Snake::displayScreen() {
@@ -141,24 +141,6 @@ boolean Snake::init() {
   _isGameRunning = true;
   
   return true;
-}
-
-boolean Snake::loop() {
-  displayScreen();
-  if (_isGameRunning && interact()) return true;
-
-  debug_printf("stop");
-  while (true) {};
-  return true;
- 
-}
-
-void Snake::clickButtonA() {
-  _isGameRunning = false;
-}
-
-void Snake::clickButtonB() {
-  _isGameRunning = false;
 }
 
 void Snake::clickButtonC() {

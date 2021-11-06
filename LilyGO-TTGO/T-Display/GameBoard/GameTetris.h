@@ -6,15 +6,11 @@
 const int _tetris_rowCount = 30;
 const int _tetris_colCount = 22;
 
-class Tetris : public Game {
+class Tetris : public GameArea {
   public:
-    Tetris(TFT_eSPI* tft): Game(tft) {}
+    Tetris(TFT_eSPI* tft): GameArea(tft) {}
     
     virtual boolean init(void);
-    virtual boolean loop(void);  
-
-    virtual void clickButtonA();
-    virtual void clickButtonB();
     virtual void clickButtonC();
     virtual void clickButtonU();
     virtual void clickButtonD();
@@ -33,11 +29,8 @@ class Tetris : public Game {
     int _y = 0;
     int _actionCode = -1;
 
-    int _moveInterval = 500;
-    int _lastMoveTime = 0;
-
     boolean _isWinner = false;
-    boolean _isGameRunning = false;
+
   private:
     void init_area();
     boolean interact();

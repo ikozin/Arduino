@@ -148,23 +148,12 @@ boolean Tetris::proceedAction() {
 
 void Tetris::displayScreen() {
   _tft->setCursor(0,0);
-
   for (int row = 0; row < _tetris_rowCount; row++) {
     for (int col = 0; col < _tetris_colCount; col++) {
       _tft->print(_area[row][col]);  
     }
     _tft->println();
   }
-
-  Serial.println("displayScreen");
-  Serial.println("-----------------------");
-  for (int row = 0; row < _tetris_rowCount; row++) {
-    for (int col = 0; col < _tetris_colCount; col++) {
-      Serial.print(_area[row][col]);  
-    }
-    Serial.println();
-  }
-  Serial.println("-----------------------");
 }
 
 boolean Tetris::init() {
@@ -190,30 +179,6 @@ boolean Tetris::init() {
   _isGameRunning = true;
   
   return true;
-}
-
-boolean Tetris::loop() {
-  //delay(1000);
-  displayScreen();
-  if (_isGameRunning && interact()) return true;
-
-  debug_printf("stop\r\n");
-  return false;
- 
-}
-
-void Tetris::clickButtonA() {
-  _isGameRunning = false;
-  _actionCode = 27;
-
-  debug_printf("ButtonA, _actionCode = %d, _isGameRunning = %d\r\n", _actionCode, _isGameRunning);  
-}
-
-void Tetris::clickButtonB() {
-  _isGameRunning = false;
-  _actionCode = 27;
-
-  debug_printf("ButtonB, _actionCode = %d, _isGameRunning = %d\r\n", _actionCode, _isGameRunning);  
 }
 
 void Tetris::clickButtonC() {
