@@ -23,18 +23,6 @@
 #define debug_println(...)
 #endif
 
-/*
-Скетч использует 9912 байт (32%) памяти устройства. Всего доступно 30720 байт.
-Глобальные переменные используют 584 байт (28%) динамической памяти, оставляя 1464 байт для локальных переменных. Максимум: 2048 байт.
-
-Скетч использует 9314 байт (30%) памяти устройства. Всего доступно 30720 байт.
-Глобальные переменные используют 582 байт (28%) динамической памяти, оставляя 1466 байт для локальных переменных. Максимум: 2048 байт.
-
-Скетч использует 8520 байт (27%) памяти устройства. Всего доступно 30720 байт.
-Глобальные переменные используют 399 байт (19%) динамической памяти, оставляя 1649 байт для локальных переменных. Максимум: 2048 байт.
-
-*/
-
 LiquidCrystal lcd(0);  // 0 = I2C LCD address 0x20, 1 = I2C LCD address 0x21
 
 #define BUZZER_PIN  8
@@ -88,7 +76,7 @@ void loop() {
   unsigned long currentMillis = millis();
   if (currentMillis - previousMillis > LOG_PERIOD) {
     previousMillis = currentMillis;
-    cpm = counts * multiplier;//
+    cpm = counts * multiplier;
     usv = float(cpm) / 151;
 
     lcd.setCursor(0, 0);
@@ -100,7 +88,7 @@ void loop() {
     lcd.print(usv);
     lcd.print(" uSv/h  ");
 
-    debug_print(F("Counts = "));
+    debug_print(F("Counts="));
     debug_print(counts);
     debug_print(F(", CPM="));
     debug_print(cpm);
