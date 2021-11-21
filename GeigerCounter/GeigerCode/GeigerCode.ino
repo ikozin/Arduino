@@ -81,6 +81,7 @@ void setup() {
     lcd.write(0xff);
     delay(900);
   }
+  lcd.clear();
 }
 
 void loop() {
@@ -89,12 +90,15 @@ void loop() {
     previousMillis = currentMillis;
     cpm = counts * multiplier;//
     usv = float(cpm) / 151;
-    lcd.clear();
+
+    lcd.setCursor(0, 0);
     lcd.print("CPM=");
     lcd.print(cpm);
+    lcd.print("  ");
+    
     lcd.setCursor(0, 1);
     lcd.print(usv);
-    lcd.print(" uSv/h");
+    lcd.print(" uSv/h  ");
 
     debug_print(F("Counts = "));
     debug_print(counts);
