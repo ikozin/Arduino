@@ -14,15 +14,12 @@
 | ![HC-05](Images/hc05.jpg "HC-05") HC-05 (Bluetooth) | работа с модулем Bluetooth HC-05 |
 | ![HS410561K-32](Images/hs410561k-32.jpg "HS410561K-32") HS410561K-32 | 4-разрядный 7-сегментный индикатор с общим анодом |
 | ![Joystick](Images/joystick.jpg "Joystick") Joystick | Аналоговый джойстик + Змейка на Processig |
-| ![573РФ2](Images/573rf2_board.png "573РФ2") 573РФ2 | Плата расширения для ППЗУ К573РФ2, содержит логику управления напряжением прошивки, для работы необходим повышающий DC-DC |
 | ![Keyboard4x4](Images/keyboard4x4.jpg "Keyboard4x4") Keyboard4x4 | Клавиатура 4 x 4 |
 | KitchenStation |  |
-| ![1533ИР24x2](Images/1533ir24x2_board.png "1533ИР24x2") 1533ИР24x2 | Плата расширения для регистра сдвига К1533ИР24, содержит 2 регистра (16 бит), с подтягивающими резисторами на входах управления |
 | ![1588AS](Images/1588as.jpg "1588AS") LED8x8 - 1588AS | Светодиодная матрица 8x8 красная (LED8x8) |
 | Matrix |  |
 | ![PCF8574](Images/pcf8574_pcb.png "PCF8574") ![PCF8574](Images/pcf8574_io_expanion_board_iic.jpg "PCF8574") PCF8574 | Плата расширения для 8-bit I/O expander (I2C) PCF8574 |
 | ![PCF8574_Button](Images/pcf8574_button_pcb.png "PCF8574_Button") PCF8574_Button | Плата расширения для 8-bit I/O expander (I2C) PCF8574, расширитель клавиатуры - 8 кнопок |
-| Programmer573RF2 | Программатор для ППЗУ К573РФ2, использует платы расширения: "1533ИР24x2", "573РФ2", "PCF8574", "PCF8574_Button", SD Card |
 | Radio | FM Radio (MP1090S) |
 | ![SSD1306](Images/oled_128x64_iic.jpg "SSD1306") ![SSD1306](Images/OLED_128x64_spi.jpg "SSD1306") SSD1306 | I2C - OLED_I2C, SPI - Adafruit_SPI |
 | ![TM1990A](Images/TM1990A.jpg "TM1990A") TM1990A | i-Button reader |
