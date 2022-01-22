@@ -47,7 +47,7 @@
 
 #define IR_INPUT_PIN        13
 #define DO_NOT_USE_FEEDBACK_LED
-#include "TinyIRReceiver.cpp.h"
+  #include "TinyIRReceiver.hpp"
 
 String trafficLevel        = String();
 String weatherDescription  = String();
