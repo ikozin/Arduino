@@ -1,0 +1,112 @@
+<!DOCTYPE HTML>
+<html lang="ru">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta http-equiv="Refresh" content="3660" />
+    <title>ESP32 TTGO T-Display</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" />
+    <style>
+        span {
+            display: inline-block;
+        }
+
+        .w_temp {
+            font-size: 40pt;
+            font-weight: 500;
+        }
+
+        .w_temp_value {
+        }
+
+            .w_temp_value:after {
+                content: '\00B0';
+            }
+
+        .w_icon_img {
+            width: 96px;
+            height: 96px;
+        }
+
+        .w_desc {
+            font-size: 24pt;
+        }
+
+        .w_desc_value::first-letter {
+            text-transform: uppercase;
+        }
+
+        .w_wind {
+            font-size: 16pt;
+        }
+
+        .w_wind_dir::first-letter {
+            text-transform: uppercase;
+        }
+
+        .w_humidity {
+            font-size: 16pt;
+        }
+
+        .w_pressure {
+            font-size: 16pt;
+        }
+    </style>
+</head>
+<body>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js"></script>
+    <br />
+    <div class="container">
+        <div class="row">
+            <form method="post">
+                <fieldset>
+                    <input type="hidden" name="index" value="%index%" />
+                    <div>
+                        <label for="station" class="form-label">Станция:</label>
+                        <select id="station" class="form-select" name="station">%STATION%</select>
+                    </div>
+                    <div>
+                        <label for="volume" class="form-label">Громкость:</label>
+                        <input type="range" class="form-range" name="volume" min="0" max="15" value="%VOLUME%" />
+                    </div>
+                    <div class="form-check form-switch">
+                        <input type="checkbox" class="form-check-input" id="mute" name="mute" %MUTE% />
+                        <label for="mute" class="form-check-label">Выключить</label>
+                    </div>
+                    <input type="submit" class="btn btn-primary" />
+                </fieldset>
+            </form>
+        </div>
+        <br />
+        <div class="row" style="border-style: solid;">
+            <div class="col-auto d-flex align-items-center justify-content-center w_temp">
+                <span class="w_temp_value text-center">%W_TEMP%</span>
+                <img class="w_icon_img" src="%W_ICON%" />
+            </div>
+            <div class="col">
+                <div class="row">
+                    <div class="col-12 w_wind">
+                        <span class="w_wind_title">Ветер</span>
+                        <span class="w_wind_value">%W_WIND_SPEED%</span>
+                        <span class="w_wind_dir">%W_WIND%</span>
+                    </div>
+                    <div class="col-12 w_humidity">
+                        <span class="w_humidity_title">Влажность</span>
+                        <span class="w_humidity_value">%W_DAMPNESS%</span>
+                    </div>
+                    <div class="col-12 w_pressure">
+                        <span class="w_pressure_title">Давление</span>
+                        <span class="w_pressure_value">%W_PRESSURE%</span>
+                    </div>
+                    <div class="col-12 w_desc">
+                        <span class="w_desc_value text-wrap">%W_TYPE%</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br />
+        <a href="alarm.html">Настройки</a>
+    </div>
+</body>
+</html>
