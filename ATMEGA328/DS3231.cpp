@@ -37,6 +37,14 @@ void DS3231::setTime(uint8_t second, uint8_t minute, uint8_t hour)
   Wire.endTransmission();
 }
 
+void DS3231::setAgingOffset(int8_t value)
+{
+  Wire.beginTransmission(DS3231_RTC);
+  Wire.write(0x10);
+  Wire.write(value);
+  Wire.endTransmission();
+}
+
 char* DS3231::getTextDate()
 {
   Wire.beginTransmission(DS3231_RTC);

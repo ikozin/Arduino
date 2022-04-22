@@ -13,6 +13,7 @@ class DS3231
     void begin();
     void setDate(uint8_t day, uint8_t month, uint16_t year);
     void setTime(uint8_t second, uint8_t minute, uint8_t hour);
+    void setAgingOffset(int8_t value);
     char* getTextDate();
     char* getTextTime();
     uint16_t getTime();
