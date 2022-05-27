@@ -41,7 +41,7 @@
   #error Select ESP32 DEV Board
 #endif
 
-#if !defined(ST7789_DRIVER) || TFT_WIDTH != 135 || TFT_HEIGHT != 240
+#if !defined(USER_SETUP_ID) || USER_SETUP_ID != 25
   #error Ошибка настройки TFT_eSPI, необходимо подключить "User_Setups/Setup25_TTGO_T_Display.h"
 #endif
 
@@ -112,7 +112,52 @@ TaskHandle_t displayDeviceTask;
 
 int16_t currentPage  = 0;
 
-alarm_t settings[5] = { {.value = 0xFFFFFFFF170000FF},  {.value = 0},  {.value = 0},  {.value = 0}, {.value = 0} };
+//alarm_t settings[5] = { {.value = 0xFFFFFFFF170000FF},  {.value = 0},  {.value = 0},  {.value = 0}, {.value = 0} };
+alarm_t settings[5] = {
+  {
+    {
+      .Monday = 1,
+      .Tuesday = 1,
+      .Wednesday = 1,
+      .Thursday = 1,
+      .Friday = 1,
+      .Saturday = 1,
+      .Sunday = 1,
+      .IsMute = 1,
+
+      .Reserv = 0 ,
+      
+      .Minute = 0,
+      .Hour = 23,
+
+      .Index = -1,
+      .Volume = -1,
+    }
+  },  {.value = 0},  {.value = 0},  {.value = 0}, {.value = 0} };
+/*
+typedef union alarm {
+  struct {
+    uint8_t Monday    : 1;  // 0
+    uint8_t Tuesday   : 1;  // 1
+    uint8_t Wednesday : 1;  // 2
+    uint8_t Thursday  : 1;  // 3
+    uint8_t Friday    : 1;  // 4
+    uint8_t Saturday  : 1;  // 5
+    uint8_t Sunday    : 1;  // 6
+    uint8_t IsMute    : 1;  // 7
+
+    uint8_t Reserv;         // 8-15
+
+    uint8_t Minute;         // 16-23
+    uint8_t Hour;           // 24-31
+
+    int16_t Index;          // 32-47
+    int16_t Volume;         // 48-63
+
+  };
+  uint64_t value;
+} alarm_t;
+*/
 #define MaxSettingsCount  (sizeof(settings) / sizeof(settings[0]))
 uint16_t settingsCount = 1;
 
