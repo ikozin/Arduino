@@ -1,3 +1,0 @@
-ATMEGA328\PCB\v2.0\
-ATMEGA328\Modules\
-LilyGO-TTGO\T-Display\PCB\v1.0
