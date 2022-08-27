@@ -146,308 +146,358 @@
 [145] Corbel Italic
 [146] Corbel Light
 [147] Corbel Light Italic
-[148] Courier New
-[149] Courier New Bold
-[150] Courier New Bold Italic
-[151] Courier New Italic
-[152] Courier New Курсив
-[153] Courier New Полужирный
-[154] Courier New Полужирный Курсив
-[155] Curlz MT
-[156] Dialog.bold
-[157] Dialog.bolditalic
-[158] Dialog.italic
-[159] Dialog.plain
-[160] DialogInput.bold
-[161] DialogInput.bolditalic
-[162] DialogInput.italic
-[163] DialogInput.plain
-[164] Dubai Bold
-[165] Dubai Light
-[166] Dubai Medium
-[167] Dubai Regular
-[168] Ebrima
-[169] Ebrima Полужирный
-[170] Edwardian Script ITC
-[171] Elephant
-[172] Elephant Курсив
-[173] Engravers MT
-[174] Eras Bold ITC
-[175] Eras Demi ITC
-[176] Eras Light ITC
-[177] Eras Medium ITC
-[178] Felix Titling
-[179] Footlight MT Light
-[180] Forte
-[181] Franklin Gothic Book
-[182] Franklin Gothic Book Курсив
-[183] Franklin Gothic Demi
-[184] Franklin Gothic Demi Cond
-[185] Franklin Gothic Demi Курсив
-[186] Franklin Gothic Heavy
-[187] Franklin Gothic Heavy Курсив
-[188] Franklin Gothic Medium
-[189] Franklin Gothic Medium Cond
-[190] Franklin Gothic Medium Курсив
-[191] Freestyle Script
-[192] French Script MT
-[193] Gabriola
-[194] Gadugi
-[195] Gadugi Bold
-[196] Garamond
-[197] Garamond Курсив
-[198] Garamond Полужирный
-[199] Georgia
-[200] Georgia Курсив
-[201] Georgia Полужирный
-[202] Georgia Полужирный Курсив
-[203] Gigi
-[204] Gill Sans MT
-[205] Gill Sans MT Condensed
-[206] Gill Sans MT Ext Condensed Bold
-[207] Gill Sans MT Курсив
-[208] Gill Sans MT Полужирный
-[209] Gill Sans MT Полужирный Курсив
-[210] Gill Sans Ultra Bold
-[211] Gill Sans Ultra Bold Condensed
-[212] Gloucester MT Extra Condensed
-[213] Goudy Old Style
-[214] Goudy Old Style Курсив
-[215] Goudy Old Style Полужирный
-[216] Goudy Stout
-[217] HP Simplified
-[218] HP Simplified Bold
-[219] HP Simplified Bold Italic
-[220] HP Simplified Hans Light
-[221] HP Simplified Hans Regular
-[222] HP Simplified Italic
-[223] HP Simplified Jpan Light
-[224] HP Simplified Jpan Regular
-[225] HP Simplified Light
-[226] HP Simplified Light Italic
-[227] Haettenschweiler
-[228] Harlow Solid Italic
-[229] Harrington
-[230] High Tower Text
-[231] High Tower Text Курсив
-[232] HoloLens MDL2 Assets
-[233] Impact
-[234] Imprint MT Shadow
-[235] Informal Roman
-[236] Ink Free
-[237] Javanese Text
-[238] Jokerman
-[239] Juice ITC
-[240] Kristen ITC
-[241] Kunstler Script
-[242] Leelawadee UI
-[243] Leelawadee UI Semilight Обычный
-[244] Leelawadee UI Полужирный
-[245] Lucida Bright
-[246] Lucida Bright Demibold
-[247] Lucida Bright Demibold Italic
-[248] Lucida Bright Italic
-[249] Lucida Bright Regular
-[250] Lucida Calligraphy Italic
-[251] Lucida Console
-[252] Lucida Fax Demibold
-[253] Lucida Fax Demibold Italic
-[254] Lucida Fax Italic
-[255] Lucida Fax Regular
-[256] Lucida Handwriting Italic
-[257] Lucida Sans Demibold
-[258] Lucida Sans Demibold Italic
-[259] Lucida Sans Demibold Roman
-[260] Lucida Sans Italic
-[261] Lucida Sans Regular
-[262] Lucida Sans Typewriter Bold
-[263] Lucida Sans Typewriter Bold Oblique
-[264] Lucida Sans Typewriter Oblique
-[265] Lucida Sans Typewriter Regular
-[266] Lucida Sans Unicode
-[267] MS Gothic
-[268] MS Outlook
-[269] MS PGothic
-[270] MS Reference Sans Serif
-[271] MS Reference Specialty
-[272] MS UI Gothic
-[273] MT Extra
-[274] MV Boli
-[275] Magneto Полужирный
-[276] Maiandra GD
-[277] Malgun Gothic
-[278] Malgun Gothic Bold
-[279] Malgun Gothic Semilight
-[280] Marlett
-[281] Matura MT Script Capitals
-[282] Microsoft Himalaya
-[283] Microsoft JhengHei
-[284] Microsoft JhengHei Light
-[285] Microsoft JhengHei UI
-[286] Microsoft JhengHei UI Light
-[287] Microsoft JhengHei UI Полужирный
-[288] Microsoft JhengHei Полужирный
-[289] Microsoft New Tai Lue
-[290] Microsoft New Tai Lue Bold
-[291] Microsoft PhagsPa
-[292] Microsoft PhagsPa Bold
-[293] Microsoft Sans Serif
-[294] Microsoft Tai Le
-[295] Microsoft Tai Le Bold
-[296] Microsoft YaHei
-[297] Microsoft YaHei Light
-[298] Microsoft YaHei UI
-[299] Microsoft YaHei UI Light
-[300] Microsoft YaHei UI Полужирный
-[301] Microsoft YaHei Полужирный
-[302] Microsoft Yi Baiti
-[303] MingLiU-ExtB
-[304] MingLiU_HKSCS-ExtB
-[305] Mistral
-[306] Modern No. 20
-[307] Mongolian Baiti
-[308] Monospaced.bold
-[309] Monospaced.bolditalic
-[310] Monospaced.italic
-[311] Monospaced.plain
-[312] Monotype Corsiva
-[313] Myanmar Text
-[314] Myanmar Text Bold
-[315] NSimSun
-[316] Niagara Engraved
-[317] Niagara Solid
-[318] Nirmala UI
-[319] Nirmala UI Semilight
-[320] Nirmala UI Полужирный
-[321] OCR A Extended
-[322] Old English Text MT
-[323] Onyx
-[324] PMingLiU-ExtB
-[325] Palace Script MT
-[326] Palatino Linotype
-[327] Palatino Linotype Курсив
-[328] Palatino Linotype Полужирный
-[329] Palatino Linotype Полужирный Курсив
-[330] Papyrus
-[331] Parchment
-[332] Perpetua
-[333] Perpetua Titling MT Light
-[334] Perpetua Titling MT Полужирный
-[335] Perpetua Курсив
-[336] Perpetua Полужирный
-[337] Perpetua Полужирный Курсив
-[338] Playbill
-[339] Poor Richard
-[340] Pristina
-[341] Rage Italic
-[342] Ravie
-[343] Rockwell
-[344] Rockwell Condensed
-[345] Rockwell Condensed Полужирный
-[346] Rockwell Extra Bold
-[347] Rockwell Курсив
-[348] Rockwell Полужирный
-[349] Rockwell Полужирный Курсив
-[350] SansSerif.bold
-[351] SansSerif.bolditalic
-[352] SansSerif.italic
-[353] SansSerif.plain
-[354] Script MT Bold
-[355] Segoe MDL2 Assets
-[356] Segoe Print
-[357] Segoe Print Bold
-[358] Segoe Script
-[359] Segoe Script Bold
-[360] Segoe UI
-[361] Segoe UI Black
-[362] Segoe UI Black Italic
-[363] Segoe UI Emoji
-[364] Segoe UI Historic
-[365] Segoe UI Light
-[366] Segoe UI Light Italic
-[367] Segoe UI Semibold
-[368] Segoe UI Semibold Italic
-[369] Segoe UI Semilight
-[370] Segoe UI Semilight Italic
-[371] Segoe UI Symbol
-[372] Segoe UI Курсив
-[373] Segoe UI Полужирный
-[374] Segoe UI Полужирный Курсив
-[375] Serif.bold
-[376] Serif.bolditalic
-[377] Serif.italic
-[378] Serif.plain
-[379] Showcard Gothic
-[380] SimSun
-[381] SimSun-ExtB
-[382] Sitka Banner
-[383] Sitka Banner Bold
-[384] Sitka Banner Bold Italic
-[385] Sitka Banner Italic
-[386] Sitka Display
-[387] Sitka Display Bold
-[388] Sitka Display Bold Italic
-[389] Sitka Display Italic
-[390] Sitka Heading
-[391] Sitka Heading Bold
-[392] Sitka Heading Bold Italic
-[393] Sitka Heading Italic
-[394] Sitka Small
-[395] Sitka Small Bold
-[396] Sitka Small Bold Italic
-[397] Sitka Small Italic
-[398] Sitka Subheading
-[399] Sitka Subheading Bold
-[400] Sitka Subheading Bold Italic
-[401] Sitka Subheading Italic
-[402] Sitka Text
-[403] Sitka Text Bold
-[404] Sitka Text Bold Italic
-[405] Sitka Text Italic
-[406] Snap ITC
-[407] Stencil
-[408] Sylfaen
-[409] Symbol
-[410] Tahoma
-[411] Tahoma Полужирный
-[412] TeamViewer15
-[413] Tempus Sans ITC
-[414] Times New Roman
-[415] Times New Roman Bold
-[416] Times New Roman Bold Italic
-[417] Times New Roman Italic
-[418] Times New Roman Курсив
-[419] Times New Roman Полужирный
-[420] Times New Roman Полужирный Курсив
-[421] Trebuchet MS
-[422] Trebuchet MS Курсив
-[423] Trebuchet MS Полужирный
-[424] Trebuchet MS Полужирный Курсив
-[425] Tw Cen MT
-[426] Tw Cen MT Condensed
-[427] Tw Cen MT Condensed Extra Bold
-[428] Tw Cen MT Condensed Полужирный
-[429] Tw Cen MT Курсив
-[430] Tw Cen MT Полужирный
-[431] Tw Cen MT Полужирный Курсив
-[432] Verdana
-[433] Verdana Курсив
-[434] Verdana Полужирный
-[435] Verdana Полужирный Курсив
-[436] Viner Hand ITC
-[437] Vivaldi Курсив
-[438] Vladimir Script
-[439] Webdings
-[440] Wide Latin
-[441] Wingdings
-[442] Wingdings 2
-[443] Wingdings 3
-[444] Yu Gothic Bold
-[445] Yu Gothic Light
-[446] Yu Gothic Medium
-[447] Yu Gothic Regular
-[448] Yu Gothic UI Bold
-[449] Yu Gothic UI Light
-[450] Yu Gothic UI Regular
-[451] Yu Gothic UI Semibold
-[452] Yu Gothic UI Semilight
+[148] Cormorant Bold
+[149] Cormorant Bold Italic
+[150] Cormorant Italic
+[151] Cormorant Regular
+[152] Courier New
+[153] Courier New Bold
+[154] Courier New Bold Italic
+[155] Courier New Italic
+[156] Courier New Курсив
+[157] Courier New Полужирный
+[158] Courier New Полужирный Курсив
+[159] Curlz MT
+[160] Dialog.bold
+[161] Dialog.bolditalic
+[162] Dialog.italic
+[163] Dialog.plain
+[164] DialogInput.bold
+[165] DialogInput.bolditalic
+[166] DialogInput.italic
+[167] DialogInput.plain
+[168] Dubai Bold
+[169] Dubai Light
+[170] Dubai Medium
+[171] Dubai Regular
+[172] Ebrima
+[173] Ebrima Полужирный
+[174] Edwardian Script ITC
+[175] Elephant
+[176] Elephant Курсив
+[177] Engravers MT
+[178] Eras Bold ITC
+[179] Eras Demi ITC
+[180] Eras Light ITC
+[181] Eras Medium ITC
+[182] Felix Titling
+[183] Footlight MT Light
+[184] Forte
+[185] Franklin Gothic Book
+[186] Franklin Gothic Book Курсив
+[187] Franklin Gothic Demi
+[188] Franklin Gothic Demi Cond
+[189] Franklin Gothic Demi Курсив
+[190] Franklin Gothic Heavy
+[191] Franklin Gothic Heavy Курсив
+[192] Franklin Gothic Medium
+[193] Franklin Gothic Medium Cond
+[194] Franklin Gothic Medium Курсив
+[195] Freestyle Script
+[196] French Script MT
+[197] GOST Type AU
+[198] GOST Type BU
+[199] GOST type A
+[200] GOST type B
+[201] Gabriola
+[202] Gadugi
+[203] Gadugi Bold
+[204] Garamond
+[205] Garamond Курсив
+[206] Garamond Полужирный
+[207] Georgia
+[208] Georgia Курсив
+[209] Georgia Полужирный
+[210] Georgia Полужирный Курсив
+[211] Gigi
+[212] Gill Sans MT
+[213] Gill Sans MT Condensed
+[214] Gill Sans MT Ext Condensed Bold
+[215] Gill Sans MT Курсив
+[216] Gill Sans MT Полужирный
+[217] Gill Sans MT Полужирный Курсив
+[218] Gill Sans Ultra Bold
+[219] Gill Sans Ultra Bold Condensed
+[220] Gloucester MT Extra Condensed
+[221] Goudy Old Style
+[222] Goudy Old Style Курсив
+[223] Goudy Old Style Полужирный
+[224] Goudy Stout
+[225] HP Simplified
+[226] HP Simplified Bold
+[227] HP Simplified Bold Italic
+[228] HP Simplified Hans Light
+[229] HP Simplified Hans Regular
+[230] HP Simplified Italic
+[231] HP Simplified Jpan Light
+[232] HP Simplified Jpan Regular
+[233] HP Simplified Light
+[234] HP Simplified Light Italic
+[235] Haettenschweiler
+[236] Harlow Solid Italic
+[237] Harrington
+[238] High Tower Text
+[239] High Tower Text Курсив
+[240] HoloLens MDL2 Assets
+[241] Impact
+[242] Imprint MT Shadow
+[243] Informal Roman
+[244] Ink Free
+[245] Javanese Text
+[246] Jokerman
+[247] Juice ITC
+[248] Kristen ITC
+[249] Kunstler Script
+[250] Leelawadee UI
+[251] Leelawadee UI Semilight Обычный
+[252] Leelawadee UI Полужирный
+[253] Lucida Bright
+[254] Lucida Bright Demibold
+[255] Lucida Bright Demibold Italic
+[256] Lucida Bright Italic
+[257] Lucida Bright Regular
+[258] Lucida Calligraphy Italic
+[259] Lucida Console
+[260] Lucida Fax Demibold
+[261] Lucida Fax Demibold Italic
+[262] Lucida Fax Italic
+[263] Lucida Fax Regular
+[264] Lucida Handwriting Italic
+[265] Lucida Sans Demibold
+[266] Lucida Sans Demibold Italic
+[267] Lucida Sans Demibold Roman
+[268] Lucida Sans Italic
+[269] Lucida Sans Regular
+[270] Lucida Sans Typewriter Bold
+[271] Lucida Sans Typewriter Bold Oblique
+[272] Lucida Sans Typewriter Oblique
+[273] Lucida Sans Typewriter Regular
+[274] Lucida Sans Unicode
+[275] MS Gothic
+[276] MS Outlook
+[277] MS PGothic
+[278] MS Reference Sans Serif
+[279] MS Reference Specialty
+[280] MS UI Gothic
+[281] MT Extra
+[282] MV Boli
+[283] Magneto Полужирный
+[284] Maiandra GD
+[285] Malgun Gothic
+[286] Malgun Gothic Bold
+[287] Malgun Gothic Semilight
+[288] Marlett
+[289] Matura MT Script Capitals
+[290] Microsoft Himalaya
+[291] Microsoft JhengHei
+[292] Microsoft JhengHei Light
+[293] Microsoft JhengHei UI
+[294] Microsoft JhengHei UI Light
+[295] Microsoft JhengHei UI Полужирный
+[296] Microsoft JhengHei Полужирный
+[297] Microsoft New Tai Lue
+[298] Microsoft New Tai Lue Bold
+[299] Microsoft PhagsPa
+[300] Microsoft PhagsPa Bold
+[301] Microsoft Sans Serif
+[302] Microsoft Tai Le
+[303] Microsoft Tai Le Bold
+[304] Microsoft YaHei
+[305] Microsoft YaHei Light
+[306] Microsoft YaHei UI
+[307] Microsoft YaHei UI Light
+[308] Microsoft YaHei UI Полужирный
+[309] Microsoft YaHei Полужирный
+[310] Microsoft Yi Baiti
+[311] MingLiU-ExtB
+[312] MingLiU_HKSCS-ExtB
+[313] Mistral
+[314] Modern No. 20
+[315] Mongolian Baiti
+[316] Monospaced.bold
+[317] Monospaced.bolditalic
+[318] Monospaced.italic
+[319] Monospaced.plain
+[320] Monotype Corsiva
+[321] Myanmar Text
+[322] Myanmar Text Bold
+[323] NSimSun
+[324] Niagara Engraved
+[325] Niagara Solid
+[326] Nirmala UI
+[327] Nirmala UI Semilight
+[328] Nirmala UI Полужирный
+[329] OCR A Extended
+[330] Old English Text MT
+[331] Onyx
+[332] OpenSymbol
+[333] PMingLiU-ExtB
+[334] PT Astra Sans
+[335] PT Astra Sans Bold
+[336] PT Astra Sans Bold Italic
+[337] PT Astra Sans Italic
+[338] PT Astra Serif Bold
+[339] PT Astra Serif Bold Italic
+[340] PT Astra Serif Italic
+[341] PT Astra Serif Regular
+[342] PT Sans
+[343] PT Sans Bold
+[344] PT Sans Bold Italic
+[345] PT Sans Italic
+[346] PT Serif
+[347] PT Serif Bold
+[348] PT Serif Bold Italic
+[349] PT Serif Italic
+[350] Palace Script MT
+[351] Palatino Linotype
+[352] Palatino Linotype Курсив
+[353] Palatino Linotype Полужирный
+[354] Palatino Linotype Полужирный Курсив
+[355] Papyrus
+[356] Parchment
+[357] Perpetua
+[358] Perpetua Titling MT Light
+[359] Perpetua Titling MT Полужирный
+[360] Perpetua Курсив
+[361] Perpetua Полужирный
+[362] Perpetua Полужирный Курсив
+[363] Playbill
+[364] Poor Richard
+[365] Pristina
+[366] Rage Italic
+[367] Ravie
+[368] Rockwell
+[369] Rockwell Condensed
+[370] Rockwell Condensed Полужирный
+[371] Rockwell Extra Bold
+[372] Rockwell Курсив
+[373] Rockwell Полужирный
+[374] Rockwell Полужирный Курсив
+[375] SansSerif.bold
+[376] SansSerif.bolditalic
+[377] SansSerif.italic
+[378] SansSerif.plain
+[379] Script MT Bold
+[380] Segoe MDL2 Assets
+[381] Segoe Print
+[382] Segoe Print Bold
+[383] Segoe Script
+[384] Segoe Script Bold
+[385] Segoe UI
+[386] Segoe UI Black
+[387] Segoe UI Black Italic
+[388] Segoe UI Emoji
+[389] Segoe UI Historic
+[390] Segoe UI Light
+[391] Segoe UI Light Italic
+[392] Segoe UI Semibold
+[393] Segoe UI Semibold Italic
+[394] Segoe UI Semilight
+[395] Segoe UI Semilight Italic
+[396] Segoe UI Symbol
+[397] Segoe UI Курсив
+[398] Segoe UI Полужирный
+[399] Segoe UI Полужирный Курсив
+[400] Serif.bold
+[401] Serif.bolditalic
+[402] Serif.italic
+[403] Serif.plain
+[404] Showcard Gothic
+[405] SimSun
+[406] SimSun-ExtB
+[407] Sitka Banner
+[408] Sitka Banner Bold
+[409] Sitka Banner Bold Italic
+[410] Sitka Banner Italic
+[411] Sitka Display
+[412] Sitka Display Bold
+[413] Sitka Display Bold Italic
+[414] Sitka Display Italic
+[415] Sitka Heading
+[416] Sitka Heading Bold
+[417] Sitka Heading Bold Italic
+[418] Sitka Heading Italic
+[419] Sitka Small
+[420] Sitka Small Bold
+[421] Sitka Small Bold Italic
+[422] Sitka Small Italic
+[423] Sitka Subheading
+[424] Sitka Subheading Bold
+[425] Sitka Subheading Bold Italic
+[426] Sitka Subheading Italic
+[427] Sitka Text
+[428] Sitka Text Bold
+[429] Sitka Text Bold Italic
+[430] Sitka Text Italic
+[431] Snap ITC
+[432] Stencil
+[433] Sylfaen
+[434] Symbol
+[435] Symbol type A
+[436] Symbol type B
+[437] Tahoma
+[438] Tahoma Полужирный
+[439] Tempus Sans ITC
+[440] Times New Roman
+[441] Times New Roman Bold
+[442] Times New Roman Bold Italic
+[443] Times New Roman Italic
+[444] Times New Roman Курсив
+[445] Times New Roman Полужирный
+[446] Times New Roman Полужирный Курсив
+[447] Trebuchet MS
+[448] Trebuchet MS Курсив
+[449] Trebuchet MS Полужирный
+[450] Trebuchet MS Полужирный Курсив
+[451] Tw Cen MT
+[452] Tw Cen MT Condensed
+[453] Tw Cen MT Condensed Extra Bold
+[454] Tw Cen MT Condensed Полужирный
+[455] Tw Cen MT Курсив
+[456] Tw Cen MT Полужирный
+[457] Tw Cen MT Полужирный Курсив
+[458] Verdana
+[459] Verdana Курсив
+[460] Verdana Полужирный
+[461] Verdana Полужирный Курсив
+[462] Viner Hand ITC
+[463] Vivaldi Курсив
+[464] Vladimir Script
+[465] Webdings
+[466] Wide Latin
+[467] Wingdings
+[468] Wingdings 2
+[469] Wingdings 3
+[470] XO Caliburn
+[471] XO Caliburn Bold
+[472] XO Caliburn Bold Italic
+[473] XO Caliburn Italic
+[474] XO Courser
+[475] XO Courser Bold
+[476] XO Courser Bold Italic
+[477] XO Courser Italic
+[478] XO Oriel
+[479] XO Oriel Bold
+[480] XO Oriel Bold Italic
+[481] XO Oriel Condensed
+[482] XO Oriel Condensed Bold
+[483] XO Oriel Condensed Bold Italic
+[484] XO Oriel Condensed Italic
+[485] XO Oriel Italic
+[486] XO Symbol
+[487] XO Tahion
+[488] XO Tahion Bold
+[489] XO Thames
+[490] XO Thames Bold
+[491] XO Thames Bold Italic
+[492] XO Thames Italic
+[493] XO Windy
+[494] Yu Gothic Bold
+[495] Yu Gothic Light
+[496] Yu Gothic Medium
+[497] Yu Gothic Regular
+[498] Yu Gothic UI Bold
+[499] Yu Gothic UI Light
+[500] Yu Gothic UI Regular
+[501] Yu Gothic UI Semibold
+[502] Yu Gothic UI Semilight

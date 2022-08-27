@@ -21,4 +21,6 @@ extern uint16_t listSize;
 
 extern uint16_t fileData[8192];
 
+void logTime();
+
 #endif  //_MAIN_H_

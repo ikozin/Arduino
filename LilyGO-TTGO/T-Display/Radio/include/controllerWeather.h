@@ -23,6 +23,7 @@ class ControllerWeather : public Controller {
     protected:
         virtual void OnHandle();
     private:
+        uint16_t ColorToRGB565(const uint8_t r, const uint8_t g, const uint8_t b);
         char* getMatch(const char* text, const char* pattern, String& value, const char first, const char last);
 };
 

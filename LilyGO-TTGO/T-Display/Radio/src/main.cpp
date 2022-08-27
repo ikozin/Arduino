@@ -129,13 +129,13 @@ void btnEncoderLongClick(Button2& b);
 
 void setDisplayPage(int16_t page);
 
-// void logTime();
 // void listDir(const char* dirname);
 
 uint16_t fileData[8192];
 
 void setup() {
   Serial.begin(9600);
+  while(!Serial);
   delay(5000);
   // Serial.printf("\r\n");
   // Serial.printf("\r\n");
@@ -197,8 +197,7 @@ void setup() {
   WiFi.begin(ssid.c_str(), pswd.c_str());
   while (WiFi.status() != WL_CONNECTED) {
     tft.printf(".");
-    delay(500);
-    yield();
+    vTaskDelay(500 / portTICK_RATE_MS);
   }
   tft.printf("\r\nconnected!\r\nip: %s\r\n", WiFi.localIP().toString().c_str());
   configTime(prefs.getInt("tz", 10800), 0, "pool.ntp.org");
@@ -220,8 +219,6 @@ void setup() {
   btnEncoder.setLongClickTime(500);
   btnEncoder.setLongClickHandler(btnEncoderLongClick);  
 
-  //logTime();
- 
   setDisplayPage(prefs.getInt("page", 0));
 }
 
@@ -234,7 +231,7 @@ void loop() {
 
 void btnEncoderClick(Button2& b) {
   if (currentHandle == &ControllerRadio::changeChannel) {
-     currentHandle = &ControllerRadio::changeVolume;
+    currentHandle = &ControllerRadio::changeVolume;
   }
   else {
     currentHandle = &ControllerRadio::changeChannel;
@@ -260,14 +257,13 @@ void setDisplayPage(int16_t page) {
   xSemaphoreGive(currentView->GetEvent());
 }
 
-// void logTime() {
-//   char strftime_buf[64];
-//   struct tm timeinfo;
-//   getLocalTime(&timeinfo);
-//   strftime(strftime_buf, sizeof(strftime_buf), "%c", &timeinfo);
-//   tft.printf("%s\r\n", strftime_buf);
-//   Serial.printf("%s\r\n", strftime_buf);
-// }
+void logTime() {
+  char strftime_buf[64];
+  struct tm timeinfo;
+  getLocalTime(&timeinfo);
+  strftime(strftime_buf, sizeof(strftime_buf), "%c", &timeinfo);
+  Serial.printf("%s\r\n", strftime_buf);
+}
 
 // void listDir(const char* dirname) {
 //   Serial.printf("Listing directory: %s\r\n", dirname);

@@ -55,7 +55,7 @@ void ViewRadio::displayFreq() {
 
 void ViewRadio::OnHandle() {
   // Serial.printf("%s\r\n", _name);
-  _tft->fillScreen(TFT_BLACK);
+  _tft->fillScreen(TFT_SKYBLUE);
   _tft->setTextColor(TFT_MAGENTA);
 
   _tft->loadFont(FONT_SEGOE_32);

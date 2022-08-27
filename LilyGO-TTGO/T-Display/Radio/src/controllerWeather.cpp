@@ -23,39 +23,6 @@ ControllerWeather::ControllerWeather(const char* name) : Controller(name) {
     weatherTemperature.reserve(16);
 }
 
-// Возврат: указатель на последний обработанный символ, мелкая оптимизация,
-// чтобы каждый раз не начинать с начала,
-// в связи с этим ВАЖЕН ПОРЯДОК ПОИСКА ЗНАЧЕНИЙ.
-char* ControllerWeather::getMatch(const char* text, const char* pattern, String& value, const char first, const char last) {
-    if (text == NULL ) return NULL;
-    char* delimeter = strchr(pattern, '|');
-    if (delimeter == NULL) {
-        char* begin = strstr(text, pattern);
-        if (begin == NULL) return NULL;
-        begin += strlen(pattern);
-        while (*begin++ != first);
-        char* end = strchr(begin, last);
-        *end = '\0';
-        value = begin;
-        *end = last;
-        return end + 1;
-    }
-    *delimeter = '\0';
-    char* begin = strstr(text, pattern);
-    if (begin == NULL) {
-        *delimeter = '|';
-        return NULL;
-    }
-    begin += strlen(pattern);
-    *delimeter++ = '|';
-    return getMatch(begin, delimeter, value, first, last);
-}
-
-/*
-uint16_t ColorToRGB565(const uint8_t r, const uint8_t g, const uint8_t b) {
-  return (uint16_t)(((r & 0b11111000) << 8) | ((g & 0b11111100) << 3) | (b >> 3));
-}
-*/
 void ControllerWeather::OnHandle() {
     HTTPClient httpClient;
     for (;;) {
@@ -89,18 +56,20 @@ void ControllerWeather::OnHandle() {
                 windFileName.concat(F(".png"));
                 windFileName = "/icon" + windFileName;
         
-                // Serial.printf("Yandex Weather Core = %d\r\n", xPortGetCoreID());
-                // Serial.printf("Трафик:        %s\r\n" ,trafficLevel.c_str());
-                // Serial.printf("Погода:        %s\r\n" ,weatherDescription.c_str());
-                // Serial.printf("Url:           %s\r\n" ,weatherUrlIcon.c_str());
-                // Serial.printf("Скорость ветра:%s\r\n" ,weatherWindSpeed.c_str());
-                // Serial.printf("Ветер:         %s\r\n" ,weatherWindType.c_str());
-                // Serial.printf("Влажность:     %s\r\n" ,weatherDampness.c_str());
-                // Serial.printf("Давление:      %s\r\n" ,weatherPressure.c_str());
-                // Serial.printf("Температура:   %s\r\n" ,weatherTemperature.c_str());
-                // Serial.printf("file icon:     %s\r\n" ,iconFileName.c_str());
-                // Serial.printf("file wind:     %s\r\n" ,windFileName.c_str());
-                // Serial.printf("\r\n");
+                logTime();
+                Serial.printf("Yandex Weather\r\n");
+                Serial.printf("Core           %d\r\n", xPortGetCoreID());
+                Serial.printf("Трафик:        %s\r\n" ,trafficLevel.c_str());
+                Serial.printf("Погода:        %s\r\n" ,weatherDescription.c_str());
+                Serial.printf("Url:           %s\r\n" ,weatherUrlIcon.c_str());
+                Serial.printf("Скорость ветра:%s\r\n" ,weatherWindSpeed.c_str());
+                Serial.printf("Ветер:         %s\r\n" ,weatherWindType.c_str());
+                Serial.printf("Влажность:     %s\r\n" ,weatherDampness.c_str());
+                Serial.printf("Давление:      %s\r\n" ,weatherPressure.c_str());
+                Serial.printf("Температура:   %s\r\n" ,weatherTemperature.c_str());
+                Serial.printf("file icon:     %s\r\n" ,iconFileName.c_str());
+                Serial.printf("file wind:     %s\r\n" ,windFileName.c_str());
+                Serial.printf("\r\n");
             }
         // } else {
         //     Serial.printf("\r\n[HTTP] GET, error: %d\r\n", httpCode);
@@ -109,4 +78,36 @@ void ControllerWeather::OnHandle() {
         xSemaphoreGive(_updateEvent);
         vTaskDelay(UPDATE_WEATHER_TIME);
     }
+}
+
+uint16_t ControllerWeather::ColorToRGB565(const uint8_t r, const uint8_t g, const uint8_t b) {
+  return (uint16_t)(((r & 0b11111000) << 8) | ((g & 0b11111100) << 3) | (b >> 3));
+}
+
+// Возврат: указатель на последний обработанный символ, мелкая оптимизация,
+// чтобы каждый раз не начинать с начала,
+// в связи с этим ВАЖЕН ПОРЯДОК ПОИСКА ЗНАЧЕНИЙ.
+char* ControllerWeather::getMatch(const char* text, const char* pattern, String& value, const char first, const char last) {
+    if (text == NULL ) return NULL;
+    char* delimeter = strchr(pattern, '|');
+    if (delimeter == NULL) {
+        char* begin = strstr(text, pattern);
+        if (begin == NULL) return NULL;
+        begin += strlen(pattern);
+        while (*begin++ != first);
+        char* end = strchr(begin, last);
+        *end = '\0';
+        value = begin;
+        *end = last;
+        return end + 1;
+    }
+    *delimeter = '\0';
+    char* begin = strstr(text, pattern);
+    if (begin == NULL) {
+        *delimeter = '|';
+        return NULL;
+    }
+    begin += strlen(pattern);
+    *delimeter++ = '|';
+    return getMatch(begin, delimeter, value, first, last);
 }

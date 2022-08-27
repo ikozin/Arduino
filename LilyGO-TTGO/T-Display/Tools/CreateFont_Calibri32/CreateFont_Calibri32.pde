@@ -146,7 +146,7 @@ static final int[] unicodeBlocks = {
 
 // Here we specify particular individual Unicodes to be included (appended at end of selected range)
 static final int[] specificUnicodes = {
-   0x002B, 0x002C, 0x002D, 0x002E, 0x005B, 0x005D,                     // + , - . [ ]
+   0x0025, 0x002B, 0x002C, 0x002D, 0x002E, 0x005B, 0x005D, 0x00B0, // % + , - . [ ] °
 };
 
 //                       >>>>>>>>>> USER CONFIGURED PARAMETERS END HERE <<<<<<<<<<
