@@ -1,10 +1,7 @@
 #include <Arduino.h>
-#include <Wire.h>
 #include <WiFi.h>
 #include <Preferences.h>
-#include <FS.h>
 #include <SPIFFS.h>
-#include <HTTPClient.h>
 #include <Button2.h>
 #include <TFT_eSPI.h>
 #include <ESP32Encoder.h>
@@ -18,9 +15,13 @@
 #include "viewWeather.h"
 
 #include "controller.h"
-#include "controllerRadio.h"
+#include "controllerAlarmClock.h"
 #include "controllerDevice.h"
+#include "controllerRadio.h"
+#include "controllerRadioStorage.h"
 #include "controllerWeather.h"
+
+#include <..\..\tools\sdk\esp32\include\lwip\include\apps\esp_sntp.h>
 
 //#include "IrRemote_CarMP3.h"
 //#include "alarm.h"
@@ -37,7 +38,7 @@
 TFT_eSPI tft = TFT_eSPI(TFT_WIDTH, TFT_HEIGHT); // 135x240
 
 Preferences prefs = Preferences();
-AsyncWebServer server = AsyncWebServer(80);
+//AsyncWebServer server = AsyncWebServer(80);
 
 #define ENCODER_PIN_A   37
 #define ENCODER_PIN_B   38
@@ -50,62 +51,8 @@ String pswd         = "";
 
 const char* fileRadio = "/radiolist.dat";
 
-RadioItem_t radioList[RADIO_MAX] = {
-  {  875, "БИЗНЕС-FM" },
-  {  879, "Like FM" },
-  {  883, "Радио Ретро FM" },
-  {  887, "Юмор FM" },
-  {  891, "Радио Джаз" },
-  {  895, "Радио Мегаполис FM" },
-  {  899, "Страна FM" },
-  {  903, "Авто Радио" },
-  {  908, "Relax-FM" },
-  {  912, "Радио Эхо Москвы" },
-  {  916, "Радио Культура" },
-  {  920, "Москва ФМ" },
-  {  924, "Радио Дача" },
-  {  928, "Радио Карнавал" },
-  {  932, "STUDIO 21" },
-  {  936, "Коммерсант ФМ" },
-  {  940, "Восток FM" },
-  {  944, "Весна FM" },
-  {  948, "Говорит Москва" },
-  {  952, "Рок ФМ" },
-  {  956, "Радио Звезда-FM" },
-  {  960, "Дорожное радио" },
-  {  964, "Такси FM" },
-  {  968, "Детское радио" },
-  {  972, "Радио Комсомольская правда" },
-  {  976, "Вести ФМ" },
-  {  980, "Радио Шоколад" },
-  {  984, "Новое Радио" },
-  {  988, "Радио Романтика" },
-  {  992, "Радио Орфей" },
-  {  996, "Радио Русский Хит" },
-  { 1001, "Радио Серебряный Дождь" },
-  { 1005, "Жара FM" },
-  { 1009, "Радио Вера" },
-  { 1012, "Радио DFM" },
-  { 1017, "Наше Радио" },
-  { 1021, "Радио Монте-Карло" },
-  { 1025, "Comedy FM" },
-  { 1030, "Радио Шансон" },
-  { 1034, "Радио Маяк" },
-  { 1037, "Радио Максимум" },
-  { 1042, "Радио Энергия FM" },
-  { 1047, "Радио 7 На Семи Холмах" },
-  { 1050, "Радио Книга" },
-  { 1053, "Capital FM" },
-  { 1057, "Русское Радио" },
-  { 1062, "Радио Европа Плюс" },
-  { 1066, "Love радио" },
-  { 1070, "звук IZ.RU" },
-  { 1074, "Радио Хит FM" },
-  { 1078, "Радио Новая Милицейская Волна" },
-};
-uint16_t listSize = 51;
-
-ControllerRadio ctrlRadio = ControllerRadio("CtrlRadio", &prefs);
+ControllerRadioStorage ctrlRadioStorage;
+ControllerRadio ctrlRadio = ControllerRadio("CtrlRadio", &prefs, &ctrlRadioStorage);
 ControllerWeather ctrlWeather = ControllerWeather("CtrlWeather");
 ControllerDevice ctrlDevice = ControllerDevice("CtrlDevice");
 
@@ -135,8 +82,8 @@ uint16_t fileData[8192];
 
 void setup() {
   Serial.begin(9600);
-  while(!Serial);
-  delay(5000);
+  // //while(!Serial);
+  // vTaskDelay(5000 / portTICK_RATE_MS);
   // Serial.printf("\r\n");
   // Serial.printf("\r\n");
   // Serial.printf("Model: %s, Rev: %d, Core: %d\r\n", ESP.getChipModel(), ESP.getChipRevision(), ESP.getChipCores());
@@ -167,14 +114,7 @@ void setup() {
     tft.printf("SPIFFS Error\r\n");
   }
 
-  File f = SPIFFS.open(fileRadio);
-  if (f) {
-    f.read((uint8_t*)radioList, sizeof(radioList));
-    f.close();
-    for (listSize = 0; listSize < RADIO_MAX; listSize++) {
-      if (radioList[listSize].band == 0) break;
-    }
-  } else {
+  if (!ctrlRadioStorage.loadRadioList(fileRadio)) {
     tft.printf("Error loading %s\r\n", fileRadio);
   }
 
@@ -202,9 +142,15 @@ void setup() {
   tft.printf("\r\nconnected!\r\nip: %s\r\n", WiFi.localIP().toString().c_str());
   configTime(prefs.getInt("tz", 10800), 0, "pool.ntp.org");
 
+  do vTaskDelay(500 / portTICK_RATE_MS);
+  while (sntp_get_sync_status() != SNTP_SYNC_STATUS_COMPLETED);
+
   ctrlRadio.Start();
   ctrlWeather.Start();
   ctrlDevice.Start();
+
+  ctrlAlarmClock.attachControllerRadio(&ctrlRadio);
+  ctrlAlarmClock.Start();
 
   viewRadio.Start(ctrlRadio.GetEvent());
   viewWeather.Start(ctrlWeather.GetEvent());
@@ -218,7 +164,7 @@ void setup() {
   btnEncoder.setDoubleClickHandler(btnEncoderDoubleClick);
   btnEncoder.setLongClickTime(500);
   btnEncoder.setLongClickHandler(btnEncoderLongClick);  
-
+  
   setDisplayPage(prefs.getInt("page", 0));
 }
 

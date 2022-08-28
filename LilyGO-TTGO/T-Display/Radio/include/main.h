@@ -3,15 +3,6 @@
 
 #include <Arduino.h>
 
-#define RADIO_MAX   64
-typedef struct _radioItem {
-  uint16_t band;
-  char name[78];
-} RadioItem_t;
-
-extern RadioItem_t radioList[RADIO_MAX];
-extern uint16_t listSize;
-
 // Для генерации шрифта использовать Create_font.pde (Processing)
 // TFT_eSPI\Tools\Create_Smooth_Font\Create_font\Create_font.pde
 // Директория Tools

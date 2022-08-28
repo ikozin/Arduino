@@ -25,12 +25,12 @@ void ControllerDevice::OnHandle() {
         _humidity = _bme.readHumidity();
         _pressure = _bme.readPressure() / 1000.0F * 7.50062;
 
-        logTime();
-        Serial.printf("BME280\r\n");
-        Serial.printf("Core           %d\r\n", xPortGetCoreID());
-        Serial.printf("Temperature    %f C\r\n", _temperature);
-        Serial.printf("Humidity       %f %%\r\n", _humidity);
-        Serial.printf("Pressure       %f мм рт. ст.\r\n", _pressure);
+        // logTime();
+        // Serial.printf("BME280\r\n");
+        // Serial.printf("Core           %d\r\n", xPortGetCoreID());
+        // Serial.printf("Temperature    %f C\r\n", _temperature);
+        // Serial.printf("Humidity       %f %%\r\n", _humidity);
+        // Serial.printf("Pressure       %f мм рт. ст.\r\n", _pressure);
 
         xSemaphoreGive(_updateEvent);
         vTaskDelay(UPDATE_DEVICE_TIME);

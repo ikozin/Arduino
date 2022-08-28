@@ -56,20 +56,20 @@ void ControllerWeather::OnHandle() {
                 windFileName.concat(F(".png"));
                 windFileName = "/icon" + windFileName;
         
-                logTime();
-                Serial.printf("Yandex Weather\r\n");
-                Serial.printf("Core           %d\r\n", xPortGetCoreID());
-                Serial.printf("Трафик:        %s\r\n" ,trafficLevel.c_str());
-                Serial.printf("Погода:        %s\r\n" ,weatherDescription.c_str());
-                Serial.printf("Url:           %s\r\n" ,weatherUrlIcon.c_str());
-                Serial.printf("Скорость ветра:%s\r\n" ,weatherWindSpeed.c_str());
-                Serial.printf("Ветер:         %s\r\n" ,weatherWindType.c_str());
-                Serial.printf("Влажность:     %s\r\n" ,weatherDampness.c_str());
-                Serial.printf("Давление:      %s\r\n" ,weatherPressure.c_str());
-                Serial.printf("Температура:   %s\r\n" ,weatherTemperature.c_str());
-                Serial.printf("file icon:     %s\r\n" ,iconFileName.c_str());
-                Serial.printf("file wind:     %s\r\n" ,windFileName.c_str());
-                Serial.printf("\r\n");
+                // logTime();
+                // Serial.printf("Yandex Weather\r\n");
+                // Serial.printf("Core           %d\r\n", xPortGetCoreID());
+                // Serial.printf("Трафик:        %s\r\n" ,trafficLevel.c_str());
+                // Serial.printf("Погода:        %s\r\n" ,weatherDescription.c_str());
+                // Serial.printf("Url:           %s\r\n" ,weatherUrlIcon.c_str());
+                // Serial.printf("Скорость ветра:%s\r\n" ,weatherWindSpeed.c_str());
+                // Serial.printf("Ветер:         %s\r\n" ,weatherWindType.c_str());
+                // Serial.printf("Влажность:     %s\r\n" ,weatherDampness.c_str());
+                // Serial.printf("Давление:      %s\r\n" ,weatherPressure.c_str());
+                // Serial.printf("Температура:   %s\r\n" ,weatherTemperature.c_str());
+                // Serial.printf("file icon:     %s\r\n" ,iconFileName.c_str());
+                // Serial.printf("file wind:     %s\r\n" ,windFileName.c_str());
+                // Serial.printf("\r\n");
             }
         // } else {
         //     Serial.printf("\r\n[HTTP] GET, error: %d\r\n", httpCode);
