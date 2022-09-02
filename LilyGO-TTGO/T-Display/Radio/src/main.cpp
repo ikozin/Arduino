@@ -17,6 +17,7 @@
 #include "controller.h"
 #include "controllerAlarmClock.h"
 #include "controllerDevice.h"
+#include "controllerIrRemote.h"
 #include "controllerRadio.h"
 #include "controllerRadioStorage.h"
 #include "controllerWeather.h"
@@ -151,6 +152,8 @@ void setup() {
 
   ctrlAlarmClock.attachControllerRadio(&ctrlRadio);
   ctrlAlarmClock.Start();
+  ctrlIrRemote.attachControllerRadio(&ctrlRadio);
+  ctrlIrRemote.Start();
 
   viewRadio.Start(ctrlRadio.GetEvent());
   viewWeather.Start(ctrlWeather.GetEvent());
