@@ -12,6 +12,8 @@
 
 extern uint16_t fileData[8192];
 
+void setDisplayPage(int16_t page);
+
 void logTime();
 
 #endif  //_MAIN_H_

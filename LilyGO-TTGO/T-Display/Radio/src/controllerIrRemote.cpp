@@ -6,8 +6,8 @@
 #include "TinyIRReceiver.hpp"
 
 ControllerIrRemote ctrlIrRemote;
-volatile uint16_t  ir_cmd;
-volatile bool     ir_repeat;
+volatile uint16_t   ir_cmd;
+volatile bool       ir_repeat;
 
 ControllerIrRemote::ControllerIrRemote() : Controller("CtrlIrRemote") {
     _radio = NULL;
@@ -21,7 +21,7 @@ void ControllerIrRemote::OnHandle() {
     initPCIInterruptForTinyReceiver(); 
     for (;;) {
         xSemaphoreTake(_updateEvent, portMAX_DELAY);
-        Serial.printf("\r\nIR Receiver Core = %d, CMD=0x%04X R=%d\n\r\n", xPortGetCoreID(), ir_cmd, ir_repeat);
+        //Serial.printf("\r\nIR Receiver Core = %d, CMD=0x%04X R=%d\r\n", xPortGetCoreID(), ir_cmd, ir_repeat);
         if (!ir_repeat) {
             switch (ir_cmd) {
                 case CARMP3_CH_MINUS:
@@ -39,15 +39,33 @@ void ControllerIrRemote::OnHandle() {
                 case CARMP3_EQ:
                     if (_radio != NULL) _radio->toggleMute();
                     break;
-                // case CARMP3_1:
-                //     setDisplayPage(DISPLAY_WEATHER);
-                //     break;
-                // case CARMP3_2:
-                //     setDisplayPage(DISPLAY_RADIO);
-                //     break;
-                // case CARMP3_3:
-                //     setDisplayPage(DISPLAY_DEVICE);
-                //     break;
+                case CARMP3_1:
+                    setDisplayPage(0);
+                    break;
+                case CARMP3_2:
+                    setDisplayPage(1);
+                    break;
+                case CARMP3_3:
+                    setDisplayPage(2);
+                    break;
+                case CARMP3_4:
+                    setDisplayPage(4);
+                    break;
+                case CARMP3_5:
+                    setDisplayPage(5);
+                    break;
+                case CARMP3_6:
+                    setDisplayPage(6);
+                    break;
+                case CARMP3_7:
+                    setDisplayPage(7);
+                    break;
+                case CARMP3_8:
+                    setDisplayPage(8);
+                    break;
+                case CARMP3_9:
+                    setDisplayPage(9);
+                    break;
                 default:
                     break;
             }
