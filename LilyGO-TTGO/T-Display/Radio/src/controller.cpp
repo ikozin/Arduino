@@ -14,4 +14,5 @@ void Controller::ControllerHandler(void* parameter) {
     assert(parameter);
     Controller* controller = (Controller*)parameter;
     controller->OnHandle();
+    vTaskDelete(controller->_task);
 }

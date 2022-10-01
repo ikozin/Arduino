@@ -13,8 +13,9 @@ ControllerIrRemote::ControllerIrRemote() : Controller("CtrlIrRemote") {
     _radio = NULL;
 }
 
-void ControllerIrRemote::attachControllerRadio(ControllerRadio* radio) {
+ControllerIrRemote& ControllerIrRemote::attachControllerRadio(ControllerRadio* radio) {
     _radio = radio;
+    return *this;
 }
 
 void ControllerIrRemote::OnHandle() {
@@ -35,6 +36,12 @@ void ControllerIrRemote::OnHandle() {
                     break;
                 case CARMP3_VOL_PLUS:
                     if (_radio != NULL) _radio->changeVolume(1);
+                    break;
+                case CARMP3_PREV:
+                    setDisplayPagePrev();
+                    break;
+                case CARMP3_NEXT:
+                    setDisplayPageNext();
                     break;
                 case CARMP3_EQ:
                     if (_radio != NULL) _radio->toggleMute();

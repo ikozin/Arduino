@@ -115,7 +115,9 @@ import java.awt.Desktop; // Required to allow sketch to open file windows
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
 //                       >>>>>>>>>> USER CONFIGURED PARAMETERS START HERE <<<<<<<<<<
-int fontNumber = 66;  //Calibri
+//int fontNumber = 66;     //Calibri
+int fontNumber = 334;    //Open Sans Regular
+
 String fontName = "";  // Manually crop the filename length later after creation if needed
                        // Note: SPIFFS does NOT accept underscore in a filename!
 String fontType = ".ttf";
@@ -140,10 +142,11 @@ static final int[] unicodeBlocks = {
 
 // Here we specify particular individual Unicodes to be included (appended at end of selected range)
 static final int[] specificUnicodes = {
+  0x0025, // %
   0x002B, // +
   0x002D, // -
   0x002E, // .
-//0x00B0, // °
+  0x00B0, // °
 };
 
 //                       >>>>>>>>>> USER CONFIGURED PARAMETERS END HERE <<<<<<<<<<

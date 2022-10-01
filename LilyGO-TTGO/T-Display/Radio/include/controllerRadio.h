@@ -3,16 +3,16 @@
 
 #include <Preferences.h>
 #include "controller.h"
-#include "controllerRadioStorage.h"
+#include "radioStorage.h"
 #include "rda5807m.h"
 
 #define VOLUME_MAX      15
 
 class ControllerRadio : public Controller {
     public:
-        ControllerRadio(const char* name, Preferences* prefs, ControllerRadioStorage* storage);
+        ControllerRadio(const char* name, Preferences* prefs, RadioStorage* storage);
         
-        ControllerRadioStorage* getStorage() const { return _storage; }
+        RadioStorage* getStorage() const { return _storage; }
 
         bool getMute() const { return _isMute; }
         void toggleMute();
@@ -32,7 +32,7 @@ class ControllerRadio : public Controller {
         virtual void OnHandle();
     private:
         Preferences* _prefs;
-        ControllerRadioStorage* _storage;
+        RadioStorage* _storage;
         Rda5807M _radio;
         uint16_t _currentVolume;    // 0..VOLUME_MAX
         uint16_t _currentIndex;

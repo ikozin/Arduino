@@ -12,7 +12,7 @@ class ControllerIrRemote : public Controller {
     private:
         ControllerRadio* _radio;
     public:
-        void attachControllerRadio(ControllerRadio* radio);
+        ControllerIrRemote& attachControllerRadio(ControllerRadio* radio);
 };
 
 extern ControllerIrRemote ctrlIrRemote;

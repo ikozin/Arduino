@@ -60,7 +60,7 @@ class ControllerAlarmClock : public Controller {
     protected:
         void OnHandle();
     public:
-        void attachControllerRadio(ControllerRadio* radio);
+        ControllerAlarmClock& attachControllerRadio(ControllerRadio* radio);
 };
 
 extern ControllerAlarmClock ctrlAlarmClock;

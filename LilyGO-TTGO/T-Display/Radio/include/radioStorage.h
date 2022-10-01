@@ -5,14 +5,14 @@
 
 #define RADIO_MAX   64
 
-class ControllerRadioStorage {
+class RadioStorage {
     public:
         typedef struct _radioItem {
         uint16_t band;
         char name[78];
         } RadioItem_t;
     public:
-        ControllerRadioStorage();
+        RadioStorage();
         boolean loadRadioList(const char* fileName);
         boolean saveRadioList(const char* fileName);
 

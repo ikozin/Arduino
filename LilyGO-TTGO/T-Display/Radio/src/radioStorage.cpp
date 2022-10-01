@@ -1,12 +1,12 @@
 #include <FS.h>
 #include <SPIFFS.h>
-#include "controllerRadioStorage.h"
+#include "radioStorage.h"
 
-ControllerRadioStorage::ControllerRadioStorage() {
+RadioStorage::RadioStorage() {
     _listSize = 0;
 }
 
-boolean ControllerRadioStorage::loadRadioList(const char* fileName) {
+boolean RadioStorage::loadRadioList(const char* fileName) {
     File f = SPIFFS.open(fileName);
     if (f) {
         f.read((uint8_t*)_radioList, sizeof(_radioList));
@@ -19,7 +19,7 @@ boolean ControllerRadioStorage::loadRadioList(const char* fileName) {
     return false;
 }
 
-boolean ControllerRadioStorage::saveRadioList(const char* fileName) {
+boolean RadioStorage::saveRadioList(const char* fileName) {
     File f = SPIFFS.open(fileName);
     if (f) {
         f.write((uint8_t*)_radioList, sizeof(_radioList));

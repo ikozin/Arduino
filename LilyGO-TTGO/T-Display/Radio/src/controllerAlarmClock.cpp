@@ -10,8 +10,9 @@ ControllerAlarmClock::ControllerAlarmClock() : Controller("CtrlAlarmClock") {
     }
 }
 
-void ControllerAlarmClock::attachControllerRadio(ControllerRadio* radio) {
+ControllerAlarmClock& ControllerAlarmClock::attachControllerRadio(ControllerRadio* radio) {
     _radio = radio;
+    return *this;
 }
 
 void ControllerAlarmClock::OnHandle() {
@@ -22,7 +23,6 @@ void ControllerAlarmClock::OnHandle() {
     for (uint32_t i = 0; i < _alarmClockCount; i++) {
         startTimer(i);    
     }
-    vTaskDelete(_task);
 }
 
 void ControllerAlarmClock::startTimer(int index) {
