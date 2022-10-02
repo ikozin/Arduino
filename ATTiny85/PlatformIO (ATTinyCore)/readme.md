@@ -26,3 +26,6 @@ upload_flags =
     stk500v1
 upload_command = avrdude $UPLOAD_FLAGS -U flash:w:$SOURCE:i
 ```
+Дополнительная информация:
+
+https://community.platformio.org/t/burn-bootloader-to-attiny85-via-arduinoasisp/662/15
