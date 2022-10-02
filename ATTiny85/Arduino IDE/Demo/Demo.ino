@@ -10,8 +10,8 @@ void setup() {
 void loop() {
   digitalWrite(PB1, LOW);
   digitalWrite(PB0, HIGH);
-  delay(1000);
+  delay(500);
   digitalWrite(PB0, LOW);
   digitalWrite(PB1, HIGH);
-  delay(1000);
+  delay(500);
 }
