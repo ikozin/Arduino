@@ -39,13 +39,20 @@ void setup() {
     pinMode(PIN_BTN, INPUT);
 
     ledRed();
+    delay(250);
+    ledGreen();
+    delay(250);
+    ledRed();
 }
 
 void loop() {
     // Проверяем нажатие
     if (digitalRead(PIN_BTN) == LOW) {
+        delayMicroseconds(100);
         // Ждем отжатия
-        while (digitalRead(PIN_BTN) != HIGH) delay(10);
+        do {
+            delayMicroseconds(100);
+        } while (digitalRead(PIN_BTN) != HIGH);
         // Переключаем состояние
         state = !state;
         if (state) {
