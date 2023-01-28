@@ -53,11 +53,11 @@
 //
 //    PC0(37) [ 1]   [14] PA0(22)
 //    PC1(36) [ 2]   [13] 
-//    PC2(35) [ 3]   [12] PA1(23)
-//            [ 4]   [11] PA2(24)
+//    PC2(35) [ 3]   [12] PA1(24)
+//            [ 4]   [11] PA2(25)
 //      VCC   [ 5]   [10]  GND 
-//    PC3(34) [ 6]   [ 9] PA3(25)
-//    PC4(33) [ 7]   [ 8] PA4(26)
+//    PC4(34) [ 6]   [ 9] PA3(26)
+//    PC5(33) [ 7]   [ 8] PA4(27)
 //
 //
 //
@@ -79,11 +79,13 @@
 
 #include <DevicePackage.h>
 #include <K555.h>
+#include <K565.h>
 #include <K580.h>
 #include <K1533.h>
 
 DevicePackage* packList[] = {
   new K555_Pack(),
+  new K565_Pack(),
   new K580_Pack(),
   new K1533_Pack(),
 };
@@ -121,17 +123,6 @@ void setup() {
   PORTC = B11111111;  // Set pullup mode
   PORTL = B11111111;  // Set pullup mode
 
-
-/*
-  DDRA = B11111111;   // Set output mode
-  DDRL = B11111111;   // Set output mode
-  DDRC = B00000000;   // Set input mode
-
-  PORTC = B11111111;   // Set pullup mode
-  PORTA = B11111111;   // Set high level
-  //PORTA = B00000000;   // Set high level
-  PORTL = B11111111;   // Set high level
-*/
   pinMode(PIN_BUTTON, INPUT_PULLUP);
   pinMode(PIN_LED1, OUTPUT);
   pinMode(PIN_LED2, OUTPUT);

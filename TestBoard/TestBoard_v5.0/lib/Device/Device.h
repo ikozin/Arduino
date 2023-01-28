@@ -8,9 +8,9 @@
 
 #if defined(DEBUG_CONSOLE)
 extern char text[128];
-#define debug_println(...)    Serial.println(__VA_ARGS__)
-#define debug_print(...)      Serial.print(__VA_ARGS__)
-#define debug_printf(...)    {sprintf(text, __VA_ARGS__); Serial.print(text);}
+#define debug_println(...)    {Serial.println(__VA_ARGS__); Serial.flush();}
+#define debug_print(...)      {Serial.print(__VA_ARGS__); Serial.flush();}
+#define debug_printf(...)    {sprintf(text, __VA_ARGS__); Serial.print(text); Serial.flush();}
 #else
 #define debug_println(...)
 #define debug_print(...)
