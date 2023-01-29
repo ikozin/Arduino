@@ -8,6 +8,9 @@ const static TDevicePin pin_map_565_ru7[] =
 
 K565RU7::K565RU7(void) {
   _devices = pin_map_565_ru7;
+  _rows = 512;
+  _cols = 512;
+
   _values = NULL;  
   _devices_count = 1;
   _values_count = 0;
@@ -41,22 +44,4 @@ void K565RU7::info(void) {
   Serial.println(F("\t  3 -o WE  |     |     |     "));
   Serial.println(F("\t      -----------------      "));
   Serial.println();
-}
-
-int K565RU7::test_device(const TDevicePin *device, const TDeviceVal *data) {
-  int errorCount = 0;
-  info();
-  init();
-  debug_println("----------");
-  noInterrupts();
-  // for (size_t i = 0; i < _devices_count; i++) {
-  //   for (size_t n = 0; n < _values_count; n++) {
-  //     debug_printf("\r\nDevice[%d], Test[%d]\r\n", i, n);
-  //     errorCount += test_device(&_devices[i], &_values[n]);
-  //   }
-  // }
-  interrupts();
-  debug_println("----------");
-  done();
-  return errorCount;
 }

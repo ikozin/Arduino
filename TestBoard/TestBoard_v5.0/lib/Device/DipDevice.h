@@ -67,13 +67,4 @@ class Dip16_ID1_IM3_TM7: public TDevice {
     }
 };
 
-class Dip16_RU5_RU7: public TDevice {
-  private:
-    const int _map[17] = {  0, 37, 36, 35, 34, 33, 32, 31,  0, 28, 27, 26, 25, 24, 23, 22};
-  protected:
-    virtual int getPin(int value) const {
-      return Dip16_RU5_RU7::_map[value];
-    }
-};
-
 #endif

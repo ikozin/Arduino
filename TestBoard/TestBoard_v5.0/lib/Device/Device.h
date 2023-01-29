@@ -52,7 +52,7 @@ class TDevice : public IDevice {
       return value;
     }
   public:
-    virtual int check_devices();
+    virtual int check_devices(void);
     virtual int test(void);
 };
 

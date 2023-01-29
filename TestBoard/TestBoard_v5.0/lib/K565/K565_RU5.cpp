@@ -3,11 +3,14 @@
 const static TDevicePin pin_map_565_ru5[] =
 {
   // Входы     A0  A1  A2  A3  A4  A5  A6  A7  DI RAS CAS  WE                   DO
-  { .Input = {  5,  7,  6, 12, 11, 10, 13,  9,  4,  2, 15,  3,  0}, .Output = { 14,  0 }},
+  { .Input = {  5,  7,  6, 12, 11, 10, 13,  9,  2,  4, 15,  3,  0}, .Output = { 14,  0 }},
 };
 
 K565RU5::K565RU5(void) {
   _devices = pin_map_565_ru5;
+  _rows = 256;
+  _cols = 256;
+
   _values = NULL;  
   _devices_count = 1;
   _values_count = 0;
@@ -40,23 +43,4 @@ void K565RU5::info(void) {
   Serial.println(F("\t  3 -o WE  |     |     |     "));
   Serial.println(F("\t      -----------------      "));
   Serial.println();
-}
-
-int K565RU5::test_device(const TDevicePin *device, const TDeviceVal *data) {
-  int errorCount = 0;
-  info();
-  init();
-  debug_println("----------");
-  noInterrupts();
- 
-  // for (size_t i = 0; i < _devices_count; i++) {
-  //   for (size_t n = 0; n < _values_count; n++) {
-  //     debug_printf("\r\nDevice[%d], Test[%d]\r\n", i, n);
-  //     errorCount += test_device(&_devices[i], &_values[n]);
-  //   }
-  // }
-  interrupts();
-  debug_println("----------");
-  done();
-  return errorCount;
 }
