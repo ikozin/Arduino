@@ -80,7 +80,60 @@
 
 long time;
 
-//uint8_t test1
+uint8_t test1[] = {
+  B11111111,
+  B10000000,
+  B10111111,
+  B10100000,
+  B10101111,
+  B10101000,
+  B10101011,
+  B10101010,
+  B10101010,
+  B10101011,
+  B10101000,
+  B10101111,
+  B10100000,
+  B10111111,
+  B10000000,
+  B11111111,
+
+  B11111111,
+  B00000000,
+  B11111111,
+  B00000000,
+  B11111111,
+  B00000000,
+  B11111111,
+  B00000000,
+  B00000000,
+  B11111111,
+  B00000000,
+  B11111111,
+  B00000000,
+  B11111111,
+  B00000000,
+  B11111111,
+
+  B11111111,
+  B00000001,
+  B11111101,
+  B00000101,
+  B11110101,
+  B00010101,
+  B11010101,
+  B01010101,
+  B01010101,
+  B11010101,
+  B00010101,
+  B11110101,
+  B00000101,
+  B11111101,
+  B00000001,
+  B11111111,
+};
+
+
 
 void clockCycle() {
   digitalWrite(C, HIGH);
@@ -108,11 +161,35 @@ void loadData(uint8_t data) {
   clockCycle();
 }
 
-void clear() {
+void set(uint8_t data) {
   resetAddress();
   for (int b = 0; b < BLOCK_COUNT; b++)
     for (int l = 0; l < LINE_COUNT; l++)
-      loadData(0x00);
+      loadData(data);
+}
+
+void inline clear() {
+  set(0x00);
+}
+
+void inline fill() {
+  set(0xFF);
+}
+
+void testBit(uint8_t bitCount) {
+  setData(B00000000);
+  delay(200);
+  uint8_t data = B00000001;
+  for (int i = 1; i < bitCount; i++) {
+    setData(data);
+    delay(200);
+    data <<= 1;
+    data |= B00000001;
+  }
+  for (; data > 0; data <<= 1) {
+    loadData(data);
+    delay(200);
+  }
 }
 
 void setup() {
@@ -140,50 +217,22 @@ void setup() {
 
 }
 
-void testBit(uint8_t bitCount) {
-  setData(B00000000);
-  delay(200);
-  uint8_t data = B00000001;
-  for (int i = 1; i < bitCount; i++) {
-    setData(data);
-    delay(200);
-    data <<= 1;
-    data |= B00000001;
-  }
-  for (; data > 0; data <<= 1) {
-    loadData(data);
-    delay(200);
-  }
-}
-
 void loop() {
   // for (int n = 1; n < 8; n++) {
   //   testBit(n);
   // }
 
 
-  //time = micros();
-  //clear();
-  // time = micros() - time;
-  // Serial.print("time:");
-  // Serial.println(time);
-  // delay(DELAY_TIME);
   for (int n = 0; n < 4; n++) {
     time = micros();
-    resetAddress();
-    for (int i = 0; i < LINE_COUNT; i++) {
-      loadData(0x00);
-    }
+    clear();
     time = micros() - time;
     Serial.print("time:");
     Serial.println(time);
     delay(DELAY_TIME);
 
     time = micros();
-    resetAddress();
-    for (int i = 0; i < LINE_COUNT; i++) {
-      loadData(0xFF);
-    }
+    fill();
     time = micros() - time;
     Serial.print("time:");
     Serial.println(time);
@@ -192,8 +241,10 @@ void loop() {
 
   time = micros();
   resetAddress();
-  for (uint8_t data = B00000001; data > 0; data <<= 1) {
-    loadData(data);
+  for (int b = 0; b < BLOCK_COUNT; b++) {
+    for (uint8_t data = B00000001; data > 0; data <<= 1) {
+      loadData(data);
+    }
   }
   time = micros() - time;
   Serial.print("time:");
@@ -202,9 +253,11 @@ void loop() {
 
   time = micros();
   resetAddress();
-  for (uint8_t data = B00000011; data > 0; data <<= 2) {
-    loadData(data);
-    loadData(data);
+  for (int b = 0; b < BLOCK_COUNT; b++) {
+    for (uint8_t data = B00000011; data > 0; data <<= 2) {
+      loadData(data);
+      loadData(data);
+    }
   }
   time = micros() - time;
   Serial.print("time:");
@@ -213,11 +266,13 @@ void loop() {
 
   time = micros();
   resetAddress();
-  for (uint8_t data = B00001111; data > 0; data <<= 4) {
-    loadData(data);
-    loadData(data);
-    loadData(data);
-    loadData(data);
+  for (int b = 0; b < BLOCK_COUNT; b++) {
+    for (uint8_t data = B00001111; data > 0; data <<= 4) {
+      loadData(data);
+      loadData(data);
+      loadData(data);
+      loadData(data);
+    }
   }
   time = micros() - time;
   Serial.print("time:");
@@ -226,11 +281,13 @@ void loop() {
 
   time = micros();
   resetAddress();
-  for (uint8_t data = B11110000; data > 0; data >>= 4) {
-    loadData(data);
-    loadData(data);
-    loadData(data);
-    loadData(data);
+  for (int b = 0; b < BLOCK_COUNT; b++) {
+    for (uint8_t data = B11110000; data > 0; data >>= 4) {
+      loadData(data);
+      loadData(data);
+      loadData(data);
+      loadData(data);
+    }
   }
   time = micros() - time;
   Serial.print("time:");
@@ -239,9 +296,11 @@ void loop() {
 
   time = micros();
   resetAddress();
-  for (uint8_t data = B11000000; data > 0; data >>= 2) {
-    loadData(data);
-    loadData(data);
+  for (int b = 0; b < BLOCK_COUNT; b++) {
+    for (uint8_t data = B11000000; data > 0; data >>= 2) {
+      loadData(data);
+      loadData(data);
+    }
   }
   time = micros() - time;
   Serial.print("time:");
@@ -250,11 +309,25 @@ void loop() {
 
   time = micros();
   resetAddress();
-  for (uint8_t data = B10000000; data > 0; data >>= 1) {
-    loadData(data);
+  for (int b = 0; b < BLOCK_COUNT; b++) {
+    for (uint8_t data = B10000000; data > 0; data >>= 1) {
+      loadData(data);
+    }
   }
   time = micros() - time;
   Serial.print("time:");
   Serial.println(time);
   delay(DELAY_TIME);
+
+  time = micros();
+  int index = 0;
+  resetAddress();
+  for (int b = 0; b < BLOCK_COUNT; b++)
+    for (int l = 0; l < LINE_COUNT; l++)
+      loadData(test1[index++]);
+  time = micros() - time;
+  Serial.print("time:");
+  Serial.println(time);
+  delay(DELAY_TIME);
+
 }
