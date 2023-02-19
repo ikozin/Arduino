@@ -23,16 +23,19 @@ void Matrix::init(void) {
   pinMode(_clock, OUTPUT);
 
   digitalWrite(_clock, LOW);
-  digitalWrite(_reset, HIGH);
+  resetAddress();
 }
 
-void inline Matrix::clockCycle(void) {
+void Matrix::clockCycle(void) {
+  //delayMicroseconds(200);  
   digitalWrite(_clock, HIGH);
+  //delayMicroseconds(200);  
   digitalWrite(_clock, LOW);
 }
 
-void inline Matrix::resetAddress(void) {
+void Matrix::resetAddress(void) {
   digitalWrite(_reset, LOW);
+  //delayMicroseconds(200);  
   digitalWrite(_reset, HIGH);
 }
 
@@ -52,20 +55,12 @@ void Matrix::loadData(uint8_t data) {
   clockCycle();
 }
 
-void Matrix::clear(void) {
+void Matrix::fill(uint8_t data) {
     resetAddress();
     for (int c = 0; c < _col; c++)
         for (int r = 0; r < _row; r++)
             for (int n = 0; n < 8; n++)
-                loadData(0x00);
-}
-
-void Matrix::fill(void) {
-    resetAddress();
-    for (int c = 0; c < _col; c++)
-        for (int r = 0; r < _row; r++)
-            for (int n = 0; n < 8; n++)
-                loadData(0xFF);
+                loadData(data);
 }
 
 void Matrix::loadBlock(uint8_t data[]) {

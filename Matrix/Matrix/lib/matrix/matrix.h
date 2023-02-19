@@ -16,8 +16,7 @@ class Matrix {
     public:
         Matrix(int pinReset, int pinClock, int row = 2, int col = 3);
         void init(void);
-        void clear(void);
-        void fill(void);
+        void fill(uint8_t data);
         void loadBlock(uint8_t data[]);
         void load(uint8_t *data);
     private:
@@ -25,7 +24,7 @@ class Matrix {
         int _clock;
         int _row;
         int _col;
-    private:
+    public:
         void clockCycle();
         void resetAddress();
         void setData(uint8_t data);

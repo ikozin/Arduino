@@ -78,7 +78,7 @@ void test4(Matrix *matrix, unsigned long timeDelay);
 
 void setup(void) {
   matrix.init();
-  matrix.clear();
+  matrix.fill(0x00);
 
   // Serial
   Serial.begin(57600);
@@ -86,16 +86,63 @@ void setup(void) {
 }
 
 void loop(void) {
-  test1(&matrix, DELAY_TIME);
-  test1(&matrix, DELAY_TIME);
-  test1(&matrix, DELAY_TIME);
-  test1(&matrix, DELAY_TIME);
 
-  test2(&matrix, DELAY_TIME);
+  matrix.resetAddress();
+  Serial.println("reset");
+  delay(1000);
 
-  test3(&matrix, DELAY_TIME);
+  matrix.setData(B00000000);
+  Serial.println("setdata");
+  for (int i = 0; i < 32; i++)  {
+    //delay(200);
+    matrix.clockCycle();
+    Serial.println("clockCycle");
+  }
 
-  for (int i = 0; i < 8; i++)
-    test4(&matrix, 100);
+  matrix.resetAddress();
+  Serial.println("reset");
+  delay(1000);
+
+  matrix.setData(B11111111);
+  Serial.println("setdata");
+  for (int i = 0; i < 32; i++)  {
+    //delay(200);
+    matrix.clockCycle();
+    Serial.println("clockCycle");
+  }
+
+  matrix.resetAddress();
+  Serial.println("reset");
+  delay(1000);
+
+  matrix.setData(B10101010);
+  Serial.println("setdata");
+  for (int i = 0; i < 32; i++)  {
+    //delay(200);
+    matrix.clockCycle();
+    Serial.println("clockCycle");
+  }
+
+  matrix.resetAddress();
+  Serial.println("reset");
+  delay(1000);
+
+  matrix.setData(B01010101);
+  Serial.println("setdata");
+  for (int i = 0; i < 32; i++)  {
+    //delay(200);
+    matrix.clockCycle();
+    Serial.println("clockCycle");
+  }
+
+  // for (int i = 0; i < 4; i++)
+  //   test1(&matrix, DELAY_TIME);
+
+  // test2(&matrix, DELAY_TIME);
+
+  // test3(&matrix, DELAY_TIME);
+
+  // for (int i = 0; i < 32; i++)
+  //   test4(&matrix, 18);
 
 }

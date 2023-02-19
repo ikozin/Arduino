@@ -2,8 +2,8 @@
 #include <matrix.h>
 
 void test1(Matrix *matrix, unsigned long timeDelay) {
-    matrix->fill();
+    matrix->fill(0xFF);
     delay(timeDelay);
-    matrix->clear();
+    matrix->fill(0x00);
     delay(timeDelay);
 }

@@ -118,8 +118,8 @@ void setup() {
     }
 
     prefs.begin("Main");
-    //prefs.putString("ssid", "i-net");
-    //prefs.putString("pswd", "95ad8c6d7e9a0c56c40a389ec8a89fe8b4c7d9b60fa3bfd28fe9dcee2e7a");
+    //prefs.putString("ssid", "...");
+    //prefs.putString("pswd", "...");
     //prefs.putInt("tz", 10800);
     //prefs.putInt("station", 35);
     //prefs.putInt("volume", 2);
