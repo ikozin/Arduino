@@ -57,7 +57,7 @@ K1533IE5::K1533IE5(void) {
 }
 
 const __FlashStringHelper * K1533IE5::menu(void) {
-  return F("Счетчик двоичный");
+  return F("ИE5 Счетчик двоичный");
 }
 
 void K1533IE5::info(void) {

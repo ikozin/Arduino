@@ -4,6 +4,7 @@
 //#define DEBUG_CONSOLE
 
 #include <Arduino.h>
+#include <avr/pgmspace.h>
 #include "binaries.h"
 
 #if defined(DEBUG_CONSOLE)

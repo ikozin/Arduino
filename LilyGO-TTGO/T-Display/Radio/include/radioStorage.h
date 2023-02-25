@@ -3,24 +3,34 @@
 
 #include <Arduino.h>
 
+#define FS_RADIOLIST_FILE   "/radio.txt"
+
 #define RADIO_MAX   64
+
+class RadioItem {
+    public:
+        uint16_t band;
+        String name;
+    public:
+        RadioItem(uint16_t band, const char* text);
+};
 
 class RadioStorage {
     public:
-        typedef struct _radioItem {
-        uint16_t band;
-        char name[78];
-        } RadioItem_t;
-    public:
         RadioStorage();
-        boolean loadRadioList(const char* fileName);
-        boolean saveRadioList(const char* fileName);
 
-        uint16_t getCount() const { return _listSize;}
-        RadioItem_t* getRadioList() const { return (RadioItem_t*)_radioList; }
+        bool load(void);
+
+        uint16_t length() const { return _size; };
+        RadioItem* getItem(int index) const { return _list[index]; }
+
+        bool add(RadioItem* item);
+        bool remove(int index);
+        void clear(void);
     private:
-        uint16_t _listSize;
-        RadioItem_t _radioList[RADIO_MAX];
+        uint16_t _size;
+        uint16_t _capacity;
+        RadioItem** _list;
 };
 
 #endif  //_CONTROLLERRADIOSTORAGE_H_

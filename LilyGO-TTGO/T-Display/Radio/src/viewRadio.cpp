@@ -44,7 +44,7 @@ void ViewRadio::displayFreq() {
     String freq;
     freq.reserve(16);
     uint16_t index = _radio->getRadioIndex();
-    uint16_t band = _radio->getStorage()->getRadioList()[index].band;
+    uint16_t band = _radio->getStorage()->getItem(index)->band;
     freq.concat((uint16_t)(band / 10));
     freq.concat('.');
     freq.concat((uint16_t)(band % 10));
@@ -86,7 +86,7 @@ void ViewRadio::OnHandle() {
     _tft->loadFont(FONT_TEXT_32);
 
     uint16_t index = _radio->getRadioIndex();
-    String text = _radio->getStorage()->getRadioList()[index].name;
+    String text = _radio->getStorage()->getItem(index)->name;
     if (_tft->textWidth(text) >=  239) {
         _tft->setTextDatum(TL_DATUM);
         _tft->drawString(text, 0, 70);

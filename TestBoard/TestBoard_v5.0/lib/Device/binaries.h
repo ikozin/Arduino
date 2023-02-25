@@ -297,4 +297,32 @@
 #define B__1__1__1__0   B00001110
 #define B__1__1__1__1   B00001111
 
+#define B_0_0_0         B00000000
+#define B_0_0_1         B00000001
+#define B_0_1_0         B00000010
+#define B_0_1_1         B00000011
+#define B_1_0_0         B00000100
+#define B_1_0_1         B00000101
+#define B_1_1_0         B00000110
+#define B_1_1_1         B00000111
+
+
+#define B_0_0_0_0         B00000000
+#define B_0_0_0_1         B00000001
+#define B_0_0_1_0         B00000010
+#define B_0_0_1_1         B00000011
+#define B_0_1_0_0         B00000100
+#define B_0_1_0_1         B00000101
+#define B_0_1_1_0         B00000110
+#define B_0_1_1_1         B00000111
+#define B_1_0_0_0         B00001000
+#define B_1_0_0_1         B00001001
+#define B_1_0_1_0         B00001010
+#define B_1_0_1_1         B00001011
+#define B_1_1_0_0         B00001100
+#define B_1_1_0_1         B00001101
+#define B_1_1_1_0         B00001110
+#define B_1_1_1_1         B00001111
+
+
 #endif

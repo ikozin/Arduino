@@ -10,6 +10,7 @@ class ControllerWeather : public Controller {
     public:
         ControllerWeather(const char* name);
     public:
+        bool  isValid;
         String trafficLevel;
         String weatherDescription;
         String weatherUrlIcon;
@@ -24,6 +25,7 @@ class ControllerWeather : public Controller {
         virtual void OnHandle();
     private:
         uint16_t ColorToRGB565(const uint8_t r, const uint8_t g, const uint8_t b);
+        void parseWeatherInfo(String& payload);
         char* getMatch(const char* text, const char* pattern, String& value, const char first, const char last);
 };
 

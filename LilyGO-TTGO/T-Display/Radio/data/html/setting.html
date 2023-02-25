@@ -1,0 +1,120 @@
+<!DOCTYPE HTML>
+<html lang="ru">
+<head>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta http-equiv="Refresh" content="3660" />
+<title>Radio Setting</title>
+<link rel="stylesheet" href="bootstrap.css" />
+<style>span {display:inline-block;}</style>
+</head>
+<body>
+<div class="container">
+<br/>
+<fieldset>
+    <a href="radio.txt" class="row">Скачать список радио (radio.txt)</a><br/>
+    <input type="file" id="fileSelection" class="form-control row" />
+    <progress id="uploadProgressBar" value="0" max="0" class="row"></progress>
+    <span id="statusText" class="row">&nbsp;</span>
+    <input id="uploadFileButton" type="submit" value="Загрузить" class="btn btn-primary row" disabled="disabled"/>
+</fieldset>
+<form method="post" class="was-validated">
+    <fieldset>
+        <div class="row">
+            <div>
+                <label for="ssid" class="form-label">Сеть (SSID):</label>
+                <input type="text" id="ssid" class="form-control" name="ssid" value="%SSID%" required/>
+            </div>
+            <div>
+                <label for="pswd" class="form-label">Пароль:</label>
+                <input type="password" id="pswd" class="form-control" name="pswd" value="%PSWD%" required/>
+            </div>
+            <div>
+                <label for="tz" class="form-label">Временная зона:</label>
+                <input type="number" id="tz" class="form-control" name="tz" value="%TZ%" required/>
+            </div>
+            <div>
+                <label for="station" class="form-label">Станция:</label>
+                <select id="station" class="form-select" name="station" required>%STATION%</select>
+            </div>
+            <div>
+                <label for="volume" class="form-label">Громкость:</label>
+                <input type="range" class="form-range" name="volume" min="0" max="15" value="%VOLUME%" />
+            </div>
+            <div class="form-check form-switch">
+                <input type="checkbox" class="form-check-input" id="mute" name="mute" %MUTE% />
+                <label for="mute" class="form-check-label">Выключить</label>
+            </div>
+            <input type="submit" class="btn btn-primary" />
+        </div>
+    </fieldset>
+</form>		
+</div>
+<script type="text/javascript">
+    function startUpload() {
+        let request = new XMLHttpRequest();
+        request.onerror = function() {
+            window.statusText.innerHTML = 'ERROR: http request failed!';
+        }
+        request.ontimeout = function() {
+            window.statusText.innerHTML = 'ERROR: Connection timeout!';
+        }
+        request.onreadystatechange = function() {
+            if (this.status == 404) {
+                window.statusText.innerHTML = '404 - Upload URL not found on server';
+                window.fileSelection.value = '';
+            }
+    
+            if (this.readyState == 4) {
+                switch (this.status) {
+                    case 200 :
+                        window.statusText.innerHTML = 'Upload succes!';
+                        window.fileSelection.value = '';
+                        window.fileSelection.disabled = false;
+                        window.uploadFileButton.disabled = true;
+                        break;
+                    case 400 :
+                        window.statusText.innerHTML = this.responseText;
+                        window.fileSelection.disabled = false;
+                        break;
+                    default : console.log('http result code: ' + this.status);
+                }
+            }
+        };
+        request.upload.addEventListener('progress', function(event) {
+            const percent = (event.loaded / event.total) * 100;
+            window.statusText.innerHTML = Math.round(percent) + '% uploaded. Please wait...';
+            let progress = window.uploadProgressBar;
+            progress.setAttribute('value', event.loaded);
+            progress.setAttribute('max', event.total);
+        });
+        request.addEventListener('load', function() {
+            let progress = window.uploadProgressBar;
+            progress.setAttribute('value', 0);
+            progress.setAttribute('max', 0);
+        });
+    
+        request.open('POST', '/upload');
+        const file = window.fileSelection.files[0];
+        let data = new FormData();
+        data.append('file', file);
+        window.statusText.innerHTML = 'Initializing upload...';
+        request.send(data);
+    }
+    
+    document.getElementById('fileSelection').addEventListener('change', function() {
+        window.uploadFileButton.disabled = this.files[0] ? false : true;
+        window.statusText.innerHTML = '&nbsp;';
+    });
+    
+    document.getElementById('uploadFileButton').addEventListener('click', function(event){
+        event.preventDefault();
+        this.disabled = true;
+        window.fileSelection.disabled = true;
+        startUpload();
+    });
+    
+    </script>
+</body>
+
+</html>

@@ -76,7 +76,7 @@ void ControllerRadio::toggleMute() {
 
 void ControllerRadio::changeChannel(int direction) {
     if (direction > 0) {
-        if (_currentIndex < _storage->getCount() - 1) {
+        if (_currentIndex < _storage->length() - 1) {
             setRadioIndex(_currentIndex + 1);
         }
     }
@@ -109,11 +109,11 @@ void ControllerRadio::setMute(bool mute) {
 }
 
 void ControllerRadio::setRadioIndex(uint16_t index) {
-    if (index >= _storage->getCount()) index = 0;
+    if (index >= _storage->length()) index = 0;
     if (_currentIndex == index) return;
     _currentIndex = index;
-    RadioStorage::RadioItem_t rec = _storage->getRadioList()[_currentIndex];
-    uint16_t band = rec.band;
+    auto rec = _storage->getItem(_currentIndex);
+    uint16_t band = rec->band;
     _radio.SetChannel(band);
     _prefs->putInt("station", _currentIndex);  
     xSemaphoreGive(_updateEvent);
