@@ -6,7 +6,7 @@ ViewDevice::ViewDevice(const char* name, TFT_eSPI* tft, View** currentView, Cont
 }
 
 void ViewDevice::OnHandle() {
-    // Serial.printf("%s\r\n", _name);
+    LOGN("ViewDevice::OnHandle")
     char text[32];
     float rad = _device->getStatic();
     uint32_t backColor = TFT_DARKGREEN;

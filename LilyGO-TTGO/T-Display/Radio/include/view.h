@@ -4,6 +4,7 @@
 #include <Arduino.h>
 #include <TFT_eSPI.h>
 #include "main.h"
+#include "logging.h"
 
 class View{
     protected:

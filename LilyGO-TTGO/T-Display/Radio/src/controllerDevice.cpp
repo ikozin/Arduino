@@ -12,6 +12,7 @@ ControllerDevice::ControllerDevice(const char* name) : Controller(name), _radSen
 }
 
 void ControllerDevice::OnHandle() {
+    LOGN("ControllerDevice::OnHandle")
     if (! _bme.begin(BME280_PORT, &Wire)) {
         // Serial.printf("bme280 error\r\n");
         return;

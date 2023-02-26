@@ -6,9 +6,10 @@
 #include "controllerRadio.h"
 
 #define WEEK_MASK     0x7F
-#define MAX_ALARMCLOCK_COUNT 8
+#define MAX_ALARMCLOCK_COUNT 16
 
-#define SET_ALARMCLOCK_MUTE(h, m, s)     { { .Monday = 1, .Tuesday = 1, .Wednesday = 1, .Thursday = 1, .Friday = 1, .Saturday = 1, .Sunday = 1, .IsMute = s, .Reserv = 0 , .Minute = m, .Hour = h, .Index = -1, .Volume = -1, } }
+#define SET_ALARMCLOCK_MUTE_ON(h, m)     { { .Monday = 1, .Tuesday = 1, .Wednesday = 1, .Thursday = 1, .Friday = 1, .Saturday = 1, .Sunday = 1, .IsMute = 1, .Reserv = 0 , .Minute = m, .Hour = h, .Index = -1, .Volume = -1, } }
+#define SET_ALARMCLOCK_MUTE_OFF(h, m)     { { .Monday = 1, .Tuesday = 1, .Wednesday = 1, .Thursday = 1, .Friday = 1, .Saturday = 1, .Sunday = 1, .IsMute = 0, .Reserv = 0 , .Minute = m, .Hour = h, .Index = -1, .Volume = -1, } }
 #define SET_ALARMCLOCK_VOLUME(h, m, v)  { { .Monday = 1, .Tuesday = 1, .Wednesday = 1, .Thursday = 1, .Friday = 1, .Saturday = 1, .Sunday = 1, .IsMute = 0, .Reserv = 0 , .Minute = m, .Hour = h, .Index = -1, .Volume = v, } }
 
 #define SET_ALARMCLOCK_MUTE_WORK(h, m, s)     { { .Monday = 1, .Tuesday = 1, .Wednesday = 1, .Thursday = 1, .Friday = 1, .Saturday = 0, .Sunday = 0, .IsMute = s, .Reserv = 0 , .Minute = m, .Hour = h, .Index = -1, .Volume = -1, } }
@@ -16,7 +17,7 @@
 
 class ControllerAlarmClock : public Controller {
     public:
-        ControllerAlarmClock();
+        ControllerAlarmClock(const char* name);
     
     private:
         typedef union alarmClockItem {
@@ -44,13 +45,14 @@ class ControllerAlarmClock : public Controller {
     private:
         ControllerRadio* _radio;
 
-        uint16_t _timerCount;
-        TimerHandle_t _timerList[MAX_ALARMCLOCK_COUNT];
-
         uint16_t _alarmClockCount;
+        TimerHandle_t _timerList[MAX_ALARMCLOCK_COUNT];
         alarmClockItem_t _alarmClockList[MAX_ALARMCLOCK_COUNT] = {
-            SET_ALARMCLOCK_MUTE(23, 0, 1),
+            SET_ALARMCLOCK_MUTE_ON(23, 0),
             SET_ALARMCLOCK_VOLUME_WORK(8, 0, 1),
+            SET_ALARMCLOCK_MUTE_OFF(13, 14),
+            SET_ALARMCLOCK_MUTE_ON(13, 15),
+            SET_ALARMCLOCK_MUTE_OFF(13, 16),
         };
     private:
         uint8_t nextDay(uint8_t wday_mask, time_t* next);

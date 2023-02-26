@@ -2,6 +2,7 @@
 #define _CONTROLLERRADIOSTORAGE_H_
 
 #include <Arduino.h>
+#include "logging.h"
 
 #define FS_RADIOLIST_FILE   "/radio.txt"
 

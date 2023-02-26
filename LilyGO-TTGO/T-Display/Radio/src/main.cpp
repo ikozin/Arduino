@@ -52,8 +52,6 @@ Button2 btnEncoder = Button2();
 String ssid         = ""; // SSID WI-FI
 String pswd         = "";
 
-const char* fileRadio = "/radiolist.dat";
-
 RadioStorage ctrlRadioStorage;
 ControllerRadio ctrlRadio = ControllerRadio("CtrlRadio", &prefs, &ctrlRadioStorage);
 ControllerWeather ctrlWeather = ControllerWeather("CtrlWeather");
@@ -133,15 +131,18 @@ void setup() {
 
     if (SPIFFS.begin(true)) {
         tft.printf("Total: %d, Free: %d\r\n", SPIFFS.totalBytes(), SPIFFS.totalBytes() - SPIFFS.usedBytes());
+        LOG("Total: %d, Free: %d\r\n", SPIFFS.totalBytes(), SPIFFS.totalBytes() - SPIFFS.usedBytes());
         //listDir("/");
     }
     else {
         //SPIFFS.format();
         tft.printf("SPIFFS Error\r\n");
+        LOG("SPIFFS Error\r\n");
     }
 
     if (!ctrlRadioStorage.load()) {
-        tft.printf("Error loading %s\r\n", fileRadio);
+        tft.printf("Error loading RadioStorage");
+        LOG("Error loading RadioStorage");
     }
 
     encoder.attachSingleEdge(ENCODER_PIN_A, ENCODER_PIN_B);
@@ -162,6 +163,7 @@ void setup() {
     pswd = prefs.getString("pswd", pswd);
 
     tft.printf("Wi-Fi SSID: %s ", ssid.c_str());
+    LOGN("Wi-Fi SSID: %s ", ssid.c_str())
 
     WiFi.disconnect();
     WiFi.mode(WIFI_STA);
@@ -171,7 +173,8 @@ void setup() {
         vTaskDelay(500 / portTICK_RATE_MS);
     }
     tft.printf("\r\nconnected!\r\nip: %s\r\n", WiFi.localIP().toString().c_str());
-    configTime(prefs.getInt("tz", 10800), 0, "pool.ntp.org");
+    LOG("\r\nconnected!\r\nip: %s\r\n", WiFi.localIP().toString().c_str())
+    configTime(prefs.getInt("tz", 10800), 0, "ntp1.vniiftri.ru", "ntp2.vniiftri.ru");
 
     wifiReconnectTimer = xTimerCreate("wifiTimer", pdMS_TO_TICKS(2000), pdFALSE, (void*)0, reinterpret_cast<TimerCallbackFunction_t>(connectToWifi));
     WiFi.onEvent(WiFiEvent);
@@ -180,13 +183,23 @@ void setup() {
     do vTaskDelay(500 / portTICK_RATE_MS);
     while (sntp_get_sync_status() != SNTP_SYNC_STATUS_COMPLETED);
 
+#ifdef DEBUG_CONSOLE
+    char text[64];
+    struct tm timeinfo;
+    getLocalTime(&timeinfo);
+    strftime(text, sizeof(text), "%c", &timeinfo);
+    //strftime(text, sizeof(text), "%d.%m.%Y %H:%M:%S ", &timeinfo);
+    Serial.printf("%s\r\n", text);
+#endif
+
+    LOGN("Controller - Start")
     ctrlRadio.Start();
     ctrlWeather.Start();
     ctrlDevice.Start();
     ctrlAlarmClock.attachControllerRadio(&ctrlRadio).Start();
     ctrlIrRemote.attachControllerRadio(&ctrlRadio).Start();
 
-
+    LOGN("View - Start")
     viewRadio.Start(ctrlRadio.GetEvent());
     viewWeather.Start(ctrlWeather.GetEvent());
     viewDevice.Start(ctrlDevice.GetEvent());

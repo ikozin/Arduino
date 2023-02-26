@@ -1,10 +1,9 @@
 #include "controllerAlarmClock.h"
 
-ControllerAlarmClock ctrlAlarmClock;
+ControllerAlarmClock ctrlAlarmClock = ControllerAlarmClock("ctrlAlarm");
 
-ControllerAlarmClock::ControllerAlarmClock() : Controller("CtrlAlarmClock") {
-    _radio = NULL;
-    _timerCount = 0;
+ControllerAlarmClock::ControllerAlarmClock(const char* name) : Controller(name) {
+    _radio = nullptr;
     for (_alarmClockCount = 0; _alarmClockCount < MAX_ALARMCLOCK_COUNT; _alarmClockCount ++) {
         if (_alarmClockList[_alarmClockCount].value == 0) break;
     }
@@ -16,18 +15,15 @@ ControllerAlarmClock& ControllerAlarmClock::attachControllerRadio(ControllerRadi
 }
 
 void ControllerAlarmClock::OnHandle() {
-    for (uint32_t i = 0; i < _timerCount; i++) {
-        xTimerStop(_timerList[i], 0);
-        xTimerDelete(_timerList[i], 0);
-    }
-    for (uint32_t i = 0; i < _alarmClockCount; i++) {
+    LOGN("ControllerAlarmClock::OnHandle")
+    for (int i = 0; i < _alarmClockCount; i++) {
         startTimer(i);    
     }
 }
 
 void ControllerAlarmClock::startTimer(int index) {
     alarmClockItem_t alarm = _alarmClockList[index];
-    // Serial.printf("\r\nstartTimer[%d]=0x%llX\r\n", index, alarm.value);
+    LOG("\r\nControllerAlarmClock::startTimer [%d]=0x%llX\r\n", index, alarm.value);
     TickType_t period = getTimerPeriod(&alarm);
     _timerList[index] = xTimerCreate("Timer", period, pdFALSE, (void*)index, timerCallback);
     xTimerStart(_timerList[index], 0);
@@ -37,8 +33,8 @@ void ControllerAlarmClock::timerCallback(TimerHandle_t pxTimer) {
     int32_t index = (int32_t)pvTimerGetTimerID(pxTimer);
     xTimerDelete(pxTimer, 0);
     alarmClockItem_t alarm = ctrlAlarmClock._alarmClockList[index];
-    // Serial.printf("timerCallback[%d], alarm[%d]=0x%llX\r\n", index, index, alarm.value);
-    if (ctrlAlarmClock._radio != NULL) {
+    LOG("ControllerAlarmClock::timerCallback [%d], alarm[%d]=0x%llX\r\n", index, index, alarm.value);
+    if (ctrlAlarmClock._radio != nullptr) {
         if (alarm.IsMute)       ctrlAlarmClock._radio->setMute(true);
         if (alarm.Index != -1)  ctrlAlarmClock._radio->setRadioIndex(alarm.Index);
         if (alarm.Volume != -1) ctrlAlarmClock._radio->setVolume(alarm.Volume);
@@ -73,8 +69,10 @@ TickType_t ControllerAlarmClock::getTimerPeriod(alarmClockItem_t* pAlarm) {
             wday_mask = nextDay(wday_mask, &next);
         }
     }
-    // char text[64];
-    // strftime(text, sizeof(text), "%d.%m.%Y %H:%M:%S ", localtime(&next));
-    // Serial.printf("%s\r\n", text);
+#ifdef DEBUG_CONSOLE
+    char text[64];
+    strftime(text, sizeof(text), "%d.%m.%Y %H:%M:%S ", localtime(&next));
+    Serial.printf("ControllerAlarmClock::getTimerPeriod %s\r\n", text);
+#endif
     return (next - timer) * 1000;
 }

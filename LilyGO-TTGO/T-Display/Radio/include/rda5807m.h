@@ -2,6 +2,7 @@
 #define _RDA5807M_H_
 
 #include <Arduino.h>
+#include "logging.h"
 
 //https://tsibrov.blogspot.com/2019/11/rda5807m-part1.html
 

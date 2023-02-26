@@ -22,7 +22,7 @@ void ViewWeather::drawImageFile(const char* fileName, const int32_t x, const int
 }
 
 void ViewWeather::OnHandle() {
-    // Serial.printf("%s\r\n", _name);
+    LOGN("ViewWeather::OnHandle")
     _tft->fillScreen(0x4C7D); //ColorToRGB565(0x4D, 0x8D, 0xEE)
     _tft->setTextDatum(TL_DATUM);
 

@@ -64,7 +64,8 @@ ControllerRadio::ControllerRadio(const char* name, Preferences* prefs, RadioStor
 }
 
 void ControllerRadio::OnHandle() {
-    _radio.Init();    
+    LOGN("ControllerRadio::OnHandle")
+    _radio.Init();
     setRadioIndex(_prefs->getInt("station", 35));
     setVolume(_prefs->getInt("volume", 2));
     setMute(_prefs->getBool("mute", false));

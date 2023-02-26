@@ -19,6 +19,7 @@ ControllerIrRemote& ControllerIrRemote::attachControllerRadio(ControllerRadio* r
 }
 
 void ControllerIrRemote::OnHandle() {
+    LOGN("ControllerIrRemote::OnHandle")
     initPCIInterruptForTinyReceiver(); 
     for (;;) {
         xSemaphoreTake(_updateEvent, portMAX_DELAY);

@@ -24,6 +24,7 @@ ControllerWeather::ControllerWeather(const char* name) : Controller(name) {
 }
 
 void ControllerWeather::OnHandle() {
+    LOGN("ControllerWeather::OnHandle")
     HTTPClient httpClient;
     for (;;) {
         isValid  = WiFi.isConnected();

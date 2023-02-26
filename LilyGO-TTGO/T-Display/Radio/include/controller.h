@@ -2,6 +2,7 @@
 #define _CONTROLLER_H_
 
 #include <Arduino.h>
+#include "logging.h"
 #include "main.h"
 
 class Controller {

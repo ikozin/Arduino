@@ -42,9 +42,11 @@ bool RadioStorage::load(void) {
             text.clear();
         }
         f.close();
+#ifdef DEBUG_CONSOLE        
         for (int i = 0; i < length(); i++) {
             Serial.printf("%d, %s\r\n", getItem(i)->band, getItem(i)->name.c_str());
         }
+#endif
         return true;
     }
     return false;
