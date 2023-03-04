@@ -11,15 +11,29 @@
 <body>
 <div class="container">
 <br/>
-<fieldset>
-    <a href="radio.txt" class="row">Скачать список радио (radio.txt)</a><br/>
-    <input type="file" id="fileSelection" class="form-control row" />
-    <progress id="uploadProgressBar" value="0" max="0" class="row"></progress>
-    <span id="statusText" class="row">&nbsp;</span>
-    <input id="uploadFileButton" type="submit" value="Загрузить" class="btn btn-primary row" disabled="disabled"/>
+<fieldset title="Список радиостанций">
+    <legend>Список радиостанций</legend>
+    <div class="input-group">
+        <a href="radio.txt" class="row col-2">Скачать (radio.txt)</a><br/>
+        <input type="file" id="fileRadio" class="form-control row" />
+        <input id="uploadRadioButton" type="submit" value="Загрузить" class="btn btn-primary row" disabled="disabled"/>
+    </div>
+    <progress id="uploadRadioProgress" value="0" max="0" class="row"></progress>
+    <span id="statusTextRadio" class="row">&nbsp;</span>
+</fieldset>
+<fieldset title="Список будильников">
+    <legend>Список будильников</legend>
+    <div class="input-group">
+        <a href="alarm.json" class="row col-2">Скачать (alarm.json)</a><br/>
+        <input type="file" id="fileAlarm" class="form-control row" />
+        <input id="uploadAlarmButton" type="submit" value="Загрузить" class="btn btn-primary row" disabled="disabled"/>
+    </div>
+    <progress id="uploadAlarmProgress" value="0" max="0" class="row"></progress>
+    <span id="statusTextAlarm" class="row">&nbsp;</span>
 </fieldset>
 <form method="post" class="was-validated">
     <fieldset>
+        <legend>Настройки</legend>
         <div class="row">
             <div>
                 <label for="ssid" class="form-label">Сеть (SSID):</label>
@@ -28,6 +42,10 @@
             <div>
                 <label for="pswd" class="form-label">Пароль:</label>
                 <input type="password" id="pswd" class="form-control" name="pswd" value="%PSWD%" required/>
+            </div>
+            <div>
+                <label for="mqtt" class="form-label">MQTT:</label>
+                <input type="text" id="mqtt" class="form-control" name="mqtt" value="%MQTT%" required/>
             </div>
             <div>
                 <label for="tz" class="form-label">Временная зона:</label>
@@ -51,31 +69,31 @@
 </form>		
 </div>
 <script type="text/javascript">
-    function startUpload() {
+    function startUploadRadio() {
         let request = new XMLHttpRequest();
         request.onerror = function() {
-            window.statusText.innerHTML = 'ERROR: http request failed!';
+            window.statusTextRadio.innerHTML = 'ERROR: http request failed!';
         }
         request.ontimeout = function() {
-            window.statusText.innerHTML = 'ERROR: Connection timeout!';
+            window.statusTextRadio.innerHTML = 'ERROR: Connection timeout!';
         }
         request.onreadystatechange = function() {
             if (this.status == 404) {
-                window.statusText.innerHTML = '404 - Upload URL not found on server';
-                window.fileSelection.value = '';
+                window.statusTextRadio.innerHTML = '404 - Upload URL not found on server';
+                window.fileRadio.value = '';
             }
     
             if (this.readyState == 4) {
                 switch (this.status) {
                     case 200 :
-                        window.statusText.innerHTML = 'Upload succes!';
-                        window.fileSelection.value = '';
-                        window.fileSelection.disabled = false;
-                        window.uploadFileButton.disabled = true;
+                        window.statusTextRadio.innerHTML = 'Upload succes!';
+                        window.fileRadio.value = '';
+                        window.fileRadio.disabled = false;
+                        window.uploadRadioButton.disabled = true;
                         break;
                     case 400 :
-                        window.statusText.innerHTML = this.responseText;
-                        window.fileSelection.disabled = false;
+                        window.statusTextRadio.innerHTML = this.responseText;
+                        window.fileRadio.disabled = false;
                         break;
                     default : console.log('http result code: ' + this.status);
                 }
@@ -83,37 +101,99 @@
         };
         request.upload.addEventListener('progress', function(event) {
             const percent = (event.loaded / event.total) * 100;
-            window.statusText.innerHTML = Math.round(percent) + '% uploaded. Please wait...';
-            let progress = window.uploadProgressBar;
+            window.statusTextRadio.innerHTML = Math.round(percent) + '% uploaded. Please wait...';
+            let progress = window.uploadRadioProgress;
             progress.setAttribute('value', event.loaded);
             progress.setAttribute('max', event.total);
         });
         request.addEventListener('load', function() {
-            let progress = window.uploadProgressBar;
+            let progress = window.uploadRadioProgress;
             progress.setAttribute('value', 0);
             progress.setAttribute('max', 0);
         });
     
-        request.open('POST', '/upload');
-        const file = window.fileSelection.files[0];
+        request.open('POST', '/upload_radio');
+        const file = window.fileRadio.files[0];
         let data = new FormData();
         data.append('file', file);
-        window.statusText.innerHTML = 'Initializing upload...';
+        window.statusTextRadio.innerHTML = 'Initializing upload...';
         request.send(data);
     }
     
-    document.getElementById('fileSelection').addEventListener('change', function() {
-        window.uploadFileButton.disabled = this.files[0] ? false : true;
-        window.statusText.innerHTML = '&nbsp;';
+    function startUploadAlarm() {
+        let request = new XMLHttpRequest();
+        request.onerror = function() {
+            window.statusTextAlarm.innerHTML = 'ERROR: http request failed!';
+        }
+        request.ontimeout = function() {
+            window.statusTextAlarm.innerHTML = 'ERROR: Connection timeout!';
+        }
+        request.onreadystatechange = function() {
+            if (this.status == 404) {
+                window.statusTextAlarm.innerHTML = '404 - Upload URL not found on server';
+                window.fileAlarm.value = '';
+            }
+    
+            if (this.readyState == 4) {
+                switch (this.status) {
+                    case 200 :
+                        window.statusTextAlarm.innerHTML = 'Upload succes!';
+                        window.fileAlarm.value = '';
+                        window.fileAlarm.disabled = false;
+                        window.uploadAlarmButton.disabled = true;
+                        break;
+                    case 400 :
+                        window.statusTextAlarm.innerHTML = this.responseText;
+                        window.fileAlarm.disabled = false;
+                        break;
+                    default : console.log('http result code: ' + this.status);
+                }
+            }
+        };
+        request.upload.addEventListener('progress', function(event) {
+            const percent = (event.loaded / event.total) * 100;
+            window.statusTextAlarm.innerHTML = Math.round(percent) + '% uploaded. Please wait...';
+            let progress = window.uploadAlarmProgress;
+            progress.setAttribute('value', event.loaded);
+            progress.setAttribute('max', event.total);
+        });
+        request.addEventListener('load', function() {
+            let progress = window.uploadAlarmProgress;
+            progress.setAttribute('value', 0);
+            progress.setAttribute('max', 0);
+        });
+    
+        request.open('POST', '/upload_alarm');
+        const file = window.fileAlarm.files[0];
+        let data = new FormData();
+        data.append('file', file);
+        window.statusTextAlarm.innerHTML = 'Initializing upload...';
+        request.send(data);
+    }
+
+    document.getElementById('fileRadio').addEventListener('change', function() {
+        window.uploadRadioButton.disabled = this.files[0] ? false : true;
+        window.statusTextRadio.innerHTML = '&nbsp;';
     });
     
-    document.getElementById('uploadFileButton').addEventListener('click', function(event){
+    document.getElementById('uploadRadioButton').addEventListener('click', function(event){
         event.preventDefault();
         this.disabled = true;
-        window.fileSelection.disabled = true;
-        startUpload();
+        window.fileRadio.disabled = true;
+        startUploadRadio();
     });
     
+    document.getElementById('fileAlarm').addEventListener('change', function() {
+        window.uploadAlarmButton.disabled = this.files[0] ? false : true;
+        window.statusTextAlarm.innerHTML = '&nbsp;';
+    });
+    
+    document.getElementById('uploadAlarmButton').addEventListener('click', function(event){
+        event.preventDefault();
+        this.disabled = true;
+        window.fileAlarm.disabled = true;
+        startUploadAlarm();
+    });
     </script>
 </body>
 

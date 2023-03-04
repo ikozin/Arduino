@@ -1,12 +1,16 @@
+#include <FS.h>
+#include <SPIFFS.h>
+#include <ArduinoJson.h>
 #include "controllerAlarmClock.h"
 
 ControllerAlarmClock ctrlAlarmClock = ControllerAlarmClock("ctrlAlarm");
 
 ControllerAlarmClock::ControllerAlarmClock(const char* name) : Controller(name) {
     _radio = nullptr;
-    for (_alarmClockCount = 0; _alarmClockCount < MAX_ALARMCLOCK_COUNT; _alarmClockCount ++) {
-        if (_alarmClockList[_alarmClockCount].value == 0) break;
-    }
+
+    _alarmClockCount = 0;
+    _timerList = nullptr;
+    _alarmClockList = nullptr;
 }
 
 ControllerAlarmClock& ControllerAlarmClock::attachControllerRadio(ControllerRadio* radio) {
@@ -16,6 +20,43 @@ ControllerAlarmClock& ControllerAlarmClock::attachControllerRadio(ControllerRadi
 
 void ControllerAlarmClock::OnHandle() {
     LOGN("ControllerAlarmClock::OnHandle")
+    File f = SPIFFS.open(FS_ALARMLIST_FILE);
+    if (f) {
+        StaticJsonDocument<2048> doc;
+        DeserializationError error = deserializeJson(doc, f);
+        if (error) {
+            LOGN("Failed to read file, using default configuration");
+        }
+        else {
+            JsonArray array = doc.as<JsonArray>();
+            if (array.size() <= 16) {
+                _alarmClockCount = array.size();
+                _timerList = new TimerHandle_t[_alarmClockCount];
+                _alarmClockList = new alarmClockItem_t[_alarmClockCount];
+
+                for (int i = 0; i < _alarmClockCount; i++) {
+                    JsonObject object = array[i].as<JsonObject>();
+                    _timerList[i] = nullptr;
+
+                    _alarmClockList[i].value = 0;
+                    _alarmClockList[i].Hour = object["Hour"].as<int>();
+                    _alarmClockList[i].Minute = object["Minute"].as<int>();
+                    _alarmClockList[i].IsMute = object["Mute"].as<int>();
+                    _alarmClockList[i].Volume = object["Volume"].as<int>();
+                    _alarmClockList[i].Index = object["Index"].as<int>();
+
+                    _alarmClockList[i].Monday = object["Mo"].as<int>();
+                    _alarmClockList[i].Tuesday= object["Tu"].as<int>();
+                    _alarmClockList[i].Wednesday = object["We"].as<int>();
+                    _alarmClockList[i].Thursday = object["Th"].as<int>();
+                    _alarmClockList[i].Friday = object["Fr"].as<int>();
+                    _alarmClockList[i].Saturday = object["Sa"].as<int>();
+                    _alarmClockList[i].Sunday = object["Su"].as<int>();
+                }
+            }
+        }
+        f.close();
+    }
     for (int i = 0; i < _alarmClockCount; i++) {
         startTimer(i);    
     }

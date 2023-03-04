@@ -35,6 +35,17 @@ void ControllerWeather::OnHandle() {
             if (isValid) {
                 String payload = httpClient.getString();
                 parseWeatherInfo(payload);
+                LOGN("ControllerWeather::isValid, %d", isValid);
+                LOGN("ControllerWeather::weatherDescription, %s", weatherDescription.c_str());
+                LOGN("ControllerWeather::weatherTemperature, %s", weatherTemperature.c_str());
+                LOGN("ControllerWeather::weatherPressure, %s", weatherPressure.c_str());
+                LOGN("ControllerWeather::weatherDampness, %s", weatherDampness.c_str());
+                LOGN("ControllerWeather::weatherWindSpeed, %s", weatherWindSpeed.c_str());
+                LOGN("ControllerWeather::weatherWindType, %s", weatherWindType.c_str());
+                LOGN("ControllerWeather::trafficLevel, %s", trafficLevel.c_str());
+                LOGN("ControllerWeather::weatherUrlIcon, %s", weatherUrlIcon.c_str());
+                LOGN("ControllerWeather::iconFileName, %s", iconFileName.c_str());
+                LOGN("ControllerWeather::windFileName, %s", windFileName.c_str());
             }
             httpClient.end();
         }

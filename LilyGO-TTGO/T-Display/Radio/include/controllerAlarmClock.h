@@ -5,6 +5,8 @@
 #include "controller.h"
 #include "controllerRadio.h"
 
+#define     FS_ALARMLIST_FILE   "/alarm.json"
+
 #define WEEK_MASK     0x7F
 #define MAX_ALARMCLOCK_COUNT 16
 
@@ -46,14 +48,8 @@ class ControllerAlarmClock : public Controller {
         ControllerRadio* _radio;
 
         uint16_t _alarmClockCount;
-        TimerHandle_t _timerList[MAX_ALARMCLOCK_COUNT];
-        alarmClockItem_t _alarmClockList[MAX_ALARMCLOCK_COUNT] = {
-            SET_ALARMCLOCK_MUTE_ON(23, 0),
-            SET_ALARMCLOCK_VOLUME_WORK(8, 0, 1),
-            SET_ALARMCLOCK_MUTE_OFF(13, 14),
-            SET_ALARMCLOCK_MUTE_ON(13, 15),
-            SET_ALARMCLOCK_MUTE_OFF(13, 16),
-        };
+        TimerHandle_t* _timerList;
+        alarmClockItem_t* _alarmClockList;
     private:
         uint8_t nextDay(uint8_t wday_mask, time_t* next);
         TickType_t getTimerPeriod(alarmClockItem_t* pAlarm);

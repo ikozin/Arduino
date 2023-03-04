@@ -1,5 +1,6 @@
 #include "setting.h"
 #include "main.h"
+#include "controllerAlarmClock.h"
 
 #define SSID "ESP32-Radio"
 #define PASSPHRASE  "12345678"
@@ -17,6 +18,8 @@ String processorSetting(const String& var) {
         return prefs.getString("ssid", "");
     if (var == "PSWD")
         return prefs.getString("pswd", "");
+    if (var == "MQTT")
+        return prefs.getString("mqtt", "");
     if (var == "TZ")
         return String(prefs.getInt("tz", 10800));
     if (var == "VOLUME")
@@ -60,6 +63,11 @@ void handlerPostSetting(AsyncWebServerRequest *request) {
         Serial.println(request->getParam("pswd", true)->value());
         prefs.putString("pswd", request->getParam("pswd", true)->value());
     }
+    if (request->hasParam("mqtt", true)) {
+        Serial.print("mqtt=");
+        Serial.println(request->getParam("mqtt", true)->value());
+        prefs.putString("mqtt", request->getParam("mqtt", true)->value());
+    }
     if (request->hasParam("tz", true)) {
         Serial.print("tz=");
         Serial.println(request->getParam("tz", true)->value().toInt());
@@ -87,6 +95,11 @@ void handleGetRadioFile(AsyncWebServerRequest *request) {
     request->send(SPIFFS, FS_RADIOLIST_FILE, String(), true);
 }
 
+void handleGetAlarmFile(AsyncWebServerRequest *request) {
+    Serial.println("handleGetAlarmFile");
+    request->send(SPIFFS, FS_ALARMLIST_FILE, String(), true);
+}
+
 void handlePostUpload(AsyncWebServerRequest *request) {
     Serial.println("handlePostUpload");
     request->send(200);
@@ -97,6 +110,23 @@ void handleUploadRadioFile(AsyncWebServerRequest *request, String filename, size
         ctrlRadioStorage.clear();
         Serial.printf("UploadStart: %s\n", filename.c_str());
         request->_tempFile = SPIFFS.open(FS_RADIOLIST_FILE, FILE_WRITE, true);
+    }
+    for(size_t i=0; i<len; i++){
+        Serial.write(data[i]);
+    }
+    request->_tempFile.write(data, len);
+    if(final){
+        Serial.printf("\nUploadEnd: %s, %u B\n", filename.c_str(), index+len);
+        request->_tempFile.close();
+        ctrlRadioStorage.load();
+    }
+}
+
+void handleUploadAlarmFile(AsyncWebServerRequest *request, String filename, size_t index, uint8_t *data, size_t len, bool final){
+    if(!index){
+        ctrlRadioStorage.clear();
+        Serial.printf("UploadStart: %s\n", filename.c_str());
+        request->_tempFile = SPIFFS.open(FS_ALARMLIST_FILE, FILE_WRITE, true);
     }
     for(size_t i=0; i<len; i++){
         Serial.write(data[i]);
@@ -123,9 +153,12 @@ void setSettings(Preferences& prefs, TFT_eSPI& tft, AsyncWebServer& server) {
     server.serveStatic("/bootstrap.css", SPIFFS, "/html/bootstrap.css");
     server.on("/", HTTP_GET, handlerGetSetting);
     server.on("/", HTTP_POST, handlerPostSetting);
-    server.on("/upload", HTTP_POST, handlePostUpload, handleUploadRadioFile);
+    server.on("/upload_radio", HTTP_POST, handlePostUpload, handleUploadRadioFile);
+    server.on("/upload_alarm", HTTP_POST, handlePostUpload, handleUploadAlarmFile);
    
     server.on(FS_RADIOLIST_FILE, HTTP_GET, handleGetRadioFile);
+    server.on(FS_ALARMLIST_FILE, HTTP_GET, handleGetAlarmFile);
+    
 
     server.onNotFound(notFound);
     server.begin();

@@ -12,7 +12,7 @@ ControllerDevice::ControllerDevice(const char* name) : Controller(name), _radSen
 }
 
 void ControllerDevice::OnHandle() {
-    LOGN("ControllerDevice::OnHandle")
+    //LOGN("ControllerDevice::OnHandle")
     if (! _bme.begin(BME280_PORT, &Wire)) {
         // Serial.printf("bme280 error\r\n");
         return;
@@ -29,6 +29,7 @@ void ControllerDevice::OnHandle() {
                     Adafruit_BME280::FILTER_OFF);
     
     for (;;) {
+        LOGN("ControllerDevice::OnHandle")
         _temperature = _bme.readTemperature();
         _humidity = _bme.readHumidity();
         _pressure = _bme.readPressure() / 1000.0F * 7.50062;
@@ -36,6 +37,13 @@ void ControllerDevice::OnHandle() {
         _dynamicValue = _radSens.getRadIntensyDynamic(); 
         _staticValue = _radSens.getRadIntensyStatic();
         _impulseValue = _radSens.getNumberOfPulses();
+
+        LOGN("ControllerDevice::getTemperature, %f", getTemperature())
+        LOGN("ControllerDevice::getHumidity, %f", getHumidity())
+        LOGN("ControllerDevice::getPressure, %f", getPressure())
+        LOGN("ControllerDevice::getDynamic, %f", getDynamic())
+        LOGN("ControllerDevice::getStatic, %f", getStatic())
+        LOGN("ControllerDevice::getImpulse, %f", getImpulse())
 
         xSemaphoreGive(_updateEvent);
         vTaskDelay(UPDATE_DEVICE_TIME);
