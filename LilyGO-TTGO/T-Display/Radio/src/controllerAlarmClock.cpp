@@ -64,7 +64,7 @@ void ControllerAlarmClock::OnHandle() {
 
 void ControllerAlarmClock::startTimer(int index) {
     alarmClockItem_t alarm = _alarmClockList[index];
-    LOG("\r\nControllerAlarmClock::startTimer [%d]=0x%llX\r\n", index, alarm.value);
+    LOGN("ControllerAlarmClock::startTimer [%d]=0x%llX", index, alarm.value);
     TickType_t period = getTimerPeriod(&alarm);
     _timerList[index] = xTimerCreate("Timer", period, pdFALSE, (void*)index, timerCallback);
     xTimerStart(_timerList[index], 0);
@@ -74,7 +74,7 @@ void ControllerAlarmClock::timerCallback(TimerHandle_t pxTimer) {
     int32_t index = (int32_t)pvTimerGetTimerID(pxTimer);
     xTimerDelete(pxTimer, 0);
     alarmClockItem_t alarm = ctrlAlarmClock._alarmClockList[index];
-    LOG("ControllerAlarmClock::timerCallback [%d], alarm[%d]=0x%llX\r\n", index, index, alarm.value);
+    LOGN("ControllerAlarmClock::timerCallback [%d], alarm[%d]=0x%llX", index, index, alarm.value);
     if (ctrlAlarmClock._radio != nullptr) {
         if (alarm.IsMute)       ctrlAlarmClock._radio->setMute(true);
         if (alarm.Index != -1)  ctrlAlarmClock._radio->setRadioIndex(alarm.Index);

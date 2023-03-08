@@ -170,7 +170,7 @@ void setup() {
     WiFi.begin(ssid.c_str(), pswd.c_str());
     while (WiFi.status() != WL_CONNECTED) {
         tft.printf(".");
-        vTaskDelay(500 / portTICK_RATE_MS);
+        vTaskDelay(1000 / portTICK_RATE_MS);
     }
     tft.printf("\r\nconnected!\r\nip: %s\r\n", WiFi.localIP().toString().c_str());
     LOG("\r\nconnected!\r\nip: %s\r\n", WiFi.localIP().toString().c_str())
@@ -180,7 +180,7 @@ void setup() {
     WiFi.onEvent(WiFiEvent);
 
 
-    do vTaskDelay(500 / portTICK_RATE_MS);
+    do vTaskDelay(1000 / portTICK_RATE_MS);
     while (sntp_get_sync_status() != SNTP_SYNC_STATUS_COMPLETED);
 
 #ifdef DEBUG_CONSOLE

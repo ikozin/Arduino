@@ -29,7 +29,6 @@ void ControllerDevice::OnHandle() {
                     Adafruit_BME280::FILTER_OFF);
     
     for (;;) {
-        LOGN("ControllerDevice::OnHandle")
         _temperature = _bme.readTemperature();
         _humidity = _bme.readHumidity();
         _pressure = _bme.readPressure() / 1000.0F * 7.50062;
@@ -38,6 +37,7 @@ void ControllerDevice::OnHandle() {
         _staticValue = _radSens.getRadIntensyStatic();
         _impulseValue = _radSens.getNumberOfPulses();
 
+        LOGN("ControllerDevice::OnHandle")
         LOGN("ControllerDevice::getTemperature, %f", getTemperature())
         LOGN("ControllerDevice::getHumidity, %f", getHumidity())
         LOGN("ControllerDevice::getPressure, %f", getPressure())

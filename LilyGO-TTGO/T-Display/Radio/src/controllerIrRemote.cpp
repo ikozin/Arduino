@@ -23,7 +23,8 @@ void ControllerIrRemote::OnHandle() {
     initPCIInterruptForTinyReceiver(); 
     for (;;) {
         xSemaphoreTake(_updateEvent, portMAX_DELAY);
-        //Serial.printf("\r\nIR Receiver Core = %d, CMD=0x%04X R=%d\r\n", xPortGetCoreID(), ir_cmd, ir_repeat);
+        LOGN("ControllerIrRemote::OnHandle")
+        LOGN("ControllerIrRemote, CMD=0x%04X R=%d\r\n", xPortGetCoreID(), ir_cmd, ir_repeat)
         if (!ir_repeat) {
             switch (ir_cmd) {
                 case CARMP3_CH_MINUS:
