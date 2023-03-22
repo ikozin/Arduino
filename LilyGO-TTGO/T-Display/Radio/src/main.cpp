@@ -12,6 +12,7 @@
 
 
 #include "view.h"
+#include "viewTime.h"
 #include "viewRadio.h"
 #include "viewDevice.h"
 #include "viewWeather.h"
@@ -22,6 +23,7 @@
 #include "controllerAlarmClock.h"
 #include "controllerDevice.h"
 #include "controllerIrRemote.h"
+#include "controllerTime.h"
 #include "controllerRadio.h"
 #include "controllerWeather.h"
 
@@ -56,14 +58,17 @@ RadioStorage ctrlRadioStorage;
 ControllerRadio ctrlRadio = ControllerRadio("CtrlRadio", &prefs, &ctrlRadioStorage);
 ControllerWeather ctrlWeather = ControllerWeather("CtrlWeather");
 ControllerDevice ctrlDevice = ControllerDevice("CtrlDevice");
+ControllerTime ctrlTime = ControllerTime("CtrlTime");
 
 int16_t viewIndex  = -1;
 View* currentView = NULL;
+ViewTime viewTime = ViewTime("ViewTime", &tft, &currentView);
 ViewRadio viewRadio = ViewRadio("ViewRadio", &tft, &currentView, &ctrlRadio);
 ViewWeather viewWeather = ViewWeather("ViewWeather", &tft, &currentView, &ctrlWeather);
 ViewDevice viewDevice = ViewDevice("ViewDevice", &tft, &currentView, &ctrlDevice);
 
 View* viewList[] = {
+    &viewTime,
     &viewRadio,
     &viewWeather,
     &viewDevice,
@@ -193,6 +198,7 @@ void setup() {
 #endif
 
     LOGN("Controller - Start")
+    ctrlTime.Start();
     ctrlRadio.Start();
     ctrlWeather.Start();
     ctrlDevice.Start();
@@ -200,6 +206,7 @@ void setup() {
     ctrlIrRemote.attachControllerRadio(&ctrlRadio).Start();
 
     LOGN("View - Start")
+    viewTime.Start(ctrlTime.GetEvent());
     viewRadio.Start(ctrlRadio.GetEvent());
     viewWeather.Start(ctrlWeather.GetEvent());
     viewDevice.Start(ctrlDevice.GetEvent());
