@@ -41,6 +41,7 @@
 #endif
 
 TFT_eSPI tft = TFT_eSPI(TFT_WIDTH, TFT_HEIGHT); // 135x240
+TFT_eSprite sprite = TFT_eSprite(&tft);
 
 Preferences prefs = Preferences();
 //AsyncWebServer server = AsyncWebServer(80);
@@ -62,10 +63,10 @@ ControllerTime ctrlTime = ControllerTime("CtrlTime");
 
 int16_t viewIndex  = -1;
 View* currentView = NULL;
-ViewTime viewTime = ViewTime("ViewTime", &tft, &currentView);
-ViewRadio viewRadio = ViewRadio("ViewRadio", &tft, &currentView, &ctrlRadio);
-ViewWeather viewWeather = ViewWeather("ViewWeather", &tft, &currentView, &ctrlWeather);
-ViewDevice viewDevice = ViewDevice("ViewDevice", &tft, &currentView, &ctrlDevice);
+ViewTime viewTime = ViewTime("ViewTime", &currentView);
+ViewRadio viewRadio = ViewRadio("ViewRadio", &currentView, &ctrlRadio);
+ViewWeather viewWeather = ViewWeather("ViewWeather", &currentView, &ctrlWeather);
+ViewDevice viewDevice = ViewDevice("ViewDevice", &currentView, &ctrlDevice);
 
 View* viewList[] = {
     &viewTime,
@@ -206,10 +207,11 @@ void setup() {
     ctrlIrRemote.attachControllerRadio(&ctrlRadio).Start();
 
     LOGN("View - Start")
-    viewTime.Start(ctrlTime.GetEvent());
-    viewRadio.Start(ctrlRadio.GetEvent());
-    viewWeather.Start(ctrlWeather.GetEvent());
-    viewDevice.Start(ctrlDevice.GetEvent());
+    sprite.createSprite(TFT_HEIGHT, TFT_WIDTH);
+    viewTime.Start(&sprite, ctrlTime.GetEvent());
+    viewRadio.Start(&sprite, ctrlRadio.GetEvent());
+    viewWeather.Start(&sprite, ctrlWeather.GetEvent());
+    viewDevice.Start(&sprite, ctrlDevice.GetEvent());
 
     currentHandle = &ControllerRadio::changeVolume;
 

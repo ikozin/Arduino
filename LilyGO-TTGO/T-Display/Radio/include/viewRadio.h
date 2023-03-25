@@ -8,7 +8,7 @@ class ViewRadio : public View {
     private:
         ControllerRadio* _radio;
     public:
-        ViewRadio(const char* name, TFT_eSPI* tft, View** currentView, ControllerRadio* radio);
+        ViewRadio(const char* name, View** currentView, ControllerRadio* radio);
     protected:
         virtual void OnHandle();
     private:

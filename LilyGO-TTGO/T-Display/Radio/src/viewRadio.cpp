@@ -1,6 +1,6 @@
 #include "viewRadio.h"
 
-ViewRadio::ViewRadio(const char* name, TFT_eSPI* tft, View** currentView, ControllerRadio* radio) : View(name, tft, currentView) {
+ViewRadio::ViewRadio(const char* name, View** currentView, ControllerRadio* radio) : View(name, currentView) {
     _radio = radio;
 }
 
@@ -16,16 +16,16 @@ void ViewRadio::displayVolume() {
     else if (volume < 13) text = "▆";
     else if (volume < 15) text = "▇";
     else                  text = "█";
-    _tft->setTextDatum(MC_DATUM);
-    _tft->drawString(text, 149, 21);
+    _sprite->setTextDatum(MC_DATUM);
+    _sprite->drawString(text, 149, 21);
 }
 
 void ViewRadio::displayMute() {
     const char* text;
     if (_radio->getMute()) text = "";
     else        text = "";
-    _tft->setTextDatum(MC_DATUM);
-    _tft->drawString(text, 185, 24);
+    _sprite->setTextDatum(MC_DATUM);
+    _sprite->drawString(text, 185, 24);
 }
 
 void ViewRadio::displayLevel() {
@@ -36,8 +36,8 @@ void ViewRadio::displayLevel() {
     else if (rssi < 50) text = "";
     else if (rssi < 60) text = "";
     else                text = "";
-    _tft->setTextDatum(MC_DATUM);
-    _tft->drawString(text, 221, 24);
+    _sprite->setTextDatum(MC_DATUM);
+    _sprite->drawString(text, 221, 24);
 }
 
 void ViewRadio::displayFreq() {
@@ -48,16 +48,18 @@ void ViewRadio::displayFreq() {
     freq.concat((uint16_t)(band / 10));
     freq.concat('.');
     freq.concat((uint16_t)(band % 10));
-    _tft->setTextDatum(MC_DATUM);
-    _tft->drawString(freq, 63, 26);
+    _sprite->setTextDatum(MC_DATUM);
+    _sprite->drawString(freq, 63, 26);
 }
 
 void ViewRadio::OnHandle() {
     LOGN("ViewRadio::OnHandle")
-    _tft->fillScreen(TFT_SKYBLUE);
-    _tft->setTextColor(TFT_MAGENTA);
+    
+    _sprite->fillRect(0, 0, _sprite->width(), _sprite->height(), TFT_SKYBLUE);
+    //_sprite->fillScreen(TFT_SKYBLUE);
+    _sprite->setTextColor(TFT_MAGENTA);
 
-    _tft->loadFont(FONT_ICON_32);
+    _sprite->loadFont(FONT_ICON_32);
     // debug_printf("▁ %d\r\n", tft.textWidth("▁"));
     // debug_printf("▂ %d\r\n", tft.textWidth("▂"));
     // debug_printf("▃ %d\r\n", tft.textWidth("▃"));
@@ -77,23 +79,24 @@ void ViewRadio::OnHandle() {
     displayVolume();
     displayMute();
     displayLevel();
-    _tft->unloadFont();
+    _sprite->unloadFont();
 
-    _tft->loadFont(FONT_DIGIT_56);
+    _sprite->loadFont(FONT_DIGIT_56);
     displayFreq();
-    _tft->unloadFont();
+    _sprite->unloadFont();
 
-    _tft->loadFont(FONT_TEXT_32);
+    _sprite->loadFont(FONT_TEXT_32);
 
     uint16_t index = _radio->getRadioIndex();
     String text = _radio->getStorage()->getItem(index)->name;
-    if (_tft->textWidth(text) >=  239) {
-        _tft->setTextDatum(TL_DATUM);
-        _tft->drawString(text, 0, 70);
+    if (_sprite->textWidth(text) >=  239) {
+        _sprite->setTextDatum(TL_DATUM);
+        _sprite->drawString(text, 0, 70);
     }
     else {
-        _tft->setTextDatum(TC_DATUM);
-        _tft->drawString(text, 119, 70);
+        _sprite->setTextDatum(TC_DATUM);
+        _sprite->drawString(text, 119, 70);
     }
-    _tft->unloadFont();
+    _sprite->unloadFont();
+    _sprite->pushSprite(0, 0);
 }

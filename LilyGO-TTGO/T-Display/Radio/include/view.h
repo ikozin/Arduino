@@ -8,14 +8,14 @@
 
 class View{
     protected:
-        TFT_eSPI* _tft;
         View** _currentView;
         const char* _name;
         SemaphoreHandle_t _updateEvent;
         TaskHandle_t _task;
+        TFT_eSprite* _sprite;
     public:
-        View(const char* name, TFT_eSPI* tft, View** currentView);
-        void Start(SemaphoreHandle_t updateEvent);
+        View(const char* name, View** currentView);
+        void Start(TFT_eSprite* sprite, SemaphoreHandle_t updateEvent);
         virtual void OnHandle() = 0;
         SemaphoreHandle_t GetEvent() const { 
             assert(_updateEvent);

@@ -6,7 +6,7 @@
 
 class ViewDevice : public View {
     public:
-        ViewDevice(const char* name, TFT_eSPI* tft, View** currentView, ControllerDevice* device);
+        ViewDevice(const char* name, View** currentView, ControllerDevice* device);
     protected:
         virtual void OnHandle();
     private:

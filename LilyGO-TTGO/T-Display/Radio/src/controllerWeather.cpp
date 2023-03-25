@@ -13,6 +13,7 @@ char _windPattern[]        = "<info|<weather|<day_part|<wind_direction|id=";
 
 
 ControllerWeather::ControllerWeather(const char* name) : Controller(name) {
+    isValid = false;
     trafficLevel.reserve(8);
     weatherDescription.reserve(128);
     weatherUrlIcon.reserve(128);
@@ -24,18 +25,22 @@ ControllerWeather::ControllerWeather(const char* name) : Controller(name) {
 }
 
 void ControllerWeather::OnHandle() {
-    LOGN("ControllerWeather::OnHandle")
     HTTPClient httpClient;
     for (;;) {
-        isValid  = WiFi.isConnected();
+        LOGN("ControllerWeather::OnHandle")
+        if (!WiFi.isConnected()) {
+            isValid = false;
+            LOGN("ControllerWeather::isValid, %d", isValid);
+            continue;   
+        }
+        httpClient.begin("https://export.yandex.ru/bar/reginfo.xml?region=213");
+        int httpCode = httpClient.GET();
+        isValid = httpCode == HTTP_CODE_OK;
         if (isValid) {
-            httpClient.begin("https://export.yandex.ru/bar/reginfo.xml?region=213");
-            int httpCode = httpClient.GET();
-            isValid = httpCode == HTTP_CODE_OK;
+            String payload = httpClient.getString();
+            isValid = !payload.isEmpty();
             if (isValid) {
-                String payload = httpClient.getString();
                 parseWeatherInfo(payload);
-                LOGN("ControllerWeather::isValid, %d", isValid);
                 LOGN("ControllerWeather::weatherDescription, %s", weatherDescription.c_str());
                 LOGN("ControllerWeather::weatherTemperature, %s", weatherTemperature.c_str());
                 LOGN("ControllerWeather::weatherPressure, %s", weatherPressure.c_str());
@@ -47,10 +52,11 @@ void ControllerWeather::OnHandle() {
                 LOGN("ControllerWeather::iconFileName, %s", iconFileName.c_str());
                 LOGN("ControllerWeather::windFileName, %s", windFileName.c_str());
             }
-            httpClient.end();
         }
+        httpClient.end();
+        LOGN("ControllerWeather::isValid, %d", isValid);
         xSemaphoreGive(_updateEvent);
-        vTaskDelay(UPDATE_WEATHER_TIME);
+        vTaskDelay(isValid ? UPDATE_WEATHER_TIME: 5000);
     }
 }
 
@@ -70,10 +76,14 @@ void ControllerWeather::parseWeatherInfo(String& payload) {
     pstr = getMatch(pstr, _temperaturePattern, weatherTemperature, '>', '<');
     getMatch(payload.begin(), _windPattern, windFileName, '"', '"');
 
-    if (!windFileName.isEmpty())
+    if (!windFileName.isEmpty()) {
         windFileName = "/" + windFileName;
-    iconFileName = strrchr(weatherUrlIcon.c_str(), '/');
-    iconFileName = "/icon" + iconFileName;
+    }
+    
+    iconFileName = "/icon";
+    if (!weatherUrlIcon.isEmpty()) {
+        iconFileName += strrchr(weatherUrlIcon.c_str(), '/');
+    }
 
     float windSpeed = weatherWindSpeed.toFloat();
     if (windSpeed > 3.0 && windSpeed < 10.0)

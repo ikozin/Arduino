@@ -6,7 +6,7 @@
 
 class ViewWeather : public View {
     public:
-        ViewWeather(const char* name, TFT_eSPI* tft, View** currentView, ControllerWeather* weather);
+        ViewWeather(const char* name, View** currentView, ControllerWeather* weather);
     protected:
         virtual void OnHandle();
     private:

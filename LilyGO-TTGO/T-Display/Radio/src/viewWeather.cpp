@@ -5,7 +5,7 @@
 
 const int32_t iconSize = 64;
 
-ViewWeather::ViewWeather(const char* name, TFT_eSPI* tft, View** currentView, ControllerWeather* weather) : View(name, tft, currentView) {
+ViewWeather::ViewWeather(const char* name, View** currentView, ControllerWeather* weather) : View(name, currentView) {
     _weather = weather;
 }
 
@@ -15,7 +15,7 @@ void ViewWeather::drawImageFile(const char* fileName, const int32_t x, const int
         size_t len = f.size();
         if (len <= sizeof(fileData)) {
             f.read((uint8_t*)fileData, len);
-            _tft->pushImage(x, y, size, size, fileData);
+            _sprite->pushImage(x, y, size, size, fileData);
         }
         f.close();
     }
@@ -23,26 +23,29 @@ void ViewWeather::drawImageFile(const char* fileName, const int32_t x, const int
 
 void ViewWeather::OnHandle() {
     LOGN("ViewWeather::OnHandle")
-    _tft->fillScreen(0x4C7D); //ColorToRGB565(0x4D, 0x8D, 0xEE)
-    _tft->setTextDatum(TL_DATUM);
+    _sprite->fillRect(0, 0, _sprite->width(), _sprite->height(), 0x4C7D); //ColorToRGB565(0x4D, 0x8D, 0xEE)
+    if (!_weather->isValid) {
+        return;
+    }
+    _sprite->setTextDatum(TL_DATUM);
 
     drawImageFile(_weather->iconFileName.c_str(), 107, 0, iconSize);
     drawImageFile(_weather->windFileName.c_str(), 192, 8, 32);
 
-    _tft->loadFont(FONT_TEXT_32);
-    _tft->setTextColor(TFT_WHITE);
-    int32_t posX = _tft->textWidth(_weather->weatherDescription);
+    _sprite->loadFont(FONT_TEXT_32);
+    _sprite->setTextColor(TFT_WHITE);
+    int32_t posX = _sprite->textWidth(_weather->weatherDescription);
     posX = (posX < 240) ? (240 - posX) >> 1 : 0;
-    _tft->setTextDatum(TL_DATUM);
-    _tft->drawString(_weather->weatherDescription, posX + 2, 64);
-    _tft->unloadFont();
+    _sprite->setTextDatum(TL_DATUM);
+    _sprite->drawString(_weather->weatherDescription, posX + 2, 64);
+    _sprite->unloadFont();
 
     // Для шрифта Colibri56
     // Ширина: для срок от -40° до +40° максимальная = 101
     // Высота: 48
-    _tft->loadFont(FONT_DIGIT_56);
-    _tft->setTextColor(TFT_WHITE);
-    posX = ((int32_t)101 - _tft->textWidth(_weather->weatherTemperature)) >> 1;
-    _tft->drawString(_weather->weatherTemperature, posX + 2, 10);
-    _tft->unloadFont();
+    _sprite->loadFont(FONT_DIGIT_56);
+    _sprite->setTextColor(TFT_WHITE);
+    posX = ((int32_t)101 - _sprite->textWidth(_weather->weatherTemperature)) >> 1;
+    _sprite->drawString(_weather->weatherTemperature, posX + 2, 10);
+    _sprite->unloadFont();
 }

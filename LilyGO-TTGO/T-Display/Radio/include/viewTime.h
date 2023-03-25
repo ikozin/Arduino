@@ -5,11 +5,9 @@
 
 class ViewTime : public View {
     public:
-        ViewTime(const char* name, TFT_eSPI* tft, View** currentView);
+        ViewTime(const char* name, View** currentView);
     protected:
         virtual void OnHandle();
-    private:
-        TFT_eSprite sprite;
 };
 
 #endif  //_VIEWTIME_H_

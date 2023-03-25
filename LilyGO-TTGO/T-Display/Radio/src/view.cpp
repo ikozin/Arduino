@@ -1,14 +1,15 @@
 #include <typeinfo>
 #include "view.h"
 
-View::View(const char* name, TFT_eSPI* tft, View** currentView) {
+View::View(const char* name, View** currentView) {
     _name = name;
-    _tft = tft;
     _currentView = currentView;
 }
 
-void View::Start(SemaphoreHandle_t updateEvent) {
+void View::Start(TFT_eSprite* sprite, SemaphoreHandle_t updateEvent) {
+    assert(sprite);
     assert(updateEvent);
+    _sprite = sprite;
     _updateEvent = updateEvent;
     xTaskCreate(ViewHandler, this->_name, 4096, this, 1, &this->_task);
 }
@@ -19,6 +20,9 @@ void View::ViewHandler(void* parameter) {
     for (;;) {
         xSemaphoreTake(page->_updateEvent, portMAX_DELAY);
         // Serial.printf("Update Event %s\r\n", page->_name);
-        if (*page->_currentView == page) page->OnHandle();
+        if (*page->_currentView == page) {
+            page->OnHandle();
+            page->_sprite->pushSprite(0, 0);
+        }
     }
 }
