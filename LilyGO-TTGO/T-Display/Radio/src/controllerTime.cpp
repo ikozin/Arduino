@@ -9,7 +9,7 @@ ControllerTime::ControllerTime(const char* name) : Controller(name) {
 void ControllerTime::OnHandle() {
     portTickType xLastWakeTime = xTaskGetTickCount();
     for (;;) {
-//         LOGN("ControllerTime::OnHandle")
+        LOGN("ControllerTime::OnHandle")
 // #ifdef DEBUG_CONSOLE
 //         char text[64];
 //         time_t currenTime = time(NULL);
