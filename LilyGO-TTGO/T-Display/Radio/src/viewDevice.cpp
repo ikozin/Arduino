@@ -15,7 +15,7 @@ void ViewDevice::OnHandle() {
     } else if (rad > 20) {
         backColor = TFT_YELLOW;
     }
-    _sprite->fillRect(0, 0, _sprite->width(), _sprite->height(), backColor);
+    _sprite->fillSprite(backColor);
     //_sprite->setTextColor(TFT_MAGENTA);
     _sprite->setTextColor(TFT_WHITE);
     _sprite->setTextDatum(BL_DATUM);
@@ -24,13 +24,18 @@ void ViewDevice::OnHandle() {
 
     _sprite->loadFont(FONT_DIGIT_56);
     sprintf(text, "%+.0f°", _device->getTemperature());
-    _sprite->drawString(text, 4, 64);
+    _sprite->drawString(text, 3, 64);
+    //_sprite->unloadFont();
+
+    //_sprite->loadFont(FONT_TEXT_32);
+
+    sprintf(text, "%.0f", _device->getHumidity());
+    int w = _sprite->drawString(text, 130, 64);
+    
     _sprite->unloadFont();
 
     _sprite->loadFont(FONT_TEXT_32);
-
-    sprintf(text, "%.0f %%", _device->getHumidity());
-    _sprite->drawString(text, 148, 64);
+    _sprite->drawString("%", 130 + w, 64);
 
     sprintf(text, "%.0f мм", _device->getPressure());
     _sprite->drawString(text, 8, 122);

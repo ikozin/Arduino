@@ -23,7 +23,7 @@ void ViewWeather::drawImageFile(const char* fileName, const int32_t x, const int
 
 void ViewWeather::OnHandle() {
     LOGN("ViewWeather::OnHandle")
-    _sprite->fillRect(0, 0, _sprite->width(), _sprite->height(), 0x4C7D); //ColorToRGB565(0x4D, 0x8D, 0xEE)
+    _sprite->fillSprite(0x4C7D); //ColorToRGB565(0x4D, 0x8D, 0xEE)
     if (!_weather->isValid) {
         return;
     }
@@ -38,7 +38,7 @@ void ViewWeather::OnHandle() {
     posX = (posX < 240) ? (240 - posX) >> 1 : 0;
     _sprite->setTextDatum(TL_DATUM);
     _sprite->drawString(_weather->weatherDescription, posX + 2, 64);
-    _sprite->unloadFont();
+    //_sprite->unloadFont();
 
     // Для шрифта Colibri56
     // Ширина: для срок от -40° до +40° максимальная = 101

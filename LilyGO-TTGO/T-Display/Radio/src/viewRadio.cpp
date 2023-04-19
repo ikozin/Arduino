@@ -48,6 +48,7 @@ void ViewRadio::displayFreq() {
     freq.concat((uint16_t)(band / 10));
     freq.concat('.');
     freq.concat((uint16_t)(band % 10));
+    _sprite->loadFont(FONT_DIGIT_56);
     _sprite->setTextDatum(MC_DATUM);
     _sprite->drawString(freq, 63, 26);
 }
@@ -55,7 +56,7 @@ void ViewRadio::displayFreq() {
 void ViewRadio::OnHandle() {
     LOGN("ViewRadio::OnHandle")
     
-    _sprite->fillRect(0, 0, _sprite->width(), _sprite->height(), TFT_SKYBLUE);
+    _sprite->fillSprite(TFT_SKYBLUE);
     //_sprite->fillScreen(TFT_SKYBLUE);
     _sprite->setTextColor(TFT_MAGENTA);
 
@@ -79,14 +80,10 @@ void ViewRadio::OnHandle() {
     displayVolume();
     displayMute();
     displayLevel();
-    _sprite->unloadFont();
 
-    _sprite->loadFont(FONT_DIGIT_56);
     displayFreq();
-    _sprite->unloadFont();
 
     _sprite->loadFont(FONT_TEXT_32);
-
     uint16_t index = _radio->getRadioIndex();
     String text = _radio->getStorage()->getItem(index)->name;
     if (_sprite->textWidth(text) >=  239) {

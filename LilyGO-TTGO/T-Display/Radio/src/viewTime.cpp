@@ -332,10 +332,10 @@ void ViewTime::OnHandle() {
     localtime_r(&now, &timeinfo);
     strftime(text, sizeof(text), "%H:%M", &timeinfo);
 
-    _sprite->fillRect(0, 0, _sprite->width(), _sprite->height(), TFT_BLACK);
+    _sprite->fillSprite(TFT_BLACK);
     _sprite->setTextColor(TFT_WHITE);
     _sprite->setTextDatum(CC_DATUM);
     _sprite->setFreeFont(&DS_DIGI56pt7b);
     _sprite->drawString(text, TFT_HEIGHT >> 1, TFT_WIDTH >> 1);
-    _sprite->unloadFont();
+    //_sprite->unloadFont();
 }
