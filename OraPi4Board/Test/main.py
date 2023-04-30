@@ -6,6 +6,7 @@
 # https://github.com/orangepi-xunlong/wiringOP#orange-pi-44b4-lts
 # https://github.com/orangepi-xunlong/wiringOP-Python
 # https://github.com/rm-hull/bme280
+# http://wiringpi.com/reference/core-functions/
 # 
 # sudo apt-get install swig python3-dev python3-setuptools
 # sudo apt-get install python3-smbus
@@ -67,6 +68,26 @@ import wiringpi
 import time
 import smbus2
 import bme280
+
+#  +----------+------+OPi 4 LTS +------+----------+
+#  | Name     | Mode | Physical | Mode | Name     |
+#  +----------+------+----++----+------+----------+
+#  |     3.3V |      |  1 || 2  |      | 5V       |
+#  | I2C8_SDA |      |  3 || 4  |      | 5V       |
+#  | I2C8_SCL |      |  5 || 6  |      | GND      |
+#  |          |      |  7 || 8  |      |          |
+#  |      GND |      |  9 || 10 |      |          |
+#  |          |      | 11 || 12 | OUT  | GPIO1_C2 |
+#  |          |      | 13 || 14 |      | GND      |
+#  |          |      | 15 || 16 | IN   | GPIO1_C6 |
+#  |     3.3V |      | 17 || 18 |      |          |
+#  |          |      | 19 || 20 |      | GND      |
+#  |          |      | 21 || 22 |      |          |
+#  |          |      | 23 || 24 |      |          |
+#  |      GND |      | 25 || 26 |      |          |
+#  +----------+------+----++----+------+----------+
+#  | Name     | Mode | Physical | Mode | Name     |
+#  +----------+------+OPi 4 LTS +---+--+----------+
 
 def gpio_callback():
     wiringpi.digitalWrite(6, wiringpi.digitalRead(9))
