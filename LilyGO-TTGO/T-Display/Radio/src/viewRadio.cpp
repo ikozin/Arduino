@@ -57,26 +57,11 @@ void ViewRadio::OnHandle() {
     LOGN("ViewRadio::OnHandle")
     
     _sprite->fillSprite(TFT_SKYBLUE);
-    //_sprite->fillScreen(TFT_SKYBLUE);
+
     _sprite->setTextColor(TFT_MAGENTA);
 
     _sprite->loadFont(FONT_ICON_32);
-    // debug_printf("▁ %d\r\n", tft.textWidth("▁"));
-    // debug_printf("▂ %d\r\n", tft.textWidth("▂"));
-    // debug_printf("▃ %d\r\n", tft.textWidth("▃"));
-    // debug_printf("▄ %d\r\n", tft.textWidth("▄"));
-    // debug_printf("▅ %d\r\n", tft.textWidth("▅"));
-    // debug_printf("▆ %d\r\n", tft.textWidth("▆"));
-    // debug_printf("▇ %d\r\n", tft.textWidth("▇"));
-    // debug_printf("█ %d\r\n", tft.textWidth("█"));
-    // debug_printf(" %d\r\n", tft.textWidth(""));
-    // debug_printf(" %d\r\n", tft.textWidth(""));
-    // debug_printf(" %d\r\n", tft.textWidth(""));
-    // debug_printf(" %d\r\n", tft.textWidth(""));
-    // debug_printf(" %d\r\n", tft.textWidth(""));
-    // debug_printf(" %d\r\n", tft.textWidth(""));
-    // debug_printf(" %d\r\n", tft.textWidth(""));
-    // debug_printf("Height = %d\r\n", tft.fontHeight());
+
     displayVolume();
     displayMute();
     displayLevel();
