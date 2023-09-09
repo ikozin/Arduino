@@ -3,6 +3,7 @@
 
 #include "controller.h"
 #include <HTTPClient.h>
+#include <ArduinoJson.h>
 
 #define UPDATE_WEATHER_TIME (20 * 60000 / portTICK_RATE_MS)
 
@@ -24,8 +25,9 @@ class ControllerWeather : public Controller {
     protected:
         virtual void OnHandle();
     private:
+        StaticJsonDocument<2048> _doc;
         uint16_t ColorToRGB565(const uint8_t r, const uint8_t g, const uint8_t b);
-        void parseWeatherInfo(String& payload);
+        bool parseWeatherInfo(String& payload);
         char* getMatch(const char* text, const char* pattern, String& value, const char first, const char last);
 };
 

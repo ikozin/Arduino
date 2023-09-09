@@ -40,6 +40,20 @@
   #error Ошибка настройки TFT_eSPI, необходимо подключить "User_Setups/Setup25_TTGO_T_Display.h"
 #endif
 
+#define RADIO_ENABLE
+//#define WEATHER_ENABLE
+//#define DEVICE_ENABLE
+//#define TIME_ENABLE
+//#define IR_ENABLE
+//#define WIFI_ENABLE
+
+#if defined(WEATHER_ENABLE) || defined(TIME_ENABLE)
+    #define WIFI_ENABLE
+#endif
+#ifdef IR_ENABLE
+    #define RADIO_ENABLE
+#endif
+
 TFT_eSPI tft = TFT_eSPI(TFT_WIDTH, TFT_HEIGHT); // 135x240
 TFT_eSprite sprite = TFT_eSprite(&tft);
 
@@ -55,27 +69,49 @@ Button2 btnEncoder = Button2();
 String ssid         = ""; // SSID WI-FI
 String pswd         = "";
 
-RadioStorage ctrlRadioStorage;
-ControllerRadio ctrlRadio = ControllerRadio("CtrlRadio", &prefs, &ctrlRadioStorage);
-ControllerWeather ctrlWeather = ControllerWeather("CtrlWeather");
-ControllerDevice ctrlDevice = ControllerDevice("CtrlDevice");
-ControllerTime ctrlTime = ControllerTime("CtrlTime");
-
 int16_t viewIndex  = -1;
 View* currentView = NULL;
-ViewTime viewTime = ViewTime("ViewTime", &currentView);
+
+RadioStorage ctrlRadioStorage;
+
+#ifdef RADIO_ENABLE
+ControllerRadio ctrlRadio = ControllerRadio("CtrlRadio", &prefs, &ctrlRadioStorage);
 ViewRadio viewRadio = ViewRadio("ViewRadio", &currentView, &ctrlRadio);
+#endif
+
+#ifdef WEATHER_ENABLE
+ControllerWeather ctrlWeather = ControllerWeather("CtrlWeather");
 ViewWeather viewWeather = ViewWeather("ViewWeather", &currentView, &ctrlWeather);
+#endif
+
+#ifdef DEVICE_ENABLE
+ControllerDevice ctrlDevice = ControllerDevice("CtrlDevice");
 ViewDevice viewDevice = ViewDevice("ViewDevice", &currentView, &ctrlDevice);
+#endif
+
+#ifdef TIME_ENABLE
+ControllerTime ctrlTime = ControllerTime("CtrlTime");
+ViewTime viewTime = ViewTime("ViewTime", &currentView);
+#endif
 
 View* viewList[] = {
+#ifdef TIME_ENABLE
     &viewTime,
+#endif
+#ifdef RADIO_ENABLE
     &viewRadio,
+#endif
+#ifdef WEATHER_ENABLE
     &viewWeather,
+#endif
+#ifdef DEVICE_ENABLE
     &viewDevice,
+#endif
 };
 
+#ifdef RADIO_ENABLE
 void (ControllerRadio::*currentHandle)(int);
+#endif
 
 void btnEncoderClick(Button2& b);
 void btnEncoderDoubleClick(Button2& b);
@@ -85,6 +121,7 @@ void btnEncoderLongClick(Button2& b);
 
 uint16_t fileData[4096];
 
+#ifdef WIFI_ENABLE
 TimerHandle_t wifiReconnectTimer;
 AsyncWebServer server(80);
 
@@ -106,7 +143,7 @@ void WiFiEvent(WiFiEvent_t event) {
             break;
     }
 }
-
+#endif
 
 void boardInfo(Print& stream) {
     stream.printf("\r\n");
@@ -146,15 +183,19 @@ void setup() {
         LOG("SPIFFS Error\r\n");
     }
 
+#ifdef RADIO_ENABLE
     if (!ctrlRadioStorage.load()) {
         tft.printf("Error loading RadioStorage");
         LOG("Error loading RadioStorage");
     }
+#endif
 
     encoder.attachSingleEdge(ENCODER_PIN_A, ENCODER_PIN_B);
     btnEncoder.begin(ENCODER_BTN);
     if (btnEncoder.isPressedRaw()) {
+#ifdef WIFI_ENABLE
         setSettings(prefs, tft, server);
+#endif
     }
 
     //prefs.putString("ssid", "...");
@@ -171,6 +212,7 @@ void setup() {
     tft.printf("Wi-Fi SSID: %s ", ssid.c_str());
     LOGN("Wi-Fi SSID: %s ", ssid.c_str())
 
+#ifdef WIFI_ENABLE
     WiFi.disconnect();
     WiFi.mode(WIFI_STA);
     WiFi.begin(ssid.c_str(), pswd.c_str());
@@ -188,6 +230,7 @@ void setup() {
 
     do vTaskDelay(1000 / portTICK_RATE_MS);
     while (sntp_get_sync_status() != SNTP_SYNC_STATUS_COMPLETED);
+#endif
 
 #ifdef DEBUG_CONSOLE
     char text[64];
@@ -199,22 +242,41 @@ void setup() {
 #endif
 
     LOGN("Controller - Start")
+#ifdef TIME_ENABLE
     ctrlTime.Start();
+#endif
+#ifdef RADIO_ENABLE
     ctrlRadio.Start();
-    ctrlWeather.Start();
-    ctrlDevice.Start();
     ctrlAlarmClock.attachControllerRadio(&ctrlRadio).Start();
+#endif
+#ifdef WEATHER_ENABLE
+    ctrlWeather.Start();
+#endif
+#ifdef DEVICE_ENABLE
+    ctrlDevice.Start();
+#endif
+#ifdef IR_ENABLE
     ctrlIrRemote.attachControllerRadio(&ctrlRadio).Start();
+#endif
 
     LOGN("View - Start")
     sprite.createSprite(TFT_HEIGHT, TFT_WIDTH);
+#ifdef TIME_ENABLE
     viewTime.Start(&sprite, ctrlTime.GetEvent());
+#endif
+#ifdef RADIO_ENABLE
     viewRadio.Start(&sprite, ctrlRadio.GetEvent());
+#endif
+#ifdef WEATHER_ENABLE
     viewWeather.Start(&sprite, ctrlWeather.GetEvent());
+#endif
+#ifdef DEVICE_ENABLE
     viewDevice.Start(&sprite, ctrlDevice.GetEvent());
+#endif
 
+#ifdef RADIO_ENABLE
     currentHandle = &ControllerRadio::changeVolume;
-
+#endif
     btnEncoder.setClickHandler(btnEncoderClick);
     btnEncoder.setDoubleClickHandler(btnEncoderDoubleClick);
     btnEncoder.setLongClickTime(500);
@@ -227,16 +289,20 @@ void loop() {
     btnEncoder.loop();
     int dir = encoder.getCount();
     encoder.setCount(0);
+#ifdef RADIO_ENABLE
     (&ctrlRadio->*currentHandle)(dir);
+#endif
 }
 
 void btnEncoderClick(Button2& b) {
+#ifdef RADIO_ENABLE
     if (currentHandle == &ControllerRadio::changeChannel) {
         currentHandle = &ControllerRadio::changeVolume;
     }
     else {
         currentHandle = &ControllerRadio::changeChannel;
     }
+#endif
 }
 
 void btnEncoderDoubleClick(Button2& b) {
@@ -244,7 +310,9 @@ void btnEncoderDoubleClick(Button2& b) {
 }
 
 void btnEncoderLongClick(Button2& b) {
+#ifdef RADIO_ENABLE
     ctrlRadio.toggleMute();
+#endif
 }
 
 void setDisplayPagePrev(void) {

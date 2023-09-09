@@ -12,7 +12,7 @@ char _temperaturePattern[] = "<temperature";
 char _windPattern[]        = "<info|<weather|<day_part|<wind_direction|id=";
 
 
-ControllerWeather::ControllerWeather(const char* name) : Controller(name) {
+ControllerWeather::ControllerWeather(const char* name) : Controller(name), _doc() {
     isValid = false;
     trafficLevel.reserve(8);
     weatherDescription.reserve(128);
@@ -33,30 +33,32 @@ void ControllerWeather::OnHandle() {
             LOGN("ControllerWeather::isValid, %d", isValid);
             continue;   
         }
-        httpClient.begin("https://export.yandex.ru/bar/reginfo.xml?region=213");
+        httpClient.begin("https://api.weatherapi.com/v1/current.json?q=Moscow&lang=ru&key=b0b2880fa2ae4b8594e115610231806");
         int httpCode = httpClient.GET();
         isValid = httpCode == HTTP_CODE_OK;
         if (isValid) {
             String payload = httpClient.getString();
             isValid = !payload.isEmpty();
             if (isValid) {
-                parseWeatherInfo(payload);
-                LOGN("ControllerWeather::weatherDescription, %s", weatherDescription.c_str());
-                LOGN("ControllerWeather::weatherTemperature, %s", weatherTemperature.c_str());
-                LOGN("ControllerWeather::weatherPressure, %s", weatherPressure.c_str());
-                LOGN("ControllerWeather::weatherDampness, %s", weatherDampness.c_str());
-                LOGN("ControllerWeather::weatherWindSpeed, %s", weatherWindSpeed.c_str());
-                LOGN("ControllerWeather::weatherWindType, %s", weatherWindType.c_str());
-                LOGN("ControllerWeather::trafficLevel, %s", trafficLevel.c_str());
-                LOGN("ControllerWeather::weatherUrlIcon, %s", weatherUrlIcon.c_str());
-                LOGN("ControllerWeather::iconFileName, %s", iconFileName.c_str());
-                LOGN("ControllerWeather::windFileName, %s", windFileName.c_str());
+                isValid = parseWeatherInfo(payload);
+                if (isValid) {
+                    LOGN("ControllerWeather::weatherDescription, %s", weatherDescription.c_str());
+                    LOGN("ControllerWeather::weatherTemperature, %s", weatherTemperature.c_str());
+                    LOGN("ControllerWeather::weatherPressure, %s", weatherPressure.c_str());
+                    LOGN("ControllerWeather::weatherDampness, %s", weatherDampness.c_str());
+                    LOGN("ControllerWeather::weatherWindSpeed, %s", weatherWindSpeed.c_str());
+                    LOGN("ControllerWeather::weatherWindType, %s", weatherWindType.c_str());
+                    LOGN("ControllerWeather::trafficLevel, %s", trafficLevel.c_str());
+                    LOGN("ControllerWeather::weatherUrlIcon, %s", weatherUrlIcon.c_str());
+                    LOGN("ControllerWeather::iconFileName, %s", iconFileName.c_str());
+                    LOGN("ControllerWeather::windFileName, %s", windFileName.c_str());
+                }
             }
         }
         httpClient.end();
         LOGN("ControllerWeather::isValid, %d", isValid);
         xSemaphoreGive(_updateEvent);
-        vTaskDelay(isValid ? UPDATE_WEATHER_TIME: 5000);
+        vTaskDelay(isValid ? UPDATE_WEATHER_TIME: 10000);
     }
 }
 
@@ -64,8 +66,40 @@ uint16_t ControllerWeather::ColorToRGB565(const uint8_t r, const uint8_t g, cons
   return (uint16_t)(((r & 0b11111000) << 8) | ((g & 0b11111100) << 3) | (b >> 3));
 }
 
-void ControllerWeather::parseWeatherInfo(String& payload) {
+bool ControllerWeather::parseWeatherInfo(String& payload) {
     char* pstr = payload.begin();
+    DeserializationError error = deserializeJson(_doc, pstr);
+    if (error) {
+        LOGN("Failed to read json, using default configuration");
+        return false;
+    }
+    LOGN("ControllerWeather, %s", pstr);
+
+    weatherDescription = _doc["current"]["condition"]["text"].as<String>();
+    weatherTemperature = _doc["current"]["temp_c"].as<String>();
+    weatherDampness = _doc["current"]["humidity"].as<String>();
+    weatherPressure = String(_doc["current"]["pressure_mb"].as<float>() * 0.750062, 1);
+    weatherWindSpeed = _doc["current"]["wind_mph"].as<String>();
+    weatherWindType =_doc["current"]["wind_dir"].as<String>();
+    weatherUrlIcon = _doc["current"]["condition"]["icon"].as<String>();
+    if (!weatherUrlIcon.isEmpty()) {
+        int pos = weatherUrlIcon.lastIndexOf('/');
+        if (pos != 1) weatherUrlIcon.remove(0, pos);
+    }
+    
+    LOGN("ControllerWeather::weatherDescription, %s", weatherDescription.c_str());
+    LOGN("ControllerWeather::weatherTemperature, %s", weatherTemperature.c_str());
+    LOGN("ControllerWeather::weatherPressure, %s", weatherPressure.c_str());
+    LOGN("ControllerWeather::weatherDampness, %s", weatherDampness.c_str());
+    LOGN("ControllerWeather::weatherWindSpeed, %s", weatherWindSpeed.c_str());
+    LOGN("ControllerWeather::weatherWindType, %s", weatherWindType.c_str());
+    LOGN("ControllerWeather::trafficLevel, %s", trafficLevel.c_str());
+    LOGN("ControllerWeather::weatherUrlIcon, %s", weatherUrlIcon.c_str());
+    LOGN("ControllerWeather::iconFileName, %s", iconFileName.c_str());
+    LOGN("ControllerWeather::windFileName, %s", windFileName.c_str());
+
+    return false;
+
     pstr = getMatch(pstr, _trafficPattern, trafficLevel, '>', '<');
     pstr = getMatch(pstr, _typePattern, weatherDescription, '>', '<');
     pstr = getMatch(pstr, _iconPattern, weatherUrlIcon, '>', '<');
