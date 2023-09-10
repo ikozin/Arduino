@@ -5,7 +5,7 @@ ViewRadio::ViewRadio(const char* name, View** currentView, ControllerRadio* radi
     _radio = radio;
 }
 
-uint8_t muteBitmap1[] = {
+uint8_t unmuteBitmap[] = {
     B00000000, B00000110, B00000000,
     B00000000, B00000110, B00000000,
     B00000000, B00011110, B00000000,
@@ -22,51 +22,6 @@ uint8_t muteBitmap1[] = {
     B00000000, B00000110, B00000000,
     B00000000, B00000110, B00000000,
 };
-
-uint8_t muteBitmap2[] = {
-    B00000000, B00000011, B00000000,
-    B00000000, B00000011, B00000000,
-    B00000000, B00000111, B00000000,
-    B00000000, B00000111, B00000000,
-    B00000000, B00011111, B01000000,
-    B00000000, B00011111, B00100000,
-    B00011111, B01111111, B10010000,
-    B00011111, B01111111, B01001000,
-    B00011111, B01111111, B00100100,
-    B00011111, B01111111, B00100100,
-    B00011111, B01111111, B00100100,
-    B00011111, B01111111, B01001000,
-    B00011111, B01111111, B10010000,
-    B00000000, B00011111, B00100000,
-    B00000000, B00011111, B01000000,
-    B00000000, B00000111, B00000000,
-    B00000000, B00000111, B00000000,
-    B00000000, B00000011, B00000000,
-    B00000000, B00000011, B00000000,
-};
-
-void ViewRadio::displayMute(uint32_t color) {
-    int32_t x = 10;
-    int32_t y = 10;
-
-    _sprite->drawBitmap(x, y, muteBitmap1, 24, 15, color);
-
-    _sprite->drawBitmap(x + 30, y, muteBitmap2, 24, 19, color);
-
-    // _sprite->drawLine(x, y, x + 24, y + 15, TFT_RED);
-    // _sprite->drawLine(x + 1, y, x + 24, y + 15 - 1, TFT_RED);
-    // _sprite->drawLine(x, y + 1, x + 24 - 1, y + 15, TFT_RED);
-
-
-    // _sprite->drawLine(x, y + 15 - 1, x + 24 - 1, y, TFT_RED);
-    // _sprite->drawLine(x + 1, y + 15, x + 24, y + 1, TFT_RED);
-
-    const char* text;
-    if (_radio->getMute()) text = "";
-    else        text = "";
-    _sprite->setTextDatum(MC_DATUM);
-    _sprite->drawString(text, 185, 24);
-}
 
 void ViewRadio::OnHandle() {
     LOGN("ViewRadio::OnHandle")
@@ -86,26 +41,21 @@ void ViewRadio::OnHandle() {
     _sprite->setFreeFont(&Orbitron_Light_24);
     _sprite->drawString("FM Radio", 140, 1);
 
-    _sprite->drawRoundRect(1, 1, 62, 95, 4, 0xAD55);
-    _sprite->setTextColor(0xBEDF, TFT_BLACK);
     int startList = (index > 2) ? index - 2 : 0;
-    if (index + 4 >= _radio->getStorage()->length()) startList = _radio->getStorage()->length() - 6;
-
-    Serial.printf("RADIO index = %d\r\n", index);
-    Serial.printf("RADIO start = %d\r\n", startList);
-    Serial.printf("RADIO max = %d\r\n", _radio->getStorage()->length());
-    
-
-    for (int i = 0; i < 6; i++) {
+    if (index + 3 >= _radio->getStorage()->length()) startList = _radio->getStorage()->length() - 5;
+    // Serial.printf("RADIO index = %d, start = %d, max = %d\r\n", index, startList, _radio->getStorage()->length());
+    _sprite->drawRoundRect(1, 17, 62, 79, 4, 0xAD55);
+    _sprite->setTextColor(0xBEDF, TFT_BLACK);
+    for (int i = 0; i < 5; i++) {
         freq = (float)_radio->getStorage()->getItem(startList++)->band / 10;
-        _sprite->drawFloat(freq, 1, 34, 6 + (i * 14), 2);
-        _sprite->fillCircle(10, 14 + (i * 14), 2, 0xFBAE);
+        _sprite->drawFloat(freq, 1, 34, 20 + (i * 14), 2);
+        _sprite->fillCircle(10, 28 + (i * 14), 2, 0xFBAE);
     }
-// |         | 
-// 0 1 2 3 4 5 6 7 8 9
-// i i i i     i i i i
-//
-//
+
+    if (!_radio->getMute()) {
+        _sprite->drawBitmap(216, 10, unmuteBitmap, 24, 15, TFT_WHITE);
+    }
+
     _sprite->drawRoundRect(216, 31, 24, 65, 4, TFT_WHITE);
     uint16_t volume = _radio->getVolume();
     for(int i = 0; i < volume; i++) {

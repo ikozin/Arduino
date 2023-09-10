@@ -12,7 +12,6 @@ class ViewRadio : public View {
     protected:
         virtual void OnHandle();
     private:
-        void displayMute(uint32_t color);
 };
 
 #endif  //_VIEWRADIO_H_
