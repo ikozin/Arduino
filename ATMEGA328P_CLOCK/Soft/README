@@ -1,8 +1,8 @@
 
 https://blog.kvv213.com/2019/09/perehod-s-arduino-ide-na-platformio-ide-na-baze-microsoft-visual-studio-code-chto-nuzhno-znat/
 
-### ATmega328P BB 8Mhz.json
-```ATmega328P BB 8Mhz.json
+### ATmega328P_BB_8Mhz.json
+```ATmega328P_BB_8Mhz.json
 {
 	"build": {
 		"core": "arduino",

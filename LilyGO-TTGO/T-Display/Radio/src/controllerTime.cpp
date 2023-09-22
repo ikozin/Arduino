@@ -7,6 +7,26 @@ ControllerTime::ControllerTime(const char* name) : Controller(name) {
 
 
 void ControllerTime::OnHandle() {
+    if (_rtc.begin()) {
+        time_t now;
+        struct tm tm;
+        time(&now);
+        localtime_r(&now, &tm);
+        if (tm.tm_year == 1970) {
+            DateTime rtcTime = _rtc.now();
+            tm.tm_year = rtcTime.year() - 1900;
+            tm.tm_mon = rtcTime.month();
+            tm.tm_mday = rtcTime.day();
+            tm.tm_hour = rtcTime.hour();
+            tm.tm_min = rtcTime.minute();
+            tm.tm_sec = rtcTime.second();
+            time_t t = mktime(&tm);
+            struct timeval tv = { .tv_sec = t, .tv_usec = 0 };
+            settimeofday(&tv,  NULL);
+            Serial.printf("ControllerTime::OnHandle, Setting time: %s", asctime(&tm));
+        }        
+    }
+
     portTickType xLastWakeTime = xTaskGetTickCount();
     for (;;) {
         LOGN("ControllerTime::OnHandle")
