@@ -4,9 +4,13 @@
 #include "controller.h"
 #include <RTClib.h>
 
+#define UPDATE_CLOCK_TIME (1000 / portTICK_RATE_MS)
+
 class ControllerTime : public Controller {
     public:
         ControllerTime(const char* name);
+    public:
+        DateTime getDateTime() { return _rtc.now(); }
     protected:
         virtual void OnHandle();
     private:

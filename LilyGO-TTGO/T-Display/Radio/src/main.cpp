@@ -91,7 +91,7 @@ ViewDevice viewDevice = ViewDevice("ViewDevice", &currentView, &ctrlDevice);
 
 #ifdef TIME_ENABLE
 ControllerTime ctrlTime = ControllerTime("CtrlTime");
-ViewTime viewTime = ViewTime("ViewTime", &currentView);
+ViewTime viewTime = ViewTime("ViewTime", &currentView, &ctrlTime);
 #endif
 
 View* viewList[] = {

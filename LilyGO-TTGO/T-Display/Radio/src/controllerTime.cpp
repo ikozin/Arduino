@@ -7,25 +7,39 @@ ControllerTime::ControllerTime(const char* name) : Controller(name) {
 
 
 void ControllerTime::OnHandle() {
-    if (_rtc.begin()) {
-        time_t now;
-        struct tm tm;
-        time(&now);
-        localtime_r(&now, &tm);
-        if (tm.tm_year == 1970) {
-            DateTime rtcTime = _rtc.now();
-            tm.tm_year = rtcTime.year() - 1900;
-            tm.tm_mon = rtcTime.month();
-            tm.tm_mday = rtcTime.day();
-            tm.tm_hour = rtcTime.hour();
-            tm.tm_min = rtcTime.minute();
-            tm.tm_sec = rtcTime.second();
-            time_t t = mktime(&tm);
-            struct timeval tv = { .tv_sec = t, .tv_usec = 0 };
-            settimeofday(&tv,  NULL);
-            Serial.printf("ControllerTime::OnHandle, Setting time: %s", asctime(&tm));
-        }        
+    if (!_rtc.begin()) {
+        return;
     }
+
+    Wire.beginTransmission(0x68);
+    Wire.write(0x10);
+    Wire.write(0);
+    Wire.endTransmission();
+
+    DateTime rtcTime;
+    time_t now;
+    struct tm tm;
+    time(&now);
+    localtime_r(&now, &tm);
+    // Если время не установлено, то берем его из DS3231
+    if (now < 300) {
+        rtcTime = _rtc.now();
+        tm.tm_year = rtcTime.year() - 1900;
+        tm.tm_mon = rtcTime.month();
+        tm.tm_mday = rtcTime.day();
+        tm.tm_hour = rtcTime.hour();
+        tm.tm_min = rtcTime.minute();
+        tm.tm_sec = rtcTime.second();
+        time_t t = mktime(&tm);
+        struct timeval tv = { .tv_sec = t, .tv_usec = 0 };
+        settimeofday(&tv,  NULL);
+        Serial.printf("ControllerTime::OnHandle, Setup ESP32: %s", asctime(&tm));
+    }
+    else {
+        _rtc.adjust(DateTime(now));
+        rtcTime = _rtc.now();
+        Serial.printf("ControllerTime::OnHandle, Setup DS3231: %02d:%02d:%02d", rtcTime.hour(), rtcTime.minute(), rtcTime.second());
+    }      
 
     portTickType xLastWakeTime = xTaskGetTickCount();
     for (;;) {
@@ -37,6 +51,6 @@ void ControllerTime::OnHandle() {
 //         Serial.printf("ControllerTime::next %s\r\n", text);
 // #endif
         xSemaphoreGive(_updateEvent);
-        vTaskDelayUntil(&xLastWakeTime, (1000/portTICK_RATE_MS));
+        vTaskDelayUntil(&xLastWakeTime, UPDATE_CLOCK_TIME);
     }
 }

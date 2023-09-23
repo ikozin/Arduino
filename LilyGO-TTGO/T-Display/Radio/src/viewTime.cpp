@@ -319,18 +319,32 @@ const GFXfont DS_DIGI56pt7b PROGMEM = {
   (uint8_t  *)DS_DIGI56pt7bBitmaps, 
   (GFXglyph *)DS_DIGI56pt7bGlyphs, 0x20, 0x3A,  110 };
 
-ViewTime::ViewTime(const char* name, View** currentView) : View(name, currentView) {
+const char* months[] = {
+  "Января",
+  "Февраля",
+  "Марта",
+  "Мая",
+  "Июня",
+  "Июля",
+  "Августа",
+  "Сентября",
+  "Октября",
+  "Ноября",
+  "Декабря",
+};
+
+ViewTime::ViewTime(const char* name, View** currentView, ControllerTime* device) : View(name, currentView) {
+    assert(device);
+    _device = device;
 }
 
 void ViewTime::OnHandle() {
     LOGN("ViewTime::OnHandle")
     char text[64];
-    time_t now;
-    struct tm timeinfo;
 
-    time(&now);
-    localtime_r(&now, &timeinfo);
-    strftime(text, sizeof(text), "%H:%M", &timeinfo);
+    DateTime now =_device->getDateTime();
+    sprintf(text, "%02d:%02d", now.hour(), now.minute());
+    Serial.println(text);
 
     _sprite->fillSprite(TFT_BLACK);
     _sprite->setTextColor(TFT_WHITE);
@@ -338,4 +352,6 @@ void ViewTime::OnHandle() {
     _sprite->setFreeFont(&DS_DIGI56pt7b);
     _sprite->drawString(text, TFT_HEIGHT >> 1, TFT_WIDTH >> 1);
     //_sprite->unloadFont();
+    sprintf(text, "%d %s %d", now.day(), months[now.month() - 1], now.year());
+    Serial.println(text);
 }
