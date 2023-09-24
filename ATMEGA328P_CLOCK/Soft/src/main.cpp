@@ -37,7 +37,7 @@ void setup() {
 	MsTimer2::start();
 
   //ds3231.setDate(24, 9, 2023);  //day, month, year
-  //ds3231.setTime(30, 23, 11);    //second, minute, hour
+  //ds3231.setTime(30, 37, 11);    //second, minute, hour
   //ds3231.setAgingOffset(0);
 }
 
