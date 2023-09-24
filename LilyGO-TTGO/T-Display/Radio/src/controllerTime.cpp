@@ -1,20 +1,15 @@
 #include "controllerTime.h"
 #include "main.h"
 
-#define UPDATE_TIME_TIME  20000
-ControllerTime::ControllerTime(const char* name) : Controller(name) {
+//#define UPDATE_TIME_TIME  20000
+ControllerTime::ControllerTime(const char* name, Preferences* prefs) : Controller(name) {
+    _prefs = prefs;
 }
-
 
 void ControllerTime::OnHandle() {
     if (!_rtc.begin()) {
         return;
     }
-
-    Wire.beginTransmission(0x68);
-    Wire.write(0x10);
-    Wire.write(0);
-    Wire.endTransmission();
 
     DateTime rtcTime;
     time_t now;
@@ -32,13 +27,13 @@ void ControllerTime::OnHandle() {
         tm.tm_sec = rtcTime.second();
         time_t t = mktime(&tm);
         struct timeval tv = { .tv_sec = t, .tv_usec = 0 };
-        settimeofday(&tv,  NULL);
-        Serial.printf("ControllerTime::OnHandle, Setup ESP32: %s", asctime(&tm));
+        settimeofday(&tv, NULL);
+        Serial.printf("ControllerTime::OnHandle, Setup ESP32: %s\r\n", asctime(&tm));
     }
     else {
-        _rtc.adjust(DateTime(now));
+        _rtc.adjust(DateTime(now + _prefs->getInt("tz", 10800)));
         rtcTime = _rtc.now();
-        Serial.printf("ControllerTime::OnHandle, Setup DS3231: %02d:%02d:%02d", rtcTime.hour(), rtcTime.minute(), rtcTime.second());
+        Serial.printf("ControllerTime::OnHandle, Setup DS3231: %02d:%02d:%02d\r\n", rtcTime.hour(), rtcTime.minute(), rtcTime.second());
     }      
 
     portTickType xLastWakeTime = xTaskGetTickCount();

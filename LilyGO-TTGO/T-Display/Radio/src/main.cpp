@@ -90,7 +90,7 @@ ViewDevice viewDevice = ViewDevice("ViewDevice", &currentView, &ctrlDevice);
 #endif
 
 #ifdef TIME_ENABLE
-ControllerTime ctrlTime = ControllerTime("CtrlTime");
+ControllerTime ctrlTime = ControllerTime("CtrlTime", &prefs);
 ViewTime viewTime = ViewTime("ViewTime", &currentView, &ctrlTime);
 #endif
 
