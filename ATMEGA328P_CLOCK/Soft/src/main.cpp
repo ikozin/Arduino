@@ -36,9 +36,9 @@ void setup() {
 	MsTimer2::set(4, updateInfo); // 4ms period (5ms = 50Hz)
 	MsTimer2::start();
 
-  //ds3231.setDate(25, 12, 2022);  //day, month, year
-  //ds3231.setTime(0, 21, 13);    //second, minute, hour
-  //ds3231.setAgingOffset(-1);
+  //ds3231.setDate(24, 9, 2023);  //day, month, year
+  //ds3231.setTime(30, 23, 11);    //second, minute, hour
+  //ds3231.setAgingOffset(0);
 }
 
 void updateInfo(void) {
