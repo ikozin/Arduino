@@ -18,29 +18,19 @@ void ViewDevice::OnHandle() {
     _sprite->fillSprite(backColor);
     //_sprite->setTextColor(TFT_MAGENTA);
     _sprite->setTextColor(TFT_WHITE);
-    _sprite->setTextDatum(BL_DATUM);
+    _sprite->setTextDatum(CC_DATUM);
     //_sprite->drawFastHLine(0, TFT_WIDTH >> 1, TFT_HEIGHT, TFT_WHITE);
     //_sprite->drawFastVLine(TFT_HEIGHT >> 1, 0, TFT_WIDTH, TFT_WHITE);
 
-    _sprite->loadFont(FONT_DIGIT_56);
-    sprintf(text, "%+.0f°", _device->getTemperature());
-    _sprite->drawString(text, 3, 64);
-    //_sprite->unloadFont();
+    uint16_t y2 = TFT_WIDTH >> 1;
+    uint16_t y4 = TFT_WIDTH >> 2;
+    uint16_t x2 = TFT_HEIGHT >> 1;
+    uint16_t x4 = TFT_HEIGHT >> 2;
 
-    //_sprite->loadFont(FONT_TEXT_32);
-
-    sprintf(text, "%.0f", _device->getHumidity());
-    int w = _sprite->drawString(text, 130, 64);
+    _sprite->drawFloat(_device->getTemperature(), 0, x4, y4, 7);
+    _sprite->drawFloat(_device->getHumidity(), 0, x4 + x2, y4, 7);
     
-    _sprite->unloadFont();
+    _sprite->drawFloat(_device->getPressure(), 0, x4, y4 + y2, 7);
 
-    _sprite->loadFont(FONT_TEXT_32);
-    _sprite->drawString("%", 130 + w, 64);
-
-    sprintf(text, "%.0f мм", _device->getPressure());
-    _sprite->drawString(text, 8, 122);
-
-    sprintf(text, "%.0f м/ч" , rad);
-    _sprite->drawString(text, 138, 122);
-    _sprite->unloadFont();
+    _sprite->drawFloat(rad, 0, x4 + x2, y4 + y2, 7);
 }

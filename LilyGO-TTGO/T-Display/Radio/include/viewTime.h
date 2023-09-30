@@ -10,6 +10,8 @@ class ViewTime : public View {
     protected:
         virtual void OnHandle();
     private:
+        uint16_t getDateColor(DateTime& date);
+    private:
         ControllerTime* _device;
 };
 

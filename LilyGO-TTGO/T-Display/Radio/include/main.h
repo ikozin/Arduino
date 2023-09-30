@@ -10,7 +10,6 @@
 // Директория Tools
 #define FONT_TEXT_32    "font/Open Sans Regular32"
 #define FONT_DIGIT_56   "font/Open Sans Regular56"
-#define FONT_ICON_32    "font/Segoe UI Symbol32"
 
 extern uint16_t fileData[4096];
 

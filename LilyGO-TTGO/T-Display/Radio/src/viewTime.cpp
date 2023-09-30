@@ -27,10 +27,15 @@ const char* months[] = {
   "Декабря",
 };
 
-
 ViewTime::ViewTime(const char* name, View** currentView, ControllerTime* device) : View(name, currentView) {
     assert(device);
     _device = device;
+}
+
+uint16_t ViewTime::getDateColor(DateTime& date) {
+  uint8_t day = date.dayOfTheWeek();
+  if (day == 0 || day == 6) return TFT_MAGENTA;
+  return TFT_WHITE;
 }
 
 void ViewTime::OnHandle() {
@@ -50,6 +55,7 @@ void ViewTime::OnHandle() {
     sprintf(text, "%s %d %s %d", dayOfWeeks[now.dayOfTheWeek()], now.day(), months[now.month() - 1], now.year());
     Serial.println(text);
 
+    _sprite->setTextColor(getDateColor(now));
     _sprite->loadFont(NotoSansSemiBold24);
     _sprite->drawString(text, TFT_HEIGHT >> 1, 28);
     _sprite->unloadFont();

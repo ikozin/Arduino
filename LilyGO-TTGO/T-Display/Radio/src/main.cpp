@@ -41,7 +41,7 @@
 #endif
 
 #define RADIO_ENABLE
-//#define WEATHER_ENABLE
+#define WEATHER_ENABLE
 #define DEVICE_ENABLE
 #define TIME_ENABLE
 //#define IR_ENABLE

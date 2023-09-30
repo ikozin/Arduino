@@ -22,7 +22,7 @@ void ControllerDevice::OnHandle() {
         return;
     }
 
-    _bme.setSampling(Adafruit_BME280::MODE_FORCED,
+    _bme.setSampling(Adafruit_BME280::MODE_NORMAL,
                     Adafruit_BME280::SAMPLING_X1, // temperature
                     Adafruit_BME280::SAMPLING_X1, // pressure
                     Adafruit_BME280::SAMPLING_X1, // humidity
