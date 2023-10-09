@@ -1,7 +1,7 @@
 #ifndef _TDevice_
 #define _TDevice_
 
-//#define DEBUG_CONSOLE
+#define DEBUG_CONSOLE
 
 #include <Arduino.h>
 #include <avr/pgmspace.h>
@@ -20,6 +20,7 @@ extern char text[128];
 
 #define PIN_SIZE  16
 
+
 typedef struct {
   uint8_t Input[PIN_SIZE];
   uint8_t Output[PIN_SIZE];
@@ -36,6 +37,9 @@ class IDevice {
     virtual int test(void) = 0;
 };
 
+const size_t MAX_DEVICE = 8;
+const size_t MAX_VALUE = 128;
+
 class TDevice : public IDevice {
   protected:
     const TDevicePin * _devices;
@@ -44,6 +48,9 @@ class TDevice : public IDevice {
     size_t _values_count;
 
     int test_device(const TDevicePin *device, const TDeviceVal *value);
+
+    virtual void loadStorage(void);
+    virtual void clearStorage(void);
 
     virtual void info(void) = 0;
     virtual void init(void);
@@ -55,6 +62,9 @@ class TDevice : public IDevice {
   public:
     virtual int check_devices(void);
     virtual int test(void);
+
+    static TDevicePin _storageDevice[MAX_DEVICE];
+    static TDeviceVal _storageValue[MAX_VALUE];
 };
 
 class TDeviceExt: public TDevice {
@@ -84,6 +94,5 @@ class TDeviceComposite: public TDevice {
       return errorCount;
     }
 };
-
 
 #endif

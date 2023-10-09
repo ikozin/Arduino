@@ -1027,13 +1027,13 @@
 #define B_1_1_11_1_1111_1   (512 + 256 + 128 + 64 + 32 + 31)
 
 
-const static TDevicePin pin_map_555_ir11a[] =
+const static TDevicePin PROGMEM pin_map_555_ir11a[] =
 {
   // Входы     DR  D1  D2  D3  D4  DL  SR  SL   R   C
   { .Input = {  2,  3,  4,  5,  6,  7,  9, 10,  1, 11,  0}, .Output = { 15, 14, 13, 12,  0,  0,  0,  0 }},
 };
 
-const static TDeviceVal values_555_ir11a[] =
+const static TDeviceVal PROGMEM values_555_ir11a[] =
 {  
   //-------------------  C R LR L 4321 R -------------------------
   { .value = (uint16_t)B_0_0_00_1_1111_1, .result = (uint16_t)0 },
@@ -1149,24 +1149,27 @@ const __FlashStringHelper * K555IR11A::menu(void) {
   return F("ИP11A (Регистр)");
 }
 
+const char K555IR11A_Description[] PROGMEM = 
+"K555ИP11A\r\n"
+"Сдвигающий регистр\r\n"
+"DIP16\r\n"
+"\t         16 - +5V        \r\n"
+"\t          8 - GND        \r\n"
+"\t      -------------      \r\n"
+"\t  2 -| DR | RG | 1 |- 15 \r\n"
+"\t  3 -| D1 |    | 2 |- 14 \r\n"
+"\t  4 -| D2 |    | 3 |- 13 \r\n"
+"\t  5 -| D3 |    | 4 |- 12 \r\n"
+"\t  6 -| D4 |    |   |     \r\n"
+"\t  7 -| DL |    |   |     \r\n"
+"\t     |    |    |   |     \r\n"
+"\t  9 -| SR |    |   |     \r\n"
+"\t 10 -| SL |    |   |     \r\n"
+"\t 11 -/ C  |    |   |     \r\n"
+"\t  1 -o R  |    |   |     \r\n"
+"\t      -------------      \r\n"
+;
+
 void K555IR11A::info(void) {
-  Serial.println(F("K555ИP11A"));
-  Serial.println(F("Сдвигающий регистр"));
-  Serial.println(F("DIP16"));
-  Serial.println(F("\t         16 - +5V        "));
-  Serial.println(F("\t          8 - GND        "));
-  Serial.println(F("\t      -------------      "));
-  Serial.println(F("\t  2 -| DR | RG | 1 |- 15 "));
-  Serial.println(F("\t  3 -| D1 |    | 2 |- 14 "));
-  Serial.println(F("\t  4 -| D2 |    | 3 |- 13 "));
-  Serial.println(F("\t  5 -| D3 |    | 4 |- 12 "));
-  Serial.println(F("\t  6 -| D4 |    |   |     "));
-  Serial.println(F("\t  7 -| DL |    |   |     "));
-  Serial.println(F("\t     |    |    |   |     "));
-  Serial.println(F("\t  9 -| SR |    |   |     "));
-  Serial.println(F("\t 10 -| SL |    |   |     "));
-  Serial.println(F("\t 11 -/ C  |    |   |     "));
-  Serial.println(F("\t  1 -o R  |    |   |     "));
-  Serial.println(F("\t      -------------      "));
-  Serial.println();
+  Serial.println((__FlashStringHelper *)K555IR11A_Description);
 }

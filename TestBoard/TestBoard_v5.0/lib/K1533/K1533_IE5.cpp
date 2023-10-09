@@ -1,12 +1,12 @@
 #include "K1533_IE5.h"
 
-const static TDevicePin pin_map_1533_ie5[] =
+const static TDevicePin PROGMEM pin_map_1533_ie5[] =
 {
   // Входы     C1  C2   &   R                     Выходы      1   2   4   8
   { .Input = { 14,  1,  2,  3,  0,  0,  0,  0 }, .Output = { 12,  9,  8, 11,  0,  0,  0,  0 }},
 };
 
-const static TDeviceVal values_1533_ie5[] =
+const static TDeviceVal PROGMEM values_1533_ie5[] =
 {  
   //                      R  & C2 C1                         8  4  2  1
   { .value = (uint16_t)B__1__1__0__0, .result = (uint16_t)B__0__0__0__0 },
@@ -60,18 +60,21 @@ const __FlashStringHelper * K1533IE5::menu(void) {
   return F("ИE5 Счетчик двоичный");
 }
 
+const char K1533IE5_Description[] PROGMEM = 
+"KP1533ИE5\r\n"
+"Счетчик двоичный\r\n"
+"DIP14\r\n"
+"\t       5 - +5V         \r\n"
+"\t      10 - GND         \r\n"
+"\t      ------------     \r\n"
+"\t 14 -\\ C1 |CT2| 1 |- 12\r\n"
+"\t  1 -\\ C2 |   | 2 |-  9\r\n"
+"\t     |----|   | 4 |-  8\r\n"
+"\t  2 -| &  |   | 8 |- 11\r\n"
+"\t  3 -| R  |   |   |    \r\n"
+"\t      ------------     \r\n"
+;
+
 void K1533IE5::info(void) {
-  Serial.println(F("KP1533ИE5                "));
-  Serial.println(F("Счетчик двоичный         "));
-  Serial.println(F("DIP14                    "));
-  Serial.println(F("\t       5 - +5V         "));
-  Serial.println(F("\t      10 - GND         "));
-  Serial.println(F("\t      ------------     "));
-  Serial.println(F("\t 14 -\\ C1 |CT2| 1 |- 12"));
-  Serial.println(F("\t  1 -\\ C2 |   | 2 |-  9"));
-  Serial.println(F("\t     |----|   | 4 |-  8"));
-  Serial.println(F("\t  2 -| &  |   | 8 |- 11"));
-  Serial.println(F("\t  3 -| R  |   |   |    "));
-  Serial.println(F("\t      ------------     "));
-  Serial.println();
+  Serial.println((__FlashStringHelper *)K1533IE5_Description);
 }

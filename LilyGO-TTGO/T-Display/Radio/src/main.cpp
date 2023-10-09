@@ -41,10 +41,10 @@
 #endif
 
 #define RADIO_ENABLE
-#define WEATHER_ENABLE
+//#define WEATHER_ENABLE
 #define DEVICE_ENABLE
 #define TIME_ENABLE
-//#define IR_ENABLE
+#define IR_ENABLE
 //#define WIFI_ENABLE
 
 #if defined(WEATHER_ENABLE)
@@ -73,6 +73,10 @@ int16_t viewIndex  = -1;
 View* currentView = NULL;
 
 RadioStorage ctrlRadioStorage;
+
+#ifdef IR_ENABLE
+ControllerIrRemote ctrlIrRemote;
+#endif
 
 #ifdef RADIO_ENABLE
 ControllerRadio ctrlRadio = ControllerRadio("CtrlRadio", &prefs, &ctrlRadioStorage);

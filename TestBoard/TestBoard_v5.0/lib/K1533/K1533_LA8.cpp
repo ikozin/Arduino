@@ -1,6 +1,6 @@
 #include "K1533_LA8.h"
 
-const static TDevicePin pin_map_1533_la8[] =
+const static TDevicePin PROGMEM pin_map_1533_la8[] =
 {
   {.Input = {  2,  3,  0,  0,  0,  0,  0,  0 }, .Output = {  1,  0,  0,  0,  0,  0,  0,  0 }},
   {.Input = {  5,  6,  0,  0,  0,  0,  0,  0 }, .Output = {  4,  0,  0,  0,  0,  0,  0,  0 }},
@@ -8,7 +8,7 @@ const static TDevicePin pin_map_1533_la8[] =
   {.Input = { 11, 11,  0,  0,  0,  0,  0,  0 }, .Output = { 13,  0,  0,  0,  0,  0,  0,  0 }},
 };
 
-const static TDeviceVal values_1533_la8[] =
+const static TDeviceVal PROGMEM values_1533_la8[] =
 {
   {.value = (uint16_t)0, .result = (uint16_t)1 },
   {.value = (uint16_t)1, .result = (uint16_t)1 },
@@ -27,31 +27,34 @@ const __FlashStringHelper * K1533LA8::menu(void) {
   return F("ЛA8 (4 элемента 2И-HE)");
 }
 
+const char K1533LA8_Description[] PROGMEM = 
+"KP1533ЛA8 - открытый коллектор\r\n"
+"4 элемента 2И-HE\r\n"
+"DIP14\r\n"
+"\t    14 - +5V     \r\n"
+"\t     7 - GND     \r\n"
+"\t      -----      \r\n"
+"\t  2 -| &   |     \r\n"
+"\t     |     o- 1  \r\n"
+"\t  3 -|     |     \r\n"
+"\t      -----      \r\n"
+"\t      -----      \r\n"
+"\t  5 -| &   |     \r\n"
+"\t     |     o- 4  \r\n"
+"\t  6 -|     |     \r\n"
+"\t      -----      \r\n"
+"\t      -----      \r\n"
+"\t  8 -| &   |     \r\n"
+"\t     |     o- 10 \r\n"
+"\t  9 -|     |     \r\n"
+"\t      -----      \r\n"
+"\t      -----      \r\n"
+"\t  11-| &   |     \r\n"
+"\t     |     o- 13 \r\n"
+"\t  12-|     |     \r\n"
+"\t      -----      \r\n"
+;
+
 void K1533LA8::info(void) {
-  Serial.println(F("KP1533ЛA8 - открытый коллектор"));
-  Serial.println(F("4 элемента 2И-HE   "));
-  Serial.println(F("DIP14              "));
-  Serial.println(F("\t    14 - +5V     "));
-  Serial.println(F("\t     7 - GND     "));
-  Serial.println(F("\t      -----      "));
-  Serial.println(F("\t  2 -| &   |     "));
-  Serial.println(F("\t     |     o- 1  "));
-  Serial.println(F("\t  3 -|     |     "));
-  Serial.println(F("\t      -----      "));
-  Serial.println(F("\t      -----      "));
-  Serial.println(F("\t  5 -| &   |     "));
-  Serial.println(F("\t     |     o- 4  "));
-  Serial.println(F("\t  6 -|     |     "));
-  Serial.println(F("\t      -----      "));
-  Serial.println(F("\t      -----      "));
-  Serial.println(F("\t  8 -| &   |     "));
-  Serial.println(F("\t     |     o- 10 "));
-  Serial.println(F("\t  9 -|     |     "));
-  Serial.println(F("\t      -----      "));
-  Serial.println(F("\t      -----      "));
-  Serial.println(F("\t  11-| &   |     "));
-  Serial.println(F("\t     |     o- 13 "));
-  Serial.println(F("\t  12-|     |     "));
-  Serial.println(F("\t      -----      "));
-  Serial.println();
+  Serial.println((__FlashStringHelper *)K1533LA8_Description);
 }

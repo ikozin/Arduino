@@ -1,13 +1,13 @@
 #include "K1533_LE4.h"
 
-const static TDevicePin pin_map_1533_le4[] =
+const static TDevicePin PROGMEM pin_map_1533_le4[] =
 {
   { .Input = {  1,  2, 13,  0,  0,  0,  0,  0 }, .Output = { 12,  0,  0,  0,  0,  0,  0,  0 }},
   { .Input = {  3,  4,  5,  0,  0,  0,  0,  0 }, .Output = {  6,  0,  0,  0,  0,  0,  0,  0 }},
   { .Input = {  9, 10, 11,  0,  0,  0,  0,  0 }, .Output = {  8,  0,  0,  0,  0,  0,  0,  0 }},
 };
 
-const static TDeviceVal values_1533_le4[] =
+const static TDeviceVal PROGMEM values_1533_le4[] =
 {
   { .value = (uint16_t) 0, .result = (uint16_t) 1 },
   { .value = (uint16_t) 1, .result = (uint16_t) 0 },
@@ -30,32 +30,35 @@ const __FlashStringHelper * K1533LE4::menu(void) {
   return F("ЛE4 (3 элемента 3ИЛИ-HE)");
 }
 
+const char K1533LE4_Description[] PROGMEM = 
+"KP1533ЛE4\r\n"
+"3 элемента 3ИЛИ-HE\r\n"
+"DIP14\r\n"
+"\t    14 - +5V     \r\n"
+"\t     7 - GND     \r\n"
+"\t      -----      \r\n"
+"\t  1 -| 1   |     \r\n"
+"\t     |     |     \r\n"
+"\t  2 -|     o- 12 \r\n"
+"\t     |     |     \r\n"
+"\t 13 -|     |     \r\n"
+"\t      -----      \r\n"
+"\t      -----      \r\n"
+"\t  3 -| 1   |     \r\n"
+"\t     |     |     \r\n"
+"\t  4 -|     o- 6  \r\n"
+"\t     |     |     \r\n"
+"\t  5 -|     |     \r\n"
+"\t      -----      \r\n"
+"\t      -----      \r\n"
+"\t  9 -| 1   |     \r\n"
+"\t     |     |     \r\n"
+"\t 10 -|     o- 8  \r\n"
+"\t     |     |     \r\n"
+"\t 11 -|     |     \r\n"
+"\t      -----      \r\n"
+;
+
 void K1533LE4::info(void) {
-  Serial.println(F("KP1533ЛE4"));
-  Serial.println(F("3 элемента 3ИЛИ-HE "));
-  Serial.println(F("DIP14              "));
-  Serial.println(F("\t    14 - +5V     "));
-  Serial.println(F("\t     7 - GND     "));
-  Serial.println(F("\t      -----      "));
-  Serial.println(F("\t  1 -| 1   |     "));
-  Serial.println(F("\t     |     |     "));
-  Serial.println(F("\t  2 -|     o- 12  "));
-  Serial.println(F("\t     |     |     "));
-  Serial.println(F("\t 13 -|     |     "));
-  Serial.println(F("\t      -----      "));
-  Serial.println(F("\t      -----      "));
-  Serial.println(F("\t  3 -| 1   |     "));
-  Serial.println(F("\t     |     |     "));
-  Serial.println(F("\t  4 -|     o- 6   "));
-  Serial.println(F("\t     |     |     "));
-  Serial.println(F("\t  5 -|     |     "));
-  Serial.println(F("\t      -----      "));
-  Serial.println(F("\t      -----      "));
-  Serial.println(F("\t  9 -| 1   |     "));
-  Serial.println(F("\t     |     |     "));
-  Serial.println(F("\t 10 -|     o- 8   "));
-  Serial.println(F("\t     |     |     "));
-  Serial.println(F("\t 11 -|     |     "));
-  Serial.println(F("\t      -----      "));
-  Serial.println();
+  Serial.println((__FlashStringHelper *)K1533LE4_Description);
 }

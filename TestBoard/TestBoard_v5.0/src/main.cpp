@@ -1,5 +1,3 @@
-//#define DEBUG_CONSOLE
-
 #include <Arduino.h>
 
 #ifndef __AVR_ATmega2560__
@@ -77,6 +75,7 @@
 //
 //
 
+#include <Device.h>
 #include <DevicePackage.h>
 #include <K555.h>
 #include <K565.h>
@@ -90,13 +89,10 @@ DevicePackage* packList[] = {
   new K1533_Pack(),
 };
 
-int _selected;
-
 // Не стандартная разводка питания: ИЕ5, ТМ5, ТМ7
-void showMenu() {
-  _selected = -1;
+int showMenu() {
   Serial.println();
-  if (digitalRead(PIN_BUTTON) == LOW) return;
+  if (digitalRead(PIN_BUTTON) == LOW) return -1;
 
   for (uint8_t i = 0; i < (sizeof(packList)/sizeof(packList[0])); i++) {
     Serial.print(i);
@@ -108,8 +104,7 @@ void showMenu() {
   String cmd = Serial.readStringUntil('\r');
   Serial.println(cmd);
   Serial.println();
-  _selected = cmd.toInt();
-  packList[_selected]->menu();
+  return cmd.toInt();
 }
 
 void setup() {
@@ -130,8 +125,6 @@ void setup() {
   // Initialize Serial
   Serial.begin(57600);
   while (!Serial);
-  Serial.println(F("\nCтapт"));
-  showMenu();
 }
 
 void testLed() {
@@ -173,8 +166,11 @@ void testPortAPortC() {
 }
 
 void loop() {
-  if (_selected != -1) {
-    packList[_selected]->test();
+  Serial.println(F("\nCтapт"));
+  int package = 3;//showMenu();
+  if (package != -1) {
+    int test = 6;//packList[package]->menu();
+    packList[package]->test(test);
     while (digitalRead(PIN_BUTTON) != LOW);
   }
   else {

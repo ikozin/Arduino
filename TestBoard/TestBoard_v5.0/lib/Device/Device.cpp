@@ -4,26 +4,61 @@
 char text[128];
 #endif
 
+TDevicePin TDevice::_storageDevice[MAX_DEVICE] = { 0 };
+TDeviceVal TDevice::_storageValue[MAX_VALUE] = { 0 };
+
+void TDevice::loadStorage(void) {
+  uint8_t* src;
+  uint8_t* dst;
+
+  if (_devices_count > MAX_DEVICE) {
+      debug_printf("\r\nERROR _devices_count %d\r\n", _devices_count);
+    _devices_count = MAX_DEVICE;
+  }
+  if (_values_count > MAX_VALUE) {
+      debug_printf("\r\nERROR _values_count %d\r\n", _values_count);
+    _values_count = MAX_VALUE;
+  }
+  src = (uint8_t*)_devices;
+  dst = reinterpret_cast<uint8_t*>(TDevice::_storageDevice);
+  for (size_t i = 0; i < (sizeof(TDevicePin) * _devices_count); i++) {
+    *(dst + i) = pgm_read_byte(src + i); 
+  }  
+  src = (uint8_t*)_values;
+  dst = reinterpret_cast<uint8_t*>(TDevice::_storageValue);
+  for (size_t i = 0; i < (sizeof(TDeviceVal) * _values_count); i++) {
+    *(dst + i) = pgm_read_byte(src + i); 
+  }
+}
+
+void TDevice::clearStorage(void) {
+  memset(TDevice::_storageDevice, 0, sizeof(TDevice::_storageDevice));
+  memset(TDevice::_storageValue, 0, sizeof(TDevice::_storageValue));
+}
+
 void TDevice::init() {
+  loadStorage();
+
   for (size_t i = 0; i < _devices_count; i++) {
     for (int n = 0; n < PIN_SIZE; n++) {
-      int pin = getPin(_devices[i].Input[n]);
+      int pin = getPin(TDevice::_storageDevice[i].Input[n]);
       if (pin == 0) break;
       pinMode(pin, OUTPUT);
-      debug_printf("%d(%d) - OUTPUT ", _devices[i].Input[n], pin);
+      debug_printf("%d(%d) - OUTPUT ", TDevice::_storageDevice[i].Input[n], pin);
     }
     debug_println();
     for (int n = 0; n < PIN_SIZE; n++) {
-      int pin = getPin(_devices[i].Output[n]);
+      int pin = getPin(TDevice::_storageDevice[i].Output[n]);
       if (pin == 0) break;
       pinMode(pin, INPUT_PULLUP);
-      debug_printf("%d(%d) - INPUT ", _devices[i].Output[n], pin);
+      debug_printf("%d(%d) - INPUT ", TDevice::_storageDevice[i].Output[n], pin);
     }
     debug_println();
   }
 }
 
 void TDevice::done(void) {
+  clearStorage();
   DDRA = B00000000;   // Set input mode
   DDRC = B00000000;   // Set input mode
   PORTA = B11111111;  // Подтягиваем выводы к +5V
@@ -62,7 +97,7 @@ int TDevice::check_devices() {
   for (size_t i = 0; i < _devices_count; i++) {
     for (size_t n = 0; n < _values_count; n++) {
       debug_printf("\r\nDevice[%d], Test[%d]\r\n", i, n);
-      errorCount += test_device(&_devices[i], &_values[n]);
+      errorCount += test_device(&TDevice::_storageDevice[i], &TDevice::_storageValue[n]);
     }
   }
   debug_println("----------");
@@ -88,7 +123,7 @@ int TDevice::test(void) {
 void TDeviceExt::set_input(int value) {
   for (size_t i = 0; i < _devices_count; i++) {
     for (int n = 0; n < PIN_SIZE; n++) {
-      int pin = getPin(_devices[i].Input[n]);
+      int pin = getPin(TDevice::_storageDevice[i].Input[n]);
       if (pin == 0) break;
       digitalWrite(pin, value);
     }
@@ -104,7 +139,7 @@ int TDeviceExt::check_devices() {
     set_input(LOW);
     for (size_t n = 0; n < _values_count; n++) {
       debug_printf("\r\nDevice[%d], Test[%d]\r\n", i, n);
-      errorCount += test_device(&_devices[i], &_values[n]);
+      errorCount += test_device(&TDevice::_storageDevice[i], &TDevice::_storageValue[n]);
     }
   }
   debug_println("----------");
@@ -112,7 +147,7 @@ int TDeviceExt::check_devices() {
     set_input(HIGH);
     for (size_t n = 0; n < _values_count; n++) {
       debug_printf("\r\nDevice[%d], Test[%d]\r\n", i, n);
-      errorCount += test_device(&_devices[i], &_values[n]);
+      errorCount += test_device(&TDevice::_storageDevice[i], &TDevice::_storageValue[n]);
     }
   }
   debug_println("----------");

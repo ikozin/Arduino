@@ -6,8 +6,7 @@ DevicePackage::DevicePackage(const char * title, TDevice** list, size_t count) {
     _count = count;
 }
 
-void DevicePackage::menu(void) {
-    _selected = -1;
+int DevicePackage::menu(void) {
     Serial.println();
     Serial.println(_title);
     for (size_t i = 0; i < _count; i++) {
@@ -20,10 +19,10 @@ void DevicePackage::menu(void) {
     String cmd = Serial.readStringUntil('\r');
     Serial.println(cmd);
     Serial.println();
-    _selected = cmd.toInt();    
+    return cmd.toInt();
 }
 
-int DevicePackage::test(void) {
-    if (_selected == -1) return -1;
-    return _list[_selected]->test();
+int DevicePackage::test(int index) {
+    if (index == -1) return -1;
+    return _list[index]->test();
 }

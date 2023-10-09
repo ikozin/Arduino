@@ -1,6 +1,6 @@
 #include "K565_RU5.h"
 
-const static TDevicePin pin_map_565_ru5[] =
+const static TDevicePin PROGMEM pin_map_565_ru5[] =
 {
   // Входы     A0  A1  A2  A3  A4  A5  A6  A7  DI RAS CAS  WE                   DO
   { .Input = {  5,  7,  6, 12, 11, 10, 13,  9,  2,  4, 15,  3,  0}, .Output = { 14,  0 }},
@@ -20,27 +20,30 @@ const __FlashStringHelper * K565RU5::menu(void) {
   return F("PУ5 (OЗУ 64Kx1)");
 }
 
+const char K565RU5_Description[] PROGMEM = 
+"K565PУ5\r\n"
+"OЗУ 64Kx1\r\n"
+"DIP16\r\n"
+"\t            8 - +5V          \r\n"
+"\t           16 - GND          \r\n"
+"\t      -----------------      \r\n"
+"\t  2 -| DI  | RAM | DO  |- 14 \r\n"
+"\t     |-----|     |     |     \r\n"
+"\t  5 -| A0  |     |     |     \r\n"
+"\t  7 -| A1  |     |     |     \r\n"
+"\t  6 -| A2  |     |     |     \r\n"
+"\t 12 -| A3  |     |     |     \r\n"
+"\t 11 -| A4  |     |     |     \r\n"
+"\t 10 -| A5  |     |     |     \r\n"
+"\t 13 -| A6  |     |     |     \r\n"
+"\t  9 -| A7  |     |     |     \r\n"
+"\t     |-----|     |     |     \r\n"
+"\t  4 -o RAS |     |     |     \r\n"
+"\t 15 -o CAS |     |     |     \r\n"
+"\t  3 -o WE  |     |     |     \r\n"
+"\t      -----------------      \r\n"
+;
+
 void K565RU5::info(void) {
-  Serial.println(F("K565PУ5"));
-  Serial.println(F("OЗУ 64Kx1"));
-  Serial.println(F("DIP16"));
-  Serial.println(F("\t            8 - +5V          "));
-  Serial.println(F("\t           16 - GND          "));
-  Serial.println(F("\t      -----------------      "));
-  Serial.println(F("\t  2 -| DI  | RAM | DO  |- 14 "));
-  Serial.println(F("\t     |-----|     |     |     "));
-  Serial.println(F("\t  5 -| A0  |     |     |     "));
-  Serial.println(F("\t  7 -| A1  |     |     |     "));
-  Serial.println(F("\t  6 -| A2  |     |     |     "));
-  Serial.println(F("\t 12 -| A3  |     |     |     "));
-  Serial.println(F("\t 11 -| A4  |     |     |     "));
-  Serial.println(F("\t 10 -| A5  |     |     |     "));
-  Serial.println(F("\t 13 -| A6  |     |     |     "));
-  Serial.println(F("\t  9 -| A7  |     |     |     "));
-  Serial.println(F("\t     |-----|     |     |     "));
-  Serial.println(F("\t  4 -o RAS |     |     |     "));
-  Serial.println(F("\t 15 -o CAS |     |     |     "));
-  Serial.println(F("\t  3 -o WE  |     |     |     "));
-  Serial.println(F("\t      -----------------      "));
-  Serial.println();
+  Serial.println((__FlashStringHelper *)K565RU5_Description);
 }

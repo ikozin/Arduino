@@ -1,6 +1,6 @@
 #include "K1533_TM7.h"
 
-const static TDevicePin pin_map_1533_tm7[] =
+const static TDevicePin PROGMEM pin_map_1533_tm7[] =
 {
   // Входы     D1  D2   C         Выходы      1       2
   { .Input = {  2,  3, 13,  0 }, .Output = { 16,  1, 15, 14,  0 }},
@@ -9,7 +9,7 @@ const static TDevicePin pin_map_1533_tm7[] =
   { .Input = {  6,  7,  4,  0 }, .Output = { 10, 11,  9,  8,  0 }},
 };
 
-const static TDeviceVal values_1533_tm7[] =
+const static TDeviceVal PROGMEM values_1533_tm7[] =
 {//                      C 2 1
   { .value = (uint16_t)B_1_0_0, .result = (uint16_t)B_1_0_1_0 },
   { .value = (uint16_t)B_0_0_0, .result = (uint16_t)B_1_0_1_0 },
@@ -35,23 +35,26 @@ const __FlashStringHelper * K1533TM7::menu(void) {
   return F("TM7 (2 Регистра)");
 }
 
+const char K1533TM7_Description[] PROGMEM = 
+"KP1533TM7\r\n"
+"Регистр\r\n"
+"DIP16\r\n"
+"\t         5 - +5V         \r\n"
+"\t        12 - GND         \r\n"
+"\t      -------------      \r\n"
+"\t  2 -| D1 | RG | 1 |- 16 \r\n"
+"\t  3 -| D2 |    |   o- 1  \r\n"
+"\t     |    |    | 2 |- 15 \r\n"
+"\t 13 -| C  |    |   o- 14 \r\n"
+"\t      -------------      \r\n"
+"\t      -------------      \r\n"
+"\t  6 -| D3 | RG | 3 |- 10 \r\n"
+"\t  7 -| D4 |    |   o- 11 \r\n"
+"\t     |    |    | 4 |- 9  \r\n"
+"\t  4 -| C  |    |   o- 8  \r\n"
+"\t      -------------      \r\n"
+;
+  
 void K1533TM7::info(void) {
-  Serial.println(F("KP1533TM7                  "));
-  Serial.println(F("Регистр                    "));
-  Serial.println(F("DIP16                      "));
-  Serial.println(F("\t         5 - +5V         "));
-  Serial.println(F("\t        12 - GND         "));
-  Serial.println(F("\t      -------------      "));
-  Serial.println(F("\t  2 -| D1 | RG | 1 |- 16 "));
-  Serial.println(F("\t  3 -| D2 |    |   o- 1  "));
-  Serial.println(F("\t     |    |    | 2 |- 15 "));
-  Serial.println(F("\t 13 -| C  |    |   o- 14 "));
-  Serial.println(F("\t      -------------      "));
-  Serial.println(F("\t      -------------      "));
-  Serial.println(F("\t  6 -| D3 | RG | 3 |- 10 "));
-  Serial.println(F("\t  7 -| D4 |    |   o- 11 "));
-  Serial.println(F("\t     |    |    | 4 |- 9  "));
-  Serial.println(F("\t  4 -| C  |    |   o- 8  "));
-  Serial.println(F("\t      -------------      "));
-  Serial.println();
+  Serial.println((__FlashStringHelper *)K1533TM7_Description);
 }

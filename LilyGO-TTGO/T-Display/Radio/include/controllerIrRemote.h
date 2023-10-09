@@ -15,6 +15,6 @@ class ControllerIrRemote : public Controller {
         ControllerIrRemote& attachControllerRadio(ControllerRadio* radio);
 };
 
-extern ControllerIrRemote ctrlIrRemote;
+//extern ControllerIrRemote ctrlIrRemote;
 
 #endif  //_CONTROLLERIRREMOTE_H_
