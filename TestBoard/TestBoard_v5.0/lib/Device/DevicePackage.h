@@ -12,6 +12,7 @@ class DevicePackage {
   public:
     DevicePackage(const char * title, TDevice** list, size_t count);
     const char * title(void) const { return _title; };
+    const size_t count() const { return _count; }
     int menu(void);
     int test(int index);
 };

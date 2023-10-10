@@ -1,25 +1,35 @@
 #ifndef _TDevice_
 #define _TDevice_
 
-#define DEBUG_CONSOLE
+//#define DEBUG_CONSOLE
+#define BUTTON_CONTROL
 
 #include <Arduino.h>
 #include <avr/pgmspace.h>
 #include "binaries.h"
 
+#define PIN_BUTTON      (38)  //PD7
+#define PIN_LED1        (41)  //PG0
+#define PIN_LED2        (40)  //PG1
+
 #if defined(DEBUG_CONSOLE)
-extern char text[128];
-#define debug_println(...)    {Serial.println(__VA_ARGS__); Serial.flush();}
-#define debug_print(...)      {Serial.print(__VA_ARGS__); Serial.flush();}
-#define debug_printf(...)    {sprintf(text, __VA_ARGS__); Serial.print(text); Serial.flush();}
+  extern char text[128];
+  #define debug_println(...)    {Serial.println(__VA_ARGS__); Serial.flush();}
+  #define debug_print(...)      {Serial.print(__VA_ARGS__); Serial.flush();}
+  #define debug_printf(...)    {sprintf(text, __VA_ARGS__); Serial.print(text); Serial.flush();}
 #else
-#define debug_println(...)
-#define debug_print(...)
-#define debug_printf(...)
+  #define debug_println(...)
+  #define debug_print(...)
+  #define debug_printf(...)
+#endif
+
+#ifdef BUTTON_CONTROL
+  #define PIN_BUTTON_UP     (2)
+  #define PIN_BUTTON_DOWN   (3)
+  #define PIN_BUTTON_ENTER  (7)
 #endif
 
 #define PIN_SIZE  16
-
 
 typedef struct {
   uint8_t Input[PIN_SIZE];
@@ -38,7 +48,7 @@ class IDevice {
 };
 
 const size_t MAX_DEVICE = 8;
-const size_t MAX_VALUE = 128;
+const size_t MAX_VALUE = 256;
 
 class TDevice : public IDevice {
   protected:

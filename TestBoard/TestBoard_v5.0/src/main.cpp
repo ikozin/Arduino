@@ -1,12 +1,9 @@
 #include <Arduino.h>
+#include "Device.h"
 
 #ifndef __AVR_ATmega2560__
 #error Select board ATMEGA2560
 #endif
-
-#define PIN_BUTTON  38  //PD7
-#define PIN_LED1    41  //PG0
-#define PIN_LED2    40  //PG1
 
 //               DIP 14
 //    PC0(37) [ 1]   [14]  VCC
@@ -91,20 +88,51 @@ DevicePackage* packList[] = {
 
 // Не стандартная разводка питания: ИЕ5, ТМ5, ТМ7
 int showMenu() {
-  Serial.println();
   if (digitalRead(PIN_BUTTON) == LOW) return -1;
 
-  for (uint8_t i = 0; i < (sizeof(packList)/sizeof(packList[0])); i++) {
-    Serial.print(i);
-    Serial.print(" - ");
-    Serial.println(packList[i]->title());
-  }
-  Serial.print("Введите команду:");
-  while (!Serial.available());
-  String cmd = Serial.readStringUntil('\r');
-  Serial.println(cmd);
-  Serial.println();
-  return cmd.toInt();
+  size_t size = sizeof(packList)/sizeof(packList[0]);
+#ifdef BUTTON_CONTROL
+  size_t index = 0;
+#endif
+  for (;;) {
+    delay(200);
+    Serial.println();
+    for (size_t i = 0; i < size;  i++) {
+#ifdef BUTTON_CONTROL
+      Serial.print((index == i)? "-> ": "   ");
+#endif
+      Serial.print(i);
+      Serial.print(" - ");
+      Serial.print(packList[i]->title());
+      Serial.println();
+    }
+
+#ifdef BUTTON_CONTROL
+    for (;;) {
+      if (digitalRead(PIN_BUTTON) == LOW) return -1;
+      if (digitalRead(PIN_BUTTON_ENTER) == LOW) return index;
+      if (digitalRead(PIN_BUTTON_UP) == LOW) {
+        if (index > 0) {
+          index --;
+          break;
+        }
+      }
+      if (digitalRead(PIN_BUTTON_DOWN) == LOW) {
+        if (index < (size - 1)) {
+          index ++;
+          break;
+        }
+      }
+    }
+#else
+    Serial.print("Введите команду:");
+    while (!Serial.available());
+    String cmd = Serial.readStringUntil('\r');
+    Serial.println(cmd);
+    Serial.println();
+    return cmd.toInt();
+#endif
+  }  
 }
 
 void setup() {
@@ -121,6 +149,12 @@ void setup() {
   pinMode(PIN_BUTTON, INPUT_PULLUP);
   pinMode(PIN_LED1, OUTPUT);
   pinMode(PIN_LED2, OUTPUT);
+
+#ifdef BUTTON_CONTROL
+  pinMode(PIN_BUTTON_UP, INPUT_PULLUP);
+  pinMode(PIN_BUTTON_DOWN, INPUT_PULLUP);
+  pinMode(PIN_BUTTON_ENTER, INPUT_PULLUP);
+#endif
 
   // Initialize Serial
   Serial.begin(57600);
@@ -143,6 +177,9 @@ void testLed() {
   digitalWrite(PIN_LED1, LOW);
   digitalWrite(PIN_LED2, HIGH);
   delay(500);
+
+  digitalWrite(PIN_LED1, LOW);
+  digitalWrite(PIN_LED2, LOW);
 }
 
 void testPortAPortC() {
@@ -167,9 +204,17 @@ void testPortAPortC() {
 
 void loop() {
   Serial.println(F("\nCтapт"));
-  int package = 3;//showMenu();
+  
+  // for (size_t p = 0; p < (sizeof(packList)/sizeof(packList[0])); p++) {
+  //   for (size_t t = 0; t < packList[p]->count(); t++) {
+  //     packList[p]->test(t);
+  //   }
+  // }
+  // while (digitalRead(PIN_BUTTON) != LOW);
+  
+  int package = showMenu();
   if (package != -1) {
-    int test = 6;//packList[package]->menu();
+    int test = packList[package]->menu();
     packList[package]->test(test);
     while (digitalRead(PIN_BUTTON) != LOW);
   }
