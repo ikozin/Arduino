@@ -80,146 +80,162 @@
 #include <K1533.h>
 
 DevicePackage* packList[] = {
-  new K555_Pack(),
-  new K565_Pack(),
-  new K580_Pack(),
-  new K1533_Pack(),
+    new K555_Pack(),
+    new K565_Pack(),
+    new K580_Pack(),
+    new K1533_Pack(),
 };
 
 // Не стандартная разводка питания: ИЕ5, ТМ5, ТМ7
 int showMenu() {
-  if (digitalRead(PIN_BUTTON) == LOW) return -1;
+    if (digitalRead(PIN_BUTTON) == LOW) return -1;
 
-  size_t size = sizeof(packList)/sizeof(packList[0]);
+    size_t size = sizeof(packList)/sizeof(packList[0]);
 #ifdef BUTTON_CONTROL
-  size_t index = 0;
+    size_t index = 0;
 #endif
-  for (;;) {
-    delay(200);
-    Serial.println();
-    for (size_t i = 0; i < size;  i++) {
-#ifdef BUTTON_CONTROL
-      Serial.print((index == i)? "-> ": "   ");
-#endif
-      Serial.print(i);
-      Serial.print(" - ");
-      Serial.print(packList[i]->title());
-      Serial.println();
-    }
-
-#ifdef BUTTON_CONTROL
     for (;;) {
-      if (digitalRead(PIN_BUTTON) == LOW) return -1;
-      if (digitalRead(PIN_BUTTON_ENTER) == LOW) return index;
-      if (digitalRead(PIN_BUTTON_UP) == LOW) {
-        if (index > 0) {
-          index --;
-          break;
-        }
-      }
-      if (digitalRead(PIN_BUTTON_DOWN) == LOW) {
-        if (index < (size - 1)) {
-          index ++;
-          break;
-        }
-      }
-    }
-#else
-    Serial.print("Введите команду:");
-    while (!Serial.available());
-    String cmd = Serial.readStringUntil('\r');
-    Serial.println(cmd);
-    Serial.println();
-    return cmd.toInt();
+        delay(200);
+        Serial.println();
+        for (size_t i = 0; i < size;  i++) {
+#ifdef BUTTON_CONTROL
+            Serial.print((index == i)? "-> ": "   ");
 #endif
-  }  
+            Serial.print(i);
+            Serial.print(" - ");
+            Serial.print(packList[i]->title());
+            Serial.println();
+        }
+
+#ifdef BUTTON_CONTROL
+        for (;;) {
+            if (digitalRead(PIN_BUTTON) == LOW) return -1;
+            if (digitalRead(PIN_BUTTON_ENTER) == LOW) return index;
+            if (digitalRead(PIN_BUTTON_UP) == LOW) {
+                if (index > 0) {
+                    index --;
+                    break;
+                }
+            }
+            if (digitalRead(PIN_BUTTON_DOWN) == LOW) {
+                if (index < (size - 1)) {
+                    index ++;
+                    break;
+                }
+            }
+        }
+#else
+        Serial.print("Введите команду:");
+        while (!Serial.available());
+        String cmd = Serial.readStringUntil('\r');
+        Serial.println(cmd);
+        Serial.println();
+        return cmd.toInt();
+#endif
+    }  
 }
 
 void setup() {
-  //Serial.println("!!!");  //ЭТО БАГ Aduino Mega, ПРИ НАЛИЧИИ СТРОКИ "!!!" ВЫЗЫВАЕТ ОШИБКУ ЗАГРУЗКИ, НАПРИМЕР: char text[128] = "!!!";
+    //Serial.println("!!!");  //ЭТО БАГ Aduino Mega, ПРИ НАЛИЧИИ СТРОКИ "!!!" ВЫЗЫВАЕТ ОШИБКУ ЗАГРУЗКИ, НАПРИМЕР: char text[128] = "!!!";
 
-  DDRA = B00000000;   // Set input mode
-  DDRC = B00000000;   // Set input mode
-  DDRL = B00000000;   // Set input mode
+    DDRA = B00000000;   // Set input mode
+    DDRC = B00000000;   // Set input mode
+    DDRL = B00000000;   // Set input mode
 
-  PORTA = B11111111;  // Set pullup mode
-  PORTC = B11111111;  // Set pullup mode
-  PORTL = B11111111;  // Set pullup mode
+    PORTA = B11111111;  // Set pullup mode
+    PORTC = B11111111;  // Set pullup mode
+    PORTL = B11111111;  // Set pullup mode
 
-  pinMode(PIN_BUTTON, INPUT_PULLUP);
-  pinMode(PIN_LED1, OUTPUT);
-  pinMode(PIN_LED2, OUTPUT);
+    pinMode(PIN_BUTTON, INPUT_PULLUP);
+    pinMode(PIN_LED1, OUTPUT);
+    pinMode(PIN_LED2, OUTPUT);
 
 #ifdef BUTTON_CONTROL
-  pinMode(PIN_BUTTON_UP, INPUT_PULLUP);
-  pinMode(PIN_BUTTON_DOWN, INPUT_PULLUP);
-  pinMode(PIN_BUTTON_ENTER, INPUT_PULLUP);
+    pinMode(PIN_BUTTON_UP, INPUT_PULLUP);
+    pinMode(PIN_BUTTON_DOWN, INPUT_PULLUP);
+    pinMode(PIN_BUTTON_ENTER, INPUT_PULLUP);
 #endif
 
-  // Initialize Serial
-  Serial.begin(57600);
-  while (!Serial);
+    // Initialize Serial
+    Serial.begin(57600);
+    while (!Serial);
+
+#ifdef BUTTON_CONTROL
+    Serial.println(F("Buttons setting"));
+
+    Serial.print(F("Button UP = "));
+    Serial.print(PIN_BUTTON_UP);
+    Serial.println();
+
+    Serial.print(F("Button DOWN = "));
+    Serial.print(PIN_BUTTON_DOWN);
+    Serial.println();
+
+    Serial.print(F("Button ENTER = "));
+    Serial.print(PIN_BUTTON_ENTER);
+    Serial.println();
+#endif
 }
 
 void testLed() {
-  digitalWrite(PIN_LED1, HIGH);
-  digitalWrite(PIN_LED2, HIGH);
-  delay(500);
-  
-  digitalWrite(PIN_LED1, LOW);
-  digitalWrite(PIN_LED2, LOW);
-  delay(500);
-  
-  digitalWrite(PIN_LED1, HIGH);
-  digitalWrite(PIN_LED2, LOW);
-  delay(500);
-  
-  digitalWrite(PIN_LED1, LOW);
-  digitalWrite(PIN_LED2, HIGH);
-  delay(500);
+    digitalWrite(PIN_LED1, HIGH);
+    digitalWrite(PIN_LED2, HIGH);
+    delay(500);
 
-  digitalWrite(PIN_LED1, LOW);
-  digitalWrite(PIN_LED2, LOW);
+    digitalWrite(PIN_LED1, LOW);
+    digitalWrite(PIN_LED2, LOW);
+    delay(500);
+
+    digitalWrite(PIN_LED1, HIGH);
+    digitalWrite(PIN_LED2, LOW);
+    delay(500);
+
+    digitalWrite(PIN_LED1, LOW);
+    digitalWrite(PIN_LED2, HIGH);
+    delay(500);
+
+    digitalWrite(PIN_LED1, LOW);
+    digitalWrite(PIN_LED2, LOW);
 }
 
-void testPortAPortC() {
-  PORTA = B00000000;
-  DDRA  = B11111111;
-  delay(200);
-  for (int i = 0; i < 8; i++) {
-    PORTA = 1 << i;
-    delay(200);
-  }
-  PORTA = B00000000;
+// void testPortAPortC() {
+//     PORTA = B00000000;
+//     DDRA  = B11111111;
+//     delay(200);
+//     for (int i = 0; i < 8; i++) {
+//         PORTA = 1 << i;
+//         delay(200);
+//     }
+//     PORTA = B00000000;
 
-  PORTC = B00000000;
-  DDRC  = B11111111;
-  delay(200);
-  for (int i = 0; i < 8; i++) {
-    PORTC = 1 << i;
-    delay(200);
-  }
-  PORTC = B00000000;
-}
+//     PORTC = B00000000;
+//     DDRC  = B11111111;
+//     delay(200);
+//     for (int i = 0; i < 8; i++) {
+//         PORTC = 1 << i;
+//         delay(200);
+//     }
+//     PORTC = B00000000;
+// }
 
 void loop() {
-  Serial.println(F("\nCтapт"));
-  
-  // for (size_t p = 0; p < (sizeof(packList)/sizeof(packList[0])); p++) {
-  //   for (size_t t = 0; t < packList[p]->count(); t++) {
-  //     packList[p]->test(t);
-  //   }
-  // }
-  // while (digitalRead(PIN_BUTTON) != LOW);
-  
-  int package = showMenu();
-  if (package != -1) {
-    int test = packList[package]->menu();
-    packList[package]->test(test);
-    while (digitalRead(PIN_BUTTON) != LOW);
-  }
-  else {
-    //testPortAPortC();
-    testLed();
-  }
+    Serial.println(F("\nCтapт"));
+
+    // for (size_t p = 0; p < (sizeof(packList)/sizeof(packList[0])); p++) {
+    //   for (size_t t = 0; t < packList[p]->count(); t++) {
+    //     packList[p]->test(t);
+    //   }
+    // }
+    // while (digitalRead(PIN_BUTTON) != LOW);
+    delay(200);
+    int package = showMenu();
+    if (package != -1) {
+        int test = packList[package]->menu();
+        packList[package]->test(test);
+        while (digitalRead(PIN_BUTTON) != LOW);
+    }
+    else {
+        //testPortAPortC();
+        testLed();
+    }
 }

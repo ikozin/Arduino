@@ -13,7 +13,7 @@
 #include "K1533_LE4.h"
 #include "K1533_LI1_LI2.h"
 #include "K1533_LL1.h"
-#include "K1533_LN1_LN2_LN3_LN5_LN8.h"
+#include "K1533_LN1_LN2_LN3_LN5_LN8_TL2.h"
 #include "K1533_LP5.h"
 #include "K1533_TM2.h"
 #include "K1533_TM7.h"
@@ -33,7 +33,7 @@ TDevice* k1533_list[] = {
     new K1533LE4(),
     new K1533LI1LI2(),
     new K1533LL1(),
-    new K1533LN1LN2LN3LN5LN8(),
+    new K1533LN1LN2LN3LN5LN8TL2(),
     new K1533LP5(),
     new K1533TM2(),
     new K1533TM7(),

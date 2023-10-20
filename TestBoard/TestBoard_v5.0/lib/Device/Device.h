@@ -70,8 +70,15 @@ class TDevice : public IDevice {
       return value;
     }
   public:
+    TDevice() {
+        _devices = NULL;
+        _values = NULL;  
+        _devices_count = 0;
+        _values_count = 0;
+    }
+    
     virtual int check_devices(void);
-    virtual int test(void);
+    virtual int test(void) override;
 
     static TDevicePin _storageDevice[MAX_DEVICE];
     static TDeviceVal _storageValue[MAX_VALUE];
@@ -80,7 +87,7 @@ class TDevice : public IDevice {
 class TDeviceExt: public TDevice {
   protected:
     void set_input(int value);
-    int check_devices(void);
+    virtual int check_devices(void) override;
 };
 
 class TDeviceComposite: public TDevice {
@@ -94,7 +101,7 @@ class TDeviceComposite: public TDevice {
       _composite = composite;
       _count = count;
     }
-    virtual int check_devices(void) {
+    virtual int check_devices(void) override {
       int errorCount = 0;
       info();
       for (size_t i = 0; i < _count; i++) {
