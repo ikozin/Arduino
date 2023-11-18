@@ -78,6 +78,7 @@ EncButtonT<PIN_ENC_S1, PIN_ENC_S2, PIN_ENC_BTN> encoder;
 
 #include <Device.h>
 #include <DevicePackage.h>
+#include <K155.h>
 #include <K555.h>
 #include <K565.h>
 #include <K580.h>
@@ -85,6 +86,7 @@ EncButtonT<PIN_ENC_S1, PIN_ENC_S2, PIN_ENC_BTN> encoder;
 
 // Не стандартная разводка питания: ИЕ5, ТМ5, ТМ7
 DevicePackage* packList[] = {
+    new K155_Pack(),
     new K555_Pack(),
     new K565_Pack(),
     new K580_Pack(),
