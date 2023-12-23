@@ -54,8 +54,8 @@
 #define OLED_RESET  (47)
 typedef GyverOLED<SSD1306_128x64, OLED_NO_BUFFER, OLED_SPI, OLED_CS, OLED_DC, OLED_RESET> GyverDisplay;
 
-#define PIN_LED1        (41)  //PG0
-#define PIN_LED2        (40)  //PG1
+#define PIN_LED_RED     (41)  //PG0
+#define PIN_LED_GREEN   (40)  //PG1
 
 #if defined(DEBUG_CONSOLE)
   extern char text[128];

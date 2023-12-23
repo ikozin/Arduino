@@ -100,6 +100,8 @@ void encoderMenuAction();
 void encoderPackageAction();
 
 void displayMenu(GyverDisplay& display, int index) {
+    digitalWrite(PIN_LED_GREEN, LOW);
+    digitalWrite(PIN_LED_RED, LOW);
     int line = 0;
     if (size > 7) {
         line = (index - 3 >= 0) ? index - 3 : 0;
@@ -153,13 +155,13 @@ void encoderPackageAction() {
             displayMenu(display, index);
             break;
         case EB_CLICK:
-            digitalWrite(PIN_LED1, LOW);
-            digitalWrite(PIN_LED2, LOW);
+            digitalWrite(PIN_LED_GREEN, LOW);
+            digitalWrite(PIN_LED_RED, LOW);
             result = packList[index]->test(display);
             if (result == 0) {
-                digitalWrite(PIN_LED1, HIGH);
+                digitalWrite(PIN_LED_GREEN, HIGH);
             } else {
-                digitalWrite(PIN_LED2, HIGH);
+                digitalWrite(PIN_LED_RED, HIGH);
             }
             break;
         case EB_TURN:
@@ -187,8 +189,8 @@ void setup() {
     PORTC = B11111111;  // Set pullup mode
     PORTL = B11111111;  // Set pullup mode
 
-    pinMode(PIN_LED1, OUTPUT);
-    pinMode(PIN_LED2, OUTPUT);
+    pinMode(PIN_LED_GREEN, OUTPUT);
+    pinMode(PIN_LED_RED, OUTPUT);
 
     //encoder.init(INPUT_PULLUP, INPUT_PULLUP, LOW);
     encoder.attach(encoderMenuAction);
@@ -206,35 +208,35 @@ void setup() {
     display.init();
     display.clear();
     display.home();
-    // display.flipV(true);
-    // display.flipH(true);
+    display.flipV(true);
+    display.flipH(true);
 
     displayMenu(display, index);   
 }
 
 void testLed() {
-    digitalWrite(PIN_LED1, HIGH);
-    digitalWrite(PIN_LED2, HIGH);
+    digitalWrite(PIN_LED_GREEN, HIGH);
+    digitalWrite(PIN_LED_RED, HIGH);
     delay(250);
 
-    digitalWrite(PIN_LED1, LOW);
-    digitalWrite(PIN_LED2, LOW);
+    digitalWrite(PIN_LED_GREEN, LOW);
+    digitalWrite(PIN_LED_RED, LOW);
     delay(250);
 
-    digitalWrite(PIN_LED1, HIGH);
-    digitalWrite(PIN_LED2, LOW);
+    digitalWrite(PIN_LED_GREEN, HIGH);
+    digitalWrite(PIN_LED_RED, LOW);
     delay(250);
 
-    digitalWrite(PIN_LED1, LOW);
-    digitalWrite(PIN_LED2, HIGH);
+    digitalWrite(PIN_LED_GREEN, LOW);
+    digitalWrite(PIN_LED_RED, HIGH);
     delay(250);
 
-    digitalWrite(PIN_LED1, LOW);
-    digitalWrite(PIN_LED2, LOW);
+    digitalWrite(PIN_LED_GREEN, LOW);
+    digitalWrite(PIN_LED_RED, LOW);
     delay(250);
 }
 
 void loop() {
     encoder.tick();
-    //testLed();
+    // testLed();
 }
