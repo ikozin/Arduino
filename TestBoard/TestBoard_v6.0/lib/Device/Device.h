@@ -74,6 +74,8 @@ typedef GyverOLED<SSD1306_128x64, OLED_NO_BUFFER, OLED_SPI, OLED_CS, OLED_DC, OL
 
 #define PIN_SIZE  16
 
+#define EXPAND_CHIP
+
 typedef struct {
   uint8_t Input[PIN_SIZE];
   uint8_t Output[PIN_SIZE];
