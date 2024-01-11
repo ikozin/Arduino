@@ -10,8 +10,7 @@ class ViewRadio : public View {
     public:
         ViewRadio(const char* name, View** currentView, ControllerRadio* radio);
     protected:
-        virtual void OnHandle();
-    private:
+        virtual void OnHandle() override;
 };
 
 #endif  //_VIEWRADIO_H_

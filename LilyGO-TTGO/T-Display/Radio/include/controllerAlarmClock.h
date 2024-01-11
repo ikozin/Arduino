@@ -56,7 +56,7 @@ class ControllerAlarmClock : public Controller {
         void startTimer(int index);
         static void timerCallback(TimerHandle_t pxTimer);
     protected:
-        void OnHandle();
+        void OnHandle() override;
     public:
         ControllerAlarmClock& attachControllerRadio(ControllerRadio* radio);
 };

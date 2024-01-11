@@ -21,7 +21,7 @@ class ControllerDevice : public Controller {
         float getStatic() const { return _staticValue; }
         float getImpulse() const { return _impulseValue; }
     protected:
-        virtual void OnHandle();
+        virtual void OnHandle() override;
     private:
         Adafruit_BME280 _bme;   // I2C
         float _temperature;

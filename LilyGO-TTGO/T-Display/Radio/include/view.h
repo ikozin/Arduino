@@ -13,10 +13,11 @@ class View{
         SemaphoreHandle_t _updateEvent;
         TaskHandle_t _task;
         TFT_eSprite* _sprite;
+    protected:
+        virtual void OnHandle() = 0;
     public:
         View(const char* name, View** currentView);
         void Start(TFT_eSprite* sprite, SemaphoreHandle_t updateEvent);
-        virtual void OnHandle() = 0;
         SemaphoreHandle_t GetEvent() const { 
             assert(_updateEvent);
             return _updateEvent;

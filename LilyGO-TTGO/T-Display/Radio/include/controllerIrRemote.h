@@ -8,7 +8,7 @@ class ControllerIrRemote : public Controller {
     public:
         ControllerIrRemote();
     protected:
-        virtual void OnHandle();
+        virtual void OnHandle() override;
     private:
         ControllerRadio* _radio;
     public:

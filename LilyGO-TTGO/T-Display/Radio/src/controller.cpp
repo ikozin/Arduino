@@ -2,6 +2,7 @@
 
 Controller::Controller(const char* name) {
     assert(name);
+    _task = NULL;
     _name = name;
     _updateEvent = xSemaphoreCreateBinary();
 }
@@ -12,7 +13,7 @@ void Controller::Start() {
 
 void Controller::ControllerHandler(void* parameter) {
     assert(parameter);
-    Controller* controller = (Controller*)parameter;
+    Controller* controller = static_cast<Controller*>(parameter);
     controller->OnHandle();
     vTaskDelete(controller->_task);
 }

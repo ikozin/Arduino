@@ -8,7 +8,7 @@ class ViewWeather : public View {
     public:
         ViewWeather(const char* name, View** currentView, ControllerWeather* weather);
     protected:
-        virtual void OnHandle();
+        virtual void OnHandle() override;
     private:
         ControllerWeather* _weather;
     private:

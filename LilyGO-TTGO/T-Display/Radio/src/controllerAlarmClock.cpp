@@ -66,7 +66,7 @@ void ControllerAlarmClock::startTimer(int index) {
     alarmClockItem_t alarm = _alarmClockList[index];
     LOGN("ControllerAlarmClock::startTimer [%d]=0x%llX", index, alarm.value);
     TickType_t period = getTimerPeriod(&alarm);
-    _timerList[index] = xTimerCreate("Timer", period, pdFALSE, (void*)index, timerCallback);
+    _timerList[index] = xTimerCreate("Timer", period, pdFALSE, (void *const)index, timerCallback);
     xTimerStart(_timerList[index], 0);
 }
 

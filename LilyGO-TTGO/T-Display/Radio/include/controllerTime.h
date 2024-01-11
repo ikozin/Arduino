@@ -13,7 +13,7 @@ class ControllerTime : public Controller {
     public:
         DateTime getDateTime() { return _rtc.now(); }
     protected:
-        virtual void OnHandle();
+        virtual void OnHandle() override;
     private:
         Preferences* _prefs;
         RTC_DS3231 _rtc;

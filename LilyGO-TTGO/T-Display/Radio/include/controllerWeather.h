@@ -23,7 +23,7 @@ class ControllerWeather : public Controller {
         String iconFileName;
         String windFileName;
     protected:
-        virtual void OnHandle();
+        virtual void OnHandle() override;
     private:
         StaticJsonDocument<2048> _doc;
         uint16_t ColorToRGB565(const uint8_t r, const uint8_t g, const uint8_t b);

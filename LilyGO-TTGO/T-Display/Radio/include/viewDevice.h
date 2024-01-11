@@ -8,7 +8,7 @@ class ViewDevice : public View {
     public:
         ViewDevice(const char* name, View** currentView, ControllerDevice* device);
     protected:
-        virtual void OnHandle();
+        virtual void OnHandle() override;
     private:
         ControllerDevice* _device;
 };
