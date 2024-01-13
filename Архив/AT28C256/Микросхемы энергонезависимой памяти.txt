@@ -1,0 +1,4 @@
+OTP EPROM			(AT27)
+FLASH				(AT29, AT49)
+Parallel EEPROM			(AT28)
+I2C, 3wire, SPI Serial EEPROM	(AT24, AT93, AT25)
