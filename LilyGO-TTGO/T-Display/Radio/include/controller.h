@@ -8,7 +8,7 @@
 class Controller {
     public:
         Controller(const char* name);
-        void Start();
+        void Start(uint16_t stackDepth = 2048);
         SemaphoreHandle_t GetEvent() const { return _updateEvent; };
     protected:
         const char* _name;

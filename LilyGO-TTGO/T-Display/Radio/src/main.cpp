@@ -41,11 +41,11 @@
 #endif
 
 #define RADIO_ENABLE
-//#define WEATHER_ENABLE
+#define WEATHER_ENABLE
 #define DEVICE_ENABLE
 #define TIME_ENABLE
-#define IR_ENABLE
-//#define WIFI_ENABLE
+//#define IR_ENABLE
+#define WIFI_ENABLE
 
 #if defined(WEATHER_ENABLE)
     #define WIFI_ENABLE
@@ -202,13 +202,13 @@ void setup() {
 #endif
     }
 
-    //prefs.putString("ssid", "...");
-    //prefs.putString("pswd", "...");
-    //prefs.putInt("tz", 10800);
-    //prefs.putInt("station", 35);
-    //prefs.putInt("volume", 2);
-    //prefs.putBool("mute", false);
-    //prefs.putInt("page", DISPLAY_RADIO);
+    // prefs.putString("ssid", "i-net");
+    // prefs.putString("pswd", "95ad8c6d7e9a0c56c40a389ec8a89fe8b4c7d9b60fa3bfd28fe9dcee2e7a");
+    // prefs.putInt("tz", 10800);
+    // prefs.putInt("station", 32);
+    // prefs.putInt("volume", 2);
+    // prefs.putBool("mute", false);
+    // prefs.putInt("page", 0);
 
     ssid = prefs.getString("ssid", ssid);
     pswd = prefs.getString("pswd", pswd);
@@ -251,16 +251,18 @@ void setup() {
 #endif
 #ifdef RADIO_ENABLE
     ctrlRadio.Start();
-    ctrlAlarmClock.attachControllerRadio(&ctrlRadio).Start();
+    ctrlAlarmClock.attachControllerRadio(&ctrlRadio);
+    ctrlAlarmClock.Start(4096);
 #endif
 #ifdef WEATHER_ENABLE
-    ctrlWeather.Start();
+    ctrlWeather.Start(8192);
 #endif
 #ifdef DEVICE_ENABLE
     ctrlDevice.Start();
 #endif
 #ifdef IR_ENABLE
-    ctrlIrRemote.attachControllerRadio(&ctrlRadio).Start();
+    ctrlIrRemote.attachControllerRadio(&ctrlRadio);
+    ctrlIrRemote.Start();
 #endif
 
     LOGN("View - Start")
@@ -272,7 +274,7 @@ void setup() {
     viewRadio.Start(&sprite, ctrlRadio.GetEvent());
 #endif
 #ifdef WEATHER_ENABLE
-    viewWeather.Start(&sprite, ctrlWeather.GetEvent());
+    viewWeather.Start(&sprite, ctrlWeather.GetEvent(), 8192);
 #endif
 #ifdef DEVICE_ENABLE
     viewDevice.Start(&sprite, ctrlDevice.GetEvent());

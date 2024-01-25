@@ -17,7 +17,7 @@ class View{
         virtual void OnHandle() = 0;
     public:
         View(const char* name, View** currentView);
-        void Start(TFT_eSprite* sprite, SemaphoreHandle_t updateEvent);
+        void Start(TFT_eSprite* sprite, SemaphoreHandle_t updateEvent, uint16_t stackDepth = 4096);
         SemaphoreHandle_t GetEvent() const { 
             assert(_updateEvent);
             return _updateEvent;

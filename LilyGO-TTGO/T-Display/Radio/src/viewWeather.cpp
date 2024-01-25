@@ -28,10 +28,6 @@ void ViewWeather::OnHandle() {
         return;
     }
     _sprite->setTextDatum(TL_DATUM);
-
-    drawImageFile(_weather->iconFileName.c_str(), 107, 0, iconSize);
-    drawImageFile(_weather->windFileName.c_str(), 192, 8, 32);
-
     _sprite->loadFont(FONT_TEXT_32);
     _sprite->setTextColor(TFT_WHITE);
     int32_t posX = _sprite->textWidth(_weather->weatherDescription);
@@ -46,6 +42,9 @@ void ViewWeather::OnHandle() {
     _sprite->loadFont(FONT_DIGIT_56);
     _sprite->setTextColor(TFT_WHITE);
     posX = ((int32_t)101 - _sprite->textWidth(_weather->weatherTemperature)) >> 1;
-    _sprite->drawString(_weather->weatherTemperature, posX + 2, 10);
+    _sprite->drawString(_weather->weatherTemperature, 122, 10);
     _sprite->unloadFont();
+
+    drawImageFile(_weather->iconFileName.c_str(), 10, 10, 64);
+    // drawImageFile(_weather->windFileName.c_str(), 192, 8, 32);
 }

@@ -7,8 +7,8 @@ Controller::Controller(const char* name) {
     _updateEvent = xSemaphoreCreateBinary();
 }
 
-void Controller::Start() {
-    xTaskCreate(ControllerHandler, _name, 4096, this, 1, &_task);
+void Controller::Start(uint16_t stackDepth) {
+    xTaskCreate(ControllerHandler, _name, stackDepth, this, 1, &_task);
  }
 
 void Controller::ControllerHandler(void* parameter) {

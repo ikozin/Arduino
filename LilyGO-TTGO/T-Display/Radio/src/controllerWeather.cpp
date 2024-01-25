@@ -1,31 +1,24 @@
 #include "controllerWeather.h"
 #include "main.h"
+#include <FS.h>
+#include <SPIFFS.h>
 
-char _trafficPattern[]     = "<info|<traffic|<region|<level";
-char _typePattern[]        = "<weather|<day_part|<weather_type";
-char _iconPattern[]        = "<image-v3";
-char _windSpeedPattern[]   = "<wind_speed";
-char _windTypePattern[]    = "<wind_direction";
-char _dampnessPattern[]    = "<dampness";
-char _pressurePattern[]    = "<pressure";
-char _temperaturePattern[] = "<temperature";
-char _windPattern[]        = "<info|<weather|<day_part|<wind_direction|id=";
-
+String payload;
+HTTPClient httpClient;
 
 ControllerWeather::ControllerWeather(const char* name) : Controller(name), _doc() {
     isValid = false;
-    trafficLevel.reserve(8);
     weatherDescription.reserve(128);
     weatherUrlIcon.reserve(128);
     weatherWindSpeed.reserve(16);
     weatherWindType.reserve(64);
-    weatherDampness.reserve(16);
+    weatherHumidity.reserve(16);
     weatherPressure.reserve(16);
     weatherTemperature.reserve(16);
+    payload.reserve(8192);
 }
 
 void ControllerWeather::OnHandle() {
-    HTTPClient httpClient;
     for (;;) {
         LOGN("ControllerWeather::OnHandle")
         if (!WiFi.isConnected()) {
@@ -33,29 +26,17 @@ void ControllerWeather::OnHandle() {
             LOGN("ControllerWeather::isValid, %d", isValid);
             continue;   
         }
-        httpClient.begin("https://api.weatherapi.com/v1/current.json?q=Moscow&lang=ru&key=b0b2880fa2ae4b8594e115610231806");
-        int httpCode = httpClient.GET();
-        isValid = httpCode == HTTP_CODE_OK;
+        httpClient.begin("https://api.weatherapi.com/v1/current.json?q=Moscow,RU&units=metric&lang=ru&key=b0b2880fa2ae4b8594e115610231806");
+        isValid = httpClient.GET() == HTTP_CODE_OK;
         if (isValid) {
-            String payload = httpClient.getString();
+            payload = httpClient.getString();
             isValid = !payload.isEmpty();
-            if (isValid) {
-                isValid = parseWeatherInfo(payload);
-                if (isValid) {
-                    LOGN("ControllerWeather::weatherDescription, %s", weatherDescription.c_str());
-                    LOGN("ControllerWeather::weatherTemperature, %s", weatherTemperature.c_str());
-                    LOGN("ControllerWeather::weatherPressure, %s", weatherPressure.c_str());
-                    LOGN("ControllerWeather::weatherDampness, %s", weatherDampness.c_str());
-                    LOGN("ControllerWeather::weatherWindSpeed, %s", weatherWindSpeed.c_str());
-                    LOGN("ControllerWeather::weatherWindType, %s", weatherWindType.c_str());
-                    LOGN("ControllerWeather::trafficLevel, %s", trafficLevel.c_str());
-                    LOGN("ControllerWeather::weatherUrlIcon, %s", weatherUrlIcon.c_str());
-                    LOGN("ControllerWeather::iconFileName, %s", iconFileName.c_str());
-                    LOGN("ControllerWeather::windFileName, %s", windFileName.c_str());
-                }
-            }
         }
-        httpClient.end();
+        httpClient.setReuse(true);
+        if (isValid) {
+            isValid = parseWeatherInfo(httpClient, payload);
+        }
+
         LOGN("ControllerWeather::isValid, %d", isValid);
         xSemaphoreGive(_updateEvent);
         vTaskDelay(isValid ? UPDATE_WEATHER_TIME: 10000);
@@ -66,93 +47,57 @@ uint16_t ControllerWeather::ColorToRGB565(const uint8_t r, const uint8_t g, cons
   return (uint16_t)(((r & 0b11111000) << 8) | ((g & 0b11111100) << 3) | (b >> 3));
 }
 
-bool ControllerWeather::parseWeatherInfo(String& payload) {
+bool ControllerWeather::parseWeatherInfo(HTTPClient& client, String& payload) {
     char* pstr = payload.begin();
     DeserializationError error = deserializeJson(_doc, pstr);
     if (error) {
         LOGN("Failed to read json, using default configuration");
         return false;
     }
-    LOGN("ControllerWeather, %s", pstr);
-
+    iconFileName.clear();
     weatherDescription = _doc["current"]["condition"]["text"].as<String>();
     weatherTemperature = _doc["current"]["temp_c"].as<String>();
-    weatherDampness = _doc["current"]["humidity"].as<String>();
+    weatherHumidity = _doc["current"]["humidity"].as<String>();
     weatherPressure = String(_doc["current"]["pressure_mb"].as<float>() * 0.750062, 1);
     weatherWindSpeed = _doc["current"]["wind_mph"].as<String>();
     weatherWindType =_doc["current"]["wind_dir"].as<String>();
     weatherUrlIcon = _doc["current"]["condition"]["icon"].as<String>();
-    if (!weatherUrlIcon.isEmpty()) {
-        int pos = weatherUrlIcon.lastIndexOf('/');
-        if (pos != 1) weatherUrlIcon.remove(0, pos);
+
+    if (!weatherTemperature.isEmpty()) {
+        weatherTemperature += "°";
+        if (isdigit(weatherTemperature[0])) {
+            weatherTemperature = "+" + weatherTemperature;
+        }
     }
-    
+    if (!weatherUrlIcon.isEmpty()) {
+        weatherUrlIcon = "https:" + weatherUrlIcon;
+        int pos = weatherUrlIcon.lastIndexOf('/');
+        if (pos != 1) {
+            iconFileName = "/icon" + weatherUrlIcon.substring(pos);
+        }
+        if (!SPIFFS.exists(iconFileName)) {
+            if (client.begin(weatherUrlIcon)) {
+                int code = client.GET();
+                if (code == HTTP_CODE_OK) {
+                    File f = SPIFFS.open(iconFileName, "w");
+                    if (f) {
+                        client.writeToStream(&f);
+                        f.close();
+                    }
+                }
+                client.end();
+            }
+        }
+    }    
     LOGN("ControllerWeather::weatherDescription, %s", weatherDescription.c_str());
     LOGN("ControllerWeather::weatherTemperature, %s", weatherTemperature.c_str());
     LOGN("ControllerWeather::weatherPressure, %s", weatherPressure.c_str());
-    LOGN("ControllerWeather::weatherDampness, %s", weatherDampness.c_str());
+    LOGN("ControllerWeather::weatherHumidity, %s", weatherHumidity.c_str());
     LOGN("ControllerWeather::weatherWindSpeed, %s", weatherWindSpeed.c_str());
     LOGN("ControllerWeather::weatherWindType, %s", weatherWindType.c_str());
-    LOGN("ControllerWeather::trafficLevel, %s", trafficLevel.c_str());
     LOGN("ControllerWeather::weatherUrlIcon, %s", weatherUrlIcon.c_str());
     LOGN("ControllerWeather::iconFileName, %s", iconFileName.c_str());
     LOGN("ControllerWeather::windFileName, %s", windFileName.c_str());
 
-    return false;
-
-    pstr = getMatch(pstr, _trafficPattern, trafficLevel, '>', '<');
-    pstr = getMatch(pstr, _typePattern, weatherDescription, '>', '<');
-    pstr = getMatch(pstr, _iconPattern, weatherUrlIcon, '>', '<');
-    pstr = getMatch(pstr, _windSpeedPattern, weatherWindSpeed, '>', '<');
-    pstr = getMatch(pstr, _windTypePattern, weatherWindType, '>', '<');
-    pstr = getMatch(pstr, _dampnessPattern, weatherDampness, '>', '<');
-    pstr = getMatch(pstr, _pressurePattern, weatherPressure, '>', '<');
-    pstr = getMatch(pstr, _temperaturePattern, weatherTemperature, '>', '<');
-    getMatch(payload.begin(), _windPattern, windFileName, '"', '"');
-
-    if (!windFileName.isEmpty()) {
-        windFileName = "/" + windFileName;
-    }
-    
-    iconFileName = "/icon";
-    if (!weatherUrlIcon.isEmpty()) {
-        iconFileName += strrchr(weatherUrlIcon.c_str(), '/');
-    }
-
-    float windSpeed = weatherWindSpeed.toFloat();
-    if (windSpeed > 3.0 && windSpeed < 10.0)
-        windFileName.concat(F("2"));
-    else if (windSpeed >= 10)
-        windFileName.concat(F("3"));
-    windFileName.concat(F(".png"));
-    windFileName = "/icon" + windFileName;
-}
-
-
-// Возврат: указатель на последний обработанный символ, мелкая оптимизация,
-// чтобы каждый раз не начинать с начала,
-// в связи с этим ВАЖЕН ПОРЯДОК ПОИСКА ЗНАЧЕНИЙ.
-char* ControllerWeather::getMatch(const char* text, const char* pattern, String& value, const char first, const char last) {
-    if (text == NULL ) return NULL;
-    char* delimeter = strchr(pattern, '|');
-    if (delimeter == NULL) {
-        char* begin = strstr(text, pattern);
-        if (begin == NULL) return NULL;
-        begin += strlen(pattern);
-        while (*begin++ != first);
-        char* end = strchr(begin, last);
-        *end = '\0';
-        value = begin;
-        *end = last;
-        return end + 1;
-    }
-    *delimeter = '\0';
-    char* begin = strstr(text, pattern);
-    if (begin == NULL) {
-        *delimeter = '|';
-        return NULL;
-    }
-    begin += strlen(pattern);
-    *delimeter++ = '|';
-    return getMatch(begin, delimeter, value, first, last);
+    return true;
 }

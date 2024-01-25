@@ -12,12 +12,11 @@ class ControllerWeather : public Controller {
         ControllerWeather(const char* name);
     public:
         bool  isValid;
-        String trafficLevel;
         String weatherDescription;
         String weatherUrlIcon;
         String weatherWindSpeed;
         String weatherWindType;
-        String weatherDampness;
+        String weatherHumidity;
         String weatherPressure;
         String weatherTemperature;
         String iconFileName;
@@ -27,8 +26,7 @@ class ControllerWeather : public Controller {
     private:
         StaticJsonDocument<2048> _doc;
         uint16_t ColorToRGB565(const uint8_t r, const uint8_t g, const uint8_t b);
-        bool parseWeatherInfo(String& payload);
-        char* getMatch(const char* text, const char* pattern, String& value, const char first, const char last);
+        bool parseWeatherInfo(HTTPClient& client, String& payload);
 };
 
 

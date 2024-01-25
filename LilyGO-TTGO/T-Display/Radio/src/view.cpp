@@ -6,12 +6,12 @@ View::View(const char* name, View** currentView) {
     _currentView = currentView;
 }
 
-void View::Start(TFT_eSprite* sprite, SemaphoreHandle_t updateEvent) {
+void View::Start(TFT_eSprite* sprite, SemaphoreHandle_t updateEvent, uint16_t stackDepth) {
     assert(sprite);
     assert(updateEvent);
     _sprite = sprite;
     _updateEvent = updateEvent;
-    xTaskCreate(ViewHandler, this->_name, 4096, this, 1, &this->_task);
+    xTaskCreate(ViewHandler, this->_name, stackDepth, this, 1, &this->_task);
 }
 
 void View::ViewHandler(void* parameter) {
