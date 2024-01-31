@@ -45,6 +45,6 @@ void ViewWeather::OnHandle() {
     _sprite->drawString(_weather->weatherTemperature, 122, 10);
     _sprite->unloadFont();
 
-    drawImageFile(_weather->iconFileName.c_str(), 10, 10, 64);
+    drawImageFile(_weather->iconFileName.c_str(), 0, 0, 64);
     // drawImageFile(_weather->windFileName.c_str(), 192, 8, 32);
 }

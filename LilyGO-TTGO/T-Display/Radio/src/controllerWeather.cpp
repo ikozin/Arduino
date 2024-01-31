@@ -69,11 +69,19 @@ bool ControllerWeather::parseWeatherInfo(HTTPClient& client, String& payload) {
             weatherTemperature = "+" + weatherTemperature;
         }
     }
+    // //cdn.weatherapi.com/weather/64x64/night/311.png
+    // //cdn.weatherapi.com/weather/64x64/day/311.png
     if (!weatherUrlIcon.isEmpty()) {
         weatherUrlIcon = "https:" + weatherUrlIcon;
         int pos = weatherUrlIcon.lastIndexOf('/');
         if (pos != 1) {
-            iconFileName = "/icon" + weatherUrlIcon.substring(pos);
+            if (weatherUrlIcon.indexOf("night") != -1) {
+                iconFileName = "/icon/night" + weatherUrlIcon.substring(pos);
+            } else if (weatherUrlIcon.indexOf("day") != -1) {
+                iconFileName = "/icon/day" + weatherUrlIcon.substring(pos);
+            } else {
+                iconFileName.clear();
+            }
         }
         if (!SPIFFS.exists(iconFileName)) {
             if (client.begin(weatherUrlIcon)) {
