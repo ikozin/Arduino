@@ -3,7 +3,7 @@
 
 #include <DipDevice.h>
 
-class K1533ID4_SubDev: public Dip14 {
+class K1533ID4_SubDev: public Dip16 {
   public:
     K1533ID4_SubDev(const TDevicePin *device, const TDeviceVal *value, size_t value_count) {
       _devices = device;
