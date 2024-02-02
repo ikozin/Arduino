@@ -1,5 +1,4 @@
-#ifndef _K555_IR11A_H_
-#define _K555_IR11A_H_
+#pragma once
 
 #include <DipDevice.h>
 
@@ -11,5 +10,3 @@ class K555IR11A: public Dip16 {
     virtual const __FlashStringHelper * title(void) override;
     virtual const __FlashStringHelper * description(void) override;
 };
-
-#endif

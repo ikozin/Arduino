@@ -1,5 +1,4 @@
-#ifndef _K1533_IE5_
-#define _K1533_IE5_
+#pragma once
 
 #include <DipDevice.h>
 
@@ -11,5 +10,3 @@ class K1533IE5: public Dip14_IE2_IE4_IE5 {
     virtual const __FlashStringHelper * title(void) override;
     virtual const __FlashStringHelper * description(void) override;
 };
-
-#endif

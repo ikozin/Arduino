@@ -1,5 +1,4 @@
-#ifndef _K1533_TM8_
-#define _K1533_TM8_
+#pragma once
 
 #include <DipDevice.h>
 
@@ -11,5 +10,3 @@ class K1533TM8: public Dip16 {
     virtual const __FlashStringHelper * title(void) override;
     virtual const __FlashStringHelper * description(void) override;
 };
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef _K565_RU5_H_
-#define _K565_RU5_H_
+#pragma once
 
 #include "Dip16_RU5_RU7.h"
 
@@ -11,5 +10,3 @@ class K565RU5: public Dip16_RU5_RU7 {
     virtual const __FlashStringHelper * title(void) override;
     virtual const __FlashStringHelper * description(void) override;
 };
-
-#endif

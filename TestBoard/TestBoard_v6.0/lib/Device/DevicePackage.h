@@ -1,5 +1,4 @@
-#ifndef _TDevicePackage_
-#define _TDevicePackage_
+#pragma once
 
 #include <Arduino.h>
 #include "Device.h"
@@ -22,5 +21,3 @@ class DevicePackage {
     int test(GyverDisplay& display, int index);
     int test(GyverDisplay& display);
 };
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef _Binaries_H_
-#define _Binaries_H_
+#pragma once
 
 #define B_00_00         B00000000
 #define B_00_01         B00000001
@@ -323,6 +322,3 @@
 #define B_1_1_0_1         B00001101
 #define B_1_1_1_0         B00001110
 #define B_1_1_1_1         B00001111
-
-
-#endif

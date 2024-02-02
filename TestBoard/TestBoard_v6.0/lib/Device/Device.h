@@ -1,5 +1,4 @@
-#ifndef _TDevice_
-#define _TDevice_
+#pragma once
 
 #define DEBUG_CONSOLE
 
@@ -158,5 +157,3 @@ class TDeviceComposite: public TDevice {
       return errorCount;
     }
 };
-
-#endif

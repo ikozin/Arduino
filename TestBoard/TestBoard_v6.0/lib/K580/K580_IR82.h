@@ -1,5 +1,4 @@
-#ifndef _K580_IR82_H_
-#define _K580_IR82_H_
+#pragma once
 
 #include <DipDevice.h>
 
@@ -11,5 +10,3 @@ class K580IR82: public Dip20 {
     virtual const __FlashStringHelper * title(void) override;
     virtual const __FlashStringHelper * description(void) override;
 };
-
-#endif

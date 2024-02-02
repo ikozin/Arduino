@@ -1,5 +1,4 @@
-#ifndef _K1533_LA1_LA6_LA7_LA22_H_
-#define _K1533_LA1_LA6_LA7_LA22_H_
+#pragma once
 
 #include <DipDevice.h>
 
@@ -11,5 +10,3 @@ class K1533LA1LA6LA7LA22: public Dip14Ext {
     virtual const __FlashStringHelper * title(void) override;
     virtual const __FlashStringHelper * description(void) override;
 };
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef _K1533_H_
-#define _K1533_H_
+#pragma once
 
 #include <Device.h>
 #include <DipDevice.h>
@@ -9,5 +8,3 @@ class K1533_Pack: public DevicePackage {
     public:
         K1533_Pack(void);
 };
-
-#endif

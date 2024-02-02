@@ -1,5 +1,4 @@
-#ifndef _DipDevice_H_
-#define _DipDevice_H_
+#pragma once
 
 #include "Device.h"
 
@@ -66,5 +65,3 @@ class Dip16_ID1_IM3_TM7: public TDevice {
       return Dip16_ID1_IM3_TM7::_map[value];
     }
 };
-
-#endif

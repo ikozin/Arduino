@@ -1,5 +1,4 @@
-#ifndef _Dip16_RU5_RU7_H_
-#define _Dip16_RU5_RU7_H_
+#pragma once
 
 #include "Device.h"
 
@@ -105,4 +104,3 @@ class Dip16_RU5_RU7: public TDevice {
   public:
     virtual int check_devices(GyverDisplay& display);
 };
-#endif
