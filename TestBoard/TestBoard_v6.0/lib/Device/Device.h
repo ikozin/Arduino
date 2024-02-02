@@ -1,8 +1,7 @@
 #ifndef _TDevice_
 #define _TDevice_
 
-//#define DEBUG_CONSOLE
-#define BUTTON_CONTROL
+#define DEBUG_CONSOLE
 
 #include <Arduino.h>
 #include <avr/pgmspace.h>
