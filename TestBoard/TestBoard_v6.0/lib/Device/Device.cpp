@@ -82,7 +82,8 @@ int TDevice::test_device(const TDevicePin *device, const TDeviceVal *data) {
         if (pin == 0) break;
         int value = bitRead(data->value, n);
         debug_printf("%d(%d) = %d\r\n", device->Input[n], pin, value);
-        digitalWrite(pin, value);
+        gio::write(pin, value);
+        // digitalWrite(pin, value);
     }
   
     delay(1);
@@ -144,7 +145,8 @@ void TDeviceExt::set_input(int value) {
         for (int n = 0; n < PIN_SIZE; n++) {
             int pin = getPin(TDevice::_storageDevice[i].Input[n]);
             if (pin == 0) break;
-            digitalWrite(pin, value);
+            gio::write(pin, value);
+            // digitalWrite(pin, value);
         }
     }
 }

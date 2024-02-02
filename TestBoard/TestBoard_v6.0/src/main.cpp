@@ -1,6 +1,13 @@
 #include <Arduino.h>
-#include "Device.h"
+#include <Device.h>
+#include <DevicePackage.h>
+#include <EncButton.h>
 
+#include <K155.h>
+#include <K555.h>
+#include <K565.h>
+#include <K580.h>
+#include <K1533.h>
 
 #ifndef __AVR_ATmega2560__
 #error Select board ATMEGA2560
@@ -76,13 +83,6 @@ EncButtonT<PIN_ENC_S1, PIN_ENC_S2, PIN_ENC_BTN> encoder;
 //
 //
 
-#include <Device.h>
-#include <DevicePackage.h>
-#include <K155.h>
-#include <K555.h>
-#include <K565.h>
-#include <K580.h>
-#include <K1533.h>
 
 // Не стандартная разводка питания: ИЕ5, ТМ5, ТМ7
 DevicePackage* packList[] = {
@@ -100,8 +100,10 @@ void encoderMenuAction();
 void encoderPackageAction();
 
 void displayMenu(GyverDisplay& display, int index) {
-    digitalWrite(PIN_LED_GREEN, LOW);
-    digitalWrite(PIN_LED_RED, LOW);
+    gio::low(PIN_LED_GREEN);
+    gio::low(PIN_LED_RED);
+    // digitalWrite(PIN_LED_GREEN, LOW);
+    // digitalWrite(PIN_LED_RED, LOW);
     int line = 0;
     if (size > 7) {
         line = (index - 3 >= 0) ? index - 3 : 0;
@@ -155,13 +157,17 @@ void encoderPackageAction() {
             displayMenu(display, index);
             break;
         case EB_CLICK:
-            digitalWrite(PIN_LED_GREEN, LOW);
-            digitalWrite(PIN_LED_RED, LOW);
+            gio::low(PIN_LED_GREEN);
+            gio::low(PIN_LED_RED);
+            // digitalWrite(PIN_LED_GREEN, LOW);
+            // digitalWrite(PIN_LED_RED, LOW);
             result = packList[index]->test(display);
             if (result == 0) {
-                digitalWrite(PIN_LED_GREEN, HIGH);
+                gio::high(PIN_LED_GREEN);
+                // digitalWrite(PIN_LED_GREEN, HIGH);
             } else {
-                digitalWrite(PIN_LED_RED, HIGH);
+                gio::high(PIN_LED_RED);
+                // digitalWrite(PIN_LED_RED, HIGH);
             }
             break;
         case EB_TURN:
@@ -189,8 +195,10 @@ void setup() {
     PORTC = B11111111;  // Set pullup mode
     PORTL = B11111111;  // Set pullup mode
 
-    pinMode(PIN_LED_GREEN, OUTPUT);
-    pinMode(PIN_LED_RED, OUTPUT);
+    gio::mode(PIN_LED_GREEN, OUTPUT);
+    gio::mode(PIN_LED_RED, OUTPUT);
+    // pinMode(PIN_LED_GREEN, OUTPUT);
+    // pinMode(PIN_LED_RED, OUTPUT);
 
     //encoder.init(INPUT_PULLUP, INPUT_PULLUP, LOW);
     encoder.attach(encoderMenuAction);
@@ -215,24 +223,34 @@ void setup() {
 }
 
 void testLed() {
-    digitalWrite(PIN_LED_GREEN, HIGH);
-    digitalWrite(PIN_LED_RED, HIGH);
+    gio::high(PIN_LED_GREEN);
+    gio::high(PIN_LED_RED);
+    // digitalWrite(PIN_LED_GREEN, HIGH);
+    // digitalWrite(PIN_LED_RED, HIGH);
     delay(250);
 
-    digitalWrite(PIN_LED_GREEN, LOW);
-    digitalWrite(PIN_LED_RED, LOW);
+    gio::low(PIN_LED_GREEN);
+    gio::low(PIN_LED_RED);
+    // digitalWrite(PIN_LED_GREEN, LOW);
+    // digitalWrite(PIN_LED_RED, LOW);
     delay(250);
 
-    digitalWrite(PIN_LED_GREEN, HIGH);
-    digitalWrite(PIN_LED_RED, LOW);
+    gio::high(PIN_LED_GREEN);
+    gio::low(PIN_LED_RED);
+    // digitalWrite(PIN_LED_GREEN, HIGH);
+    // digitalWrite(PIN_LED_RED, LOW);
     delay(250);
 
-    digitalWrite(PIN_LED_GREEN, LOW);
-    digitalWrite(PIN_LED_RED, HIGH);
+    gio::low(PIN_LED_GREEN);
+    gio::high(PIN_LED_RED);
+    // digitalWrite(PIN_LED_GREEN, LOW);
+    // digitalWrite(PIN_LED_RED, HIGH);
     delay(250);
 
-    digitalWrite(PIN_LED_GREEN, LOW);
-    digitalWrite(PIN_LED_RED, LOW);
+    gio::low(PIN_LED_GREEN);
+    gio::low(PIN_LED_RED);
+    // digitalWrite(PIN_LED_GREEN, LOW);
+    // digitalWrite(PIN_LED_RED, LOW);
     delay(250);
 }
 
