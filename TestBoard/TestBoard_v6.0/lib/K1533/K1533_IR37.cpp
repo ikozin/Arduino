@@ -1,0 +1,88 @@
+#include "K1533_IR37.h"
+
+const static TDevicePin PROGMEM pin_map_1533_ir37[] =
+{
+  // Входы     D1  D2  D3  D4  D5  D6  D7  D8   C   E         Выходы      1   2   3   4   5   6   7   8
+  { .Input = {  2,  3,  4,  5,  6,  7,  8,  9, 11,  1,  0 }, .Output = { 19, 18, 17, 16, 15, 14, 13, 12, 0 }},
+};
+
+const static TDeviceVal PROGMEM values_1533_ir37[] =
+{
+  //                     E C D8 -- D1  
+  { .value = (uint16_t)B_1_0_00000000, .result = (uint16_t)B11111111 },
+  { .value = (uint16_t)B_1_0_11111111, .result = (uint16_t)B11111111 },
+  { .value = (uint16_t)B_0_0_00000000, .result = (uint16_t)B11111111 },
+
+  { .value = (uint16_t)B_0_1_00000000, .result = (uint16_t)B00000000 },
+  { .value = (uint16_t)B_0_0_00000000, .result = (uint16_t)B00000000 },
+
+  { .value = (uint16_t)B_0_1_00000001, .result = (uint16_t)B00000001 },
+  { .value = (uint16_t)B_0_0_00000001, .result = (uint16_t)B00000001 },
+
+  { .value = (uint16_t)B_0_1_00000010, .result = (uint16_t)B00000010 },
+  { .value = (uint16_t)B_0_0_00000010, .result = (uint16_t)B00000010 },
+
+  { .value = (uint16_t)B_0_1_00000100, .result = (uint16_t)B00000100 },
+  { .value = (uint16_t)B_0_0_00000100, .result = (uint16_t)B00000100 },
+
+  { .value = (uint16_t)B_0_1_00001000, .result = (uint16_t)B00001000 },
+  { .value = (uint16_t)B_0_0_00001000, .result = (uint16_t)B00001000 },
+
+  { .value = (uint16_t)B_0_1_00010000, .result = (uint16_t)B00010000 },
+  { .value = (uint16_t)B_0_0_00010000, .result = (uint16_t)B00010000 },
+
+  { .value = (uint16_t)B_0_1_00100000, .result = (uint16_t)B00100000 },
+  { .value = (uint16_t)B_0_0_00100000, .result = (uint16_t)B00100000 },
+
+  { .value = (uint16_t)B_0_1_01000000, .result = (uint16_t)B01000000 },
+  { .value = (uint16_t)B_0_0_01000000, .result = (uint16_t)B01000000 },
+
+  { .value = (uint16_t)B_0_1_10000000, .result = (uint16_t)B10000000 },
+  { .value = (uint16_t)B_0_0_10000000, .result = (uint16_t)B10000000 },
+
+  { .value = (uint16_t)B_0_1_00000000, .result = (uint16_t)B00000000 },
+  { .value = (uint16_t)B_0_0_00000000, .result = (uint16_t)B00000000 },
+
+  { .value = (uint16_t)B_0_1_11111111, .result = (uint16_t)B11111111 },
+  { .value = (uint16_t)B_0_0_11111111, .result = (uint16_t)B11111111 },
+
+  { .value = (uint16_t)B_1_0_11111111, .result = (uint16_t)B11111111 },
+};
+
+K1533IR37::K1533IR37() {
+  _devices = pin_map_1533_ir37;
+  _values = values_1533_ir37;  
+  _devices_count = sizeof(pin_map_1533_ir37)/sizeof(pin_map_1533_ir37[0]);
+  _values_count = sizeof(values_1533_ir37)/sizeof(values_1533_ir37[0]);
+}
+
+const __FlashStringHelper * K1533IR37::menu(void) {
+  return F("ИР37 (Регистр)");
+}
+
+const __FlashStringHelper * K1533IR37::description(void) {
+    return F(
+"KP1533ИР37\r\n"
+"Регистр\r\n"
+"DIP20\r\n"
+"\t         20 - +5V        \r\n"
+"\t         10 - GND        \r\n"
+"\t      -------------      \r\n"
+"\t  2 -| D1 | RG | 1 |- 19 \r\n"
+"\t  3 -| D2 |    | 2 |- 18 \r\n"
+"\t  4 -| D3 |    | 3 |- 17 \r\n"
+"\t  5 -| D4 |    | 4 |- 16 \r\n"
+"\t  6 -| D5 |    | 5 |- 15 \r\n"
+"\t  7 -| D6 |    | 6 |- 14 \r\n"
+"\t  8 -| D7 |    | 7 |- 13 \r\n"
+"\t  9 -| D8 |    | 8 |- 12 \r\n"
+"\t     |    |    |   |     \r\n"
+"\t 11 -/ C  |    |   |     \r\n"
+"\t  1 -o EO |    |   |     \r\n"
+"\t      -------------      \r\n"
+    );
+}
+
+const __FlashStringHelper * K1533IR37::title(void) {
+  return F("KP1533ИР37\r\nРегистр\r\nDIP20\r\n");
+}

@@ -6,7 +6,9 @@
 #include "K1533_ID4.h"
 #include "K1533_ID14.h"
 #include "K1533_IE5.h"
+#include "K1533_IE19.h"
 #include "K1533_IR33.h"
+#include "K1533_IR37.h"
 #include "K1533_KP2.h"
 #include "K1533_LA1_LA6_LA7_LA22.h"
 #include "K1533_LA3_LA9_LA11_LA12_LA13_TL3.h"
@@ -28,7 +30,9 @@
 #include "K1533_ID4.h"
 #include "K1533_ID14.h"
 #include "K1533_IE5.h"
+#include "K1533_IE19.h"
 #include "K1533_IR33.h"
+#include "K1533_IR37.h"
 #include "K1533_KP2.h"
 #include "K1533_LA1.h"
 #include "K1533_LA3.h"
@@ -73,7 +77,9 @@ TDevice* k1533_list[] = {
     new K1533ID4(),
     new K1533ID14(),
     new K1533IE5(),
+    new K1533IE19(),
     new K1533IR33(),
+    new K1533IR37(),
     new K1533KP2(),
     new K1533LA1LA6LA7LA22(),
     new K1533LA3LA9LA11LA12LA13TL3(),
@@ -95,7 +101,9 @@ TDevice* k1533_list[] = {
     new K1533ID4(),
     new K1533ID14(),
     new K1533IE5(),
+    new K1533IE19(),
     new K1533IR33(),
+    new K1533IR37(),
     new K1533KP2(),
     new K1533LA1(),
     new K1533LA3(),
