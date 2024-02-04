@@ -4,46 +4,58 @@ internal class Program
 {
     private static int Main(string[] args)
     {
-        TextWriter writer;
+        try
+        {
+            TextWriter writer;
 
-        if (args.Length == 0)
-        {
-            writer = Console.Out;
+            switch (args.Length)
+            {
+                case 0:
+                    writer = Console.Out;
+                    break;
+                case 1:
+                {
+                    string filename = args[0];
+                    Encoding utf8WithoutBom = new UTF8Encoding(encoderShouldEmitUTF8Identifier: false);
+                    writer = new StreamWriter(filename, false, utf8WithoutBom);
+                    break;
+                }
+
+                default:
+                    return -1;
+            }
+
+            writer.WriteLine("#pragma once");
+            writer.WriteLine();
+
+            for (uint i = 256; i < 1024; i += 256)
+            {
+                writer.WriteLine(Encoding.UTF8.GetString(Encoding.Default.GetBytes(string.Format("#define B{0:B10}  {0}", i))));
+            }
+            writer.WriteLine();
+
+            format(writer, "B_{2}_{1}_{0}", 3);
+
+            format(writer, "B_{3}_{2}_{1}_{0}", 4);
+            format(writer, "B__{3}__{2}__{1}__{0}", 4);
+            format(writer, "B_{3}{2}{1}{0}", 4);
+            format(writer, "B_{3}{2}_{1}{0}", 4);
+
+            format(writer, "B_{5}_{4}_{3}{2}{1}{0}", 6);
+
+            format(writer, "B_{6}{5}_{4}_{3}{2}{1}{0}", 7);
+
+            format(writer, "B_{9}_{8}_{7}{6}{5}{4}{3}{2}{1}{0}", 10);
+
+            writer.Flush();
+            writer.Close();
+            return 0;
         }
-        else if (args.Length == 1)
+        catch (Exception ex)
         {
-            string filename = args[0];
-            Encoding utf8WithoutBom = new UTF8Encoding(encoderShouldEmitUTF8Identifier: false);
-            writer = new StreamWriter(filename, false, utf8WithoutBom);
-        }
-        else { 
+            Console.WriteLine(ex.ToString());
             return -1;
         }
-
-        writer.WriteLine("#pragma once");
-        writer.WriteLine();
-
-        for (uint i = 256; i < 1024; i += 256)
-        {
-            writer.WriteLine(Encoding.UTF8.GetString(Encoding.Default.GetBytes(string.Format("#define B{0:B10}  {0}", i))));
-        }
-        writer.WriteLine();
-
-        format(writer, "B_{2}_{1}_{0}", 3);
-
-        format(writer, "B_{3}_{2}_{1}_{0}", 4);
-        format(writer, "B__{3}__{2}__{1}__{0}", 4);
-        format(writer, "B_{3}{2}{1}{0}", 4);
-        format(writer, "B_{3}{2}_{1}{0}", 4);
-
-        format(writer, "B_{5}_{4}_{3}{2}{1}{0}", 6);
-
-        format(writer, "B_{6}{5}_{4}_{3}{2}{1}{0}", 7);
-
-        format(writer, "B_{9}_{8}_{7}{6}{5}{4}{3}{2}{1}{0}", 10);
-
-        writer.Flush();
-        return 0;
     }
     static uint bitRead(uint data, int bit)
     {
