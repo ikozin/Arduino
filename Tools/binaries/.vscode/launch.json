@@ -1,0 +1,21 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "C#: binaries Debug",
+            "type": "dotnet",
+            "request": "launch",
+            "projectPath": "${workspaceFolder}\\binaries.csproj",
+            "launchConfigurationId": "TargetFramework=;binaries",
+            "windows": {
+                "args": ["binaries.h"],
+                "cwd": "${workspaceFolder}",
+                "stopAtEntry": false,
+                "console": "internalConsole"
+            },
+        }
+    ]
+}
