@@ -5,13 +5,26 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "C#: binaries Debug",
+            "name": "C#: Debug binaries.h",
             "type": "dotnet",
             "request": "launch",
             "projectPath": "${workspaceFolder}\\binaries.csproj",
             "launchConfigurationId": "TargetFramework=;binaries",
             "windows": {
                 "args": ["binaries.h"],
+                "cwd": "${workspaceFolder}",
+                "stopAtEntry": false,
+                "console": "internalConsole"
+            },
+        },
+        {
+            "name": "C#: Debug",
+            "type": "dotnet",
+            "request": "launch",
+            "projectPath": "${workspaceFolder}\\binaries.csproj",
+            "launchConfigurationId": "TargetFramework=;binaries",
+            "windows": {
+                "args": [],
                 "cwd": "${workspaceFolder}",
                 "stopAtEntry": false,
                 "console": "internalConsole"
