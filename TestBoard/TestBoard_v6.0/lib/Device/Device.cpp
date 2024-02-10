@@ -86,7 +86,7 @@ int TDevice::test_device(const TDevicePin *device, const TDeviceVal *data) {
         // digitalWrite(pin, value);
     }
   
-    delay(1);
+    delay(10);
     debug_println("Output:");
     int errorCount = 0;
     for (int n = 0; n < PIN_SIZE; n++) {
@@ -136,6 +136,7 @@ int TDevice::test(GyverDisplay& display) {
         
         Serial.println(F(" OШИБKA! "));
         Serial.print(F("Koл-во ошибок = "));
+        Serial.println(result);
     }
     return result;
 }
