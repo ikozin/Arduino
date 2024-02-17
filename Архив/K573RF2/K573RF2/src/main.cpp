@@ -228,7 +228,6 @@ void handlerTestMenu() {
     display.println("  Нажмите ");
     display.println("кнопку для");
     display.println("  начала");
-    display.autoPrintln(false);
     display.update();
     
     while (true) {
@@ -293,6 +292,7 @@ void handlerProgMenu() {
             if (encoder.hold()) {
                 display.clear();
                 display.home();
+                display.invertText(false);
                 display.println(fileEntries[index].name);
                 for (int n = 0; n < WRITE_COUNT; n++) {
                     display.print("WRITE: ");
