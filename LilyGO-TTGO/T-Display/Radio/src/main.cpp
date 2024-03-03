@@ -202,13 +202,13 @@ void setup() {
 #endif
     }
 
-    prefs.putString("ssid", "...");
-    prefs.putString("pswd", "...");
-    prefs.putInt("tz", 10800);
-    prefs.putInt("station", 32);
-    prefs.putInt("volume", 2);
-    prefs.putBool("mute", false);
-    prefs.putInt("page", 0);
+    // prefs.putString("ssid", "...");
+    // prefs.putString("pswd", "...");
+    // prefs.putInt("tz", 10800);
+    // prefs.putInt("station", 32);
+    // prefs.putInt("volume", 2);
+    // prefs.putBool("mute", true);
+    // prefs.putInt("page", 0);
 
     ssid = prefs.getString("ssid", ssid);
     pswd = prefs.getString("pswd", pswd);
