@@ -13,6 +13,7 @@ class ViewWeather : public View {
         ControllerWeather* _weather;
     private:
         void drawImageFile(const char* fileName, const int32_t x, const int32_t y, const int32_t size);
+        void drawTextBlock(int32_t left, int32_t top, int32_t width, const String &text);
 };
 
 #endif  //_VIEWWEATHER_H_

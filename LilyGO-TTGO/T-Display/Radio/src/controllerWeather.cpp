@@ -6,6 +6,12 @@
 String payload;
 HTTPClient httpClient;
 
+#define WEATHER_STUB
+
+#if defined(WEATHER_STUB)
+    const String weather_stub = "{\"location\":{\"name\":\"Moscow\",\"region\":\"Moscow City\",\"country\":\"Russia\",\"lat\":55.75,\"lon\":37.62,\"tz_id\":\"Europe/Moscow\",\"localtime_epoch\":1709628576,\"localtime\":\"2024-03-05 11:49\"},\"current\":{\"last_updated_epoch\":1709628300,\"last_updated\":\"2024-03-05 11:45\",\"temp_c\":-1.0,\"temp_f\":30.2,\"is_day\":1,\"condition\":{\"text\":\"переменная облачность\",\"icon\":\"//cdn.weatherapi.com/weather/64x64/day/326.png\",\"code\":1213},\"wind_mph\":11.9,\"wind_kph\":19.1,\"wind_degree\":50,\"wind_dir\":\"NE\",\"pressure_mb\":1022.0,\"pressure_in\":30.18,\"precip_mm\":0.07,\"precip_in\":0.0,\"humidity\":86,\"cloud\":75,\"feelslike_c\":-5.9,\"feelslike_f\":21.3,\"vis_km\":9.0,\"vis_miles\":5.0,\"uv\":1.0,\"gust_mph\":13.6,\"gust_kph\":21.9}}";
+#endif
+
 ControllerWeather::ControllerWeather(const char* name) : Controller(name), _doc() {
     isValid = false;
     weatherDescription.reserve(128);
@@ -21,11 +27,13 @@ ControllerWeather::ControllerWeather(const char* name) : Controller(name), _doc(
 void ControllerWeather::OnHandle() {
     for (;;) {
         LOGN("ControllerWeather::OnHandle")
+
         if (!WiFi.isConnected()) {
             isValid = false;
             LOGN("ControllerWeather::isValid, %d", isValid);
             continue;   
         }
+#if !defined(WEATHER_STUB)
         httpClient.begin("https://api.weatherapi.com/v1/current.json?q=Moscow,RU&units=metric&lang=ru&key=b0b2880fa2ae4b8594e115610231806");
         isValid = httpClient.GET() == HTTP_CODE_OK;
         if (isValid) {
@@ -33,6 +41,11 @@ void ControllerWeather::OnHandle() {
             isValid = !payload.isEmpty();
         }
         httpClient.setReuse(true);
+#endif
+#if defined(WEATHER_STUB)
+        isValid = true;
+        payload = weather_stub;
+ #endif
         if (isValid) {
             isValid = parseWeatherInfo(httpClient, payload);
         }
