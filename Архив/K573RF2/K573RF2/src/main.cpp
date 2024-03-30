@@ -32,8 +32,8 @@ void handlerTestMenu();
 void handlerProgMenu();
 
 MenuAction menuRoot[] = {
-    { "   TEST   ", handlerTestMenu },
-    { "   PROG   ", handlerProgMenu },
+    { " ПРОВЕРКА ", handlerTestMenu },
+    { "  ЗАПИСЬ  ", handlerProgMenu },
 };
 const int menuSize = sizeof(menuRoot)/sizeof(menuRoot[0]);
 
@@ -179,7 +179,12 @@ static bool writeMemoryBin(int selected) {
             noInterrupts();
             writeData(addr++, data);
             interrupts();
-            
+
+            // Serial.print(addr - 1, HEX);
+            // Serial.print(":");
+            // Serial.print(data, HEX);
+            // Serial.println();
+
             if (addr >= CHIP_SIZE) {
                 break;
             }
@@ -206,6 +211,13 @@ static bool checkMemoryBin(int selected) {
             noInterrupts();
             byte data = readData(addr++);
             interrupts();
+            
+            // Serial.print(addr - 1, HEX);
+            // Serial.print(":");
+            // Serial.print(result, HEX);
+            // Serial.print(":");
+            // Serial.print(data, HEX);
+            // Serial.println();
 
             if (data != result) {
                 error = true;
@@ -216,9 +228,8 @@ static bool checkMemoryBin(int selected) {
         }
         readEnd();
         dataFile.close();
-        return true;
     }
-    return false;
+    return !error;
 }
 
 void handlerTestMenu() {
@@ -236,6 +247,7 @@ void handlerTestMenu() {
             break;
         }
     }
+    writeBegin();
     
     display.clear();
     display.home();
@@ -250,6 +262,7 @@ void handlerTestMenu() {
             break;
         }
     }
+    writeEnd();
 }
 
 void handlerProgMenu() {
@@ -295,20 +308,20 @@ void handlerProgMenu() {
                 display.invertText(false);
                 display.println(fileEntries[index].name);
                 for (int n = 0; n < WRITE_COUNT; n++) {
-                    display.print("WRITE: ");
+                    display.print("ЗАПИСЬ: ");
                     display.update();
                     if (writeMemoryBin(index))
-                        display.print("OK");
+                        display.print("ПОРЯДОК");
                     else
-                        display.print("ERR");
+                        display.print("ОШИБКА");
                     display.println();
                     display.update();
                 }
-                display.print("CHECK: ");
+                display.print("ПРОВЕРКА: ");
                 if (checkMemoryBin(index))
-                    display.print("OK");
+                    display.print("ПОРЯДОК");
                 else
-                    display.print("ERR");
+                    display.print("ОШИБКА");
                 display.println();
                 display.update();
                 delay(5000);
