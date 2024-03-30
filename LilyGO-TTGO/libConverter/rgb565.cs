@@ -11,13 +11,20 @@ namespace libConverter
             return (ushort)(((color.R & 0b11111000) << 8) | ((color.G & 0b11111100) << 3) | (color.B >> 3));
         }
 
-        public void WriteBitmap(Stream stream, Bitmap bitmap, bool swap)
+        public void WriteBitmap(Stream stream, Bitmap bitmap, bool swap, Color transparentColor, Color backColor)
         {
             for (int y = 0; y < bitmap.Height; y++)
             {
                 for (int x = 0; x < bitmap.Width; x++)
                 {
                     Color pixel = bitmap.GetPixel(x, y);
+                    if (transparentColor != Color.Empty)
+                    {
+                        if (pixel == transparentColor)
+                        {
+                            pixel = backColor;
+                        }
+                    }
                     ushort rgb565 = ColorToRGB565(pixel);
                     byte[] buf = BitConverter.GetBytes(rgb565);
                     if (swap)
@@ -41,7 +48,7 @@ namespace libConverter
             foreach (var item in BitConverter.GetBytes((ushort)posY)) stream.WriteByte(item);
             foreach (var item in BitConverter.GetBytes((ushort)bitmap.Width)) stream.WriteByte(item);
             foreach (var item in BitConverter.GetBytes((ushort)bitmap.Height)) stream.WriteByte(item);
-            WriteBitmap(stream, bitmap, swap);
+            WriteBitmap(stream, bitmap, swap, Color.Empty, Color.Empty);
         }
     }
 }

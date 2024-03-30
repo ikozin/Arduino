@@ -29,7 +29,7 @@ namespace uiConverter
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
+            components = new System.ComponentModel.Container();
             System.Windows.Forms.Label labelPositionX;
             System.Windows.Forms.Label labelPositionY;
             System.Windows.Forms.Label labelWidth;
@@ -39,19 +39,19 @@ namespace uiConverter
             System.Windows.Forms.Panel panelMain;
             System.Windows.Forms.Button btnBatch;
             System.Windows.Forms.Button btnLoad;
-            this.btnSaveRaw = new System.Windows.Forms.Button();
-            this.panelInfo = new System.Windows.Forms.Panel();
-            this.textBoxForeColor = new System.Windows.Forms.TextBox();
-            this.textBoxBackColor = new System.Windows.Forms.TextBox();
-            this.textBoxHeight = new System.Windows.Forms.TextBox();
-            this.textBoxWidth = new System.Windows.Forms.TextBox();
-            this.numericPosY = new System.Windows.Forms.NumericUpDown();
-            this.numericPosX = new System.Windows.Forms.NumericUpDown();
-            this.checkBoxSwap = new System.Windows.Forms.CheckBox();
-            this.pictureBox = new System.Windows.Forms.PictureBox();
-            this.openFileDlg = new System.Windows.Forms.OpenFileDialog();
-            this.toolTip = new System.Windows.Forms.ToolTip(this.components);
-            this.folderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
+            btnSaveRaw = new System.Windows.Forms.Button();
+            panelInfo = new System.Windows.Forms.Panel();
+            textBoxForeColor = new System.Windows.Forms.TextBox();
+            textBoxBackColor = new System.Windows.Forms.TextBox();
+            textBoxHeight = new System.Windows.Forms.TextBox();
+            textBoxWidth = new System.Windows.Forms.TextBox();
+            numericPosY = new System.Windows.Forms.NumericUpDown();
+            numericPosX = new System.Windows.Forms.NumericUpDown();
+            checkBoxSwap = new System.Windows.Forms.CheckBox();
+            pictureBox = new System.Windows.Forms.PictureBox();
+            openFileDlg = new System.Windows.Forms.OpenFileDialog();
+            toolTip = new System.Windows.Forms.ToolTip(components);
+            folderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
             labelPositionX = new System.Windows.Forms.Label();
             labelPositionY = new System.Windows.Forms.Label();
             labelWidth = new System.Windows.Forms.Label();
@@ -62,11 +62,11 @@ namespace uiConverter
             btnBatch = new System.Windows.Forms.Button();
             btnLoad = new System.Windows.Forms.Button();
             panelMain.SuspendLayout();
-            this.panelInfo.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numericPosY)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericPosX)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox)).BeginInit();
-            this.SuspendLayout();
+            panelInfo.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)numericPosY).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)numericPosX).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)pictureBox).BeginInit();
+            SuspendLayout();
             // 
             // labelPositionX
             // 
@@ -125,9 +125,9 @@ namespace uiConverter
             // panelMain
             // 
             panelMain.Controls.Add(btnBatch);
-            panelMain.Controls.Add(this.btnSaveRaw);
+            panelMain.Controls.Add(btnSaveRaw);
             panelMain.Controls.Add(btnLoad);
-            panelMain.Controls.Add(this.panelInfo);
+            panelMain.Controls.Add(panelInfo);
             panelMain.Dock = System.Windows.Forms.DockStyle.Left;
             panelMain.Location = new System.Drawing.Point(0, 0);
             panelMain.Name = "panelMain";
@@ -142,17 +142,17 @@ namespace uiConverter
             btnBatch.TabIndex = 3;
             btnBatch.Text = "Batch (swap:true)";
             btnBatch.UseVisualStyleBackColor = true;
-            btnBatch.Click += new System.EventHandler(this.btnBatch_Click);
+            btnBatch.Click += btnBatch_Click;
             // 
             // btnSaveRaw
             // 
-            this.btnSaveRaw.Location = new System.Drawing.Point(12, 47);
-            this.btnSaveRaw.Name = "btnSaveRaw";
-            this.btnSaveRaw.Size = new System.Drawing.Size(187, 29);
-            this.btnSaveRaw.TabIndex = 0;
-            this.btnSaveRaw.Text = "Save RAW";
-            this.btnSaveRaw.UseVisualStyleBackColor = true;
-            this.btnSaveRaw.Click += new System.EventHandler(this.btnSaveRaw_Click);
+            btnSaveRaw.Location = new System.Drawing.Point(12, 47);
+            btnSaveRaw.Name = "btnSaveRaw";
+            btnSaveRaw.Size = new System.Drawing.Size(187, 29);
+            btnSaveRaw.TabIndex = 0;
+            btnSaveRaw.Text = "Save RAW";
+            btnSaveRaw.UseVisualStyleBackColor = true;
+            btnSaveRaw.Click += btnSaveRaw_Click;
             // 
             // btnLoad
             // 
@@ -162,123 +162,121 @@ namespace uiConverter
             btnLoad.TabIndex = 2;
             btnLoad.Text = "Load";
             btnLoad.UseVisualStyleBackColor = true;
-            btnLoad.Click += new System.EventHandler(this.btnLoad_Click);
+            btnLoad.Click += btnLoad_Click;
             // 
             // panelInfo
             // 
-            this.panelInfo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.panelInfo.Controls.Add(this.textBoxForeColor);
-            this.panelInfo.Controls.Add(labelForeColor);
-            this.panelInfo.Controls.Add(this.textBoxBackColor);
-            this.panelInfo.Controls.Add(labelBackColor);
-            this.panelInfo.Controls.Add(this.textBoxHeight);
-            this.panelInfo.Controls.Add(labelHeight);
-            this.panelInfo.Controls.Add(this.textBoxWidth);
-            this.panelInfo.Controls.Add(labelWidth);
-            this.panelInfo.Controls.Add(this.numericPosY);
-            this.panelInfo.Controls.Add(labelPositionY);
-            this.panelInfo.Controls.Add(this.numericPosX);
-            this.panelInfo.Controls.Add(labelPositionX);
-            this.panelInfo.Controls.Add(this.checkBoxSwap);
-            this.panelInfo.Enabled = false;
-            this.panelInfo.Location = new System.Drawing.Point(0, 121);
-            this.panelInfo.Name = "panelInfo";
-            this.panelInfo.Size = new System.Drawing.Size(210, 264);
-            this.panelInfo.TabIndex = 0;
+            panelInfo.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            panelInfo.Controls.Add(textBoxForeColor);
+            panelInfo.Controls.Add(labelForeColor);
+            panelInfo.Controls.Add(textBoxBackColor);
+            panelInfo.Controls.Add(labelBackColor);
+            panelInfo.Controls.Add(textBoxHeight);
+            panelInfo.Controls.Add(labelHeight);
+            panelInfo.Controls.Add(textBoxWidth);
+            panelInfo.Controls.Add(labelWidth);
+            panelInfo.Controls.Add(numericPosY);
+            panelInfo.Controls.Add(labelPositionY);
+            panelInfo.Controls.Add(numericPosX);
+            panelInfo.Controls.Add(labelPositionX);
+            panelInfo.Controls.Add(checkBoxSwap);
+            panelInfo.Enabled = false;
+            panelInfo.Location = new System.Drawing.Point(0, 121);
+            panelInfo.Name = "panelInfo";
+            panelInfo.Size = new System.Drawing.Size(210, 264);
+            panelInfo.TabIndex = 0;
             // 
             // textBoxForeColor
             // 
-            this.textBoxForeColor.Location = new System.Drawing.Point(95, 219);
-            this.textBoxForeColor.Name = "textBoxForeColor";
-            this.textBoxForeColor.Size = new System.Drawing.Size(104, 27);
-            this.textBoxForeColor.TabIndex = 33;
-            this.textBoxForeColor.Text = "FFFFFFFF";
-            this.toolTip.SetToolTip(this.textBoxForeColor, "Double click to select a color");
-            this.textBoxForeColor.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.textBoxColor_MouseDoubleClick);
+            textBoxForeColor.Location = new System.Drawing.Point(95, 219);
+            textBoxForeColor.Name = "textBoxForeColor";
+            textBoxForeColor.Size = new System.Drawing.Size(104, 27);
+            textBoxForeColor.TabIndex = 33;
+            textBoxForeColor.Text = "FFFFFFFF";
+            toolTip.SetToolTip(textBoxForeColor, "Double click to select a color");
+            textBoxForeColor.MouseDoubleClick += textBoxColor_MouseDoubleClick;
             // 
             // textBoxBackColor
             // 
-            this.textBoxBackColor.Location = new System.Drawing.Point(95, 182);
-            this.textBoxBackColor.Name = "textBoxBackColor";
-            this.textBoxBackColor.Size = new System.Drawing.Size(104, 27);
-            this.textBoxBackColor.TabIndex = 31;
-            this.toolTip.SetToolTip(this.textBoxBackColor, "Double click to select a color");
-            this.textBoxBackColor.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.textBoxColor_MouseDoubleClick);
+            textBoxBackColor.Location = new System.Drawing.Point(95, 182);
+            textBoxBackColor.Name = "textBoxBackColor";
+            textBoxBackColor.Size = new System.Drawing.Size(104, 27);
+            textBoxBackColor.TabIndex = 31;
+            toolTip.SetToolTip(textBoxBackColor, "Double click to select a color");
+            textBoxBackColor.MouseDoubleClick += textBoxColor_MouseDoubleClick;
             // 
             // textBoxHeight
             // 
-            this.textBoxHeight.Location = new System.Drawing.Point(138, 142);
-            this.textBoxHeight.Name = "textBoxHeight";
-            this.textBoxHeight.ReadOnly = true;
-            this.textBoxHeight.Size = new System.Drawing.Size(61, 27);
-            this.textBoxHeight.TabIndex = 26;
+            textBoxHeight.Location = new System.Drawing.Point(138, 142);
+            textBoxHeight.Name = "textBoxHeight";
+            textBoxHeight.ReadOnly = true;
+            textBoxHeight.Size = new System.Drawing.Size(61, 27);
+            textBoxHeight.TabIndex = 26;
             // 
             // textBoxWidth
             // 
-            this.textBoxWidth.Location = new System.Drawing.Point(138, 107);
-            this.textBoxWidth.Name = "textBoxWidth";
-            this.textBoxWidth.ReadOnly = true;
-            this.textBoxWidth.Size = new System.Drawing.Size(61, 27);
-            this.textBoxWidth.TabIndex = 24;
+            textBoxWidth.Location = new System.Drawing.Point(138, 107);
+            textBoxWidth.Name = "textBoxWidth";
+            textBoxWidth.ReadOnly = true;
+            textBoxWidth.Size = new System.Drawing.Size(61, 27);
+            textBoxWidth.TabIndex = 24;
             // 
             // numericPosY
             // 
-            this.numericPosY.Location = new System.Drawing.Point(95, 71);
-            this.numericPosY.Name = "numericPosY";
-            this.numericPosY.Size = new System.Drawing.Size(104, 27);
-            this.numericPosY.TabIndex = 4;
+            numericPosY.Location = new System.Drawing.Point(95, 71);
+            numericPosY.Name = "numericPosY";
+            numericPosY.Size = new System.Drawing.Size(104, 27);
+            numericPosY.TabIndex = 4;
             // 
             // numericPosX
             // 
-            this.numericPosX.Location = new System.Drawing.Point(93, 37);
-            this.numericPosX.Name = "numericPosX";
-            this.numericPosX.Size = new System.Drawing.Size(106, 27);
-            this.numericPosX.TabIndex = 2;
+            numericPosX.Location = new System.Drawing.Point(93, 37);
+            numericPosX.Name = "numericPosX";
+            numericPosX.Size = new System.Drawing.Size(106, 27);
+            numericPosX.TabIndex = 2;
             // 
             // checkBoxSwap
             // 
-            this.checkBoxSwap.Checked = true;
-            this.checkBoxSwap.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBoxSwap.Location = new System.Drawing.Point(12, 12);
-            this.checkBoxSwap.Name = "checkBoxSwap";
-            this.checkBoxSwap.Size = new System.Drawing.Size(106, 24);
-            this.checkBoxSwap.TabIndex = 0;
-            this.checkBoxSwap.Text = "Swap Bytes";
-            this.checkBoxSwap.UseVisualStyleBackColor = true;
+            checkBoxSwap.Checked = true;
+            checkBoxSwap.CheckState = System.Windows.Forms.CheckState.Checked;
+            checkBoxSwap.Location = new System.Drawing.Point(12, 12);
+            checkBoxSwap.Name = "checkBoxSwap";
+            checkBoxSwap.Size = new System.Drawing.Size(106, 24);
+            checkBoxSwap.TabIndex = 0;
+            checkBoxSwap.Text = "Swap Bytes";
+            checkBoxSwap.UseVisualStyleBackColor = true;
             // 
             // pictureBox
             // 
-            this.pictureBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pictureBox.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pictureBox.Location = new System.Drawing.Point(210, 0);
-            this.pictureBox.Name = "pictureBox";
-            this.pictureBox.Size = new System.Drawing.Size(395, 385);
-            this.pictureBox.TabIndex = 1;
-            this.pictureBox.TabStop = false;
-            this.pictureBox.MouseClick += new System.Windows.Forms.MouseEventHandler(this.pictureBox_MouseClick);
+            pictureBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            pictureBox.Dock = System.Windows.Forms.DockStyle.Fill;
+            pictureBox.Location = new System.Drawing.Point(210, 0);
+            pictureBox.Name = "pictureBox";
+            pictureBox.Size = new System.Drawing.Size(395, 385);
+            pictureBox.TabIndex = 1;
+            pictureBox.TabStop = false;
+            pictureBox.MouseClick += pictureBox_MouseClick;
             // 
             // openFileDlg
             // 
-            this.openFileDlg.Filter = "All files|*.*";
+            openFileDlg.Filter = "All files|*.*";
             // 
             // MainForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(605, 385);
-            this.Controls.Add(this.pictureBox);
-            this.Controls.Add(panelMain);
-            this.Name = "MainForm";
-            this.Text = "LilyGO-TTGO T-Display [135 x 240]";
+            AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
+            AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            ClientSize = new System.Drawing.Size(605, 385);
+            Controls.Add(pictureBox);
+            Controls.Add(panelMain);
+            Name = "MainForm";
+            Text = "LilyGO-TTGO T-Display [135 x 240]";
             panelMain.ResumeLayout(false);
-            this.panelInfo.ResumeLayout(false);
-            this.panelInfo.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numericPosY)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericPosX)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox)).EndInit();
-            this.ResumeLayout(false);
-
+            panelInfo.ResumeLayout(false);
+            panelInfo.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)numericPosY).EndInit();
+            ((System.ComponentModel.ISupportInitialize)numericPosX).EndInit();
+            ((System.ComponentModel.ISupportInitialize)pictureBox).EndInit();
+            ResumeLayout(false);
         }
 
         #endregion

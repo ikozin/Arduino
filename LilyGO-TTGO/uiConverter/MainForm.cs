@@ -118,7 +118,7 @@ namespace uiConverter
                     string fileName = Path.Combine(targetDir, Path.GetFileName(item));
                     using (var stream = File.Create(fileName))
                     {
-                        tool.WriteBitmap(stream, _bitmap, true);
+                        tool.WriteBitmap(stream, _bitmap, true, Color.FromArgb(0, 0, 0, 0), Color.FromArgb(0, 0x4D, 0x8D, 0xEE));
                         maxSize = Math.Max(stream.Length, maxSize);
                     }
                 }
