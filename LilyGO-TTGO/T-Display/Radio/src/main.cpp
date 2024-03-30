@@ -40,12 +40,12 @@
   #error Ошибка настройки TFT_eSPI, необходимо подключить "User_Setups/Setup25_TTGO_T_Display.h"
 #endif
 
-#define RADIO_ENABLE
-#define WEATHER_ENABLE
-#define DEVICE_ENABLE
-#define TIME_ENABLE
+//#define RADIO_ENABLE
+//#define WEATHER_ENABLE
+//#define DEVICE_ENABLE
+//#define TIME_ENABLE
 //#define IR_ENABLE
-#define WIFI_ENABLE
+//#define WIFI_ENABLE
 
 #if defined(WEATHER_ENABLE)
     #define WIFI_ENABLE

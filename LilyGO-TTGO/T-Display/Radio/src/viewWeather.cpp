@@ -27,29 +27,27 @@ void ViewWeather::OnHandle() {
     if (!_weather->isValid) {
         return;
     }
-    _sprite->setTextDatum(TL_DATUM);
     _sprite->loadFont(FONT_TEXT_32);
     _sprite->setTextColor(TFT_WHITE);
+    _sprite->setTextDatum(TL_DATUM);
+
     int32_t posX = _sprite->textWidth(_weather->weatherDescription);
     posX = (posX < (TFT_HEIGHT - 2)) ? (TFT_HEIGHT - posX) >> 1 : 2;
     _sprite->setTextDatum(TC_DATUM);
-    //_sprite->drawString(_weather->weatherDescription, posX, 64);
     drawTextBlock(TFT_HEIGHT >> 1, 64, (TFT_HEIGHT - 2), _weather->weatherDescription);
     
-    //_sprite->unloadFont();
-    _sprite->setTextDatum(TL_DATUM);
-
     // Для шрифта Colibri56
     // Ширина: для срок от -40° до +40° максимальная = 101
     // Высота: 48
     _sprite->loadFont(FONT_DIGIT_56);
     _sprite->setTextColor(TFT_WHITE);
+    _sprite->setTextDatum(TL_DATUM);
+
     posX = ((int32_t)91 - _sprite->textWidth(_weather->weatherTemperature)) >> 1;
     _sprite->drawString(_weather->weatherTemperature, 122, 10);
     _sprite->unloadFont();
 
     drawImageFile(_weather->iconFileName.c_str(), 0, 0, 64);
-    // drawImageFile(_weather->windFileName.c_str(), 192, 8, 32);
 }
 
 void ViewWeather::drawTextBlock(int32_t left, int32_t top, int32_t width, const String &text) {
