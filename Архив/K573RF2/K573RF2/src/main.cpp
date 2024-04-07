@@ -152,11 +152,11 @@ static void writeBegin() {
 static void writeData(uint16_t addr, byte data) {
     setAddress(addr);
     setDataPort(data);
-    delayMicroseconds(10);
+    delayMicroseconds(50);
     digitalWrite(CE, HIGH);   // CE   L HL L    ▄ █50ms█▄ ▄ ... ▄
     delayMicroseconds(50);    // OE   H HH H    █ █50ms██ █ ... █
     digitalWrite(CE, LOW);    // VPP  H HH H    █ █50ms██ █ ... █
-    delayMicroseconds(1);
+    delayMicroseconds(50);
 }
 
 static void writeEnd() {
@@ -170,9 +170,8 @@ static bool writeMemoryBin(int selected) {
     File dataFile = SD.open(fileEntries[selected].name);    
     if (dataFile) {
         uint16_t addr = 0;
-        bool error = false;
         writeBegin();
-        while (!error) {
+        while (true) {
             int data = dataFile.read();      
             if (data == -1) break;
 
@@ -180,10 +179,10 @@ static bool writeMemoryBin(int selected) {
             writeData(addr++, data);
             interrupts();
 
-            // Serial.print(addr - 1, HEX);
-            // Serial.print(":");
-            // Serial.print(data, HEX);
-            // Serial.println();
+            Serial.print(addr - 1, HEX);
+            Serial.print(":");
+            Serial.print(data, HEX);
+            Serial.println();
 
             if (addr >= CHIP_SIZE) {
                 break;
@@ -204,7 +203,7 @@ static bool checkMemoryBin(int selected) {
     if (dataFile) {
         uint16_t addr = 0;
         readBegin();
-        while (true) {
+        while (!error) {
             int result = dataFile.read();
             if (result == -1) break;
       
@@ -212,17 +211,18 @@ static bool checkMemoryBin(int selected) {
             byte data = readData(addr++);
             interrupts();
             
-            // Serial.print(addr - 1, HEX);
-            // Serial.print(":");
-            // Serial.print(result, HEX);
-            // Serial.print(":");
-            // Serial.print(data, HEX);
-            // Serial.println();
+            Serial.print(addr - 1, HEX);
+            Serial.print(":");
+            Serial.print(result, HEX);
+            Serial.print(":");
+            Serial.print(data, HEX);
+            Serial.println();
 
             if (data != result) {
                 error = true;
             }
-            if (error) {
+
+            if (addr >= CHIP_SIZE) {
                 break;
             }
         }
