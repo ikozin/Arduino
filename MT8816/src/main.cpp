@@ -211,16 +211,16 @@ uint8_t table[256];
 
 
 // ОРИОН-128
-#define RESET_ORION     (PD3)   // PD3
-#define SHIFT_ORION     (PC0)   // PC0
-#define CRTL_ORION      (PC1)   // PC1
-#define LANG_ORION      (PC2)   // PC2
+#define RESET_ORION     (3)   // PD3
+#define SHIFT_ORION     (A0)   // PC0
+#define CRTL_ORION      (A1)   // PC1
+#define LANG_ORION      (A2)   // PC2
 
 // MT8816
-#define RESET_MT8816    (PD4)   // PD4
-#define DATA_MT8816     (PD5)   // PD5
-#define STROBE_MT8816   (PD6)   // PD6
-#define CS_MT8816       (PD7)   // PD7
+#define RESET_MT8816    (4)   // PD4
+#define DATA_MT8816     (5)   // PD5
+#define STROBE_MT8816   (6)   // PD6
+#define CS_MT8816       (7)   // PD7
 
 // #define AX0_MT8816      (PB0)   // PB0
 // #define AX1_MT8816      (PB1)   // PB1
@@ -267,7 +267,7 @@ void setTable(const key* map, size_t size) {
 }
 
 void setup() {
-    setTable(keymapTest, sizeof(keymapTest) / sizeof(keymapTest[0]));
+    setTable(keymapOrion128, sizeof(keymapOrion128) / sizeof(keymapOrion128[0]));
 
     interrupts();
     keyboard.begin();
@@ -502,20 +502,100 @@ void loop() {
     // while (!(code = keyboard.read()));
     // DEBUG_PRINT_HEX(code);
 
-    uint8_t code;
-    while ((code = keyboard.read())) {
-        if (code == 0xF0) {
-            while (!(code = keyboard.read()));
-            processKeyCode(code);
-            return;
-        }
-        code = processKeyCode(code);
-        decode(code);
+    // uint8_t code;
+    // while ((code = keyboard.read())) {
+    //     if (code == 0xF0) {
+    //         while (!(code = keyboard.read()));
+    //         processKeyCode(code);
+    //         return;
+    //     }
+    //     code = processKeyCode(code);
+    //     decode(code);
 
-        uint8_t key = (code < (sizeof(mapping) / sizeof(mapping[0]))) ? mapping[code] : NO_KEY;
-        if (key != NO_KEY) {
+    //     uint8_t key = (code < (sizeof(mapping) / sizeof(mapping[0]))) ? mapping[code] : NO_KEY;
+    //     if (key != NO_KEY) {
 
-        }
-    }
+    //     }
+    // }
+
+
+
+
+    // key value;
+    // for (int i = 0; i < 8; i++) {
+    //     value = { 0, {(1), 0}};
+    //     SetAddr_MT8826(value.matrix.value);
+    //     SetKey_MT8826(true);
+    //     delay(1000);
+
+    //     value = { 1, {(2), 2}};
+    //     SetAddr_MT8826(value.matrix.value);
+    //     SetKey_MT8826(1);
+    //     delay(1000);
+
+    //     value = { 2, {(1), 2}};
+    //     SetAddr_MT8826(value.matrix.value);
+    //     SetKey_MT8826(true);
+    //     delay(1000);
+
+    //     value = { 3, {(1), 3}};
+    //     SetAddr_MT8826(value.matrix.value);
+    //     SetKey_MT8826(true);
+    //     delay(1000);
+
+    //     value = { 4, {(1), 4}};
+    //     SetAddr_MT8826(value.matrix.value);
+    //     SetKey_MT8826(true);
+    //     delay(1000);
+
+    //     value = { 5, {(1), 5}};
+    //     SetAddr_MT8826(value.matrix.value);
+    //     SetKey_MT8826(true);
+    //     delay(1000);
+
+    //     value = { 6, {(1), 6}};
+    //     SetAddr_MT8826(value.matrix.value);
+    //     SetKey_MT8826(true);
+    //     delay(1000);
+
+    //     value = { 7, {(1), 7}};
+    //     SetAddr_MT8826(value.matrix.value);
+    //     SetKey_MT8826(true);
+    //     delay(1000);
+
+    // }
+
+    // Serial.println("RESET_ORION = LOW");
+    // gio::low(RESET_ORION);
+    // delay(3000);
+
+    // Serial.println("RESET_ORION = HIGH");
+    // gio::high(RESET_ORION);
+    // delay(3000);
+
+    Serial.println("SHIFT_ORION = LOW");
+    gio::low(SHIFT_ORION);
+    delay(3000);
+
+    Serial.println("SHIFT_ORION = HIGH");
+    gio::high(SHIFT_ORION);
+    delay(3000);
+
+    // Serial.println("CRTL_ORION = LOW");
+    // gio::low(CRTL_ORION);
+    // delay(3000);
+
+    // Serial.println("CRTL_ORION = HIGH");
+    // gio::high(CRTL_ORION);
+    // delay(3000);
+
+    // Serial.println("LANG_ORION = LOW");
+    // gio::low(LANG_ORION);
+    // delay(3000);
+
+    // Serial.println("LANG_ORION = HIGH");
+    // gio::high(LANG_ORION);
+    // delay(3000);
+
 }
 
