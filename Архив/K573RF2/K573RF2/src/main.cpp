@@ -3,6 +3,7 @@
 #include <SD.h>
 #include <Wire.h>
 
+#include "GyverIO.h"    // https://github.com/GyverLibs/GyverOLED
 #include "GyverOLED.h"  // https://github.com/GyverLibs/GyverOLED
 #include "EncButton.h"  // https://github.com/GyverLibs/EncButton
 #include "main.h"
@@ -17,7 +18,23 @@
 
 GyverOLED<SSD1306_128x64, OLED_BUFFER> display;
 EncButtonT<PIN_ENC_S1, PIN_ENC_S2, PIN_ENC_BTN> encoder;
-
+/*
+ Распиновка К573РФ2
+      -------------
+  1 -| A7      +5V |- 24
+  2 -| A6       A8 |- 23
+  3 -| A5       A9 |- 22
+  4 -| A4      Vpp |- 21
+  5 -| A3      ~OE |- 20
+  6 -| A2      A10 |- 19
+  7 -| A1      ~CE |- 18
+  8 -| A0       D7 |- 17
+  9 -| D0       D6 |- 16
+ 10 -| D1       D5 |- 15
+ 11 -| D2       D4 |- 14
+ 12 -| GND      D3 |- 13
+      -------------
+*/
 #define VPP         (39)  //PG2
 #define CE          (40)  //PG1
 #define OE          (41)  //PG0
@@ -26,7 +43,7 @@ EncButtonT<PIN_ENC_S1, PIN_ENC_S2, PIN_ENC_BTN> encoder;
 
 #define CHIP_SIZE   (2048)
 
-#define WRITE_COUNT (5)
+#define WRITE_COUNT (6)
 
 void handlerTestMenu();
 void handlerProgMenu();
@@ -110,22 +127,22 @@ inline void setDataOutMode() {
 
 static void readBegin() {
     setDataInMode();
-    digitalWrite(VPP, LOW);   // CE   H HHL L   █ ██▄ ▄ ... ▄
-    digitalWrite(OE, LOW);    // OE   H HLL L   █ ██▄ ▄ ... ▄
-    digitalWrite(CE, LOW);    // VPP  L LLL L   ▄ ▄▄▄ ▄ ... ▄
+    gio::write(VPP, LOW);       // CE   H HHL L   █ ██▄ ▄ ... ▄
+    gio::write(OE, LOW);        // OE   H HLL L   █ ██▄ ▄ ... ▄
+    gio::write(CE, LOW);        // VPP  L LLL L   ▄ ▄▄▄ ▄ ... ▄
 }
 
 static byte readData(uint16_t addr) {
     setAddress(addr);
-    delayMicroseconds(2);     // CE   L L       ▄ ... ▄
-    byte data = getDataPort();// OE   L L       ▄ ... ▄
-    return data;              // VPP  L L       ▄ ... ▄
+    delayMicroseconds(2);       // CE   L L       ▄ ... ▄
+    byte data = getDataPort();  // OE   L L       ▄ ... ▄
+    return data;                // VPP  L L       ▄ ... ▄
 }
 
 static void readEnd() {
-    digitalWrite(VPP, LOW);   // CE   L LLH H   ▄ ▄▄█ █ ... █
-    digitalWrite(OE, HIGH);   // OE   L LHH H   ▄ ▄██ █ ... █
-    digitalWrite(CE, HIGH);   // VPP  L LLL L   ▄ ▄▄▄ ▄ ... ▄
+    gio::write(VPP, LOW);       // CE   L LLH H   ▄ ▄▄█ █ ... █
+    gio::write(OE, HIGH);       // OE   L LHH H   ▄ ▄██ █ ... █
+    gio::write(CE, HIGH);       // VPP  L LLL L   ▄ ▄▄▄ ▄ ... ▄
 }
 
 /*
@@ -143,52 +160,58 @@ A0...A10  -CE  -OE  Vpp    D0...D7
 
 static void writeBegin() {
     setDataOutMode();
-    digitalWrite(CE, LOW);    // CE   H LLL L   █ ▄▄▄ ▄ ... ▄
-    digitalWrite(OE, HIGH);   // OE   H HHH H   █ ███ █ ... █
-    digitalWrite(VPP, HIGH);  // VPP  L LLH H   ▄ ▄▄█ █ ... █
+    gio::write(CE, LOW);        // CE   H LLL L   █ ▄▄▄ ▄ ... ▄
+    gio::write(OE, HIGH);       // OE   H HHH H   █ ███ █ ... █
+    gio::write(VPP, HIGH);      // VPP  L LLH H   ▄ ▄▄█ █ ... █
     delayMicroseconds(1);
 }
 
 static void writeData(uint16_t addr, byte data) {
     setAddress(addr);
     setDataPort(data);
-    delayMicroseconds(50);
-    digitalWrite(CE, HIGH);   // CE   L HL L    ▄ █50ms█▄ ▄ ... ▄
-    delayMicroseconds(50);    // OE   H HH H    █ █50ms██ █ ... █
-    digitalWrite(CE, LOW);    // VPP  H HH H    █ █50ms██ █ ... █
-    delayMicroseconds(50);
+    delayMicroseconds(5);
+    gio::write(CE, HIGH);       // CE   L HL L    ▄ █50ms█▄ ▄ ... ▄
+    delayMicroseconds(52);      // OE   H HH H    █ █50ms██ █ ... █
+    gio::write(CE, LOW);        // VPP  H HH H    █ █50ms██ █ ... █
+    delayMicroseconds(1);
 }
 
 static void writeEnd() {
-    digitalWrite(VPP, LOW);   // CE   L LH H    ▄ ▄█ █ ... █
-    delayMicroseconds(1);     // OE   H HH H    █ ██ █ ... █
-    digitalWrite(CE, HIGH);   // VPP  H LL L    █ ▄▄ ▄ ... ▄
+    gio::write(VPP, LOW);       // CE   L LH H    ▄ ▄█ █ ... █
+    delayMicroseconds(1);       // OE   H HH H    █ ██ █ ... █
+    gio::write(CE, HIGH);       // VPP  H LL L    █ ▄▄ ▄ ... ▄
     delayMicroseconds(1);
 }
 
 static bool writeMemoryBin(int selected) {
     File dataFile = SD.open(fileEntries[selected].name);    
     if (dataFile) {
+
+        noInterrupts();
+
         uint16_t addr = 0;
         writeBegin();
         while (true) {
             int data = dataFile.read();      
             if (data == -1) break;
 
-            noInterrupts();
+            // noInterrupts();
             writeData(addr++, data);
-            interrupts();
+            // interrupts();
 
-            Serial.print(addr - 1, HEX);
-            Serial.print(":");
-            Serial.print(data, HEX);
-            Serial.println();
+            // Serial.print(addr - 1, HEX);
+            // Serial.print(":");
+            // Serial.print(data, HEX);
+            // Serial.println();
 
             if (addr >= CHIP_SIZE) {
                 break;
             }
         }
         writeEnd();
+
+        interrupts();
+
         dataFile.close();
         return true;
     }
@@ -201,22 +224,23 @@ static bool checkMemoryBin(int selected) {
     bool error = false;
     File dataFile = SD.open(fileEntries[selected].name);    
     if (dataFile) {
+
+        noInterrupts();
+
         uint16_t addr = 0;
         readBegin();
         while (!error) {
             int result = dataFile.read();
             if (result == -1) break;
       
-            noInterrupts();
             byte data = readData(addr++);
-            interrupts();
             
-            Serial.print(addr - 1, HEX);
-            Serial.print(":");
-            Serial.print(result, HEX);
-            Serial.print(":");
-            Serial.print(data, HEX);
-            Serial.println();
+            // Serial.print(addr - 1, HEX);
+            // Serial.print(":");
+            // Serial.print(result, HEX);
+            // Serial.print(":");
+            // Serial.print(data, HEX);
+            // Serial.println();
 
             if (data != result) {
                 error = true;
@@ -227,6 +251,9 @@ static bool checkMemoryBin(int selected) {
             }
         }
         readEnd();
+
+        interrupts();
+
         dataFile.close();
     }
     return !error;
@@ -343,12 +370,13 @@ void setup() {
     // так как если не выставить до переключения вывода на выход,
     // то изначально он будет низким,
     // таким образом исключаем передергивание уровней
-    digitalWrite(CE, HIGH);   // На плате подтянут к +5V
-    digitalWrite(OE, HIGH);   // На плате подтянут к +5V
-    digitalWrite(VPP, LOW);   // На плате подтянут к земле
-    pinMode(CE, OUTPUT);      // CE   H HHL L   █ ... █
-    pinMode(OE, OUTPUT);      // OE   H HLL L   █ ... █
-    pinMode(VPP, OUTPUT);     // VPP  L LLL L   ▄ ... ▄
+    gio::write(CE, HIGH);   // На плате подтянут к +5V
+    gio::write(OE, HIGH);   // На плате подтянут к +5V
+    gio::write(VPP, LOW);   // На плате подтянут к земле
+
+    gio::mode(CE, OUTPUT);      // CE   H HHL L   █ ... █
+    gio::mode(OE, OUTPUT);      // OE   H HLL L   █ ... █
+    gio::mode(VPP, OUTPUT);     // VPP  L LLL L   ▄ ... ▄
 
     // Initialize Serial
     Serial.begin(57600);
