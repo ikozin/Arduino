@@ -35,6 +35,9 @@ EncButtonT<PIN_ENC_S1, PIN_ENC_S2, PIN_ENC_BTN> encoder;
  12 -| GND      D3 |- 13
       -------------
 */
+
+#define DELAY_WRITE (102)
+
 #define VPP         (39)  //PG2
 #define CE          (40)  //PG1
 #define OE          (41)  //PG0
@@ -170,9 +173,9 @@ static void writeData(uint16_t addr, byte data) {
     setAddress(addr);
     setDataPort(data);
     delayMicroseconds(5);
-    gio::write(CE, HIGH);       // CE   L HL L    ▄ █50ms█▄ ▄ ... ▄
-    delayMicroseconds(52);      // OE   H HH H    █ █50ms██ █ ... █
-    gio::write(CE, LOW);        // VPP  H HH H    █ █50ms██ █ ... █
+    gio::write(CE, HIGH);           // CE   L HL L    ▄ █50ms█▄ ▄ ... ▄
+    delayMicroseconds(DELAY_WRITE); // OE   H HH H    █ █50ms██ █ ... █
+    gio::write(CE, LOW);            // VPP  H HH H    █ █50ms██ █ ... █
     delayMicroseconds(1);
 }
 
