@@ -1,16 +1,28 @@
 #include <Arduino.h>
 #include <GyverIO.h>
 #include <PS2KeyAdvanced.h>
-//#include <PS2KeyRaw.h>
 #include "KeyDef.h"
 
 
 PS2KeyAdvanced keyboard;
-//PS2KeyRaw keyboard;
 
 #ifndef ARDUINO_AVR_ATmega328P_BB8
 #error ATmega328P BB 8Mhz.json
 #endif
+
+
+//////////////////////////////////////////////////////
+//
+//   Q   W   E   R   T   Y   U   I   O   P   [   ]
+//   Й   Ц   У   К   Е   Н   Г   Ш   Щ   З   Х   Ъ
+//
+//     A   S   D   F   G   H   J   K   L   ;   '
+//     Ф   Ы   В   А   П   Р   О   Л   Д   Ж   Э
+//
+//       Z   X   C   V   B   N   M   ,   .
+//       Я   Ч   С   М   И   Т   Ь   Б   Ю
+//
+//////////////////////////////////////////////////////
 
 //#define DEBUG_CONSOLE
 
