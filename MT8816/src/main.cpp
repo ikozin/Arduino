@@ -10,19 +10,36 @@ PS2KeyAdvanced keyboard;
 #error ATmega328P BB 8Mhz.json
 #endif
 
+// PS 2
+///////////////////////////////////////////////////////
+//                                                   //
+//   Q   W   E   R   T   Y   U   I   O   P   [   ]   //
+//   Й   Ц   У   К   Е   Н   Г   Ш   Щ   З   Х   Ъ   //
+//                                                   //
+//     A   S   D   F   G   H   J   K   L   ;   '     //
+//     Ф   Ы   В   А   П   Р   О   Л   Д   Ж   Э     //
+//                                                   //
+//       Z   X   C   V   B   N   M   ,   .           //
+//       Я   Ч   С   М   И   Т   Ь   Б   Ю           //
+//                                                   //
+///////////////////////////////////////////////////////
 
-//////////////////////////////////////////////////////
-//
-//   Q   W   E   R   T   Y   U   I   O   P   [   ]
-//   Й   Ц   У   К   Е   Н   Г   Ш   Щ   З   Х   Ъ
-//
-//     A   S   D   F   G   H   J   K   L   ;   '
-//     Ф   Ы   В   А   П   Р   О   Л   Д   Ж   Э
-//
-//       Z   X   C   V   B   N   M   ,   .
-//       Я   Ч   С   М   И   Т   Ь   Б   Ю
-//
-//////////////////////////////////////////////////////
+
+
+///////////////////////////////////////////////////////
+//                                                   //
+//   J   C   U   K   E   N   G   [   ]   Z   H       //
+//   Й   Ц   У   К   Е   Н   Г   Ш   Щ   З   Х       //
+//                                                   //
+//     F   Y   W   A   P   R   O   L   D   V   \     //
+//     Ф   Ы   В   А   П   Р   О   Л   Д   Ж   Э     //
+//                                                   //
+//       Q   ^   S   M   I   T   X   B   @           //
+//       Я   Ч   С   М   И   Т   Ь   Б   Ю           //
+//                                                   //
+///////////////////////////////////////////////////////
+
+
 
 //#define DEBUG_CONSOLE
 
@@ -155,44 +172,44 @@ const key_t keymapOrion128_Shift[] PROGMEM = {
 };
 
 const key_t keymapOrion128_RU[] PROGMEM = {
-{  0x32, KEY_2 },                   // 2 @
-{  0x36, KEY_6 },                   // 6 ^
-{  0x41, KEY_A },                   // A - Ф
-{  0x42, KEY_B },                   // B - И
-{  0x43, KEY_C },                   // C - С
-{  0x44, KEY_D },                   // D - В
-{  0x45, KEY_E },                   // E - У
-{  0x46, KEY_F },                   // F - А
-{  0x47, KEY_G },                   // G - П
-{  0x48, KEY_H },                   // H - Р
-{  0x49, KEY_I },                   // I - Ш
-{  0x4A, KEY_J },                   // J - О
-{  0x4B, KEY_K },                   // K - Л
-{  0x4C, KEY_L },                   // L - Д
-{  0x4D, KEY_M },                   // M - Ь
-{  0x4E, KEY_N },                   // N - Т
-{  0x4F, KEY_O },                   // O - Щ
-{  0x50, KEY_P },                   // P - З
-{  0x51, KEY_Q },                   // Q - Й
-{  0x52, KEY_R },                   // R - К
-{  0x53, KEY_S },                   // S - Ы
-{  0x54, KEY_T },                   // T - Е
-{  0x55, KEY_U },                   // U - Г
-{  0x56, KEY_V },                   // V - М
-{  0x57, KEY_W },                   // W - Ц
-{  0x58, KEY_X },                   // X - Ч
-{  0x59, KEY_Y },                   // Y - Н
-{  0x5A, KEY_Z },                   // Z - Я
+// {  0x32, NO_KEY },                  // 2 @
+// {  0x36, NO_KEY },                  // 6 ^
+{  0x41, KEY_F },                   // A - Ф -> F
+{  0x42, KEY_I },                   // B - И -> I
+{  0x43, KEY_S },                   // C - С -> S
+{  0x44, KEY_W },                   // D - В -> W
+{  0x45, KEY_U },                   // E - У -> U
+{  0x46, KEY_A },                   // F - А -> A
+{  0x47, KEY_P },                   // G - П -> P
+{  0x48, KEY_R },                   // H - Р -> R
+{  0x49, KEY_SqBrL },               // I - Ш -> [
+{  0x4A, KEY_O },                   // J - О -> O
+{  0x4B, KEY_L },                   // K - Л -> L
+{  0x4C, KEY_D },                   // L - Д -> D
+{  0x4D, KEY_X },                   // M - Ь -> X
+{  0x4E, KEY_T },                   // N - Т -> T
+{  0x4F, KEY_SqBrR },               // O - Щ -> ]
+{  0x50, KEY_Z },                   // P - З -> Z
+{  0x51, KEY_J },                   // Q - Й -> J
+{  0x52, KEY_K },                   // R - К -> K
+{  0x53, KEY_Y },                   // S - Ы -> Y
+{  0x54, KEY_E },                   // T - Е -> E
+{  0x55, KEY_G },                   // U - Г -> G
+{  0x56, KEY_M },                   // V - М -> M
+{  0x57, KEY_C },                   // W - Ц -> C
+{  0x58, KEY_Circ },                // X - Ч -> ^
+{  0x59, KEY_Z },                   // Y - Н -> Z
+{  0x5A, KEY_Q },                   // Z - Я -> Q
 {  0x5C, KEY_Slash },               // "\\"
-{  0x5D, KEY_SqBrL },               // [ {
-{  0x5E, KEY_SqBrR },               // ] }
+{  0x5D, KEY_H },                   // [ - { -> H
+{  0x5E, KEY_X },                   // ] - } -> X
 };
 
 uint8_t table_main[128];
 uint8_t table_shift[128];
 uint8_t table_ru[128];
 
-
+bool isRuLand = false;
 
 // ОРИОН-128
 #define SHIFT_ORION     (A0)   // PC0
@@ -247,7 +264,9 @@ void setup() {
     setTable(table_main, sizeof(table_main) / sizeof(table_main[0]),  keymapOrion128_Main, sizeof(keymapOrion128_Main) / sizeof(keymapOrion128_Main[0]));
     setTable(table_shift, sizeof(table_shift) / sizeof(table_shift[0]),  keymapOrion128_Shift, sizeof(keymapOrion128_Shift) / sizeof(keymapOrion128_Shift[0]));
     setTable(table_ru, sizeof(table_ru) / sizeof(table_ru[0]),  keymapOrion128_RU, sizeof(keymapOrion128_RU) / sizeof(keymapOrion128_RU[0]));
-    
+
+    isRuLand = false;
+ 
     keyboard.begin(3, 2);
     keyboard.resetKey();
 #ifdef DEBUG_CONSOLE
@@ -384,7 +403,7 @@ uint16_t getScanCode() {
 
 // E2 E0 XX E0 F0 XX E2
 uint16_t processKeyCodeApp() {
-    uint16_t code;
+    __attribute__((__unused__)) uint16_t code;
     // code = getScanCode();   // 0xE2
     // DEBUG_PRINT_HEX(code);
     code = getScanCode();   // code
@@ -430,10 +449,14 @@ void loop() {
     // Обрабатываем переключения языка
     if (index == PS2_KEY_CAPS) {
         gio::toggle(LANG_ORION);
+        isRuLand = !isRuLand;
         return;
     }
 
-    matrix_t value = { .value = table_main[index] };
+    matrix_t value = { .value = table_main[index]};
+    if (isRuLand && table_ru[index] != NO_KEY) {
+        value.value = table_ru[index];
+    }
     if ((code & PS2_SHIFT) == PS2_SHIFT) {
         if (table_shift[index] != NO_KEY) {
             value.value = table_shift[index];
