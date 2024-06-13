@@ -12,6 +12,12 @@
 #error Select board ATMEGA2560
 #endif
 
+#define DEBUG_INFO
+
+#if defined(DEBUG_INFO)
+char text[128];
+#endif
+
 #define PIN_ENC_BTN         (10)
 #define PIN_ENC_S1          (9)
 #define PIN_ENC_S2          (8)
@@ -76,7 +82,7 @@ static void loadFileInfo() {
     fileEntryCount = 1;
     File dir = SD.open("/");    
     while (true) {
-        File entry =  dir.openNextFile();
+        File entry = dir.openNextFile();
         if (! entry) {
             break;
         }
@@ -137,7 +143,7 @@ static void readBegin() {
 
 static byte readData(uint16_t addr) {
     setAddress(addr);
-    delayMicroseconds(2);       // CE   L L       ▄ ... ▄
+    delayMicroseconds(100);     // CE   L L       ▄ ... ▄
     byte data = getDataPort();  // OE   L L       ▄ ... ▄
     return data;                // VPP  L L       ▄ ... ▄
 }
@@ -166,54 +172,66 @@ static void writeBegin() {
     gio::write(CE, LOW);        // CE   H LLL L   █ ▄▄▄ ▄ ... ▄
     gio::write(OE, HIGH);       // OE   H HHH H   █ ███ █ ... █
     gio::write(VPP, HIGH);      // VPP  L LLH H   ▄ ▄▄█ █ ... █
-    delayMicroseconds(1);
+    delayMicroseconds(10);
 }
 
 static void writeData(uint16_t addr, byte data) {
     setAddress(addr);
     setDataPort(data);
-    delayMicroseconds(5);
+    delayMicroseconds(50);
     gio::write(CE, HIGH);           // CE   L HL L    ▄ █50ms█▄ ▄ ... ▄
     delayMicroseconds(DELAY_WRITE); // OE   H HH H    █ █50ms██ █ ... █
     gio::write(CE, LOW);            // VPP  H HH H    █ █50ms██ █ ... █
-    delayMicroseconds(1);
+    delayMicroseconds(50);
 }
 
 static void writeEnd() {
     gio::write(VPP, LOW);       // CE   L LH H    ▄ ▄█ █ ... █
-    delayMicroseconds(1);       // OE   H HH H    █ ██ █ ... █
+    delayMicroseconds(10);      // OE   H HH H    █ ██ █ ... █
     gio::write(CE, HIGH);       // VPP  H LL L    █ ▄▄ ▄ ... ▄
-    delayMicroseconds(1);
+    delayMicroseconds(10);
 }
 
 static bool writeMemoryBin(int selected) {
     File dataFile = SD.open(fileEntries[selected].name);    
     if (dataFile) {
-
+#if !defined(DEBUG_INFO)
         noInterrupts();
-
+#else
+        Serial.println();
+        Serial.print("write");
+        Serial.flush();
+#endif
         uint16_t addr = 0;
         writeBegin();
         while (true) {
             int data = dataFile.read();      
             if (data == -1) break;
 
-            // noInterrupts();
+#if defined(DEBUG_INFO)
+            if ((addr & 0xF) == 0) {
+                sprintf(text, "0x%04X :", addr);
+                Serial.println();
+                Serial.print(text);
+            }
+            sprintf(text, " 0x%02X ", data);
+            Serial.print(text);
+            Serial.flush();
+            noInterrupts();
             writeData(addr++, data);
-            // interrupts();
-
-            // Serial.print(addr - 1, HEX);
-            // Serial.print(":");
-            // Serial.print(data, HEX);
-            // Serial.println();
-
+            interrupts();
+#else
+            writeData(addr++, data);
+#endif
             if (addr >= CHIP_SIZE) {
                 break;
             }
         }
         writeEnd();
 
+#if !defined(DEBUG_INFO)
         interrupts();
+#endif
 
         dataFile.close();
         return true;
@@ -227,25 +245,41 @@ static bool checkMemoryBin(int selected) {
     bool error = false;
     File dataFile = SD.open(fileEntries[selected].name);    
     if (dataFile) {
-
+#if !defined(DEBUG_INFO)
         noInterrupts();
-
+#else
+        Serial.println();
+        Serial.print("check");
+        Serial.flush();
+#endif
         uint16_t addr = 0;
         readBegin();
         while (!error) {
             int result = dataFile.read();
             if (result == -1) break;
       
+#if defined(DEBUG_INFO)
+            if ((addr & 0xF) == 0) {
+                sprintf(text, "0x%04X :", addr);
+                Serial.println();
+                Serial.print(text);
+            }
+            noInterrupts();
             byte data = readData(addr++);
-            
-            // Serial.print(addr - 1, HEX);
-            // Serial.print(":");
-            // Serial.print(result, HEX);
-            // Serial.print(":");
-            // Serial.print(data, HEX);
-            // Serial.println();
+            interrupts();
+            sprintf(text, " 0x%02X", data);
+            Serial.print(text);
+            Serial.flush();
+#else
+            byte data = readData(addr++);
+#endif
 
             if (data != result) {
+#if defined(DEBUG_INFO)
+            sprintf(text, ",0x%02X ", result);
+            Serial.println(text);
+            Serial.flush();
+#endif
                 error = true;
             }
 
@@ -254,9 +288,9 @@ static bool checkMemoryBin(int selected) {
             }
         }
         readEnd();
-
+#if !defined(DEBUG_INFO)
         interrupts();
-
+#endif
         dataFile.close();
     }
     return !error;
@@ -270,6 +304,9 @@ void handlerTestMenu() {
     display.println("кнопку для");
     display.println("  начала");
     display.update();
+
+    gio::write(CE, LOW);
+    gio::write(OE, HIGH);
     
     while (true) {
         encoder.tick();
@@ -373,9 +410,9 @@ void setup() {
     // так как если не выставить до переключения вывода на выход,
     // то изначально он будет низким,
     // таким образом исключаем передергивание уровней
-    gio::write(CE, HIGH);   // На плате подтянут к +5V
-    gio::write(OE, HIGH);   // На плате подтянут к +5V
-    gio::write(VPP, LOW);   // На плате подтянут к земле
+    gio::write(CE, LOW);        // На плате подтянут к +5V
+    gio::write(OE, HIGH);       // На плате подтянут к +5V
+    gio::write(VPP, LOW);       // На плате подтянут к земле
 
     gio::mode(CE, OUTPUT);      // CE   H HHL L   █ ... █
     gio::mode(OE, OUTPUT);      // OE   H HLL L   █ ... █
