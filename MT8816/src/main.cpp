@@ -57,9 +57,10 @@ char text[128];
 
 typedef union _matrix_ {
     struct {
-        uint8_t row : 4;
+        uint8_t row : 3;
         uint8_t col : 3;
         uint8_t shift : 1;
+        uint8_t lang : 1;
     };
     uint8_t value;
 } matrix_t;
