@@ -305,6 +305,7 @@ void handlerTestMenu() {
     display.println("  начала");
     display.update();
 
+    setDataPort(0xFF);
     gio::write(CE, LOW);
     gio::write(OE, HIGH);
     
