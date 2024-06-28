@@ -1,5 +1,9 @@
 #include "K565_RU7.h"
 
+///////////////////////////////////////////////////////////////////
+// https://forum.defence-force.org/viewtopic.php?t=1699&start=45 //
+///////////////////////////////////////////////////////////////////
+
 const static TDevicePin PROGMEM pin_map_565_ru7[] =
 {
   // Входы     A0  A1  A2  A3  A4  A5  A6  A7  A8  DI RAS CAS  WE                   DO
