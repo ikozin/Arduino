@@ -11,10 +11,15 @@ MCP23008_ADDRESS    0x20
 DS1307_ADDRESS      0x68
 
 */
+// #define RELOCATE
+
 #include <Wire.h>
 #include "MP1090S.h"
 #include "Radio.h"
 
+#ifndef ARDUINO_AVR_PRO
+#error Select board: Arduino Pro Mini 
+#endif
 
 #define sizeofarray(a)  (sizeof(a)/sizeof(a[0]))
 
@@ -107,6 +112,28 @@ byte _B4[8] =
   B11100
 };
 
+/*
+http://robotosha.ru/wp-content/uploads/2015/03/hd44780_char_table.png
+    | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | A | B | C | D | E | F |
+| 0 |   |   |   | 0 | @ | P | ` | p |   |   | Б | Ю | ч |   | Д |   |
+| 1 |   |   | ! | 1 | A | Q | a | q |   |   | Г | Я | ш |   | Ц |   |
+| 2 |   |   | " | 2 | B | R | b | r |   |   | Ё | б | ъ |   | Щ |   |
+| 3 |   |   | # | 3 | C | S | c | s |   |   | Ж | в | ы |   | д |   |
+| 4 |   |   | $ | 4 | D | T | d | t |   |   | З | г | ь |   | ф |   |
+| 5 |   |   | % | 5 | E | U | e | u |   |   | И | ё | э |   | ц |   |
+| 6 |   |   | & | 6 | F | V | f | v |   |   | Й | ж | ю |   | щ |   |
+| 7 |   |   | ' | 7 | G | W | g | w |   |   | Л | з | я |   |   |   |
+| 8 |   |   | ( | 8 | H | X | h | x |   |   | П | и |   |   |   |   |
+| 9 |   |   | ) | 9 | I | Y | i | y |   |   | У | й |   |   |   |   |
+| A |   |   | * | : | J | Z | j | z |   |   | Ф | к |   |   |   |   |
+| B |   |   | + | ; | K | [ | k |   |   |   | Ч | л |   |   |   |   |
+| C |   |   | , | < | L |   | l |   |   |   | Ш | м |   |   |   |   |
+| D |   |   | - | = | M | ] | m |   |   |   | Ъ | н |   |   |   |   |
+| E |   |   | . | > | N | ^ | n |   |   |   | Ы | п |   |   |   |   |
+| F |   |   | / | ? | O | _ | o |   |   |   | Э | т |   |   |   |   |
+
+*/
+
 const char months[12][9] =
 {
   "\xC7\xBD\xB3""ap\xC4",
@@ -127,23 +154,23 @@ const char months[12][9] =
 const RadioItem radioList[] PROGMEM =
 {
   { 87500, "Business FM     87,5"},                                       // 0 - Business FM
-  { 87900, "C\xB8\xBF\xB8-FM         87,9"},                              // 1 - Сити-FM
+  { 87900, "Like FM         87,9"},                                       // 1 - Like FM
   { 88300, "Pe\xBFpo FM        88,3"},                                    // 2 - Ретро FM
   { 88700, "\xB0\xBCop FM         88,7"},                                 // 3 - Юмор FM
   { 89100, "Pa\xE3\xB8o Jazz      89,1"},                                 // 4 - Радио Jazz
-  { 89500, "Megapolis FM    89,5"},                                       // 5 - Megapolis FM
-  { 89900, "Ke\xBA""c FM         89,9"},                                  // 6 - Кекс FM
+  { 89500, "Ka\xBB\xB8\xBD""a Kpac\xBD""a\xC7  89,5"},                    // 5 - Радио Калина Красная
+  { 89900, "Pa\xE3\xB8o Pe\xBAop\xE3    89,9"},                           // 6 - Радио Рекорд
   { 90300, "A\xB3\xBFopa\xE3\xB8o       90,3"},                           // 7 - Авторадио
   { 90800, "Relax FM        90,8"},                                       // 8 - Relax FM
-  { 91200, "\xAFxo Moc\xBA\xB3\xC3      91,2"},                           // 9 - Эхо Москвы
+  { 91200, "Pa\xE3\xB8o Sputnik   91,2"},                                 // 9 - Радио Sputnik
   { 91600, "Pa\xE3\xB8o Ky\xBB\xC4\xBFypa  91,6"},                        //10 - Радио Культура
   { 92000, "Moc\xBA\xB3""a FM       92,0"},                               //11 - Москва FM
   { 92400, "Pa\xE3\xB8o \xE0""a\xC0""a      92,4"},                       //12 - Радио Дача
   { 92800, "Pa\xE3\xB8o Kap\xBD""a\xB3""a\xBB  92,8"},                    //13 - Радио Карнавал
-  { 93200, "C\xBEop\xBF FM        93,2"},                                 //14 - Спорт FM
+  { 93200, "STUDIO 21       93,2"},                                       //14 - STUDIO 21
   { 93600, "Ko\xBC\xBC""epca\xBD\xBF\xC2 FM  93,6"},                      //15 - Коммерсант FM
   { 94000, "Boc\xBFo\xBA FM       94,0"},                                 //16 - Восток FM
-  { 94400, "Bec\xBD""a FM        94,4"},                                  //17 - Весна FM
+  { 94400, "C\xBEop\xBF\xB8\xB3\xBDoe Pa\xE3\xB8o94,4"},                  //17 - Первое Спортивное Радио
   { 94800, "\xA1o\xB3op\xB8\xBF Moc\xBA\xB3""a  94,8"},                   //18 - Говорит Москва
   { 95200, "Rock FM         95,2"},                                       //19 - Rock FM
   { 95600, "Pa\xE3\xB8o \xA4\xB3""e\xB7\xE3""a    95,6"},                 //20 - Радио Звезда
@@ -153,27 +180,27 @@ const RadioItem radioList[] PROGMEM =
   { 97200, "Pa\xE3\xB8o K\xA8        97,2"},                              //24 - Радио КП
   { 97600, "Bec\xBF\xB8 FM        97,6"},                                 //25 - Вести FM
   { 98000, "Pa\xE3\xB8o \xACo\xBAo\xBB""a\xE3   98,0"},                   //26 - Радио Шоколад
-  { 98400, "Pa\xE3\xB8o Pe\xBAop\xE3    98,4"},                           //27 - Радио Рекорд
+  { 98400, "Ho\xB3oe Pa\xE3\xB8o     98,4"},                              //27 - Новое Радио
   { 98800, "Pa\xE3\xB8o Romantika 98,8"},                                 //28 - Радио Romantika
   { 99200, "Pa\xE3\xB8o Op\xAA""e\xB9     99,2"},                         //29 - Радио Орфей
-  { 99600, "C\xBFo\xBB\xB8\xE5""a FM      99,6"},                         //30 - Столица FM
+  { 99600, "Pycc\xB8\xA6 X\xB8\xBF      99,6"},                           //30 - Радио Русский Хит
   {100100, "Cepe\xB2p\xC7\xBD\xC3\xB9 \xE3o\xB6\xE3\xC4    "},            //31 - Серебряннй дождь
-  {100500, "Best FM        100,5"},                                       //32 - Best FM
-  {100900, "Pa\xE3\xB8o Classic  100,9"},                                 //33 - Радио Classic
-  {101200, "DFM            101,2"},                                       //34 - DFM
-  {101700, "Ha\xC1""e pa\xE3\xB8o     101,7"},                            //35 - Наше Радио
-  {102100, "Mo\xBD\xBF""e-Kap\xBBo    102,1"},                            //36 - Монте-Карло
-  {102500, "Comedy Radio   102,5"},                                       //37 - Comedy Radio
-  {103000, "\xAC""a\xBD""co\xBD         103,0"},                          //38 - Шансон
-  {103400, "Ma\xC7\xBA           103,4"},                                 //39 - Маяк
-  {103700, "Maximum        103,7"},                                       //40 - Maximum
-  {104200, "NRJ            104,2"},                                       //41 - NRJ
-  {104700, "Pa\xE3\xB8o 7        104,7"},                                 //42 - Радио 7
-  {105200, "Moscow FM      105,2"},                                       //43 - Moscow FM
+  {100500, "\xA3""apa FM        100,5"},                                  //32 - Жара FM
+  {101200, "DFM            101,2"},                                       //33 - DFM
+  {101800, "Ha\xC1""e pa\xE3\xB8o     101,7"},                            //34 - Наше Радио
+  {102100, "Mo\xBD\xBF""e-Kap\xBBo    102,1"},                            //35 - Монте-Карло
+  {102500, "Comedy Radio   102,5"},                                       //36 - Comedy Radio
+  {103000, "\xAC""a\xBD""co\xBD         103,0"},                          //37 - Шансон
+  {103400, "Ma\xC7\xBA           103,4"},                                 //38 - Маяк
+  {103700, "Maximum        103,7"},                                       //39 - Maximum
+  {104200, "Pa\xE3\xB8o ENERGY   104,2"},                                 //40 - Радио ENERGY
+  {104700, "Pa\xE3\xB8o 7        104,7"},                                 //41 - Радио 7
+  {105000, "Pa\xE3\xB8o \xA1op\xE3oc\xBF\xC4 105,2"},                     //42 - Радио Гордость
+  {105300, "Capital FM     105,2"},                                       //43 - Capital FM
   {105700, "Pycc\xBAoe pa\xE3\xB8o  105,7"},                              //44 - Русское радио
   {106200, "E\xB3po\xBE""a \xA8\xBB\xC6""c    106,2"},                    //45 - Европа Плюс
   {106600, "Love Radio     106,6"},                                       //46 - Love Radio
-  {107000, "PCH            107,0"},                                       //47 - PCH
+  {107000, "KIS FM         107,0"},                                       //47 - KISS FM
   {107400, "X\xB8\xBF FM         107,4"},                                 //48 - Хит FM
   {107800, "M\xB8\xBB\xB8\xE5""e\xB9""c\xBA""a\xC7 \xB3o\xBB\xBD""a   "}, //49 - Милицейская волна
 };
@@ -326,16 +353,23 @@ void setup()
   rtc.begin();
   //rtc.adjust(DateTime(2000, 1, 1, 0, 0, 0));
   
-  //saveAlarmData(EEPROM_ADDR_ALARM_ON1,  &alarmOn[0]);
-  //saveAlarmData(EEPROM_ADDR_ALARM_ON2,  &alarmOn[1]);
-  //saveAlarmData(EEPROM_ADDR_ALARM_ON3,  &alarmOn[2]);
-  //saveAlarmData(EEPROM_ADDR_ALARM_ON4,  &alarmOn[3]);
-  //saveAlarmData(EEPROM_ADDR_ALARM_OFF1, &alarmOff[0]);
-  //saveAlarmData(EEPROM_ADDR_ALARM_OFF2, &alarmOff[1]);
-  //saveAlarmData(EEPROM_ADDR_ALARM_OFF3, &alarmOff[2]);
-  //saveAlarmData(EEPROM_ADDR_ALARM_OFF4, &alarmOff[3]);
-  
-  dumpInfo();
+
+#ifdef RELOCATE
+  EEPROM_ADDR_RADIO_INDEX = 8;
+  EEPROM.write(EEPROM_ADDR_RADIO_INDEX, index);         // 1 byte
+  EEPROM.write(EEPROM_ADDR_RADIO_VOLUME, volume);       // 1 byte
+  EEPROM.write(EEPROM_ADDR_CORRECTION_SEC, corrSec);    // 1 byte
+  EEPROM.write(EEPROM_ADDR_ALARM_INDEX, currentPlay);   // 1 byte
+  saveAlarmData(EEPROM_ADDR_ALARM_ON1,  &alarmOn[0]);   // 4 byte
+  saveAlarmData(EEPROM_ADDR_ALARM_ON2,  &alarmOn[1]);   // 4 byte
+  saveAlarmData(EEPROM_ADDR_ALARM_ON3,  &alarmOn[2]);   // 4 byte
+  saveAlarmData(EEPROM_ADDR_ALARM_ON4,  &alarmOn[3]);   // 4 byte
+  saveAlarmData(EEPROM_ADDR_ALARM_OFF1, &alarmOff[0]);  // 4 byte
+  saveAlarmData(EEPROM_ADDR_ALARM_OFF2, &alarmOff[1]);  // 4 byte
+  saveAlarmData(EEPROM_ADDR_ALARM_OFF3, &alarmOff[2]);  // 4 byte
+  saveAlarmData(EEPROM_ADDR_ALARM_OFF4, &alarmOff[3]);  // 4 byte
+#endif
+  //dumpInfo();
 }
 
 void dumpInfo()

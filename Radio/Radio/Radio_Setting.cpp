@@ -488,17 +488,17 @@ void select_alarm_list_off()
 
 void subselect_alarm()
 {
-	// 0 - Включить
-	// 1 - Выключить
+	// 0 - пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+	// 1 - пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 	show_choice_list(2, showSettingsInitAlarmType, select_alarm_list_on, select_alarm_list_off, NULL, NULL);
 }
 
 void loopSettings()
 {
-	// 0 - установка даты
-	// 1 - установка времени
-	// 2 - коррекция времени
-	// 3 - будильник
+	// 0 - пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ
+	// 1 - пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+	// 2 - пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+	// 3 - пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 	show_choice_list(4, showSettingsInit, subselect_date, subselect_time, subselect_correct, subselect_alarm);
 }
 

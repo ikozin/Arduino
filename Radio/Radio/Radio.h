@@ -50,7 +50,11 @@ extern bool corrApplied;
 extern AlarmItem alarmOn[4];
 extern AlarmItem alarmOff[4];
 
-#define EEPROM_ADDR_CONFIGURATION     0
+#ifdef RELOCATE
+static int EEPROM_ADDR_CONFIGURATION = 4;
+#else 
+#define EEPROM_ADDR_CONFIGURATION     4
+#endif
 #define EEPROM_ADDR_RADIO_INDEX       (EEPROM_ADDR_CONFIGURATION)
 #define EEPROM_ADDR_RADIO_VOLUME      (EEPROM_ADDR_CONFIGURATION + 1)
 #define EEPROM_ADDR_CORRECTION_SEC    (EEPROM_ADDR_CONFIGURATION + 2)
