@@ -46,9 +46,9 @@ api:                                        # https://esphome.io/components/api
     key: "GrG70uA55WijIP6WWiDV4lZOJGS9FY4RefThBIOf9PQ="
 
 mqtt:                                       # https://esphome.io/components/mqtt
-  broker: 192.168.1.50
-  username: pi
-  password: windows-suxx
+  broker: !secret mqtt_broker
+  username: !secret mqtt_user
+  password: !secret mqtt_password
 
 ota:
   - platform: esphome
