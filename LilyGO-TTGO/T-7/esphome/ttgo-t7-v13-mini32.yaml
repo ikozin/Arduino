@@ -1,0 +1,513 @@
+esphome:                                    # https://esphome.io/components/esphome
+  name: ttgo-t7-v13-mini32
+  friendly_name: TTGO T7 V1.3 Mini32
+  on_boot:                                  # https://esphome.io/components/esphome#on-boot
+    - priority: -100
+      then:
+        # - text_sensor.template.publish:
+        #     id: time_text
+        #     state: ''
+        - sensor.rotary_encoder.set_value:
+            id: rot_enc
+            value: 0
+        # - wait_until:
+        #     condition:
+        #       time.has_time
+        #       # lambda: |-
+        #       #   return (id(time_device).now().is_valid());
+
+
+esp32:                                      # https://esphome.io/components/esp32
+  board: ttgo-t7-v13-mini32                 # https://registry.platformio.org/platforms/platformio/espressif32/boards
+  framework:
+    # type: arduino                           # https://esphome.io/components/esp32#arduino-framework
+    type: esp-idf                           # https://esphome.io/components/esp32#esp-idf-framework
+
+# Enable logging
+logger:                                     # https://esphome.io/components/logger
+  level: VERBOSE
+
+wifi:                                       # https://esphome.io/components/wifi
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+  manual_ip:
+    static_ip: 192.168.2.10
+    gateway: 192.168.2.1
+    subnet: 255.255.255.0
+  ap:
+    ssid: "Ttgo-T7-V13-Mini32"
+    password: "gBygnWJoMIpk"
+
+captive_portal:                             # https://esphome.io/components/captive_portal
+
+# Enable Home Assistant API
+api:                                        # https://esphome.io/components/api
+  encryption:
+    key: "GrG70uA55WijIP6WWiDV4lZOJGS9FY4RefThBIOf9PQ="
+
+mqtt:                                       # https://esphome.io/components/mqtt
+  broker: 192.168.1.50
+  username: pi
+  password: windows-suxx
+
+ota:
+  - platform: esphome
+    password: "65abeae31ea9a83d956fe2d5078fb069"
+
+time:                                       # https://esphome.io/components/time/
+  - id: time_device
+    timezone: Europe/Moscow
+    # platform: homeassistant                 # https://esphome.io/components/time/homeassistant
+    platform: sntp                          # https://esphome.io/components/time/sntp
+    servers:
+      - ntp1.vniiftri.ru
+      - ntp2.vniiftri.ru
+      - ntp3.vniiftri.ru
+    # on_time:
+    #   - seconds: /1
+    #     then:
+    #       - text_sensor.template.publish:
+    #           id: time_text
+    #           state: !lambda 'return id(time_device).now().strftime("%H:%M:%S");' # https://esphome.io/components/time/#strftime
+
+# globals:                                    # https://esphome.io/components/globals
+#   - id: page
+#     type: int
+#     initial_value: "1"
+
+datetime:                                   # https://esphome.io/components/datetime/
+  - id: alarm_time_up
+    platform: template                      # https://esphome.io/components/datetime/template
+    type: time
+    name: "Время подъема"
+    optimistic: yes
+    restore_value: true
+    icon: mdi:timer-outline                 # https://pictogrammers.com/library/mdi/
+    initial_value:
+      hour: 7
+      minute: 10
+      second: 0
+    on_time:
+      - script.execute: script_run
+    web_server_sorting_weight: 20
+
+  - id: alarm_time_down
+    platform: template                      # https://esphome.io/components/datetime/template
+    type: time
+    name: "Время сна"
+    optimistic: yes
+    restore_value: true
+    icon: mdi:timer-outline                 # https://pictogrammers.com/library/mdi/
+    initial_value:
+      hour: 23
+      minute: 0
+      second: 0
+    on_time:
+      - script.execute: script_run
+    web_server_sorting_weight: 30
+
+interval:                                   # https://esphome.io/components/interval
+  # - interval: 1s
+  #   then:
+  #     if:
+  #       condition:
+  #         time.has_time:
+  #       then:
+  #         # - logger.log: 'Every 1 second'
+  #         - text_sensor.template.publish:
+  #             id: time_text
+  #             # https://esphome.io/components/time/#strftime
+  #             state: !lambda return id(time_device).now().strftime("%H:%M:%S");
+  - interval: 10s
+    then:
+      - select.next:
+          id: displayScreen
+          cycle: True    
+      # - lambda: |-
+      #     id(page) = (id(page) + 1);
+      #     if (id(page) > 2) {
+      #       id(page) = 1;
+      #     }
+  # - interval: 60s
+  #   then:
+  #     - rtttl.play:
+  #         rtttl: !lambda 'return id(buzzerMelode).state;'
+
+i2c:                                        # https://esphome.io/components/i2c.html
+  - id: bus
+    # frequency: 400kHz 
+    sda: 21
+    scl: 22
+    scan: true
+
+uart:                                       # https://esphome.io/components/uart.html#configuration-variables
+  - id: mhz19_uart
+    rx_pin: 16
+    tx_pin: 17
+    baud_rate: 9600
+
+select:
+  - id: displayScreen
+    platform: template
+    name: "Экран"
+    internal: False
+    options:
+      - "BME280"
+      - "MHZ19"
+      - "TIME"
+    optimistic: true
+    set_action:
+      - logger.log:
+          format: "Display: %s"
+          args: ["x.c_str()"]
+    web_server_sorting_weight: 100
+
+  - id: buzzerMelode
+    platform: template
+    name: "Мелодия"
+    internal: False
+    options:
+      - "Indiana:d=4,o=5,b=250:e,8p,8f,8g,8p,1c6,8p.,d,8p,8e,1f,p.,g,8p,8a,8b,8p,1f6,p,a,8p,8b,2c6,2d6,2e6,e,8p,8f,8g,8p,1c6,p,d6,8p,8e6,1f.6,g,8p,8g,e.6,8p,d6,8p,8g,e.6,8p,d6,8p,8g,f.6,8p,e6,8p,8d6,2c6"
+      - "Entertainer:d=4,o=5,b=140:8d,8d#,8e,c6,8e,c6,8e,2c.6,8c6,8d6,8d#6,8e6,8c6,8d6,e6,8b,d6,2c6,p,8d,8d#,8e,c6,8e,c6,8e,2c.6,8p,8a,8g,8f#,8a,8c6,e6,8d6,8c6,8a,2d6"
+      - "Bond:d=4,o=5,b=80:32p,16c#6,32d#6,32d#6,16d#6,8d#6,16c#6,16c#6,16c#6,16c#6,32e6,32e6,16e6,8e6,16d#6,16d#6,16d#6,16c#6,32d#6,32d#6,16d#6,8d#6,16c#6,16c#6,16c#6,16c#6,32e6,32e6,16e6,8e6,16d#6,16d6,16c#6,16c#7,c.7,16g#6,16f#6,g#.6"
+      - "MahnaMahna:d=16,o=6,b=125:c#,c.,b5,8a#.5,8f.,4g#,a#,g.,4d#,8p,c#,c.,b5,8a#.5,8f.,g#.,8a#.,4g,8p,c#,c.,b5,8a#.5,8f.,4g#,f,g.,8d#.,f,g.,8d#.,f,8g,8d#.,f,8g,d#,8c,a#5,8d#.,8d#.,4d#,8d#."
+      - "MissionImp:d=16,o=6,b=95:32d,32d#,32d,32d#,32d,32d#,32d,32d#,32d,32d,32d#,32e,32f,32f#,32g,g,8p,g,8p,a#,p,c7,p,g,8p,g,8p,f,p,f#,p,g,8p,g,8p,a#,p,c7,p,g,8p,g,8p,f,p,f#,p,a#,g,2d,32p,a#,g,2c#,32p,a#,g,2c,a#5,8c,2p,32p,a#5,g5,2f#,32p,a#5,g5,2f,32p,a#5,g5,2e,d#,8d"
+      - "Pacman:d=4,o=5,b=112:32b,32p,32b6,32p,32f#6,32p,32d#6,32p,32b6,32f#6,16p,16d#6,16p,32c6,32p,32c7,32p,32g6,32p,32e6,32p,32c7,32g6,16p,16e6,16p,32b,32p,32b6,32p,32f#6,32p,32d#6,32p,32b6,32f#6,16p,16d#6,16p,32d#6,32e6,32f6,32p,32f6,32f#6,32g6,32p,32g6,32g#6,32a6,32p,32b.6"
+      - "Terminator II:d=4,o=5,b=90:32d6,16e6,2f6,8e6,8c6,2f,16p,32d6,16e6,2f6,8e6,8c6,2a6,2g6"
+      - "Toccata:d=4,o=5,b=160:16a4,16g4,1a4,16g4,16f4,16d4,16e4,2c#4,16p,d.4,2p,16a4,16g4,1a4,8e.4,8f.4,8c#.4,2d4"
+      - "Flinstones:d=4,o=5,b=40:32p,16f6,16a#,16a#6,32g6,16f6,16a#.,16f6,32d#6,32d6,32d6,32d#6,32f6,16a#,16c6,d6"
+      - "Tetris:d=4,o=5,b=160:e6,8b,8c6,8d6,16e6,16d6,8c6,8b,a,8a,8c6,e6,8d6,8c6,b,8b,8c6,d6,e6,c6,a,2a,8p,d6,8f6,a6,8g6,8f6,e6,8e6,8c6,e6,8d6,8c6,b,8b,8c6,d6,e6,c6,a,a"
+      - "AxelF:d=4,o=5,b=125:32p,8g,8p,16a#.,8p,16g,16p,16g,8c6,8g,8f,8g,8p,16d.6,8p,16g,16p,16g,8d#6,8d6,8a#,8g,8d6,8g6,16g,16f,16p,16f,8d,8a#,2g,p,ss,16f6,8d6,8c6,8a#,g,8a#.,16g,16p,16g,8c6,8g,8f,g,8d.6,16g,16p,16g,8d#6,8d6,8a#,8g,8d6,8g6,16g,16f,16p,16f,8d,8a#,2g"
+      - "girl:d=4,o=5,b=125:8g#,8e,8g#,8c#6,a,p,8f#,8d#,8f#,8b,g#,8f#,8e,p,8e,8c#,f#,c#,p,8f#,8e,g#,f#"
+      - "careaboutus:d=4,o=5,b=125:16f,16e,16f,16e,16f,16e,8d,16e,16d,16e,16d,16e,16d,16c,16d,d"
+      - "Scatman:d=4,o=5,b=200:8b,16b,32p,8b,16b,32p,8b,2d6,16p,16c#.6,16p.,8d6,16p,16c#6,8b,16p,8f#,2p.,16c#6,8p,16d.6,16p.,16c#6,16b,8p,8f#,2p,32p,2d6,16p,16c#6,8p,16d.6,16p.,16c#6,16a.,16p.,8e,2p.,16c#6,8p,16d.6,16p.,16c#6,16b,8p,8b,16b,32p,8b,16b,32p,8b,2d6,16p,16c#.6,16p.,8d6,16p,16c#6,8b,16p,8f#,2p.,16c#6,8p,16d.6,16p.,16c#6,16b,8p,8f#,2p,32p,2d6,16p,16c#6,8p,16d.6,16p.,16c#6,16a.,16p.,8e,2p.,16c#6,8p,16d.6,16p.,16c#6,16a,8p,8e,2p,32p,16f#.6,16p.,16b.,16p."
+      - "Smoke:d=4,o=5,b=112:c,d#,f.,c,d#,8f#,f,p,c,d#,f.,d#,c,2p,8p,c,d#,f.,c,d#,8f#,f,p,c,d#,f.,d#,c,p"
+      - "countdown:d=4,o=5,b=125:p,8p,16b,16a,b,e,p,8p,16c6,16b,8c6,8b,a,p,8p,16c6,16b,c6,e,p,8p,16a,16g,8a,8g,8f#,8a,g.,16f#,16g,a.,16g,16a,8b,8a,8g,8f#,e,c6,2b.,16b,16c6,16b,16a,1b"
+      - "VanessaMae:d=4,o=6,b=70:32c7,32b,16c7,32g,32p,32g,32p,32d#,32p,32d#,32p,32c,32p,32c,32p,32c7,32b,16c7,32g#,32p,32g#,32p,32f,32p,16f,32c,32p,32c,32p,32c7,32b,16c7,32g,32p,32g,32p,32d#,32p,32d#,32p,32c,32p,32c,32p,32g,32f,32d#,32d,32c,32d,32d#,32c,32d#,32f,16g,8p,16d7,32c7,32d7,32a#,32d7,32a,32d7,32g,32d7,32d7,32p,32d7,32p,32d7,32p,16d7,32c7,32d7,32a#,32d7,32a,32d7,32g,32d7,32d7,32p,32d7,32p,32d7,32p,32g,32f,32d#,32d,32c,32d,32d#,32c,32d#,32f,16c"
+      - "Verve:d=4,o=5,b=180:e,g,e,f,d,2f,a#,f,2a#,a,f,2a,p,e,g,e,f,d,2f,a#,f,2a#,a,f,2a,p"
+      - "Wannabe:d=4,o=5,b=125:16g,16g,16g,16g,8g,8a,8g,8e,8p,16c,16d,16c,8d,8d,8c,e,p,8g,8g,8g,8a,8g,8e,8p,c6,8c6,8b,8g,8a,16b,16a,g"
+      - "Yaketysax:d=4,o=5,b=125:8d.,16e,8g,8g,16e,16d,16a4,16b4,16d,16b4,8e,16d,16b4,16a4,16b4,8a4,16a4,16a#4,16b4,16d,16e,16d,g,p,16d,16e,16d,8g,8g,16e,16d,16a4,16b4,16d,16b4,8e,16d,16b4,16a4,16b4,8d,16d,16d,16f#,16a,8f,d,p,16d,16e,16d,8g,16g,16g,8g,16g,16g,8g,8g,16e,8e.,8c,8c,8c,8c,16e,16g,16a,16g,16a#,8g,16a,16b,16a#,16b,16a,16b,8d6,16a,16b,16d6,8b,8g,8d,16e6,16b,16b,16d,8a,8g,g"
+      - "StarWars:d=4,o=5,b=45:32p,32f#,32f#,32f#,8b.,8f#.6,32e6,32d#6,32c#6,8b.6,16f#.6,32e6,32d#6,32c#6,8b.6,16f#.6,32e6,32d#6,32e6,8c#.6,32f#,32f#,32f#,8b.,8f#.6,32e6,32d#6,32c#6,8b.6,16f#.6,32e6,32d#6,32c#6,8b.6,16f#.6,32e6,32d#6,32e6,8c#6"
+      - "StWars:d=4,o=5,b=180:8f,8f,8f,2a#.,2f.6,8d#6,8d6,8c6,2a#.6,f.6,8d#6,8d6,8c6,2a#.6,f.6,8d#6,8d6,8d#6,2c6,p,8f,8f,8f,2a#.,2f.6,8d#6,8d6,8c6,2a#.6,f.6,8d#6,8d6,8c6,2a#.6,f.6,8d#6,8d6,8d#6,2c6"
+      - "Cantina:d=4,o=5,b=250:8a,8p,8d6,8p,8a,8p,8d6,8p,8a,8d6,8p,8a,8p,8g#,a,8a,8g#,8a,g,8f#,8g,8f#,f.,8d.,16p,p.,8a,8p,8d6,8p,8a,8p,8d6,8p,8a,8d6,8p,8a,8p,8g#,8a,8p,8g,8p,g.,8f#,8g,8p,8c6,a#,a,g"
+      - "SWEnd:d=4,o=5,b=225:2c,1f,2g.,8g#,8a#,1g#,2c.,c,2f.,g,g#,c,8g#.,8c.,8c6,1a#.,2c,2f.,g,g#.,8f,c.6,8g#,1f6,2f,8g#.,8g.,8f,2c6,8c.6,8g#.,8f,2c,8c.,8c.,8c,2f,8f.,8f.,8f,2f"
+    optimistic: true
+    # set_action:
+    #   - logger.log:
+    #       format: "Chosen option: %s"
+    #       args: ["x.c_str()"]
+    web_server_sorting_weight: 110
+
+sensor:                                     # https://esphome.io/components/sensor/#base-sensor-configuration
+  - id: mhz19_id
+    platform: mhz19                         # https://esphome.io/components/sensor/mhz19
+    co2:
+      id: mhz19_CO2
+      name: "Качество воздуха [CO2] (MH-Z19)"
+      device_class: carbon_monoxide         # https://www.home-assistant.io/integrations/sensor/
+      icon: mdi:molecule-co2                # https://pictogrammers.com/library/mdi/
+      web_server_sorting_weight: 51
+    temperature:
+      id: mhz19_Temperature
+      name: "Температура (MH-Z19)"
+      device_class: temperature             # https://www.home-assistant.io/integrations/sensor/
+      icon: mdi:temperature-celsius         # https://pictogrammers.com/library/mdi/
+      web_server_sorting_weight: 52
+    update_interval: 60s
+    automatic_baseline_calibration: false
+    uart_id: mhz19_uart
+
+  - id: bme280
+    platform: bme280_i2c                    # https://esphome.io/components/sensor/bme280
+    i2c_id: bus
+    address: 0x76
+    update_interval: 15s
+    temperature:
+      id: bme280_Temperature
+      name: "Температура (BME280)"
+      device_class: temperature             # https://www.home-assistant.io/integrations/sensor/
+      icon: mdi:temperature-celsius         # https://pictogrammers.com/library/mdi/
+      web_server_sorting_weight: 41
+    humidity:
+      id: bme280_Humidity
+      name: "Влажность (BME280)"
+      device_class: humidity                # https://www.home-assistant.io/integrations/sensor/
+      icon: mdi:water-percent               # https://pictogrammers.com/library/mdi/
+      web_server_sorting_weight: 42
+    pressure:
+      id: bme280_Pressure
+      name: "Давление (BME280)"
+      device_class: pressure                # https://www.home-assistant.io/integrations/sensor/
+      icon: mdi:gauge                       # https://pictogrammers.com/library/mdi/
+      unit_of_measurement: "mm"
+      filters:
+        - lambda: return x * 0.750062;
+      web_server_sorting_weight: 43
+
+  - id: rot_enc
+    platform: rotary_encoder                # https://esphome.io/components/sensor/rotary_encoder
+    name: "Крутилка"
+    pin_a: 36
+    pin_b: 35
+    resolution: 2
+    restore_mode: ALWAYS_ZERO
+    publish_initial_value: True
+    web_server_sorting_weight: 62
+
+  # - id: rad_pulse_counter                   # https://devices.esphome.io/devices/geiger-counter
+  #   platform: pulse_counter
+  #   pin: 34
+  #   name: "Radiation"
+  #   unit_of_measurement: 'μSv/h'
+  #   count_mode:
+  #    rising_edge: DISABLE
+  #    falling_edge: INCREMENT
+  #   filters:
+  #     - offset: -12.0 # J305ß Geiger Mueller tube background noise 0.2 pulses / sec x 60 sec = 12 CPM (Counts per Minute)
+  #     - multiply: 0.00812037037037 # Factor: 0.00812037037037
+
+binary_sensor:                              # https://esphome.io/components/binary_sensor/
+  - id: pir
+    platform: gpio                          # https://esphome.io/components/binary_sensor/gpio
+    pin: 39
+    name: "Датчик движения"
+    device_class: motion                    # https://www.home-assistant.io/integrations/sensor/
+    web_server_sorting_weight: 10
+
+  - id: rot_enc_btn
+    platform: gpio                          # https://esphome.io/components/binary_sensor/gpio
+    name: "Кнопка на крутилке"
+    pin:                                    # https://esphome.io/guides/configuration-types#config-pin-schema
+      number: 33
+      inverted: true
+      mode:
+          input: True
+          pullup: True 
+    filters:
+      - delayed_on: 10ms
+    on_click: 
+      then:
+        - script.execute: script_run
+    web_server_sorting_weight: 61
+      
+# remote_receiver:                            # https://esphome.io/components/remote_receiver
+#     pin: 26
+#     rmt_channel: 3
+#     dump: all
+#     # - pronto
+
+text_sensor:                                # https://esphome.io/components/text_sensor/template
+  # - platform: template
+  #   id: time_text
+  #   name: 'Текущее время'
+  #   icon: "mdi:clock-outline"               # https://pictogrammers.com/library/mdi/
+  #   internal: False
+  #   web_server_sorting_weight: 1
+
+  - id: time_up_sensor
+    platform: homeassistant
+    entity_id: input_datetime.timeup
+    attribute: datetime
+    internal: True
+
+  - id: time_down_sensor
+    platform: homeassistant
+    entity_id: input_datetime.timedown
+    attribute: datetime
+    internal: True
+
+output:                                     # https://esphome.io/components/output/
+  - id: buzzer_output
+    platform: ledc                          # https://esphome.io/components/output/ledc
+    pin: 32
+    channel: 2
+
+  - id: led_output
+    platform: gpio                          # https://esphome.io/components/output/gpio
+    pin: 27
+
+rtttl:                                      # https://esphome.io/components/rtttl
+    id: buzzer
+    output: buzzer_output
+    gain: 20%
+    on_finished_playback: 
+      then:
+        - select.next:
+            id: buzzerMelode
+            cycle: True    
+
+light:
+  - platform: binary                        # https://esphome.io/components/light/binary
+    id: led_light
+    name: "LED Lamp"
+    output: led_output
+
+display:                                    # https://esphome.io/components/display/lcd_display
+  - platform: lcd_pcf8574                   # https://esphome.io/api/classesphome_1_1lcd__base_1_1_l_c_d_display
+    i2c_id: bus
+    address: 0x27
+    id: lcd
+    dimensions: 16x2
+    user_characters: 
+      - position: 0
+        data: 
+        - 0b00000
+        - 0b00000
+        - 0b01110
+        - 0b10001
+        - 0b10101
+        - 0b10001
+        - 0b01110
+        - 0b00000
+      - position: 1
+        data: 
+        - 0b00000
+        - 0b00000
+        - 0b00000
+        - 0b00000
+        - 0b00000
+        - 0b11111
+        - 0b11111
+        - 0b11111
+      - position: 2
+        data: 
+        - 0b11111
+        - 0b11111
+        - 0b11111
+        - 0b00000
+        - 0b00000
+        - 0b00000
+        - 0b00000
+        - 0b00000
+      - position: 3
+        data: 
+        - 0b11111
+        - 0b11111
+        - 0b11111
+        - 0b00000
+        - 0b00000
+        - 0b00000
+        - 0b11111
+        - 0b11111
+      - position: 4
+        data: 
+        - 0b00111
+        - 0b01111
+        - 0b11111
+        - 0b11111
+        - 0b11111
+        - 0b11111
+        - 0b11111
+        - 0b11111
+      - position: 5
+        data: 
+        - 0b11100
+        - 0b11110
+        - 0b11111
+        - 0b11111
+        - 0b11111
+        - 0b11111
+        - 0b11111
+        - 0b11111
+      - position: 6
+        data: 
+        - 0b11111
+        - 0b11111
+        - 0b11111
+        - 0b11111
+        - 0b11111
+        - 0b11111
+        - 0b01111
+        - 0b00111
+      - position: 7
+        data: 
+        - 0b11111
+        - 0b11111
+        - 0b11111
+        - 0b11111
+        - 0b11111
+        - 0b11111
+        - 0b11110
+        - 0b11100
+    # update_interval: 20s
+    # https://esphome.io/components/display/#display-printf
+    # https://esphome.io/api/classesphome_1_1sensor_1_1_sensor
+    # https://esphome.io/cookbook/lambda_magic#lambda-magic-pages
+    lambda: |-                              
+      it.clear();
+      auto index = id(displayScreen).active_index();
+      switch (index.value()) {
+        case 0:
+          if (id(time_device).now().is_valid())
+            it.print(4, 0, id(time_device).now().strftime("%H:%M:%S"));
+          if (id(bme280_Temperature).has_state())
+            it.printf(1, 1, "%.0f\xDF", id(bme280_Temperature).state);
+          if (id(bme280_Humidity).has_state())
+            it.printf(6, 1, "%.0f%%", id(bme280_Humidity).state);
+          if (id(bme280_Pressure).has_state())
+            it.printf(11, 1, "%.0fm", id(bme280_Pressure).state);
+          if (id(pir).has_state()) {
+            if (id(pir).state)
+              it.printf(15, 0, "\x08");
+            else
+              it.printf(15, 0, " ");
+          }
+          break;
+        case 1:
+          if (id(time_device).now().is_valid())
+            it.print(4, 0, id(time_device).now().strftime("%H:%M:%S"));
+          if (id(mhz19_Temperature).has_state())
+            it.printf(1, 1, "%.0f\xDF", id(mhz19_Temperature).state);
+          if (id(mhz19_CO2).has_state())
+            it.printf(11, 1, "%.0fp", id(mhz19_CO2).state);
+          if (id(pir).has_state()) {
+            if (id(pir).state)
+              it.printf(15, 0, "\x08");
+            else
+              it.printf(15, 0, " ");
+          }
+          break;
+        case 2:
+          static char top[10][4] = {
+            "\x04""\x02""\x05", "\x02""\x05""\x20", "\x02""\x03""\x05", "\x02""\x03""\x07", "\x04""\x01""\xFF", "\x06""\x03""\x02", "\x04""\x03""\x02", "\x02""\x02""\x05", "\x06""\x03""\x07", "\x06""\x03""\x05",
+          };
+          static char bottom[10][4] = {
+            "\x06""\x01""\x07", "\x01""\xFF""\x01", "\x04""\x03""\x01", "\x01""\x03""\x05", "\x20""\x20""\xFF", "\x01""\x03""\x05", "\x06""\x03""\x05", "\x20""\x20""\xFF", "\x04""\x03""\x05", "\x01""\x03""\x07"
+          };
+          if (id(time_device).now().is_valid()) {
+            auto timeOfDay = id(time_device).now();
+            uint8_t cnt;
+            uint8_t hour = timeOfDay.hour;
+            uint8_t minute = timeOfDay.minute;
+
+            cnt = 0;
+            while (hour >= 10) { cnt += 1; hour -= 10; }
+            it.print(0, 0, top[cnt]);
+            it.print(0, 1, bottom[cnt]);
+            it.print(4, 0, top[hour]);
+            it.print(4, 1, bottom[hour]);
+
+            cnt = 0;
+            while (minute >= 10) {cnt += 1; minute -= 10; }
+            it.print(9, 0, top[cnt]);
+            it.print(9, 1, bottom[cnt]);
+            it.print(13, 0, top[minute]);
+            it.print(13, 1, bottom[minute]);
+          }
+          break;
+      }
+
+web_server:                                 # https://esphome.io/components/web_server
+  port: 80
+  version: 3
+  local: True
+
+script:
+  - id: script_run
+    mode: single
+    then:
+      - light.turn_on: led_light
+      - rtttl.play:
+          rtttl: !lambda 'return id(buzzerMelode).state;'
+      - delay: 10s
+      - light.turn_off: led_light
