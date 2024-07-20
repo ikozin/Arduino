@@ -29,7 +29,7 @@ esp32:                                      # https://esphome.io/components/esp3
 
 # Enable logging
 logger:                                     # https://esphome.io/components/logger
-  level: ERROR
+  level: VERBOSE
 
 wifi:                                       # https://esphome.io/components/wifi
   ssid: !secret wifi_ssid
@@ -364,11 +364,43 @@ binary_sensor:                              # https://esphome.io/components/bina
         - script.execute: script_run_working
     web_server_sorting_weight: 71
       
-# remote_receiver:                            # https://esphome.io/components/remote_receiver
-#     pin: 26
-#     rmt_channel: 3
-#     dump: all
-#     # - pronto
+remote_receiver:                            # https://esphome.io/components/remote_receiver
+  pin:
+    number: 26
+    inverted: true
+    mode:
+      input: true
+      pullup: true
+  dump: nec
+  on_nec: 
+    then:
+      - if:
+          condition:
+            - lambda: 'return (x.command == 0xBA45);'
+          then:
+            - script.execute: script_run_working
+
+# 'return (x.data == 0xBA45);'
+# 'return (x.data == 0xB946);'
+# 'return (x.data == 0xB847);'
+# 'return (x.data == 0xBB44);'
+# 'return (x.data == 0xBF40);'
+# 'return (x.data == 0xBC43);'
+# 'return (x.data == 0xF807);'
+# 'return (x.data == 0xEA15);'
+# 'return (x.data == 0xF609);'
+# 'return (x.data == 0xE916);'
+# 'return (x.data == 0xE619);'
+# 'return (x.data == 0xF20D);'
+# 'return (x.data == 0xF30C);'
+# 'return (x.data == 0xE718);'
+# 'return (x.data == 0xA15E);'
+# 'return (x.data == 0xF708);'
+# 'return (x.data == 0xE31C);'
+# 'return (x.data == 0xA55A);'
+# 'return (x.data == 0xBD42);'
+# 'return (x.data == 0xAD52);'
+# 'return (x.data == 0xB54A);'
 
 text_sensor:                                # https://esphome.io/components/text_sensor/template
   # - platform: template
