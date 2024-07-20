@@ -31,8 +31,8 @@ wifi:                                       # https://esphome.io/components/wifi
   ssid: !secret wifi_ssid
   password: !secret wifi_password
   manual_ip:
-    static_ip: 192.168.2.10
-    gateway: 192.168.2.1
+    static_ip: !secret wifi_static_ip
+    gateway: !secret wifi_gateway
     subnet: 255.255.255.0
   ap:
     ssid: "Ttgo-T7-V13-Mini32"
