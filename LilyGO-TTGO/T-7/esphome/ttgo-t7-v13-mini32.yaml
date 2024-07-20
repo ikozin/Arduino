@@ -15,17 +15,21 @@ esphome:                                    # https://esphome.io/components/esph
         #       time.has_time
         #       # lambda: |-
         #       #   return (id(time_device).now().is_valid());
-
+  libraries:
+    - Wire
+    - "climateguard/ClimateGuard RadSens"   # https://github.com/maaad/RadSens1v2
+  includes:
+    - RadSens1v2/_CG_RadSens.h
 
 esp32:                                      # https://esphome.io/components/esp32
   board: ttgo-t7-v13-mini32                 # https://registry.platformio.org/platforms/platformio/espressif32/boards
   framework:
-    # type: arduino                           # https://esphome.io/components/esp32#arduino-framework
-    type: esp-idf                           # https://esphome.io/components/esp32#esp-idf-framework
+    type: arduino                           # https://esphome.io/components/esp32#arduino-framework
+    # type: esp-idf                           # https://esphome.io/components/esp32#esp-idf-framework
 
 # Enable logging
 logger:                                     # https://esphome.io/components/logger
-  level: VERBOSE
+  level: ERROR
 
 wifi:                                       # https://esphome.io/components/wifi
   ssid: !secret wifi_ssid
@@ -57,12 +61,12 @@ ota:
 time:                                       # https://esphome.io/components/time/
   - id: time_device
     timezone: Europe/Moscow
-    # platform: homeassistant                 # https://esphome.io/components/time/homeassistant
-    platform: sntp                          # https://esphome.io/components/time/sntp
-    servers:
-      - ntp1.vniiftri.ru
-      - ntp2.vniiftri.ru
-      - ntp3.vniiftri.ru
+    platform: homeassistant                 # https://esphome.io/components/time/homeassistant
+    # platform: sntp                          # https://esphome.io/components/time/sntp
+    # servers:
+    #   - ntp1.vniiftri.ru
+    #   - ntp2.vniiftri.ru
+    #   - ntp3.vniiftri.ru
     # on_time:
     #   - seconds: /1
     #     then:
@@ -76,35 +80,65 @@ time:                                       # https://esphome.io/components/time
 #     initial_value: "1"
 
 datetime:                                   # https://esphome.io/components/datetime/
-  - id: alarm_time_up
+  - id: alarm_time_up_working
     platform: template                      # https://esphome.io/components/datetime/template
     type: time
-    name: "Время подъема"
+    name: "Время подъема (Рабочий)"
     optimistic: yes
     restore_value: true
-    icon: mdi:timer-outline                 # https://pictogrammers.com/library/mdi/
+    icon: mdi:clock-time-eight-outline      # https://pictogrammers.com/library/mdi/
     initial_value:
       hour: 7
       minute: 10
       second: 0
     on_time:
-      - script.execute: script_run
+      - script.execute: script_run_working
     web_server_sorting_weight: 20
 
-  - id: alarm_time_down
+  - id: alarm_time_down_working
     platform: template                      # https://esphome.io/components/datetime/template
     type: time
-    name: "Время сна"
+    name: "Время сна (Рабочий)"
     optimistic: yes
     restore_value: true
-    icon: mdi:timer-outline                 # https://pictogrammers.com/library/mdi/
+    icon: mdi:clock-time-eleven             # https://pictogrammers.com/library/mdi/
     initial_value:
       hour: 23
       minute: 0
       second: 0
     on_time:
-      - script.execute: script_run
+      - script.execute: script_down_working
+    web_server_sorting_weight: 21
+
+  - id: alarm_time_up_weekend
+    platform: template                      # https://esphome.io/components/datetime/template
+    type: time
+    name: "Время подъема (Выходной)"
+    optimistic: yes
+    restore_value: true
+    icon: mdi:clock-time-eight-outline      # https://pictogrammers.com/library/mdi/
+    initial_value:
+      hour: 8
+      minute: 0
+      second: 0
+    on_time:
+      - script.execute: script_run_weekend
     web_server_sorting_weight: 30
+
+  - id: alarm_time_down_weekend
+    platform: template                      # https://esphome.io/components/datetime/template
+    type: time
+    name: "Время сна (Выходной)"
+    optimistic: yes
+    restore_value: true
+    icon: mdi:clock-time-eleven             # https://pictogrammers.com/library/mdi/
+    initial_value:
+      hour: 23
+      minute: 0
+      second: 0
+    on_time:
+      - script.execute: script_down_weekend
+    web_server_sorting_weight: 31
 
 interval:                                   # https://esphome.io/components/interval
   # - interval: 1s
@@ -206,6 +240,7 @@ sensor:                                     # https://esphome.io/components/sens
       name: "Качество воздуха [CO2] (MH-Z19)"
       device_class: carbon_monoxide         # https://www.home-assistant.io/integrations/sensor/
       icon: mdi:molecule-co2                # https://pictogrammers.com/library/mdi/
+      state_topic: "co2/state"
       web_server_sorting_weight: 51
     temperature:
       id: mhz19_Temperature
@@ -252,19 +287,58 @@ sensor:                                     # https://esphome.io/components/sens
     resolution: 2
     restore_mode: ALWAYS_ZERO
     publish_initial_value: True
-    web_server_sorting_weight: 62
+    web_server_sorting_weight: 72
 
-  # - id: rad_pulse_counter                   # https://devices.esphome.io/devices/geiger-counter
-  #   platform: pulse_counter
-  #   pin: 34
-  #   name: "Radiation"
-  #   unit_of_measurement: 'μSv/h'
-  #   count_mode:
-  #    rising_edge: DISABLE
-  #    falling_edge: INCREMENT
-  #   filters:
-  #     - offset: -12.0 # J305ß Geiger Mueller tube background noise 0.2 pulses / sec x 60 sec = 12 CPM (Counts per Minute)
-  #     - multiply: 0.00812037037037 # Factor: 0.00812037037037
+  - id: rad_pulse_counter                   # https://devices.esphome.io/devices/geiger-counter
+    platform: pulse_counter
+    pin: 34
+    name: "Радиационный фон"
+    unit_of_measurement: 'μSv/h'
+    icon: mdi:radioactive-circle-outline    # https://pictogrammers.com/library/mdi/
+    count_mode:
+     rising_edge: DISABLE
+     falling_edge: INCREMENT
+    filters:
+      - offset: -12.0 # J305ß Geiger Mueller tube background noise 0.2 pulses / sec x 60 sec = 12 CPM (Counts per Minute)
+      - multiply: 0.00812037037037 # Factor: 0.00812037037037
+    web_server_sorting_weight: 60
+
+  # - id: rad_sens
+  #   platform: custom
+  #   lambda: |-
+  #     auto rad_sens = new MyRadSens();
+  #     App.register_component(rad_sens);
+  #     return {rad_sens->IntensityDynamic_Sensor,rad_sens->IntensityStatic_Sensor, rad_sens->CurrentCPM_Sensor, rad_sens->MaxCPM_Sensor,rad_sens->Sensivity_Sensor};
+  #   sensors:
+  #     - id: dynamic_intensity
+  #       name: "Dynamic intensity"
+  #       accuracy_decimals: 1
+  #       unit_of_measurement: μR/h
+  #       state_class: measurement
+  #       icon: mdi:radioactive-circle-outline  # https://pictogrammers.com/library/mdi/
+  #     - id: static_intensity
+  #       name: "Static intensity"
+  #       accuracy_decimals: 1
+  #       unit_of_measurement: μR/h
+  #       state_class: measurement
+  #       icon: mdi:radioactive-circle-outline  # https://pictogrammers.com/library/mdi/
+  #     - id: current_cpm
+  #       name: "Current CPM"
+  #       accuracy_decimals: 1
+  #       unit_of_measurement: CPM
+  #       state_class: measurement
+  #       icon: mdi:radioactive-circle-outline  # https://pictogrammers.com/library/mdi/
+  #     - id: max_cpm
+  #       name: "Max CPM"
+  #       accuracy_decimals: 1
+  #       unit_of_measurement: CPM
+  #       state_class: measurement
+  #       icon: mdi:radioactive-circle-outline  # https://pictogrammers.com/library/mdi/
+  #     - id: sensivity
+  #       name: "Device Sensivity"
+  #       state_class: measurement
+  #       entity_category: diagnostic
+  #       icon: mdi:radioactive-circle-outline  # https://pictogrammers.com/library/mdi/
 
 binary_sensor:                              # https://esphome.io/components/binary_sensor/
   - id: pir
@@ -287,8 +361,8 @@ binary_sensor:                              # https://esphome.io/components/bina
       - delayed_on: 10ms
     on_click: 
       then:
-        - script.execute: script_run
-    web_server_sorting_weight: 61
+        - script.execute: script_run_working
+    web_server_sorting_weight: 71
       
 # remote_receiver:                            # https://esphome.io/components/remote_receiver
 #     pin: 26
@@ -304,17 +378,30 @@ text_sensor:                                # https://esphome.io/components/text
   #   internal: False
   #   web_server_sorting_weight: 1
 
-  - id: time_up_sensor
+  - id: time_up_working_sensor
     platform: homeassistant
-    entity_id: input_datetime.timeup
+    entity_id: input_datetime.alarm_time_up_working
     attribute: datetime
     internal: True
 
-  - id: time_down_sensor
+  - id: time_down_working_sensor
     platform: homeassistant
-    entity_id: input_datetime.timedown
+    entity_id: input_datetime.alarm_time_down_working
     attribute: datetime
     internal: True
+
+  - id: time_up_weekend_sensor
+    platform: homeassistant
+    entity_id: input_datetime.alarm_time_up_weekend
+    attribute: datetime
+    internal: True
+
+  - id: time_down_weekend_sensor
+    platform: homeassistant
+    entity_id: input_datetime.alarm_time_down_weekend
+    attribute: datetime
+    internal: True
+
 
 output:                                     # https://esphome.io/components/output/
   - id: buzzer_output
@@ -339,7 +426,7 @@ rtttl:                                      # https://esphome.io/components/rttt
 light:
   - platform: binary                        # https://esphome.io/components/light/binary
     id: led_light
-    name: "LED Lamp"
+    name: "Индикатор"
     output: led_output
 
 display:                                    # https://esphome.io/components/display/lcd_display
@@ -500,10 +587,11 @@ display:                                    # https://esphome.io/components/disp
 web_server:                                 # https://esphome.io/components/web_server
   port: 80
   version: 3
+  log: False
   local: True
 
 script:
-  - id: script_run
+  - id: script_run_working
     mode: single
     then:
       - light.turn_on: led_light
@@ -511,3 +599,24 @@ script:
           rtttl: !lambda 'return id(buzzerMelode).state;'
       - delay: 10s
       - light.turn_off: led_light
+
+  - id: script_down_working
+    mode: single
+    then:
+      - light.turn_off: led_light
+
+  - id: script_run_weekend
+    mode: single
+    then:
+      - light.turn_on: led_light
+      - rtttl.play:
+          rtttl: !lambda 'return id(buzzerMelode).state;'
+      - delay: 10s
+      - light.turn_off: led_light
+
+  - id: script_down_weekend
+    mode: single
+    then:
+      - light.turn_off: led_light
+
+
