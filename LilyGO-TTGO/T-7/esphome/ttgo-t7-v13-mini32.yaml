@@ -15,10 +15,10 @@ esphome:                                    # https://esphome.io/components/esph
         #       time.has_time
         #       # lambda: |-
         #       #   return (id(time_device).now().is_valid());
-  libraries:
+  libraries:                                # https://esphome.io/components/esphome#libraries
     - Wire
     - "climateguard/ClimateGuard RadSens"   # https://github.com/maaad/RadSens1v2
-  includes:
+  includes:                                 # https://esphome.io/components/esphome#esphome-includes
     - RadSens1v2/_CG_RadSens.h
 
 esp32:                                      # https://esphome.io/components/esp32
@@ -29,7 +29,7 @@ esp32:                                      # https://esphome.io/components/esp3
 
 # Enable logging
 logger:                                     # https://esphome.io/components/logger
-  level: VERBOSE
+  level: NONE
 
 wifi:                                       # https://esphome.io/components/wifi
   ssid: !secret wifi_ssid
@@ -54,7 +54,7 @@ mqtt:                                       # https://esphome.io/components/mqtt
   username: !secret mqtt_user
   password: !secret mqtt_password
 
-ota:
+ota:                                        # https://esphome.io/components/ota/
   - platform: esphome
     password: "65abeae31ea9a83d956fe2d5078fb069"
 
@@ -154,7 +154,7 @@ interval:                                   # https://esphome.io/components/inte
   #             state: !lambda return id(time_device).now().strftime("%H:%M:%S");
   - interval: 10s
     then:
-      - select.next:
+      - select.next:                        # https://esphome.io/components/select/#select-next-action
           id: displayScreen
           cycle: True    
       # - lambda: |-
@@ -180,7 +180,7 @@ uart:                                       # https://esphome.io/components/uart
     tx_pin: 17
     baud_rate: 9600
 
-select:
+select:                                     # https://esphome.io/components/select/
   - id: displayScreen
     platform: template
     name: "Экран"
@@ -190,10 +190,10 @@ select:
       - "MHZ19"
       - "TIME"
     optimistic: true
-    set_action:
-      - logger.log:
-          format: "Display: %s"
-          args: ["x.c_str()"]
+    # set_action:
+    #   - logger.log:
+    #       format: "Display: %s"
+    #       args: ["x.c_str()"]
     web_server_sorting_weight: 100
 
   - id: buzzerMelode
@@ -296,8 +296,8 @@ sensor:                                     # https://esphome.io/components/sens
     unit_of_measurement: 'μSv/h'
     icon: mdi:radioactive-circle-outline    # https://pictogrammers.com/library/mdi/
     count_mode:
-     rising_edge: DISABLE
-     falling_edge: INCREMENT
+      rising_edge: DISABLE
+      falling_edge: INCREMENT
     filters:
       - offset: -12.0 # J305ß Geiger Mueller tube background noise 0.2 pulses / sec x 60 sec = 12 CPM (Counts per Minute)
       - multiply: 0.00812037037037 # Factor: 0.00812037037037
@@ -365,7 +365,7 @@ binary_sensor:                              # https://esphome.io/components/bina
     web_server_sorting_weight: 71
       
 remote_receiver:                            # https://esphome.io/components/remote_receiver
-  pin:
+  pin:                                      # https://esphome.io/guides/configuration-types#config-pin-schema
     number: 26
     inverted: true
     mode:
@@ -374,33 +374,40 @@ remote_receiver:                            # https://esphome.io/components/remo
   dump: nec
   on_nec: 
     then:
-      - if:
-          condition:
+      - if:                                 # https://esphome.io/automations/actions#if-action
+          condition:                        # https://esphome.io/automations/actions#common-conditions
             - lambda: 'return (x.command == 0xBA45);'
           then:
             - script.execute: script_run_working
+      - if:                                 # https://esphome.io/automations/actions#if-action
+          condition:                        # https://esphome.io/automations/actions#common-conditions
+            - lambda: 'return (x.command == 0xB847);'
+          then:
+          - select.next:                    # https://esphome.io/components/select/#select-next-action
+              id: displayScreen
+              cycle: True    
 
-# 'return (x.data == 0xBA45);'
-# 'return (x.data == 0xB946);'
-# 'return (x.data == 0xB847);'
-# 'return (x.data == 0xBB44);'
-# 'return (x.data == 0xBF40);'
-# 'return (x.data == 0xBC43);'
-# 'return (x.data == 0xF807);'
-# 'return (x.data == 0xEA15);'
-# 'return (x.data == 0xF609);'
-# 'return (x.data == 0xE916);'
-# 'return (x.data == 0xE619);'
-# 'return (x.data == 0xF20D);'
-# 'return (x.data == 0xF30C);'
-# 'return (x.data == 0xE718);'
-# 'return (x.data == 0xA15E);'
-# 'return (x.data == 0xF708);'
-# 'return (x.data == 0xE31C);'
-# 'return (x.data == 0xA55A);'
-# 'return (x.data == 0xBD42);'
-# 'return (x.data == 0xAD52);'
-# 'return (x.data == 0xB54A);'
+# 'return (x.command == 0xBA45);'
+# 'return (x.command == 0xB946);'
+# 'return (x.command == 0xB847);'
+# 'return (x.command == 0xBB44);'
+# 'return (x.command == 0xBF40);'
+# 'return (x.command == 0xBC43);'
+# 'return (x.command == 0xF807);'
+# 'return (x.command == 0xEA15);'
+# 'return (x.command == 0xF609);'
+# 'return (x.command == 0xE916);'
+# 'return (x.command == 0xE619);'
+# 'return (x.command == 0xF20D);'
+# 'return (x.command == 0xF30C);'
+# 'return (x.command == 0xE718);'
+# 'return (x.command == 0xA15E);'
+# 'return (x.command == 0xF708);'
+# 'return (x.command == 0xE31C);'
+# 'return (x.command == 0xA55A);'
+# 'return (x.command == 0xBD42);'
+# 'return (x.command == 0xAD52);'
+# 'return (x.command == 0xB54A);'
 
 text_sensor:                                # https://esphome.io/components/text_sensor/template
   # - platform: template
@@ -448,10 +455,10 @@ output:                                     # https://esphome.io/components/outp
 rtttl:                                      # https://esphome.io/components/rtttl
     id: buzzer
     output: buzzer_output
-    gain: 20%
+    gain: 80%
     on_finished_playback: 
       then:
-        - select.next:
+        - select.next:                      # https://esphome.io/components/select/#select-next-action
             id: buzzerMelode
             cycle: True    
 
@@ -554,7 +561,7 @@ display:                                    # https://esphome.io/components/disp
     # https://esphome.io/cookbook/lambda_magic#lambda-magic-pages
     lambda: |-                              
       it.clear();
-      auto index = id(displayScreen).active_index();
+      auto index = id(displayScreen).active_index();  // https://esphome.io/components/select/#lambda-calls
       switch (index.value()) {
         case 0:
           if (id(time_device).now().is_valid())
@@ -622,7 +629,7 @@ web_server:                                 # https://esphome.io/components/web_
   log: False
   local: True
 
-script:
+script:                                     # https://esphome.io/components/script
   - id: script_run_working
     mode: single
     then:
