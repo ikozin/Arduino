@@ -1,5 +1,4 @@
-#ifndef _LOGGING_H_
-#define _LOGGING_H_
+#pragma once
 
 #include <Arduino.h>
 
@@ -11,6 +10,4 @@
 #else
     #define LOG(...)
     #define LOGN(...)
-#endif
-
 #endif

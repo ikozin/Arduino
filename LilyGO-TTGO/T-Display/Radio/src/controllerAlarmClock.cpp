@@ -5,7 +5,8 @@
 
 ControllerAlarmClock ctrlAlarmClock = ControllerAlarmClock("ctrlAlarm");
 
-ControllerAlarmClock::ControllerAlarmClock(const char* name) : Controller(name) {
+ControllerAlarmClock::ControllerAlarmClock(const char* name):
+                        Controller(name) {
     _radio = nullptr;
 
     _alarmClockCount = 0;
@@ -18,8 +19,13 @@ ControllerAlarmClock& ControllerAlarmClock::attachControllerRadio(ControllerRadi
     return *this;
 }
 
-void ControllerAlarmClock::OnHandle() {
-    LOGN("ControllerAlarmClock::OnHandle")
+InitResponse_t ControllerAlarmClock::OnInit() {
+    return OnInitResultOK;
+}
+
+bool ControllerAlarmClock::OnIteration() {
+    LOGN("ControllerAlarmClock::OnIteration")
+
     File f = SPIFFS.open(FS_ALARMLIST_FILE);
     if (f) {
         DynamicJsonDocument  doc(2048);
@@ -60,6 +66,7 @@ void ControllerAlarmClock::OnHandle() {
     for (int i = 0; i < _alarmClockCount; i++) {
         startTimer(i);    
     }
+    return false;
 }
 
 void ControllerAlarmClock::startTimer(int index) {

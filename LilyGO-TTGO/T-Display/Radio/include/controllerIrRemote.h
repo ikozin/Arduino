@@ -1,5 +1,4 @@
-#ifndef _CONTROLLERIRREMOTE_H_
-#define _CONTROLLERIRREMOTE_H_
+#pragma once
 
 #include "controller.h"
 #include "controllerRadio.h"
@@ -8,7 +7,8 @@ class ControllerIrRemote : public Controller {
     public:
         ControllerIrRemote();
     protected:
-        virtual void OnHandle() override;
+        virtual InitResponse_t OnInit() override;
+        virtual bool OnIteration() override;
     private:
         ControllerRadio* _radio;
     public:
@@ -16,5 +16,3 @@ class ControllerIrRemote : public Controller {
 };
 
 //extern ControllerIrRemote ctrlIrRemote;
-
-#endif  //_CONTROLLERIRREMOTE_H_

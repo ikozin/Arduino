@@ -1,5 +1,4 @@
-#ifndef _SETTING_H_
-#define _SETTING_H_
+#pragma once
 
 #include <Arduino.h>
 #include <WiFi.h>
@@ -11,5 +10,3 @@
 #include "logging.h"
 
 void setSettings(Preferences& prefs, TFT_eSPI& tft, AsyncWebServer& server);
-
-#endif

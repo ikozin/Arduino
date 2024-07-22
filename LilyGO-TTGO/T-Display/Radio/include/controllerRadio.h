@@ -1,5 +1,4 @@
-#ifndef _CONTROLLERRADIO_H_
-#define _CONTROLLERRADIO_H_
+#pragma once
 
 #include <Preferences.h>
 #include "controller.h"
@@ -29,7 +28,8 @@ class ControllerRadio : public Controller {
 
         uint8_t GetRssi() { return _radio.GetRssi(); }
     protected:
-        virtual void OnHandle() override;
+        virtual InitResponse_t OnInit() override;
+        virtual bool OnIteration() override;
     private:
         Preferences* _prefs;
         RadioStorage* _storage;
@@ -38,5 +38,3 @@ class ControllerRadio : public Controller {
         uint16_t _currentIndex;
         bool _isMute; 
 };
-
-#endif  //_CONTROLLERRADIO_H_

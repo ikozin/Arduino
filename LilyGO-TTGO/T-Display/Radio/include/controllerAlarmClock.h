@@ -1,5 +1,4 @@
-#ifndef _CONTROLLERALARMCLOCK_H_
-#define _CONTROLLERALARMCLOCK_H_
+#pragma once
 
 #include <Arduino.h>
 #include "controller.h"
@@ -56,11 +55,10 @@ class ControllerAlarmClock : public Controller {
         void startTimer(int index);
         static void timerCallback(TimerHandle_t pxTimer);
     protected:
-        void OnHandle() override;
+        virtual InitResponse_t OnInit() override;
+        virtual bool OnIteration() override;
     public:
         ControllerAlarmClock& attachControllerRadio(ControllerRadio* radio);
 };
 
 extern ControllerAlarmClock ctrlAlarmClock;
-
-#endif  //_CONTROLLERALARMCLOCK_H_

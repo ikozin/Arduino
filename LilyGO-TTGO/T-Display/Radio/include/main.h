@@ -1,5 +1,4 @@
-#ifndef _MAIN_H_
-#define _MAIN_H_
+#pragma once
 
 #include <Arduino.h>
 #include <Preferences.h>
@@ -21,5 +20,3 @@ void setDisplayPageNext(void);
 void setDisplayPagePrev(void);
 
 void logTime();
-
-#endif  //_MAIN_H_

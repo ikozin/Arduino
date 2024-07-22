@@ -1,5 +1,4 @@
-#ifndef _VIEWRADIO_H_
-#define _VIEWRADIO_H_
+#pragma once
 
 #include "view.h"
 #include "controllerRadio.h"
@@ -12,5 +11,3 @@ class ViewRadio : public View {
     protected:
         virtual void OnHandle() override;
 };
-
-#endif  //_VIEWRADIO_H_

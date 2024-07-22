@@ -1,5 +1,4 @@
-#ifndef _VIEW_H_
-#define _VIEW_H_
+#pragma once
 
 #include <Arduino.h>
 #include <TFT_eSPI.h>
@@ -25,5 +24,3 @@ class View{
     private:
         static void ViewHandler(void* parameter);
 };
-
-#endif  //_VIEW_H_

@@ -1,9 +1,24 @@
-#ifndef _CONTROLLER_H_
-#define _CONTROLLER_H_
+#pragma once
+// https://docs.espressif.com/projects/esp-idf/en/v5.0/esp32/api-reference/system/freertos.html#task-api
 
 #include <Arduino.h>
 #include "logging.h"
 #include "main.h"
+
+typedef enum InitCode {
+    INIT_ERROR = -1,
+    INIT_OK = 0,
+} InitCode_t;
+
+typedef union Response {
+    int16_t DelaySeconds;
+    InitCode_t Code;
+} InitResponse_t;
+
+#define OnInitResultOK              (InitResponse_t){ .Code = InitCode_t::INIT_OK }
+#define OnInitResultERROR           (InitResponse_t){ .Code = InitCode_t::INIT_ERROR }
+#define OnInitDelayInSec(delay)     (InitResponse_t){ .DelaySeconds = delay }
+
 
 class Controller {
     public:
@@ -12,12 +27,16 @@ class Controller {
         SemaphoreHandle_t GetEvent() const { return _updateEvent; };
     protected:
         const char* _name;
+        uint32_t  _updateTimeInSec;
         SemaphoreHandle_t _updateEvent;
         TaskHandle_t _task;
     protected:
-        virtual void OnHandle() = 0;
+        virtual InitResponse_t OnInit() = 0;
+        virtual bool OnIteration() = 0;
+        virtual void OnHandle();
+    protected:
+        static void DelayInSec(uint32_t seconds);
+        static void DelayInMin(uint32_t minutes);
     private:
         static void ControllerHandler(void* parameter);
 };
-
-#endif  //_CONTROLLER_H_

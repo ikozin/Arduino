@@ -44,10 +44,10 @@ void ViewWeather::OnHandle() {
     _sprite->setTextDatum(TL_DATUM);
 
     posX = ((int32_t)91 - _sprite->textWidth(_weather->weatherTemperature)) >> 1;
-    _sprite->drawString(_weather->weatherTemperature, 122, 10);
+    _sprite->drawString(_weather->weatherTemperature, 80, 10);
     _sprite->unloadFont();
 
-    drawImageFile(_weather->iconFileName.c_str(), 0, 0, 64);
+    drawImageFile(_weather->iconFileName.c_str(), 3, 0, 64);
 }
 
 void ViewWeather::drawTextBlock(int32_t left, int32_t top, int32_t width, const String &text) {

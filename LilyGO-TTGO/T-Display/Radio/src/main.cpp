@@ -22,6 +22,7 @@
 #include "controller.h"
 #include "controllerAlarmClock.h"
 #include "controllerDevice.h"
+#include "controllerMHZ19.h"
 #include "controllerIrRemote.h"
 #include "controllerTime.h"
 #include "controllerRadio.h"
@@ -42,9 +43,10 @@
 
 //#define RADIO_ENABLE
 //#define WEATHER_ENABLE
-//#define DEVICE_ENABLE
+#define DEVICE_ENABLE
+// #define MHZ19_ENABLE
 //#define TIME_ENABLE
-//#define IR_ENABLE
+// #define IR_ENABLE
 //#define WIFI_ENABLE
 
 #if defined(WEATHER_ENABLE)
@@ -96,6 +98,10 @@ ViewDevice viewDevice = ViewDevice("ViewDevice", &currentView, &ctrlDevice);
 #ifdef TIME_ENABLE
 ControllerTime ctrlTime = ControllerTime("CtrlTime", &prefs);
 ViewTime viewTime = ViewTime("ViewTime", &currentView, &ctrlTime);
+#endif
+
+#ifdef MHZ19_ENABLE
+ControllerMHZ19 ctrlMHZ19 = ControllerMHZ19("CtrlMHZ19");
 #endif
 
 View* viewList[] = {
@@ -160,7 +166,7 @@ void boardInfo(Print& stream) {
 }
 
 void setup() {
-    Serial.begin(57600);
+    Serial.begin(115200);
 
     boardInfo(Serial);
 
@@ -259,6 +265,9 @@ void setup() {
 #endif
 #ifdef DEVICE_ENABLE
     ctrlDevice.Start();
+#endif
+#ifdef MHZ19_ENABLE
+    ctrlMHZ19.Start();
 #endif
 #ifdef IR_ENABLE
     ctrlIrRemote.attachControllerRadio(&ctrlRadio);

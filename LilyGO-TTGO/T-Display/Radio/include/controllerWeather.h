@@ -1,11 +1,8 @@
-#ifndef _CONTROLLERWEATHER_H_
-#define _CONTROLLERWEATHER_H_
+#pragma once
 
 #include "controller.h"
 #include <HTTPClient.h>
 #include <ArduinoJson.h>
-
-#define UPDATE_WEATHER_TIME (20 * 60000 / portTICK_RATE_MS)
 
 class ControllerWeather : public Controller {
     public:
@@ -22,12 +19,10 @@ class ControllerWeather : public Controller {
         String iconFileName;
         String windFileName;
     protected:
-        virtual void OnHandle() override;
+        virtual InitResponse_t OnInit() override;
+        virtual bool OnIteration() override;
     private:
         StaticJsonDocument<2048> _doc;
         uint16_t ColorToRGB565(const uint8_t r, const uint8_t g, const uint8_t b);
         bool parseWeatherInfo(HTTPClient& client, String& payload);
 };
-
-
-#endif  //_CONTROLLERWEATHER_H_

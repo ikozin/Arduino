@@ -1,7 +1,8 @@
 #include "controllerRadio.h"
 #include "main.h"
 
-ControllerRadio::ControllerRadio(const char* name, Preferences* prefs, RadioStorage* storage) : Controller(name) {
+ControllerRadio::ControllerRadio(const char* name, Preferences* prefs, RadioStorage* storage):
+                    Controller(name) {
     _prefs = prefs;
     _storage = storage;
     _currentVolume = 0;
@@ -9,12 +10,17 @@ ControllerRadio::ControllerRadio(const char* name, Preferences* prefs, RadioStor
     _isMute = false;
 }
 
-void ControllerRadio::OnHandle() {
-    LOGN("ControllerRadio::OnHandle")
+InitResponse_t ControllerRadio::OnInit() {
     _radio.Init();
     setRadioIndex(_prefs->getInt("station", 35));
     setVolume(_prefs->getInt("volume", 2));
     setMute(_prefs->getBool("mute", false));
+    return OnInitResultOK;
+}
+
+bool ControllerRadio::OnIteration() {
+    LOGN("ControllerRadio::OnIteration")
+    return false;
 }
 
 void ControllerRadio::toggleMute() {

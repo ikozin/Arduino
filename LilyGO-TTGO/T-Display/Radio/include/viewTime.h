@@ -1,5 +1,4 @@
-#ifndef _VIEWTIME_H_
-#define _VIEWTIME_H_
+#pragma once
 
 #include "view.h"
 #include "controllerTime.h"
@@ -14,5 +13,3 @@ class ViewTime : public View {
     private:
         ControllerTime* _device;
 };
-
-#endif  //_VIEWTIME_H_

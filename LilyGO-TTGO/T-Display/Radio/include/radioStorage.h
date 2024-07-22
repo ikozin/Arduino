@@ -1,5 +1,4 @@
-#ifndef _CONTROLLERRADIOSTORAGE_H_
-#define _CONTROLLERRADIOSTORAGE_H_
+#pragma once
 
 #include <Arduino.h>
 #include "logging.h"
@@ -33,5 +32,3 @@ class RadioStorage {
         uint16_t _capacity;
         RadioItem** _list;
 };
-
-#endif  //_CONTROLLERRADIOSTORAGE_H_

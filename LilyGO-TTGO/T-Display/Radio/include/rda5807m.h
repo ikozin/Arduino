@@ -1,5 +1,4 @@
-#ifndef _RDA5807M_H_
-#define _RDA5807M_H_
+#pragma once
 
 #include <Arduino.h>
 #include "logging.h"
@@ -209,5 +208,3 @@ class Rda5807M {
     uint16_t getRegister(uint8_t reg);
     void setRegister(uint8_t reg, const uint16_t value);
 };
-
-#endif  //_RDA5807M_H_

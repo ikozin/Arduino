@@ -1,11 +1,8 @@
-#ifndef _CONTROLLERTIME_H_
-#define _CONTROLLERTIME_H_
+#pragma once
 
 #include "controller.h"
 #include <Preferences.h>
 #include <RTClib.h>
-
-#define UPDATE_CLOCK_TIME (1000 / portTICK_RATE_MS)
 
 class ControllerTime : public Controller {
     public:
@@ -13,10 +10,10 @@ class ControllerTime : public Controller {
     public:
         DateTime getDateTime() { return _rtc.now(); }
     protected:
+        virtual InitResponse_t OnInit() override;
+        virtual bool OnIteration() override { return true; }
         virtual void OnHandle() override;
     private:
         Preferences* _prefs;
         RTC_DS3231 _rtc;
 };
-
-#endif  //_CONTROLLERTIME_H_
