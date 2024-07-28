@@ -1,0 +1,520 @@
+# https://esphome.io/components/display/st7789v.html
+esphome:                                            # https://esphome.io/components/esphome
+  name: ttgo-t-display-v11
+  friendly_name: TTGO T-Display V1.1
+  libraries:                                        # https://esphome.io/components/esphome#libraries
+    - Wire
+    - "climateguard/ClimateGuard RadSens"           # https://github.com/maaad/RadSens1v2
+  includes:                                         # https://esphome.io/components/esphome#esphome-includes
+    - RadSens1v2/_CG_RadSens.h
+  on_boot:                                          # https://esphome.io/components/esphome#on-boot
+    then:
+      - light.turn_on: id_backlight                 # https://esphome.io/components/light/#light-turn-on-action 
+
+esp32:                                              # https://esphome.io/components/esp32
+  # board: featheresp32                               # https://registry.platformio.org/platforms/platformio/espressif32/boards
+  # board: esp32dev                                   # https://registry.platformio.org/platforms/platformio/espressif32/boards
+  # board: lilygo-t-display                           # https://registry.platformio.org/platforms/platformio/espressif32/boards
+  board: nodemcu-32s                                # https://registry.platformio.org/platforms/platformio/espressif32/boards
+  flash_size: 16MB
+  framework:
+    type: arduino                                   # https://esphome.io/components/esp32#arduino-framework
+    # type: esp-idf                                   # https://esphome.io/components/esp32#esp-idf-framework
+
+# Enable logging
+logger:                                             # https://esphome.io/components/logger
+  level: VERBOSE
+
+wifi:                                               # https://esphome.io/components/wifi
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+  manual_ip:
+    static_ip: !secret wifi_static_ip_t_display
+    gateway: !secret wifi_gateway
+    subnet: 255.255.255.0
+  ap:
+    ssid: "Ttgo-T-Display-V11"
+    password: "4lDcGZzy7629"
+
+captive_portal:                                     # https://esphome.io/components/captive_portal
+
+# Enable Home Assistant API
+api:                                                # https://esphome.io/components/api
+  encryption:
+    key: "M+JAdkZZxDG+YXsokKjgQN00e696lGwSVo1aVmMX+uw="
+
+ota:                                                # https://esphome.io/components/ota/
+  - platform: esphome
+    password: "c755a085ee5675b298f117914467518b"
+
+time:                                               # https://esphome.io/components/time/
+  - id: time_device
+    timezone: Europe/Moscow
+    platform: homeassistant                         # https://esphome.io/components/time/homeassistant
+    # platform: sntp                                  # https://esphome.io/components/time/sntp
+    # servers:
+    #   - ntp1.vniiftri.ru
+    #   - ntp2.vniiftri.ru
+    #   - ntp3.vniiftri.ru
+
+i2c:                                                # https://esphome.io/components/i2c.html
+  - id: id_i2c
+    # frequency: 400kHz
+    sda: 21
+    scl: 22
+    scan: true
+
+spi:                                                # https://esphome.io/components/spi
+  - id: spi_st7798v
+    clk_pin: 18
+    mosi_pin: 19
+
+uart:                                               # https://esphome.io/components/uart.html#configuration-variables
+  - id: mhz19_uart
+    rx_pin: 13
+    tx_pin: 15
+    baud_rate: 9600
+
+interval:                                           # https://esphome.io/components/interval
+  - interval: 10s
+    then:
+      - display.page.show_next: id_display
+      - component.update: id_display
+
+globals:                                            # https://esphome.io/components/globals
+  - id: id_mode
+    type: int
+    initial_value: "0"
+
+  - id: id_band
+    type: int
+    initial_value: "1018"
+
+  - id: id_volume
+    type: int
+    initial_value: "0"
+
+select:                                             # https://esphome.io/components/select/
+
+  - id: id_mode_select
+    platform: template                              # https://esphome.io/components/select/template
+    name: "Режим"
+    internal: False
+    options:
+      - "Volume"
+      - "Station"
+    optimistic: true
+    # restore_value: True
+    on_value:                                       # https://esphome.io/components/select/#on-value
+      then:
+        # https://esphome.io/api/helpers_8h
+        # https://esphome.io/api/helpers_8h_source
+        # https://esphome.io/api/classesphome_1_1select_1_1_select
+        - lambda: id(id_mode) = std::stoi(str_until(x, ','));
+        - component.update: id_display
+    web_server_sorting_weight: 120
+
+  - id: id_volume_select
+    platform: template                              # https://esphome.io/components/select/template
+    name: "Громкость"
+    internal: False
+    options:
+      - 0,Кто здесь?
+      - 1,Очень тихо
+      - 2,Очень тихо
+      - 3,Тихо
+      - 4,Тихо
+      - 5,Ниже серединки
+      - 6,Ниже серединки
+      - 7,Серединка
+      - 8,Серединка
+      - 9,Выше серединки
+      - 10,Выше серединки
+      - 11,Громко
+      - 12,Громко
+      - 13,Очень громко
+      - 14,Очень громко
+      - 15,Are you nuts!?
+    optimistic: true
+    # restore_value: True
+    on_value: 
+      then:
+        # https://esphome.io/api/helpers_8h
+        # https://esphome.io/api/helpers_8h_source
+        # https://esphome.io/api/classesphome_1_1select_1_1_select
+        - lambda: id(id_volume) = std::stoi(str_until(x, ','));
+        - component.update: id_display
+    web_server_sorting_weight: 122
+
+  - id: id_station_select
+    platform: template                              # https://esphome.io/components/select/template
+    name: "Радиостанция"
+    internal: False
+    options:
+      - 875,Business FM
+      - 879,Like FM
+      - 883,Ретро FM
+      - 887,Юмор FM
+      - 891,Радио Jazz
+      - 895,Радио Калина Красная
+      - 899,Радио Рекорд
+      - 903,Авторадио
+      - 908,Relax FM
+      - 912,Радио Sputnik
+      - 916,Радио Культура
+      - 920,Москва FM
+      - 924,Радио Дача
+      - 928,Радио Карнавал
+      - 932,STUDIO 21
+      - 936,Коммерсант FM
+      - 940,Восток FM
+      - 944,Первое Спортивное Радио
+      - 948,Говорит Москва
+      - 952,Rock FM
+      - 956,Радио Звезда
+      - 960,Дорожное радио
+      - 964,Такси FM
+      - 968,Детское радио
+      - 972,Радио КП
+      - 976,Вести FM
+      - 980,Радио Шоколад
+      - 984,Новое Радио
+      - 988,Радио Romantika
+      - 992,Радио Орфей
+      - 996,Радио Русский Хит
+      - 1001,Серебряннй дождь
+      - 1005,Жара FM
+      - 1012,DFM
+      - 1018,Наше Радио
+      - 1021,Монте-Карло
+      - 1025,Comedy Radio
+      - 1030,Шансон
+      - 1034,Маяк
+      - 1037,Maximum
+      - 1042,Радио ENERGY
+      - 1047,Радио 7
+      - 1050,Радио Гордость
+      - 1053,Capital FM
+      - 1057,Русское радио
+      - 1062,Европа Плюс
+      - 1066,Love Radio
+      - 1070,KISS FM
+      - 1074,Хит FM
+      - 1078,Милицейская волна
+    optimistic: true
+    # restore_value: True
+    on_value: 
+      then:
+        # https://esphome.io/api/helpers_8h
+        # https://esphome.io/api/helpers_8h_source
+        # https://esphome.io/api/classesphome_1_1select_1_1_select
+        - lambda: id(id_band) = std::stoi(str_until(x, ','));
+        - component.update: id_display              # https://esphome.io/automations/actions#component-update-action
+    web_server_sorting_weight: 121
+
+binary_sensor:                                      # https://esphome.io/components/binary_sensor/
+
+  - id: tdisplay_button_input_0
+    platform: gpio                                  # https://esphome.io/components/binary_sensor/gpio
+    pin:                                            # https://esphome.io/guides/configuration-types#config-pin-schema
+      number: GPIO0
+      inverted: true
+      mode:
+        input: true
+        pullup: true
+    name: "T-Display Button Input 0"
+
+  - id: tdisplay_button_input_1
+    platform: gpio                                  # https://esphome.io/components/binary_sensor/gpio
+    pin:                                            # https://esphome.io/guides/configuration-types#config-pin-schema
+      number: GPIO35
+      inverted: true
+    name: "T-Display Button Input 1"
+
+  - id: rot_enc_btn
+    platform: gpio                                  # https://esphome.io/components/binary_sensor/gpio
+    name: "Кнопка на крутилке"
+    pin:                                            # https://esphome.io/guides/configuration-types#config-pin-schema
+      number: 39
+      inverted: true
+    filters:                                        # https://esphome.io/components/binary_sensor/#binary-sensor-filters
+      - delayed_on: 10ms
+    # on_click:
+    #   then:
+    #     - script.execute: script_run_working
+    web_server_sorting_weight: 71
+
+
+sensor:
+
+  - id: bme280
+    platform: bme280_i2c                            # https://esphome.io/components/sensor/bme280
+    i2c_id: id_i2c
+    address: 0x76
+    update_interval: 15s
+    temperature:
+      id: bme280_Temperature
+      name: "Температура (BME280)"
+      device_class: temperature                     # https://www.home-assistant.io/integrations/sensor/
+      icon: mdi:temperature-celsius                 # https://pictogrammers.com/library/mdi/
+      web_server_sorting_weight: 41
+    humidity:
+      id: bme280_Humidity
+      name: "Влажность (BME280)"
+      device_class: humidity                        # https://www.home-assistant.io/integrations/sensor/
+      icon: mdi:water-percent                       # https://pictogrammers.com/library/mdi/
+      web_server_sorting_weight: 42
+    pressure:
+      id: bme280_Pressure
+      name: "Давление (BME280)"
+      device_class: pressure                        # https://www.home-assistant.io/integrations/sensor/
+      icon: mdi:gauge                               # https://pictogrammers.com/library/mdi/
+      unit_of_measurement: "mm"
+      filters:
+        - lambda: return x * 0.750062;
+      web_server_sorting_weight: 43
+
+  - id: mhz19_id
+    platform: mhz19                                 # https://esphome.io/components/sensor/mhz19
+    co2:
+      id: mhz19_CO2
+      name: "Качество воздуха [CO2] (MH-Z19)"
+      device_class: carbon_monoxide                 # https://www.home-assistant.io/integrations/sensor/
+      icon: mdi:molecule-co2                        # https://pictogrammers.com/library/mdi/
+      web_server_sorting_weight: 51
+    temperature:
+      id: mhz19_Temperature
+      name: "Температура (MH-Z19)"
+      device_class: temperature                     # https://www.home-assistant.io/integrations/sensor/
+      icon: mdi:temperature-celsius                 # https://pictogrammers.com/library/mdi/
+      web_server_sorting_weight: 52
+    update_interval: 60s
+    automatic_baseline_calibration: false
+    uart_id: mhz19_uart
+
+  - id: rot_enc
+    platform: rotary_encoder                        # https://esphome.io/components/sensor/rotary_encoder
+    name: "Крутилка"
+    pin_a: 37
+    pin_b: 38
+    resolution: 2
+    restore_mode: ALWAYS_ZERO
+    publish_initial_value: True
+    on_clockwise: 
+      then:
+        - lambda: |-
+           auto select = id(id_mode_select).state.c_str() == "Volume" ? id(id_volume_select) : id(id_station_select);
+           select->make_call().select_next(true);
+        # - if:                                       # https://esphome.io/automations/actions#common-actions
+        #     condition:
+        #       lambda: return id(id_mode_select).state == "Volume";
+        #     then:        
+        #       - select.next: id_volume_select       # https://esphome.io/components/select/#select-next-action
+        # - if:                                       # https://esphome.io/automations/actions#common-actions
+        #     condition:
+        #       lambda: return id(id_mode_select).state == "Station";
+        #     then:        
+        #       - select.next: id_station_select      # https://esphome.io/components/select/#select-next-action
+    on_anticlockwise: 
+      then:
+        - if:                                       # https://esphome.io/automations/actions#common-actions
+            condition:
+              lambda: return id(id_mode_select).state == "Volume";
+            then:
+              - select.previous: id_volume_select   # https://esphome.io/components/select/#select-previous-action
+        - if:                                       # https://esphome.io/automations/actions#common-actions
+            condition:
+              lambda: return id(id_mode_select).state == "Station";
+            then:        
+              - select.previous: id_station_select  # https://esphome.io/components/select/#select-previous-action
+    web_server_sorting_weight: 72
+
+  - id: rad_sens
+    platform: custom
+    lambda: |-
+      auto rad_sens = new MyRadSens();
+      App.register_component(rad_sens);
+      return {rad_sens->IntensityDynamic_Sensor,rad_sens->IntensityStatic_Sensor, rad_sens->CurrentCPM_Sensor, rad_sens->MaxCPM_Sensor,rad_sens->Sensivity_Sensor};
+    sensors:
+      - id: dynamic_intensity
+        name: "Dynamic intensity"
+        accuracy_decimals: 1
+        unit_of_measurement: μR/h
+        state_class: measurement
+        icon: mdi:radioactive-circle-outline        # https://pictogrammers.com/library/mdi/
+      - id: static_intensity
+        name: "Static intensity"
+        accuracy_decimals: 1
+        unit_of_measurement: μR/h
+        state_class: measurement
+        icon: mdi:radioactive-circle-outline        # https://pictogrammers.com/library/mdi/
+      - id: current_cpm
+        name: "Current CPM"
+        accuracy_decimals: 1
+        unit_of_measurement: CPM
+        state_class: measurement
+        icon: mdi:radioactive-circle-outline        # https://pictogrammers.com/library/mdi/
+      - id: max_cpm
+        name: "Max CPM"
+        accuracy_decimals: 1
+        unit_of_measurement: CPM
+        state_class: measurement
+        icon: mdi:radioactive-circle-outline        # https://pictogrammers.com/library/mdi/
+      - id: sensivity
+        name: "Device Sensivity"
+        state_class: measurement
+        entity_category: diagnostic
+        icon: mdi:radioactive-circle-outline        # https://pictogrammers.com/library/mdi/
+
+# Allow dimmable control of the backlight (pin GPIO4)
+output:
+  - platform: ledc
+    pin: GPIO4
+    id: gpio4
+
+light:
+  - id: id_backlight
+    platform: monochromatic
+    output: gpio4
+    name: "Backlight"
+
+color:
+  - id: my_red
+    red: 100%
+    green: 3%
+    blue: 5%
+
+  - id: color_day_work
+    red: 100%
+    green: 100%
+    blue: 100%
+
+  - id: color_day_weekend
+    red: 100%
+
+font:
+  - id: id_font_small
+    file: "gfonts://Roboto"
+    glyphs: |-
+      .0123456789
+    size: 16
+
+  # - id: id_font_station
+  #   file: "gfonts://Roboto"
+  #   glyphs: |-
+  #     ,-0123456789 BCDEFGIJKLMNORSTUYacdeiklmnopstuvxyzАВГДЕЖЗКМНОПРСТХШЮабвдежзийклмнопрстуфцчшьюя
+  #   size: 30
+
+  - id: id_font_text
+    file: "gfonts://Roboto"
+    glyphs: |-
+      %+-.,°0123456789 АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧЩЬЫЪЭЮЯабвгдеёжзийклмнопрстуфхцчщьыъэюя
+    size: 30
+
+  - id: id_font_digit
+    file: "gfonts://Roboto Mono"
+    glyphs: |-
+      0123456789 :
+    size: 75
+
+# display:
+#   - id: id_display
+#     platform: st7789v
+#     model: TTGO_TDISPLAY_135X240
+#     spi_id: spi_st7798v
+#     cs_pin: GPIO5
+#     dc_pin: GPIO16
+#     reset_pin: GPIO23
+#     rotation: 90
+#     lambda: |-
+#       it.fill(COLOR_BLACK);
+#       it.print(0, 0, id(id_font), id(my_red), TextAlign::TOP_LEFT, "Hello World!");
+
+display:                                            # https://esphome.io/components/display/
+
+  - id: id_display
+    platform: ili9xxx                               # https://github.com/esphome/esphome-docs/blob/current/components/display/ili9xxx.rst
+    model: st7789v
+    spi_id: spi_st7798v
+    cs_pin: GPIO5
+    dc_pin: GPIO16
+    reset_pin: GPIO23
+    rotation: 90
+    dimensions:
+      height: 240
+      width: 135
+      offset_height: 40
+      offset_width: 52
+    # Required or the colors are all inverted, and Black screen is White
+    invert_colors: true
+    update_interval: 60s
+    pages:
+      - id: page_Time
+        lambda: |-
+            static const char* months[] = { "Января", "Февраля", "Марта", "Апреля", "Мая", "Июня", "Июля", "Августа", "Сентября", "Октября", "Ноября", "Декабря" };
+            static const char* days[] = { "ВС", "ПН", "ВТ", "СР", "ЧТ", "ПТ", "СБ" };
+            auto timeOfDay = id(time_device).now();
+            if (timeOfDay.is_valid()) {
+              auto color_text =  (timeOfDay.day_of_week == 1 || timeOfDay.day_of_week == 7) ? id(color_day_weekend) : id(color_day_work);
+              it.strftime(120, 82, id(id_font_digit), TextAlign::CENTER, "%H:%M", timeOfDay);
+              it.printf(120, 18, id(id_font_text), color_text, TextAlign::CENTER, "%s %d %s %d", days[timeOfDay.day_of_week-1], timeOfDay.day_of_month, months[timeOfDay.month-1], timeOfDay.year);
+            }
+      - id: page_Radio
+        # https://esphome.io/api/classesphome_1_1select_1_1_select
+        # https://esphome.io/api/display_8h_source
+        # https://esphome.io/api/color_8h_source
+        # https://esphome.io/api/helpers_8h
+
+        lambda: |-
+            it.clear();
+            auto station = id(id_station_select);
+            uint32_t index = station->active_index().value();
+            uint32_t startList = (index > 2) ? index - 2 : 0;
+            if (index + 3 >= station->size()) startList = station->size() - 5;
+            it.rectangle(1, 17, 62, 79, Color(255, 255, 255));
+            for (int i = 0; i < 5; i++) {
+                auto freq = std::stoi(str_until(station->at(startList++).value(), ','));
+                it.printf(38, 28 + (i * 14), id(id_font_small), Color(255, 255, 255), TextAlign::CENTER, "%.1f", freq / 10.0);
+                it.filled_circle(10, 28 + (i * 14), 2, Color(255, 255, 0));
+            }
+            it.rectangle(216, 31, 24, 65, Color(255, 255, 255));
+            auto volume = id(id_volume); 
+            for(int i = 0; i < volume; i++) {
+                Color color = Color(128, 128, 128);
+                if (i > 5)  color = Color(255, 255, 0);
+                if (i > 10) color = Color(255, 0, 0);
+                it.filled_rectangle(220, 90 - (i * 4), 16, 2, color);
+            }
+            uint32_t temp = id(id_band) - 15;
+            for(int i = 0; i < 30; i++) {
+              uint32_t x = i * 8;
+              if ((temp % 10) == 0) {
+                it.line(x, 135, x, 123, Color(0, 255, 0));
+                it.line(x + 1, 135, x + 1, 123, Color(0, 255, 0));
+                it.printf(x, 115, id(id_font_small), Color(255, 255, 255), TextAlign::CENTER, "%.1f", temp / 10.0);
+              }
+              else if ((temp % 5) == 0 && (temp % 10) !=0 ) {
+                it.line(x, 135, x, 127, Color(0, 255, 0));
+                it.line(x + 1, 135, x + 1, 127, Color(0, 255, 0));
+              }
+              else {
+                it.line(x, 135, x, 131, Color(0, 255, 0));
+              }
+              temp = temp + 1;
+            }
+            it.filled_triangle(116, 98, 120, 108, 124, 98, Color(255, 0, 0));
+            it.line(120, 108, 120, 135, Color(255, 0, 0));
+
+      # - id: page_BME280
+      #   lambda: |-
+      #       it.clear();
+
+      # - id: page_RadSens
+      #   lambda: |-
+      #       it.clear();
+
+web_server:                                         # https://esphome.io/components/web_server
+  port: 80
+  version: 3
+  log: True
+  local: True

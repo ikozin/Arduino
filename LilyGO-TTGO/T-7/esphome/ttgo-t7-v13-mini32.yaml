@@ -35,7 +35,7 @@ wifi:                                       # https://esphome.io/components/wifi
   ssid: !secret wifi_ssid
   password: !secret wifi_password
   manual_ip:
-    static_ip: !secret wifi_static_ip
+    static_ip: !secret wifi_static_ip_t7_v13_mini
     gateway: !secret wifi_gateway
     subnet: 255.255.255.0
   ap:
@@ -240,7 +240,7 @@ sensor:                                     # https://esphome.io/components/sens
       name: "Качество воздуха [CO2] (MH-Z19)"
       device_class: carbon_monoxide         # https://www.home-assistant.io/integrations/sensor/
       icon: mdi:molecule-co2                # https://pictogrammers.com/library/mdi/
-      state_topic: "co2/state"
+      # state_topic: "co2/state"
       web_server_sorting_weight: 51
     temperature:
       id: mhz19_Temperature
