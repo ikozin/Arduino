@@ -4,7 +4,7 @@
 #define IR_INPUT_PIN        13
 
 ControllerIrRemote::ControllerIrRemote() :
-                        Controller("CtrlIrRemote") {
+                        Controller("CtrlIrRemote", NULL) {
     _radio = NULL;
 }
 

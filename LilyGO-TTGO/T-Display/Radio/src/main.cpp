@@ -21,7 +21,8 @@
 
 #include "controller.h"
 #include "controllerAlarmClock.h"
-#include "controllerDevice.h"
+#include "controllerBme280.h"
+#include "controllerRadSens.h"
 #include "controllerMHZ19.h"
 #include "controllerIrRemote.h"
 #include "controllerTime.h"
@@ -41,13 +42,13 @@
   #error Ошибка настройки TFT_eSPI, необходимо подключить "User_Setups/Setup25_TTGO_T_Display.h"
 #endif
 
-//#define RADIO_ENABLE
-//#define WEATHER_ENABLE
+#define RADIO_ENABLE
+#define WEATHER_ENABLE
 #define DEVICE_ENABLE
-// #define MHZ19_ENABLE
-//#define TIME_ENABLE
+#define MHZ19_ENABLE
+#define TIME_ENABLE
 // #define IR_ENABLE
-//#define WIFI_ENABLE
+#define WIFI_ENABLE
 
 #if defined(WEATHER_ENABLE)
     #define WIFI_ENABLE
@@ -74,6 +75,8 @@ String pswd         = "";
 int16_t viewIndex  = -1;
 View* currentView = NULL;
 
+SemaphoreHandle_t xMutex = xSemaphoreCreateMutex();
+
 RadioStorage ctrlRadioStorage;
 
 #ifdef IR_ENABLE
@@ -91,8 +94,11 @@ ViewWeather viewWeather = ViewWeather("ViewWeather", &currentView, &ctrlWeather)
 #endif
 
 #ifdef DEVICE_ENABLE
-ControllerDevice ctrlDevice = ControllerDevice("CtrlDevice");
-ViewDevice viewDevice = ViewDevice("ViewDevice", &currentView, &ctrlDevice);
+SemaphoreHandle_t updateEvent = xSemaphoreCreateBinary(); 
+ControllerBme280 ctrlBme280 = ControllerBme280("CtrlBme280", updateEvent);
+ControllerRadSens ctrlRadSens = ControllerRadSens("CtrlRadSens", updateEvent);
+
+ViewDevice viewDevice = ViewDevice("ViewDevice", &currentView, &ctrlBme280, &ctrlRadSens);
 #endif
 
 #ifdef TIME_ENABLE
@@ -253,6 +259,7 @@ void setup() {
 
     LOGN("Controller - Start")
 #ifdef TIME_ENABLE
+    ctrlTime.SetLockingHandler(xMutex);
     ctrlTime.Start();
 #endif
 #ifdef RADIO_ENABLE
@@ -264,7 +271,10 @@ void setup() {
     ctrlWeather.Start(8192);
 #endif
 #ifdef DEVICE_ENABLE
-    ctrlDevice.Start();
+    ctrlBme280.SetLockingHandler(xMutex);
+    ctrlBme280.Start();
+    ctrlRadSens.SetLockingHandler(xMutex);
+    ctrlRadSens.Start();
 #endif
 #ifdef MHZ19_ENABLE
     ctrlMHZ19.Start();
@@ -286,7 +296,7 @@ void setup() {
     viewWeather.Start(&sprite, ctrlWeather.GetEvent(), 8192);
 #endif
 #ifdef DEVICE_ENABLE
-    viewDevice.Start(&sprite, ctrlDevice.GetEvent());
+    viewDevice.Start(&sprite, ctrlRadSens.GetEvent());
 #endif
 
 #ifdef RADIO_ENABLE

@@ -13,7 +13,7 @@ HTTPClient httpClient;
 #endif
 
 ControllerWeather::ControllerWeather(const char* name):
-                    Controller(name), _doc() {
+                    Controller(name, NULL), _doc() {
     _updateTimeInSec = 20 * 60;
     
     isValid = false;

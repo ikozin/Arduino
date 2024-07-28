@@ -39,12 +39,12 @@ uint16_t ViewTime::getDateColor(DateTime& date) {
 }
 
 void ViewTime::OnHandle() {
-    LOGN("ViewTime::OnHandle")
+    //LOGN("ViewTime::OnHandle")
     char text[64];
 
     DateTime now =_device->getDateTime();
     sprintf(text, "%02d:%02d", now.hour(), now.minute());
-    Serial.println(text);
+    // Serial.println(text);
 
     _sprite->fillSprite(TFT_BLACK);
     _sprite->setTextColor(TFT_WHITE);
@@ -53,7 +53,7 @@ void ViewTime::OnHandle() {
     _sprite->drawString(text, TFT_HEIGHT >> 1, (TFT_WIDTH >> 1) + 20);
 
     sprintf(text, "%s %d %s %d", dayOfWeeks[now.dayOfTheWeek()], now.day(), months[now.month() - 1], now.year());
-    Serial.println(text);
+    // Serial.println(text);
 
     _sprite->setTextColor(getDateColor(now));
     _sprite->loadFont(NotoSansSemiBold24);

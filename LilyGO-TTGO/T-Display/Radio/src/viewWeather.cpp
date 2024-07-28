@@ -22,7 +22,7 @@ void ViewWeather::drawImageFile(const char* fileName, const int32_t x, const int
 }
 
 void ViewWeather::OnHandle() {
-    LOGN("ViewWeather::OnHandle")
+    //LOGN("ViewWeather::OnHandle")
     _sprite->fillSprite(0x4C7D); //ColorToRGB565(0x4D, 0x8D, 0xEE)
     if (!_weather->isValid) {
         return;

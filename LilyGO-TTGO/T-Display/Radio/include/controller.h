@@ -22,7 +22,7 @@ typedef union Response {
 
 class Controller {
     public:
-        Controller(const char* name);
+        Controller(const char* name, SemaphoreHandle_t updateEvent);
         void Start(uint16_t stackDepth = 2048);
         SemaphoreHandle_t GetEvent() const { return _updateEvent; };
     protected:
@@ -37,6 +37,12 @@ class Controller {
     protected:
         static void DelayInSec(uint32_t seconds);
         static void DelayInMin(uint32_t minutes);
+    protected:
+        SemaphoreHandle_t  _xMutex = NULL;
+    public:
+        void Lock();
+        void Unlock();
+        void SetLockingHandler(SemaphoreHandle_t xMutex);
     private:
         static void ControllerHandler(void* parameter);
 };

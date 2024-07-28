@@ -1,7 +1,7 @@
 #include "controllerMHZ19.h"
 
 ControllerMHZ19::ControllerMHZ19(const char* name):
-                    Controller(name), _serial(1), _mhz19() {
+                    Controller(name, NULL), _serial(1), _mhz19() {
     _updateTimeInSec = 10;
 
     _temperature = 0;
@@ -11,9 +11,12 @@ ControllerMHZ19::ControllerMHZ19(const char* name):
 InitResponse_t ControllerMHZ19::OnInit() {
     _serial.begin(9600, SERIAL_8N1, UART_RX_PIN, UART_TX_PIN);
     _mhz19.begin(_serial);
-    _mhz19.autoCalibration(false);
-    _mhz19.setRange(5000);
-    return OnInitDelayInSec(600);
+    _mhz19.autoCalibration();
+    _mhz19.setRange(2000);
+    DelayInMin(20);
+    _mhz19.zeroSpan(2000);
+    //return OnInitResultOK;
+    return OnInitDelayInSec(60);
 }
 
 bool ControllerMHZ19::OnIteration() {

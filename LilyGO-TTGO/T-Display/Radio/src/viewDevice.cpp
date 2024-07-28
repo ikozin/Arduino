@@ -1,15 +1,17 @@
 #include "viewDevice.h"
 #include "fonts\CalibriBold12.h"
 
-ViewDevice::ViewDevice(const char* name, View** currentView, ControllerDevice* device) : View(name, currentView) {
-    assert(device);
-    _device = device;
+ViewDevice::ViewDevice(const char* name, View** currentView,  ControllerBme280* bme280, ControllerRadSens* radSens) : View(name, currentView) {
+    assert(bme280);
+    assert(radSens);
+    _bme280 = bme280;
+    _radSens = radSens;
 }
 
 void ViewDevice::OnHandle() {
-    LOGN("ViewDevice::OnHandle")
+    //LOGN("ViewDevice::OnHandle")
     char text[32];
-    float rad = _device->getStatic();
+    float rad = _radSens->getStatic();
     uint32_t backColor = TFT_BLACK; //TFT_DARKGREEN;
     if (rad > 30) {
         backColor = TFT_RED;
@@ -25,9 +27,9 @@ void ViewDevice::OnHandle() {
 
     _sprite->setTextColor(TFT_WHITE);
     _sprite->setTextDatum(CC_DATUM);
-    _sprite->drawFloat(_device->getTemperature(), 0, x4, y4 + 7, 7);
-    _sprite->drawFloat(_device->getHumidity(), 0, x4 + x2, y4 + 7, 7);
-    _sprite->drawFloat(_device->getPressure(), 0, x4, y4 + y2 + 7, 7);
+    _sprite->drawFloat(_bme280->getTemperature(), 0, x4, y4 + 7, 7);
+    _sprite->drawFloat(_bme280->getHumidity(), 0, x4 + x2, y4 + 7, 7);
+    _sprite->drawFloat(_bme280->getPressure(), 0, x4, y4 + y2 + 7, 7);
     _sprite->drawFloat(rad, 0, x4 + x2, y4 + y2 + 7, 7);
 
     _sprite->drawFastHLine(0, 0,             TFT_HEIGHT, TFT_WHITE);

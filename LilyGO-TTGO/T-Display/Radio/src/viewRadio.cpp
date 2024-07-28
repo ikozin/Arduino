@@ -24,7 +24,7 @@ uint8_t unmuteBitmap[] = {
 };
 
 void ViewRadio::OnHandle() {
-    LOGN("ViewRadio::OnHandle")
+    //LOGN("ViewRadio::OnHandle")
 
     _sprite->fillSprite(TFT_BLACK);
 
