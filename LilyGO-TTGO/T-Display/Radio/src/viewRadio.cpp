@@ -1,5 +1,5 @@
 #include "viewRadio.h"
-
+#include "fonts\NotoSansSemiBold24.h"
 
 ViewRadio::ViewRadio(const char* name, View** currentView, ControllerRadio* radio) : View(name, currentView) {
     _radio = radio;
@@ -28,8 +28,9 @@ void ViewRadio::OnHandle() {
 
     _sprite->fillSprite(TFT_BLACK);
 
+    RadioStorage* storage = _radio->getStorage();
     uint16_t index = _radio->getRadioIndex();
-    uint16_t band = _radio->getStorage()->getItem(index)->band;
+    uint16_t band = storage->getItem(index)->band;
     float freq = band / 10.0;
 
     _sprite->fillSprite(TFT_BLACK);
@@ -38,18 +39,22 @@ void ViewRadio::OnHandle() {
 
     _sprite->drawFloat(freq, 1, 130, 40, 7);
 
-    _sprite->setFreeFont(&Orbitron_Light_24);
-    _sprite->drawString("FM Radio", 140, 1);
+    // _sprite->setFreeFont(&Orbitron_Light_24);
+    // _sprite->drawString("FM Radio", 140, 1);
+
+    _sprite->loadFont(NotoSansSemiBold24);
+    _sprite->drawString(storage->getItem(index)->name.c_str(), 120, 1);
+    _sprite->unloadFont();
 
     int startList = (index > 2) ? index - 2 : 0;
-    if (index + 3 >= _radio->getStorage()->length()) startList = _radio->getStorage()->length() - 5;
-    // Serial.printf("RADIO index = %d, start = %d, max = %d\r\n", index, startList, _radio->getStorage()->length());
-    _sprite->drawRoundRect(1, 17, 62, 79, 4, 0xAD55);
+    if (index + 3 >= storage->length()) startList = storage->length() - 5;
+    // Serial.printf("RADIO index = %d, start = %d, max = %d\r\n", index, startList, storage->length());
+    _sprite->drawRoundRect(1, 24, 62, 77, 4, 0xAD55);
     _sprite->setTextColor(0xBEDF, TFT_BLACK);
     for (int i = 0; i < 5; i++) {
-        freq = (float)_radio->getStorage()->getItem(startList++)->band / 10;
-        _sprite->drawFloat(freq, 1, 34, 20 + (i * 14), 2);
-        _sprite->fillCircle(10, 28 + (i * 14), 2, 0xFBAE);
+        freq = (float)storage->getItem(startList++)->band / 10;
+        _sprite->drawFloat(freq, 1, 34, 26 + (i * 14), 2);
+        _sprite->fillCircle(10, 33 + (i * 14), 2, 0xFBAE);
     }
 
     if (!_radio->getMute()) {

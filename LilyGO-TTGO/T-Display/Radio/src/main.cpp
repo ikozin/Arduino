@@ -1,12 +1,12 @@
 #include <Arduino.h>
-#include <WiFi.h>
+//#include <WiFi.h>
 #include <Preferences.h>
 #include <SPIFFS.h>
 #include <Button2.h>
 #include <TFT_eSPI.h>
 #include <ESP32Encoder.h>
-#include <AsyncTCP.h>
-#include <ESPAsyncWebServer.h>
+#include <AsyncMqttClient.h>
+//#include <ESPAsyncWebServer.h>
 #include "main.h"
 #include "setting.h"
 
@@ -49,12 +49,16 @@
 #define TIME_ENABLE
 // #define IR_ENABLE
 #define WIFI_ENABLE
+// #define MQTT_ENABLE
 
 #if defined(WEATHER_ENABLE)
     #define WIFI_ENABLE
 #endif
 #ifdef IR_ENABLE
     #define RADIO_ENABLE
+#endif
+#ifdef MQTT_ENABLE
+    #define WIFI_ENABLE
 #endif
 
 TFT_eSPI tft = TFT_eSPI(TFT_WIDTH, TFT_HEIGHT); // 135x240
@@ -129,6 +133,7 @@ View* viewList[] = {
 void (ControllerRadio::*currentHandle)(int);
 #endif
 
+
 void btnEncoderClick(Button2& b);
 void btnEncoderDoubleClick(Button2& b);
 void btnEncoderLongClick(Button2& b);
@@ -138,23 +143,51 @@ void btnEncoderLongClick(Button2& b);
 uint16_t fileData[4096];
 
 #ifdef WIFI_ENABLE
+
+#ifdef MQTT_ENABLE
+AsyncMqttClient mqttClient;
+TimerHandle_t mqttReconnectTimer;
+#endif
+
 TimerHandle_t wifiReconnectTimer;
 AsyncWebServer server(80);
 
 void connectToWifi() {
+    Serial.println("Connecting to Wi-Fi...");
     WiFi.begin(ssid.c_str(), pswd.c_str());
 }
 
+#ifdef MQTT_ENABLE
+void connectToMqtt() {
+    Serial.println("Connecting to MQTT...");
+    mqttClient.connect();
+}
+
+void onMqttDisconnect(AsyncMqttClientDisconnectReason reason) {
+    Serial.println("Disconnected from MQTT.");
+    if (WiFi.isConnected()) {
+        xTimerStart(mqttReconnectTimer, 0);
+    }
+}
+#endif
+
 void WiFiEvent(WiFiEvent_t event) {
+    // Serial.printf("[WiFi-event] event: %d\n", event);
     switch(event) {
         case SYSTEM_EVENT_STA_GOT_IP:
             Serial.println("\r\nWiFi connected");
             Serial.print("IP address:");
             Serial.println(WiFi.localIP());
             configTime(prefs.getInt("tz", 10800), 0, "ntp2.vniiftri.ru");
+#ifdef MQTT_ENABLE
+            connectToMqtt();
+#endif
             break;
         case SYSTEM_EVENT_STA_DISCONNECTED:
             Serial.println("\r\nWiFi lost connection");
+#ifdef MQTT_ENABLE
+            xTimerStop(mqttReconnectTimer, 0); // ensure we don't reconnect to MQTT while reconnecting to Wi-Fi
+#endif
             xTimerStart(wifiReconnectTimer, 0);
             break;
     }
@@ -221,6 +254,9 @@ void setup() {
     // prefs.putInt("volume", 2);
     // prefs.putBool("mute", true);
     // prefs.putInt("page", 0);
+    // prefs.putString("mqtt_broker", "192.168.1.50");
+    // prefs.putString("mqtt_user", "...");
+    // prefs.putString("mqtt_password", "...");
 
     ssid = prefs.getString("ssid", ssid);
     pswd = prefs.getString("pswd", pswd);
@@ -229,9 +265,22 @@ void setup() {
     LOGN("Wi-Fi SSID: %s ", ssid.c_str())
 
 #ifdef WIFI_ENABLE
-    WiFi.disconnect();
+    // WiFi.disconnect();
     WiFi.mode(WIFI_STA);
-    WiFi.begin(ssid.c_str(), pswd.c_str());
+#ifdef MQTT_ENABLE
+    // mqttClient.onConnect(onMqttConnect);
+    mqttClient.onDisconnect(onMqttDisconnect);
+    // mqttClient.onSubscribe(onMqttSubscribe);
+    // mqttClient.onUnsubscribe(onMqttUnsubscribe);
+    // mqttClient.onMessage(onMqttMessage);
+    // mqttClient.onPublish(onMqttPublish);
+    mqttClient.setServer(prefs.getString("mqtt_broker").c_str(), 1883);    
+    mqttClient.setCredentials(prefs.getString("mqtt_user").c_str(), prefs.getString("mqtt_password").c_str());
+    mqttReconnectTimer = xTimerCreate("mqttTimer", pdMS_TO_TICKS(2000), pdFALSE, (void*)0, reinterpret_cast<TimerCallbackFunction_t>(connectToMqtt));
+#endif
+    wifiReconnectTimer = xTimerCreate("wifiTimer", pdMS_TO_TICKS(2000), pdFALSE, (void*)0, reinterpret_cast<TimerCallbackFunction_t>(connectToWifi));
+    WiFi.onEvent(WiFiEvent);
+    connectToWifi();
     while (WiFi.status() != WL_CONNECTED) {
         tft.printf(".");
         vTaskDelay(1000 / portTICK_RATE_MS);
@@ -239,10 +288,6 @@ void setup() {
     tft.printf("\r\nconnected!\r\nip: %s\r\n", WiFi.localIP().toString().c_str());
     LOG("\r\nconnected!\r\nip: %s\r\n", WiFi.localIP().toString().c_str())
     configTime(prefs.getInt("tz", 10800), 0, "ntp1.vniiftri.ru", "ntp2.vniiftri.ru");
-
-    wifiReconnectTimer = xTimerCreate("wifiTimer", pdMS_TO_TICKS(2000), pdFALSE, (void*)0, reinterpret_cast<TimerCallbackFunction_t>(connectToWifi));
-    WiFi.onEvent(WiFiEvent);
-
 
     do vTaskDelay(1000 / portTICK_RATE_MS);
     while (sntp_get_sync_status() != SNTP_SYNC_STATUS_COMPLETED);
