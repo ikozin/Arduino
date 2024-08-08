@@ -10,15 +10,16 @@ typedef enum InitCode {
     INIT_OK = 0,
 } InitCode_t;
 
-typedef union Response {
-    int16_t DelaySeconds;
-    InitCode_t Code;
+typedef struct Response {
+    int16_t DelaySeconds    : 14;
+    int16_t IsDone          : 1;
+    int16_t IsError         : 1;
 } InitResponse_t;
 
-#define OnInitResultOK              (InitResponse_t){ .Code = InitCode_t::INIT_OK }
-#define OnInitResultERROR           (InitResponse_t){ .Code = InitCode_t::INIT_ERROR }
-#define OnInitDelayInSec(delay)     (InitResponse_t){ .DelaySeconds = delay }
-
+#define OnInitResultStart                   (InitResponse_t){ .IsDone  = 0 }
+#define OnInitResultStartDelaySec(delay)    (InitResponse_t){ .DelaySeconds = delay }
+#define OnInitResultStop                    (InitResponse_t){ .IsDone  = 1 }
+#define OnInitResultERROR                   (InitResponse_t){ .IsError = 1 }
 
 class Controller {
     public:
@@ -45,4 +46,19 @@ class Controller {
         void SetLockingHandler(SemaphoreHandle_t xMutex);
     private:
         static void ControllerHandler(void* parameter);
+};
+
+template<typename Type>
+class ControllerT: public Controller {
+    public:
+        ControllerT(const char* name, SemaphoreHandle_t updateEvent):
+            Controller(name, updateEvent) {
+            _controller = nullptr;
+        }
+    protected:
+        Type* _controller;
+    public:
+        void attachController(Type* controller) {
+            _controller = controller;
+        };
 };

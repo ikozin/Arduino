@@ -15,12 +15,7 @@ InitResponse_t ControllerRadio::OnInit() {
     setRadioIndex(_prefs->getInt("station", 35));
     setVolume(_prefs->getInt("volume", 2));
     setMute(_prefs->getBool("mute", false));
-    return OnInitResultOK;
-}
-
-bool ControllerRadio::OnIteration() {
-    LOGN("ControllerRadio::OnIteration")
-    return false;
+    return OnInitResultStop;
 }
 
 void ControllerRadio::toggleMute() {

@@ -4,12 +4,9 @@
 #include <MHZ19.h> 
 #include "controller.h"
 
-#define UART_RX_PIN  (13)
-#define UART_TX_PIN  (15)
-
 class ControllerMHZ19 : public Controller {
     public:
-        ControllerMHZ19(const char* name);
+        ControllerMHZ19(const char* name, gpio_num_t rx, gpio_num_t tx, SemaphoreHandle_t updateEvent = NULL);
     public:
         float getTemperature() const { return _temperature; }
         int getCO2() const { return _ppm; }
@@ -17,6 +14,9 @@ class ControllerMHZ19 : public Controller {
         virtual InitResponse_t OnInit() override;
         virtual bool OnIteration() override;
     private:
+        gpio_num_t  _rx;
+        gpio_num_t  _tx;
+
         HardwareSerial _serial;
         MHZ19   _mhz19;
         float _temperature;

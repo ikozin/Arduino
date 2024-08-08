@@ -6,26 +6,17 @@
 ControllerAlarmClock ctrlAlarmClock = ControllerAlarmClock("ctrlAlarm");
 
 ControllerAlarmClock::ControllerAlarmClock(const char* name):
-                        Controller(name, NULL) {
-    _radio = nullptr;
-
+                        ControllerT(name, NULL) {
     _alarmClockCount = 0;
     _timerList = nullptr;
     _alarmClockList = nullptr;
 }
 
-ControllerAlarmClock& ControllerAlarmClock::attachControllerRadio(ControllerRadio* radio) {
-    _radio = radio;
-    return *this;
-}
-
 InitResponse_t ControllerAlarmClock::OnInit() {
-    return OnInitResultOK;
+    return OnInitResultStart;
 }
 
 bool ControllerAlarmClock::OnIteration() {
-    LOGN("ControllerAlarmClock::OnIteration")
-
     File f = SPIFFS.open(FS_ALARMLIST_FILE);
     if (f) {
         DynamicJsonDocument  doc(2048);
@@ -71,7 +62,7 @@ bool ControllerAlarmClock::OnIteration() {
 
 void ControllerAlarmClock::startTimer(int index) {
     alarmClockItem_t alarm = _alarmClockList[index];
-    LOGN("ControllerAlarmClock::startTimer [%d]=0x%llX", index, alarm.value);
+    LOGN("%s::startTimer [%d]=0x%llX", _name, index, alarm.value);
     TickType_t period = getTimerPeriod(&alarm);
     _timerList[index] = xTimerCreate("Timer", period, pdFALSE, (void *const)index, timerCallback);
     xTimerStart(_timerList[index], 0);
@@ -81,12 +72,12 @@ void ControllerAlarmClock::timerCallback(TimerHandle_t pxTimer) {
     int32_t index = (int32_t)pvTimerGetTimerID(pxTimer);
     xTimerDelete(pxTimer, 0);
     alarmClockItem_t alarm = ctrlAlarmClock._alarmClockList[index];
-    LOGN("ControllerAlarmClock::timerCallback [%d], alarm[%d]=0x%llX", index, index, alarm.value);
-    if (ctrlAlarmClock._radio != nullptr) {
-        if (alarm.IsMute)       ctrlAlarmClock._radio->setMute(true);
-        if (alarm.Index != -1)  ctrlAlarmClock._radio->setRadioIndex(alarm.Index);
-        if (alarm.Volume != -1) ctrlAlarmClock._radio->setVolume(alarm.Volume);
-        if (!alarm.IsMute)      ctrlAlarmClock._radio->setMute(false);
+    LOGN("timerCallback [%d], alarm[%d]=0x%llX", index, index, alarm.value);
+    if (ctrlAlarmClock._controller != nullptr) {
+        if (alarm.IsMute)       ctrlAlarmClock._controller->setMute(true);
+        if (alarm.Index != -1)  ctrlAlarmClock._controller->setRadioIndex(alarm.Index);
+        if (alarm.Volume != -1) ctrlAlarmClock._controller->setVolume(alarm.Volume);
+        if (!alarm.IsMute)      ctrlAlarmClock._controller->setMute(false);
     }
     ctrlAlarmClock.startTimer(index);
 }
@@ -120,7 +111,7 @@ TickType_t ControllerAlarmClock::getTimerPeriod(alarmClockItem_t* pAlarm) {
 #ifdef DEBUG_CONSOLE
     char text[64];
     strftime(text, sizeof(text), "%d.%m.%Y %H:%M:%S ", localtime(&next));
-    Serial.printf("ControllerAlarmClock::getTimerPeriod %s\r\n", text);
+    Serial.printf("%s::getTimerPeriod %s\r\n", _name, text);
 #endif
     return (next - timer) * 1000;
 }

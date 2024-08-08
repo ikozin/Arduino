@@ -25,15 +25,15 @@ InitResponse_t ControllerTime::OnInit() {
             time_t t = mktime(&tm);
             struct timeval tv = { .tv_sec = t, .tv_usec = 0 };
             settimeofday(&tv, NULL);
-            Serial.printf("ControllerTime::OnHandle, Setup ESP32: %s\r\n", asctime(&tm));
+            Serial.printf("%s::OnHandle, Setup ESP32: %s\r\n", _name, asctime(&tm));
         }
         else {
             _rtc.adjust(DateTime(now + _prefs->getInt("tz", 10800)));
             _currentTime = _rtc.now();
-            Serial.printf("ControllerTime::OnHandle, Setup DS3231: %02d:%02d:%02d\r\n",
-                             _currentTime.hour(), _currentTime.minute(), _currentTime.second());
+            Serial.printf("%s::OnHandle, Setup DS3231: %02d:%02d:%02d\r\n",
+                             _name, _currentTime.hour(), _currentTime.minute(), _currentTime.second());
         }      
-        return OnInitResultOK;
+        return OnInitResultStart;
     }
     return OnInitResultERROR;
 }

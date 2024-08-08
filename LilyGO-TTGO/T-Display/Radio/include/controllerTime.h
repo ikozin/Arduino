@@ -11,7 +11,7 @@ class ControllerTime : public Controller {
         DateTime getDateTime() const { return _currentTime; }
     protected:
         virtual InitResponse_t OnInit() override;
-        virtual bool OnIteration() override { return true; }
+        virtual bool OnIteration() override { return false; }
         virtual void OnHandle() override;
     private:
         DateTime _currentTime;

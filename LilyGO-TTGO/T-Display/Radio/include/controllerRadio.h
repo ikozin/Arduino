@@ -29,7 +29,7 @@ class ControllerRadio : public Controller {
         uint8_t GetRssi() { return _radio.GetRssi(); }
     protected:
         virtual InitResponse_t OnInit() override;
-        virtual bool OnIteration() override;
+        virtual bool OnIteration() override { return false; }
     private:
         Preferences* _prefs;
         RadioStorage* _storage;

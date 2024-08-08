@@ -12,19 +12,16 @@ ControllerRadSens::ControllerRadSens(const char* name, SemaphoreHandle_t updateE
 }
 
 InitResponse_t ControllerRadSens::OnInit() {
-    return _radSens.init() ? OnInitResultOK : OnInitResultERROR;
+    return _radSens.init() ? OnInitResultStart : OnInitResultERROR;
 }
 
 bool ControllerRadSens::OnIteration() {
-    LOGN("ControllerRadSens::OnIteration")
-
     _dynamicValue = _radSens.getRadIntensyDynamic(); 
     _staticValue = _radSens.getRadIntensyStatic();
     _impulseValue = _radSens.getNumberOfPulses();
-
-    LOGN("ControllerRadSens::getDynamic, %f", getDynamic())
-    LOGN("ControllerRadSens::getStatic, %f", getStatic())
-    LOGN("ControllerRadSens::getImpulse, %f", getImpulse())
+    LOGN("%s::getDynamic, %f", _name, getDynamic())
+    LOGN("%s::getStatic, %f", _name, getStatic())
+    LOGN("%s::getImpulse, %f", _name, getImpulse())
 
     return true;
 }

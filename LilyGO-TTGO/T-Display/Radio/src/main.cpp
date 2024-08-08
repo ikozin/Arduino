@@ -14,7 +14,8 @@
 #include "view.h"
 #include "viewTime.h"
 #include "viewRadio.h"
-#include "viewDevice.h"
+#include "viewBme280.h"
+#include "viewRadsMHZ19.h"
 #include "viewWeather.h"
 
 #include "radioStorage.h"
@@ -28,6 +29,7 @@
 #include "controllerTime.h"
 #include "controllerRadio.h"
 #include "controllerWeather.h"
+#include "controllerSoftReset.h"
 
 #include <..\..\tools\sdk\esp32\include\lwip\include\apps\esp_sntp.h>
 
@@ -43,12 +45,12 @@
 #endif
 
 #define RADIO_ENABLE
-#define WEATHER_ENABLE
-#define DEVICE_ENABLE
-#define MHZ19_ENABLE
-#define TIME_ENABLE
+//#define WEATHER_ENABLE
+#define BME280_ENABLE
+// #define MHZ19_RADSENS_ENABLE
+// #define TIME_ENABLE
 // #define IR_ENABLE
-#define WIFI_ENABLE
+// #define WIFI_ENABLE
 // #define MQTT_ENABLE
 
 #if defined(WEATHER_ENABLE)
@@ -84,7 +86,8 @@ SemaphoreHandle_t xMutex = xSemaphoreCreateMutex();
 RadioStorage ctrlRadioStorage;
 
 #ifdef IR_ENABLE
-ControllerIrRemote ctrlIrRemote;
+#define IR_PIN  GPIO_NUM_12
+ControllerIrRemote ctrlIrRemote(IR_PIN);
 #endif
 
 #ifdef RADIO_ENABLE
@@ -97,12 +100,20 @@ ControllerWeather ctrlWeather = ControllerWeather("CtrlWeather");
 ViewWeather viewWeather = ViewWeather("ViewWeather", &currentView, &ctrlWeather);
 #endif
 
-#ifdef DEVICE_ENABLE
-SemaphoreHandle_t updateEvent = xSemaphoreCreateBinary(); 
-ControllerBme280 ctrlBme280 = ControllerBme280("CtrlBme280", updateEvent);
-ControllerRadSens ctrlRadSens = ControllerRadSens("CtrlRadSens", updateEvent);
+#ifdef BME280_ENABLE
+ControllerBme280 ctrlBme280 = ControllerBme280("CtrlBme280");
+ViewBME280 viewBme280 = ViewBME280("ViewBME280", &currentView, &ctrlBme280);
+#endif
 
-ViewDevice viewDevice = ViewDevice("ViewDevice", &currentView, &ctrlBme280, &ctrlRadSens);
+#ifdef MHZ19_RADSENS_ENABLE
+
+#define UART_RX_PIN  GPIO_NUM_13
+#define UART_TX_PIN  GPIO_NUM_15
+
+SemaphoreHandle_t updateEvent = xSemaphoreCreateBinary(); 
+ControllerRadSens ctrlRadSens = ControllerRadSens("CtrlRadSens", updateEvent);
+ControllerMHZ19 ctrlMHZ19 = ControllerMHZ19("CtrlMHZ19", UART_RX_PIN, UART_TX_PIN, updateEvent);
+ViewRadsMHZ19 viewRadsMHZ19 = ViewRadsMHZ19("ViewRadsMHZ19", &currentView, &ctrlRadSens);
 #endif
 
 #ifdef TIME_ENABLE
@@ -110,9 +121,8 @@ ControllerTime ctrlTime = ControllerTime("CtrlTime", &prefs);
 ViewTime viewTime = ViewTime("ViewTime", &currentView, &ctrlTime);
 #endif
 
-#ifdef MHZ19_ENABLE
-ControllerMHZ19 ctrlMHZ19 = ControllerMHZ19("CtrlMHZ19");
-#endif
+#define RESET_PIN   GPIO_NUM_33
+ControllerSoftReset ctrlReset = ControllerSoftReset(RESET_PIN);
 
 View* viewList[] = {
 #ifdef TIME_ENABLE
@@ -124,8 +134,11 @@ View* viewList[] = {
 #ifdef WEATHER_ENABLE
     &viewWeather,
 #endif
-#ifdef DEVICE_ENABLE
-    &viewDevice,
+#ifdef BME280_ENABLE
+    &viewBme280,
+#endif
+#ifdef MHZ19_RADSENS_ENABLE
+    &viewRadsMHZ19,
 #endif
 };
 
@@ -309,25 +322,26 @@ void setup() {
 #endif
 #ifdef RADIO_ENABLE
     ctrlRadio.Start();
-    ctrlAlarmClock.attachControllerRadio(&ctrlRadio);
+    ctrlAlarmClock.attachController(&ctrlRadio);
     ctrlAlarmClock.Start(4096);
 #endif
 #ifdef WEATHER_ENABLE
     ctrlWeather.Start(8192);
 #endif
-#ifdef DEVICE_ENABLE
-    ctrlBme280.SetLockingHandler(xMutex);
+#ifdef BME280_ENABLE
     ctrlBme280.Start();
+#endif
+#ifdef MHZ19_RADSENS_ENABLE
     ctrlRadSens.SetLockingHandler(xMutex);
     ctrlRadSens.Start();
-#endif
-#ifdef MHZ19_ENABLE
+    ctrlMHZ19.SetLockingHandler(xMutex);
     ctrlMHZ19.Start();
 #endif
 #ifdef IR_ENABLE
-    ctrlIrRemote.attachControllerRadio(&ctrlRadio);
+    ctrlIrRemote.attachController(&ctrlRadio);
     ctrlIrRemote.Start();
 #endif
+    ctrlReset.Start();
 
     LOGN("View - Start")
     sprite.createSprite(TFT_HEIGHT, TFT_WIDTH);
@@ -340,8 +354,11 @@ void setup() {
 #ifdef WEATHER_ENABLE
     viewWeather.Start(&sprite, ctrlWeather.GetEvent(), 8192);
 #endif
-#ifdef DEVICE_ENABLE
-    viewDevice.Start(&sprite, ctrlRadSens.GetEvent());
+#ifdef BME280_ENABLE
+    viewBme280.Start(&sprite, ctrlBme280.GetEvent());
+#endif
+#ifdef MHZ19_RADSENS_ENABLE
+    viewRadsMHZ19.Start(&sprite, ctrlRadSens.GetEvent());
 #endif
 
 #ifdef RADIO_ENABLE
@@ -365,18 +382,15 @@ void loop() {
 }
 
 void btnEncoderClick(Button2& b) {
-#ifdef RADIO_ENABLE
-    if (currentHandle == &ControllerRadio::changeChannel) {
-        currentHandle = &ControllerRadio::changeVolume;
-    }
-    else {
-        currentHandle = &ControllerRadio::changeChannel;
-    }
-#endif
+    setDisplayPageNext();
 }
 
 void btnEncoderDoubleClick(Button2& b) {
-    setDisplayPageNext();
+#ifdef RADIO_ENABLE
+    currentHandle = (currentHandle == &ControllerRadio::changeChannel)
+        ? &ControllerRadio::changeVolume
+        : &ControllerRadio::changeChannel;
+#endif
 }
 
 void btnEncoderLongClick(Button2& b) {

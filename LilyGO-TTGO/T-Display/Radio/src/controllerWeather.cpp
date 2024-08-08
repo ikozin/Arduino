@@ -28,15 +28,13 @@ ControllerWeather::ControllerWeather(const char* name):
 }
 
 InitResponse_t ControllerWeather::OnInit() {
-    return OnInitResultOK;
+    return OnInitResultStart;
 }
 
 bool ControllerWeather::OnIteration() {
-    LOGN("ControllerWeather::OnIteration")
-
     if (!WiFi.isConnected()) {
         isValid = false;
-        LOGN("ControllerWeather::isValid, %d", isValid);
+        LOGN("%s::isValid, %d", _name, isValid);
         return true;   
     }
 #if !defined(WEATHER_STUB)
@@ -56,7 +54,7 @@ bool ControllerWeather::OnIteration() {
         isValid = parseWeatherInfo(httpClient, payload);
     }
 
-    LOGN("ControllerWeather::isValid, %d", isValid);
+    LOGN("%::isValid, %d", _name, isValid);
     return true;
 }
 
@@ -114,15 +112,15 @@ bool ControllerWeather::parseWeatherInfo(HTTPClient& client, String& payload) {
             }
         }
     }    
-    LOGN("ControllerWeather::weatherDescription, %s", weatherDescription.c_str());
-    LOGN("ControllerWeather::weatherTemperature, %s", weatherTemperature.c_str());
-    LOGN("ControllerWeather::weatherPressure, %s", weatherPressure.c_str());
-    LOGN("ControllerWeather::weatherHumidity, %s", weatherHumidity.c_str());
-    LOGN("ControllerWeather::weatherWindSpeed, %s", weatherWindSpeed.c_str());
-    LOGN("ControllerWeather::weatherWindType, %s", weatherWindType.c_str());
-    LOGN("ControllerWeather::weatherUrlIcon, %s", weatherUrlIcon.c_str());
-    LOGN("ControllerWeather::iconFileName, %s", iconFileName.c_str());
-    LOGN("ControllerWeather::windFileName, %s", windFileName.c_str());
+    LOGN("%s::weatherDescription, %s", _name, weatherDescription.c_str());
+    LOGN("%s::weatherTemperature, %s", _name, weatherTemperature.c_str());
+    LOGN("%s::weatherPressure, %s", _name, weatherPressure.c_str());
+    LOGN("%s::weatherHumidity, %s", _name, weatherHumidity.c_str());
+    LOGN("%s::weatherWindSpeed, %s", _name, weatherWindSpeed.c_str());
+    LOGN("%s::weatherWindType, %s", _name, weatherWindType.c_str());
+    LOGN("%s::weatherUrlIcon, %s", _name, weatherUrlIcon.c_str());
+    LOGN("%s::iconFileName, %s", _name, iconFileName.c_str());
+    LOGN("%s::windFileName, %s", _name, windFileName.c_str());
 
     return true;
 }

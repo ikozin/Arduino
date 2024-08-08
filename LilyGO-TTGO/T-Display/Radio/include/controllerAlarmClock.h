@@ -16,7 +16,7 @@
 #define SET_ALARMCLOCK_MUTE_WORK(h, m, s)     { { .Monday = 1, .Tuesday = 1, .Wednesday = 1, .Thursday = 1, .Friday = 1, .Saturday = 0, .Sunday = 0, .IsMute = s, .Reserv = 0 , .Minute = m, .Hour = h, .Index = -1, .Volume = -1, } }
 #define SET_ALARMCLOCK_VOLUME_WORK(h, m, v)  { { .Monday = 1, .Tuesday = 1, .Wednesday = 1, .Thursday = 1, .Friday = 1, .Saturday = 0, .Sunday = 0, .IsMute = 0, .Reserv = 0 , .Minute = m, .Hour = h, .Index = -1, .Volume = v, } }
 
-class ControllerAlarmClock : public Controller {
+class ControllerAlarmClock : public ControllerT<ControllerRadio> {
     public:
         ControllerAlarmClock(const char* name);
     
@@ -44,8 +44,6 @@ class ControllerAlarmClock : public Controller {
         } alarmClockItem_t;
     
     private:
-        ControllerRadio* _radio;
-
         uint16_t _alarmClockCount;
         TimerHandle_t* _timerList;
         alarmClockItem_t* _alarmClockList;
@@ -57,8 +55,6 @@ class ControllerAlarmClock : public Controller {
     protected:
         virtual InitResponse_t OnInit() override;
         virtual bool OnIteration() override;
-    public:
-        ControllerAlarmClock& attachControllerRadio(ControllerRadio* radio);
 };
 
 extern ControllerAlarmClock ctrlAlarmClock;

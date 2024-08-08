@@ -1,23 +1,15 @@
 #include "controllerIrRemote.h"
 #include "IrRemote_CarMP3.h"
 
-#define IR_INPUT_PIN        13
-
-ControllerIrRemote::ControllerIrRemote() :
-                        Controller("CtrlIrRemote", NULL) {
-    _radio = NULL;
-}
-
-ControllerIrRemote& ControllerIrRemote::attachControllerRadio(ControllerRadio* radio) {
-    _radio = radio;
-    return *this;
+ControllerIrRemote::ControllerIrRemote(gpio_num_t pin) :
+                        ControllerT("CtrlIrRemote", NULL) {
+    _pin = pin;
 }
 
 InitResponse_t ControllerIrRemote::OnInit() {
-    return OnInitResultOK;
+    return OnInitResultStart;
 }
 
 bool ControllerIrRemote::OnIteration() {
-    LOGN("ControllerIrRemote::OnIteration")
     return false;
 }
