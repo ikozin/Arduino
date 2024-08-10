@@ -1,11 +1,11 @@
 #include "controllerSoftReset.h"
 
-ControllerSoftReset::ControllerSoftReset(gpio_num_t pin) :
-                        Controller("ControllerSoftReset", NULL) {
-    // _updateTimeInSec = 1;
+// https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/peripherals/gpio.html
+
+ControllerSoftReset::ControllerSoftReset(const char* name, gpio_num_t pin, SemaphoreHandle_t updateEvent) :
+                        Controller(name, updateEvent) {
     _pin = pin;
 }
-
 
 // GPIO_INTR_DISABLE - отключено
 // GPIO_INTR_POSEDGE - по изменению с 0 до 1
@@ -26,13 +26,6 @@ InitResponse_t ControllerSoftReset::OnInit() {
     return OnInitResultStart;
 }
 
-// bool ControllerSoftReset::OnIteration() {
-//     LOGN("ControllerSoftReset::OnIteration")
-//     int result = gpio_get_level(_pin);
-//     LOGN("ControllerSoftReset::result, %d", result);
-//     return false;
-// }
-
 void ControllerSoftReset::OnHandle() {
     xSemaphoreTake(_updateEvent, portMAX_DELAY);
     LOGN("%s::RESET", _name);
@@ -41,5 +34,5 @@ void ControllerSoftReset::OnHandle() {
 
 void IRAM_ATTR ControllerSoftReset::gpio_isr_handler(void* parameter) {
     ControllerSoftReset* controller = static_cast<ControllerSoftReset*>(parameter);
-    xSemaphoreGiveFromISR(controller->_updateEvent, NULL);
+    xSemaphoreGiveFromISR(controller->_updateEvent, nullptr);
 }

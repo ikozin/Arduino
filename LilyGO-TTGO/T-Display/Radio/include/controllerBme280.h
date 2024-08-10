@@ -8,7 +8,7 @@
 
 class ControllerBme280 : public Controller {
     public:
-        ControllerBme280(const char* name, SemaphoreHandle_t updateEvent = NULL);
+        ControllerBme280(const char* name, SemaphoreHandle_t updateEvent = nullptr);
     public:
         float getTemperature() const { return _temperature; }
         float getHumidity() const { return _humidity; }

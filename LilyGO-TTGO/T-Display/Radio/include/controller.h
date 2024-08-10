@@ -33,13 +33,14 @@ class Controller {
         TaskHandle_t _task;
     protected:
         virtual InitResponse_t OnInit() = 0;
+        virtual void OnDone() {};
         virtual bool OnIteration() = 0;
         virtual void OnHandle();
     protected:
         static void DelayInSec(uint32_t seconds);
         static void DelayInMin(uint32_t minutes);
     protected:
-        SemaphoreHandle_t  _xMutex = NULL;
+        SemaphoreHandle_t  _xMutex = nullptr;
     public:
         void Lock();
         void Unlock();

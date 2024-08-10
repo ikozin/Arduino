@@ -3,10 +3,10 @@
 
 Controller::Controller(const char* name, SemaphoreHandle_t updateEvent) {
     assert(name);
-    _task = NULL;
+    _task = nullptr;
     _name = name;
     _updateTimeInSec = 0;
-    _updateEvent = (updateEvent == NULL) ? xSemaphoreCreateBinary() : updateEvent;
+    _updateEvent = (updateEvent == nullptr) ? xSemaphoreCreateBinary() : updateEvent;
 }
 
 void Controller::Start(uint16_t stackDepth) {
@@ -30,6 +30,7 @@ void Controller::ControllerHandler(void* parameter) {
     assert(parameter);
     Controller* controller = static_cast<Controller*>(parameter);
     controller->OnHandle();
+    controller->OnDone();
     vTaskDelete(controller->_task);
 }
 
@@ -56,13 +57,13 @@ void Controller::DelayInMin(uint32_t minutes) {
 }
 
 void Controller::Lock() {
-    if (_xMutex != NULL) {
+    if (_xMutex != nullptr) {
         xSemaphoreTake(_xMutex, portMAX_DELAY);
     }
 }
 
 void Controller::Unlock() {
-    if (_xMutex != NULL) {
+    if (_xMutex != nullptr) {
         xSemaphoreGive(_xMutex);
     }
 }

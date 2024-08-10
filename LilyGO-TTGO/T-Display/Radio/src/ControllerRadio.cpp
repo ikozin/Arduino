@@ -2,7 +2,7 @@
 #include "main.h"
 
 ControllerRadio::ControllerRadio(const char* name, Preferences* prefs, RadioStorage* storage):
-                    Controller(name, NULL) {
+                    Controller(name, nullptr) {
     _prefs = prefs;
     _storage = storage;
     _currentVolume = 0;

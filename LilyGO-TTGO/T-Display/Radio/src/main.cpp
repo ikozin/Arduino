@@ -49,7 +49,7 @@
 #define BME280_ENABLE
 // #define MHZ19_RADSENS_ENABLE
 // #define TIME_ENABLE
-// #define IR_ENABLE
+#define IR_ENABLE
 // #define WIFI_ENABLE
 // #define MQTT_ENABLE
 
@@ -79,15 +79,15 @@ String ssid         = ""; // SSID WI-FI
 String pswd         = "";
 
 int16_t viewIndex  = -1;
-View* currentView = NULL;
+View* currentView = nullptr;
 
 SemaphoreHandle_t xMutex = xSemaphoreCreateMutex();
 
 RadioStorage ctrlRadioStorage;
 
 #ifdef IR_ENABLE
-#define IR_PIN  GPIO_NUM_12
-ControllerIrRemote ctrlIrRemote(IR_PIN);
+#define IR_PIN  GPIO_NUM_13
+ControllerIrRemote ctrlIrRemote("CtrlIrRemote", IR_PIN);
 #endif
 
 #ifdef RADIO_ENABLE
@@ -107,8 +107,8 @@ ViewBME280 viewBme280 = ViewBME280("ViewBME280", &currentView, &ctrlBme280);
 
 #ifdef MHZ19_RADSENS_ENABLE
 
-#define UART_RX_PIN  GPIO_NUM_13
-#define UART_TX_PIN  GPIO_NUM_15
+#define UART_RX_PIN  GPIO_NUM_17
+#define UART_TX_PIN  GPIO_NUM_27
 
 SemaphoreHandle_t updateEvent = xSemaphoreCreateBinary(); 
 ControllerRadSens ctrlRadSens = ControllerRadSens("CtrlRadSens", updateEvent);
@@ -122,7 +122,7 @@ ViewTime viewTime = ViewTime("ViewTime", &currentView, &ctrlTime);
 #endif
 
 #define RESET_PIN   GPIO_NUM_33
-ControllerSoftReset ctrlReset = ControllerSoftReset(RESET_PIN);
+ControllerSoftReset ctrlReset = ControllerSoftReset("CtrlSoftReset", RESET_PIN);
 
 View* viewList[] = {
 #ifdef TIME_ENABLE

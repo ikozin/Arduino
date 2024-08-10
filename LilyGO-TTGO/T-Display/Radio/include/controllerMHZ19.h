@@ -6,7 +6,7 @@
 
 class ControllerMHZ19 : public Controller {
     public:
-        ControllerMHZ19(const char* name, gpio_num_t rx, gpio_num_t tx, SemaphoreHandle_t updateEvent = NULL);
+        ControllerMHZ19(const char* name, gpio_num_t rx, gpio_num_t tx, SemaphoreHandle_t updateEvent = nullptr);
     public:
         float getTemperature() const { return _temperature; }
         int getCO2() const { return _ppm; }

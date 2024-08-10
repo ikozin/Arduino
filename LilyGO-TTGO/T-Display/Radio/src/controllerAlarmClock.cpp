@@ -6,7 +6,7 @@
 ControllerAlarmClock ctrlAlarmClock = ControllerAlarmClock("ctrlAlarm");
 
 ControllerAlarmClock::ControllerAlarmClock(const char* name):
-                        ControllerT(name, NULL) {
+                        ControllerT(name, nullptr) {
     _alarmClockCount = 0;
     _timerList = nullptr;
     _alarmClockList = nullptr;
@@ -90,7 +90,7 @@ uint8_t ControllerAlarmClock::nextDay(uint8_t wday_mask, time_t* next) {
 }
 
 TickType_t ControllerAlarmClock::getTimerPeriod(alarmClockItem_t* pAlarm) {
-    time_t timer = time(NULL);
+    time_t timer = time(nullptr);
     struct tm* t = localtime(&timer);
     t->tm_sec  = 0;
     t->tm_min  = pAlarm->Minute;

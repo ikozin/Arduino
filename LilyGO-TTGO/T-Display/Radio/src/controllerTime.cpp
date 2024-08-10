@@ -2,7 +2,7 @@
 #include "main.h"
 
 ControllerTime::ControllerTime(const char* name, Preferences* prefs):
-                    Controller(name, NULL) {
+                    Controller(name, nullptr) {
     _updateTimeInSec = 1;
     _prefs = prefs;
 }
@@ -24,7 +24,7 @@ InitResponse_t ControllerTime::OnInit() {
             tm.tm_sec = _currentTime.second();
             time_t t = mktime(&tm);
             struct timeval tv = { .tv_sec = t, .tv_usec = 0 };
-            settimeofday(&tv, NULL);
+            settimeofday(&tv, nullptr);
             Serial.printf("%s::OnHandle, Setup ESP32: %s\r\n", _name, asctime(&tm));
         }
         else {
