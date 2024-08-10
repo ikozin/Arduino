@@ -36,7 +36,7 @@ void Controller::ControllerHandler(void* parameter) {
 
 void Controller::OnHandle() {
     for (;;) {
-        LOGN("%s::OnIteration", _name)
+        // LOGN("%s::OnIteration", _name)
         Lock();
         bool result  = OnIteration();
         Unlock();

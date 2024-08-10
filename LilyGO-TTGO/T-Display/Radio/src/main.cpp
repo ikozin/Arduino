@@ -22,6 +22,7 @@
 
 #include "controller.h"
 #include "controllerAlarmClock.h"
+#include "controllerBuzzer.h"
 #include "controllerBme280.h"
 #include "controllerRadSens.h"
 #include "controllerMHZ19.h"
@@ -45,11 +46,12 @@
 #endif
 
 #define RADIO_ENABLE
-//#define WEATHER_ENABLE
-#define BME280_ENABLE
+// #define WEATHER_ENABLE
+// #define BME280_ENABLE
 // #define MHZ19_RADSENS_ENABLE
+#define BUZZER_ENABLE
 // #define TIME_ENABLE
-#define IR_ENABLE
+// #define IR_ENABLE
 // #define WIFI_ENABLE
 // #define MQTT_ENABLE
 
@@ -88,6 +90,11 @@ RadioStorage ctrlRadioStorage;
 #ifdef IR_ENABLE
 #define IR_PIN  GPIO_NUM_13
 ControllerIrRemote ctrlIrRemote("CtrlIrRemote", IR_PIN);
+#endif
+
+#ifdef BUZZER_ENABLE
+#define BUZZER_PIN  GPIO_NUM_17
+ControllerBuzzer ctrlBuzzer("CtrlBuzzer", BUZZER_PIN);
 #endif
 
 #ifdef RADIO_ENABLE
@@ -331,6 +338,10 @@ void setup() {
 #ifdef BME280_ENABLE
     ctrlBme280.Start();
 #endif
+#ifdef BUZZER_ENABLE
+    ctrlBuzzer.Start();
+#endif
+
 #ifdef MHZ19_RADSENS_ENABLE
     ctrlRadSens.SetLockingHandler(xMutex);
     ctrlRadSens.Start();
