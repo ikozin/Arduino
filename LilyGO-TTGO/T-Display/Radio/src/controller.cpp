@@ -38,10 +38,12 @@ void Controller::OnHandle() {
     for (;;) {
         // LOGN("%s::OnIteration", _name)
         Lock();
-        bool result  = OnIteration();
+        IterationCode_t result  = OnIteration();
         Unlock();
-        xSemaphoreGive(_updateEvent);
-        if (!result) {
+        if (result == IterationCode_t::Ok) {
+            xSemaphoreGive(_updateEvent);
+        }
+        if (result == IterationCode_t::Stop) {
             break;
         }
         DelayInSec(_updateTimeInSec);

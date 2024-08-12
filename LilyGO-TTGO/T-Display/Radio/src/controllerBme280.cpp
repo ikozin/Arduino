@@ -22,7 +22,7 @@ InitResponse_t ControllerBme280::OnInit() {
     return OnInitResultERROR;
 }
 
-bool ControllerBme280::OnIteration() {
+IterationCode_t ControllerBme280::OnIteration() {
     _temperature = _bme.readTemperature();
     _humidity = _bme.readHumidity();
     _pressure = _bme.readPressure() / 1000.0F * 7.50062;
@@ -31,5 +31,5 @@ bool ControllerBme280::OnIteration() {
     LOGN("%s::getHumidity, %f", _name, getHumidity())
     LOGN("%s::getPressure, %f", _name, getPressure())
 
-    return true;
+    return IterationCode_t::Ok;
 }

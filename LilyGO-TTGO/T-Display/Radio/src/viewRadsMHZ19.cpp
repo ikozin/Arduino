@@ -8,9 +8,8 @@ ViewRadsMHZ19::ViewRadsMHZ19(const char* name, View** currentView,  ControllerRa
 }
 
 void ViewRadsMHZ19::OnHandle() {
-    //LOGN("ViewRadsMHZ19::OnHandle")
-    char text[32];
-    float rad = _radSens->getStatic();
+    // char text[32];
+    // float rad = _radSens->getStatic();
     // uint32_t backColor = TFT_DARKGREY; //TFT_DARKGREEN;
     // if (rad > 30) {
     //     backColor = TFT_RED;

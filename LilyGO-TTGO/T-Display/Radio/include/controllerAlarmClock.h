@@ -54,7 +54,7 @@ class ControllerAlarmClock : public ControllerT<ControllerRadio> {
         static void timerCallback(TimerHandle_t pxTimer);
     protected:
         virtual InitResponse_t OnInit() override;
-        virtual bool OnIteration() override;
+        virtual IterationCode_t OnIteration() override;
 };
 
 extern ControllerAlarmClock ctrlAlarmClock;

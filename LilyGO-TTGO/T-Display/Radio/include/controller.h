@@ -16,10 +16,16 @@ typedef struct Response {
     int16_t IsError         : 1;
 } InitResponse_t;
 
-#define OnInitResultStart                   (InitResponse_t){ .IsDone  = 0 }
-#define OnInitResultStartDelaySec(delay)    (InitResponse_t){ .DelaySeconds = delay }
-#define OnInitResultStop                    (InitResponse_t){ .IsDone  = 1 }
-#define OnInitResultERROR                   (InitResponse_t){ .IsError = 1 }
+typedef enum IterationCode {
+    Ok   = 0,
+    Skip = 1,
+    Stop = 2,
+} IterationCode_t;
+
+#define OnInitResultStart                   (InitResponse_t){ .DelaySeconds = 0,     .IsDone  = 0, .IsError = 0 }
+#define OnInitResultStartDelaySec(delay)    (InitResponse_t){ .DelaySeconds = delay, .IsDone  = 0, .IsError = 0 }
+#define OnInitResultStop                    (InitResponse_t){ .DelaySeconds = 0,     .IsDone  = 1, .IsError = 0 }
+#define OnInitResultERROR                   (InitResponse_t){ .DelaySeconds = 0,     .IsDone  = 0, .IsError = 1 }
 
 class Controller {
     public:
@@ -33,8 +39,8 @@ class Controller {
         TaskHandle_t _task;
     protected:
         virtual InitResponse_t OnInit() = 0;
+        virtual IterationCode_t OnIteration() = 0;
         virtual void OnDone() {};
-        virtual bool OnIteration() = 0;
         virtual void OnHandle();
     protected:
         static void DelayInSec(uint32_t seconds);

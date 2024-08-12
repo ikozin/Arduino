@@ -14,8 +14,8 @@
 #include <stdlib.h>
 #include <sys/cdefs.h>
 #include "esp_log.h"
-#include "infrared_tools/ir_tools.h"
-#include "infrared_tools/ir_timings.h"
+#include "ir_tools.h"
+#include "ir_timings.h"
 #include "driver/rmt.h"
 
 static const char *TAG = "nec_parser";

@@ -31,11 +31,11 @@ InitResponse_t ControllerWeather::OnInit() {
     return OnInitResultStart;
 }
 
-bool ControllerWeather::OnIteration() {
+IterationCode_t ControllerWeather::OnIteration() {
     if (!WiFi.isConnected()) {
         isValid = false;
         LOGN("%s::isValid, %d", _name, isValid);
-        return true;   
+        return IterationCode_t::Ok;   
     }
 #if !defined(WEATHER_STUB)
     httpClient.begin("https://api.weatherapi.com/v1/current.json?q=Moscow,RU&units=metric&lang=ru&key=b0b2880fa2ae4b8594e115610231806");
@@ -54,8 +54,8 @@ bool ControllerWeather::OnIteration() {
         isValid = parseWeatherInfo(httpClient, payload);
     }
 
-    LOGN("%::isValid, %d", _name, isValid);
-    return true;
+    LOGN("%s::isValid, %d", _name, isValid);
+    return IterationCode_t::Ok;
 }
 
 uint16_t ControllerWeather::ColorToRGB565(const uint8_t r, const uint8_t g, const uint8_t b) {

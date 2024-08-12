@@ -15,7 +15,7 @@ InitResponse_t ControllerRadSens::OnInit() {
     return _radSens.init() ? OnInitResultStart : OnInitResultERROR;
 }
 
-bool ControllerRadSens::OnIteration() {
+IterationCode_t ControllerRadSens::OnIteration() {
     _dynamicValue = _radSens.getRadIntensyDynamic(); 
     _staticValue = _radSens.getRadIntensyStatic();
     _impulseValue = _radSens.getNumberOfPulses();
@@ -23,5 +23,5 @@ bool ControllerRadSens::OnIteration() {
     LOGN("%s::getStatic, %f", _name, getStatic())
     LOGN("%s::getImpulse, %f", _name, getImpulse())
 
-    return true;
+    return IterationCode_t::Ok;
 }

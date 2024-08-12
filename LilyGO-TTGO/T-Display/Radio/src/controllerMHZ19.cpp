@@ -19,11 +19,11 @@ InitResponse_t ControllerMHZ19::OnInit() {
     return OnInitResultStartDelaySec(60);
 }
 
-bool ControllerMHZ19::OnIteration() {
+IterationCode_t ControllerMHZ19::OnIteration() {
     _ppm = _mhz19.getCO2();
     _temperature = _mhz19.getTemperature();
     LOGN("%s::getCO2, %d", _name, getCO2())
     LOGN("%s::getTemperature, %f", _name, getTemperature())
 
-    return true;
+    return IterationCode_t::Ok;
 }

@@ -15,7 +15,7 @@ class ControllerBme280 : public Controller {
         float getPressure() const { return _pressure; }
     protected:
         virtual InitResponse_t OnInit() override;
-        virtual bool OnIteration() override;
+        virtual IterationCode_t OnIteration() override;
     private:
         Adafruit_BME280 _bme;   // I2C
         float _temperature;

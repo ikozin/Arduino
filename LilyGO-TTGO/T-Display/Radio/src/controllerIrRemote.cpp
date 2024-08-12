@@ -1,6 +1,7 @@
 #include "controllerIrRemote.h"
 #include "IrRemote_CarMP3.h"
 
+
 //  -----------------------------------------------------------------------------------------
 //  |                                                                                       |
 //  |           POWER                       RETURN                      MODE                |
@@ -50,25 +51,33 @@
 
 
 // static rmt_channel_t example_tx_channel = RMT_CHANNEL_0;
-static rmt_channel_t rx_channel = RMT_CHANNEL_2;
+static rmt_channel_t rx_channel = RMT_CHANNEL_0;
 
 ControllerIrRemote::ControllerIrRemote(const char* name, gpio_num_t pin, SemaphoreHandle_t updateEvent) :
                         ControllerT(name, updateEvent) {
     _pin = pin;
-    _rb = NULL;
-    _ir_parser = NULL;
+    _addr = 0;
+    _cmd = 0;
+    _repeat = false;
+    _ir_parser = nullptr;
+    _rb = nullptr;
 }
 
 InitResponse_t ControllerIrRemote::OnInit() {
+    esp_err_t err;
     rmt_config_t rmt_rx_config = RMT_DEFAULT_CONFIG_RX(_pin, rx_channel);
-    rmt_config(&rmt_rx_config);
-    rmt_driver_install(rx_channel, 1000, 0);
+    err = rmt_config(&rmt_rx_config);
+    // LOGN("%s::rmt_config: %d", _name, err);
+
+    err = rmt_driver_install(rx_channel, 1000/*2048*/, 0);
+    // LOGN("%s::rmt_driver_install: %d", _name, err);
     ir_parser_config_t ir_parser_config = IR_PARSER_DEFAULT_CONFIG((ir_dev_t)rx_channel);
     ir_parser_config.flags |= IR_TOOLS_FLAGS_PROTO_EXT; // Using extended IR protocols (both NEC and RC5 have extended version)
     _ir_parser = ir_parser_rmt_new_nec(&ir_parser_config);
     //get RMT RX ringbuffer
-    rmt_get_ringbuf_handle(rx_channel, &_rb);
-    assert(_rb != NULL);
+    err = rmt_get_ringbuf_handle(rx_channel, &_rb);
+    // LOGN("%s::rmt_get_ringbuf_handle: %d", _name, err);
+    assert(_rb != nullptr);
     // Start receive
     rmt_rx_start(rx_channel, true);
 
@@ -80,41 +89,23 @@ void ControllerIrRemote::OnDone() {
     rmt_driver_uninstall(rx_channel);
 }
 
-bool ControllerIrRemote::OnIteration() {
-    uint32_t length = 0;
-    rmt_item32_t *items = (rmt_item32_t *) xRingbufferReceive(_rb, &length, portMAX_DELAY);
+IterationCode_t ControllerIrRemote::OnIteration() {
+    IterationCode_t result = IterationCode_t::Skip;
+    size_t length = 0;
+    rmt_item32_t *items = nullptr;
+    items = (rmt_item32_t *) xRingbufferReceive(_rb, &length, portMAX_DELAY);
     if (items) {
         length /= 4; // one RMT = 4 Bytes
         if (_ir_parser->input(_ir_parser, items, length) == ESP_OK) {
+            _addr = _cmd = 0;
+            _repeat = false;
             if (_ir_parser->get_scan_code(_ir_parser, &_addr, &_cmd, &_repeat) == ESP_OK) {
                 LOGN("%s::Scan Code %s --- addr: 0x%04x cmd: 0x%04x", _name, _repeat ? "(repeat)" : "", _addr, _cmd);
-                if (!_repeat) {
-                    switch (_cmd) {
-                        case 0xe916:
-                            _controller->changeVolume(-1);
-                            break;
-                        case 0xe619:
-                            _controller->changeVolume(+1);
-                            break;
-                        case 0xf807:
-                            _controller->changeChannel(-1);
-                            break;
-                        case 0xea15:
-                            _controller->changeChannel(+1);
-                            break;
-                        case 0xf609:
-                            _controller->toggleMute();
-                            break;
-                    }
-                }
-            // } else {
-            //     _addr = 0;
-            //     _cmd = 0;
-            //     _repeat = false;                            
+                result = IterationCode_t::Ok;
             }
         }
         //after parsing the data, return spaces to ringbuffer.
         vRingbufferReturnItem(_rb, (void *) items);
     }
-    return true;
+    return result;
 }

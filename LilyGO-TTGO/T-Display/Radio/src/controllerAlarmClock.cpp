@@ -16,7 +16,7 @@ InitResponse_t ControllerAlarmClock::OnInit() {
     return OnInitResultStart;
 }
 
-bool ControllerAlarmClock::OnIteration() {
+IterationCode_t ControllerAlarmClock::OnIteration() {
     File f = SPIFFS.open(FS_ALARMLIST_FILE);
     if (f) {
         DynamicJsonDocument  doc(2048);
@@ -57,14 +57,14 @@ bool ControllerAlarmClock::OnIteration() {
     for (int i = 0; i < _alarmClockCount; i++) {
         startTimer(i);    
     }
-    return false;
+    return IterationCode_t::Stop;
 }
 
 void ControllerAlarmClock::startTimer(int index) {
     alarmClockItem_t alarm = _alarmClockList[index];
     LOGN("%s::startTimer [%d]=0x%llX", _name, index, alarm.value);
     TickType_t period = getTimerPeriod(&alarm);
-    _timerList[index] = xTimerCreate("Timer", period, pdFALSE, (void *const)index, timerCallback);
+    _timerList[index] = xTimerCreate("Timer", period, pdFALSE, reinterpret_cast<void *>(index), timerCallback);
     xTimerStart(_timerList[index], 0);
 }
 

@@ -1,6 +1,17 @@
 {
     "files.associations": {
         "fstream": "cpp",
-        "*.tcc": "cpp"
+        "*.tcc": "cpp",
+        "rmt.h": "c",
+        "rmt_types.h": "c",
+        "atomic": "cpp",
+        "cstddef": "cpp",
+        "vector": "cpp",
+        "memory": "cpp",
+        "type_traits": "cpp",
+        "new": "cpp",
+        "tuple": "cpp",
+        "utility": "cpp",
+        "typeinfo": "cpp"
     }
 }

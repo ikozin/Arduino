@@ -12,7 +12,7 @@ class ControllerRadSens : public Controller {
         float getImpulse() const { return _impulseValue; }
     protected:
         virtual InitResponse_t OnInit() override;
-        virtual bool OnIteration() override;
+        virtual IterationCode_t OnIteration() override;
     private:
         CG_RadSens _radSens;    // I2C
         float _dynamicValue; 

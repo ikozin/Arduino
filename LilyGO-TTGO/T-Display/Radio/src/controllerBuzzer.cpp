@@ -43,8 +43,8 @@ void ControllerBuzzer::Stop() {
     _rtttl.stop();
 }
 
-bool ControllerBuzzer::OnIteration() {
+IterationCode_t ControllerBuzzer::OnIteration() {
     _rtttl.play();
-    return true;
+    return IterationCode_t::Ok;
 }
 

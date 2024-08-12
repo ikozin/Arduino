@@ -12,7 +12,7 @@ class ControllerMHZ19 : public Controller {
         int getCO2() const { return _ppm; }
     protected:
         virtual InitResponse_t OnInit() override;
-        virtual bool OnIteration() override;
+        virtual IterationCode_t OnIteration() override;
     private:
         gpio_num_t  _rx;
         gpio_num_t  _tx;
