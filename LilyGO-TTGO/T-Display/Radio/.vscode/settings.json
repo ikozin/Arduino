@@ -12,6 +12,7 @@
         "new": "cpp",
         "tuple": "cpp",
         "utility": "cpp",
-        "typeinfo": "cpp"
+        "typeinfo": "cpp",
+        "algorithm": "cpp"
     }
 }

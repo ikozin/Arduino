@@ -1,5 +1,4 @@
 #include "controllerIrRemote.h"
-#include "IrRemote_CarMP3.h"
 
 
 //  -----------------------------------------------------------------------------------------
@@ -53,9 +52,10 @@
 // static rmt_channel_t example_tx_channel = RMT_CHANNEL_0;
 static rmt_channel_t rx_channel = RMT_CHANNEL_0;
 
-ControllerIrRemote::ControllerIrRemote(const char* name, gpio_num_t pin, SemaphoreHandle_t updateEvent) :
+ControllerIrRemote::ControllerIrRemote(const char* name, gpio_num_t pin, rmt_channel_t channel, SemaphoreHandle_t updateEvent) :
                         ControllerT(name, updateEvent) {
     _pin = pin;
+    _channel = channel;
     _addr = 0;
     _cmd = 0;
     _repeat = false;
@@ -65,28 +65,28 @@ ControllerIrRemote::ControllerIrRemote(const char* name, gpio_num_t pin, Semapho
 
 InitResponse_t ControllerIrRemote::OnInit() {
     esp_err_t err;
-    rmt_config_t rmt_rx_config = RMT_DEFAULT_CONFIG_RX(_pin, rx_channel);
+    rmt_config_t rmt_rx_config = RMT_DEFAULT_CONFIG_RX(_pin, _channel);
     err = rmt_config(&rmt_rx_config);
     // LOGN("%s::rmt_config: %d", _name, err);
 
-    err = rmt_driver_install(rx_channel, 1000/*2048*/, 0);
+    err = rmt_driver_install(_channel, 1000/*2048*/, 0);
     // LOGN("%s::rmt_driver_install: %d", _name, err);
-    ir_parser_config_t ir_parser_config = IR_PARSER_DEFAULT_CONFIG((ir_dev_t)rx_channel);
+    ir_parser_config_t ir_parser_config = IR_PARSER_DEFAULT_CONFIG((ir_dev_t)_channel);
     ir_parser_config.flags |= IR_TOOLS_FLAGS_PROTO_EXT; // Using extended IR protocols (both NEC and RC5 have extended version)
     _ir_parser = ir_parser_rmt_new_nec(&ir_parser_config);
     //get RMT RX ringbuffer
-    err = rmt_get_ringbuf_handle(rx_channel, &_rb);
+    err = rmt_get_ringbuf_handle(_channel, &_rb);
     // LOGN("%s::rmt_get_ringbuf_handle: %d", _name, err);
     assert(_rb != nullptr);
     // Start receive
-    rmt_rx_start(rx_channel, true);
+    rmt_rx_start(_channel, true);
 
     return OnInitResultStart;
 }
 
 void ControllerIrRemote::OnDone() {
     _ir_parser->del(_ir_parser);
-    rmt_driver_uninstall(rx_channel);
+    rmt_driver_uninstall(_channel);
 }
 
 IterationCode_t ControllerIrRemote::OnIteration() {

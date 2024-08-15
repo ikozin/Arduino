@@ -51,7 +51,7 @@
 // #define WEATHER_ENABLE
 #define BME280_ENABLE
 // #define MHZ19_RADSENS_ENABLE
-// #define BUZZER_ENABLE
+#define BUZZER_ENABLE
 #define TIME_ENABLE
  #define IR_ENABLE
 // #define WIFI_ENABLE
