@@ -21,15 +21,23 @@ esphome:                                    # https://esphome.io/components/esph
   includes:                                 # https://esphome.io/components/esphome#esphome-includes
     - RadSens1v2/_CG_RadSens.h
 
+
+external_components:
+  - source: components
+    components: [RDA5807M]
+
+
 esp32:                                      # https://esphome.io/components/esp32
   board: ttgo-t7-v13-mini32                 # https://registry.platformio.org/platforms/platformio/espressif32/boards
   framework:
     type: arduino                           # https://esphome.io/components/esp32#arduino-framework
     # type: esp-idf                           # https://esphome.io/components/esp32#esp-idf-framework
 
+
 # Enable logging
 logger:                                     # https://esphome.io/components/logger
-  level: NONE
+  level: VERBOSE
+
 
 wifi:                                       # https://esphome.io/components/wifi
   ssid: !secret wifi_ssid
@@ -41,32 +49,39 @@ wifi:                                       # https://esphome.io/components/wifi
   ap:
     ssid: "Ttgo-T7-V13-Mini32"
     password: "gBygnWJoMIpk"
+  on_connect:
+    - component.update: time_device
+
 
 captive_portal:                             # https://esphome.io/components/captive_portal
+
 
 # Enable Home Assistant API
 api:                                        # https://esphome.io/components/api
   encryption:
     key: "GrG70uA55WijIP6WWiDV4lZOJGS9FY4RefThBIOf9PQ="
 
+
 mqtt:                                       # https://esphome.io/components/mqtt
   broker: !secret mqtt_broker
   username: !secret mqtt_user
   password: !secret mqtt_password
 
+
 ota:                                        # https://esphome.io/components/ota/
   - platform: esphome
     password: "65abeae31ea9a83d956fe2d5078fb069"
 
+
 time:                                       # https://esphome.io/components/time/
   - id: time_device
     timezone: Europe/Moscow
-    platform: homeassistant                 # https://esphome.io/components/time/homeassistant
-    # platform: sntp                          # https://esphome.io/components/time/sntp
+    # platform: homeassistant                 # https://esphome.io/components/time/homeassistant
+    platform: sntp                          # https://esphome.io/components/time/sntp
     # servers:
-    #   - ntp1.vniiftri.ru
-    #   - ntp2.vniiftri.ru
-    #   - ntp3.vniiftri.ru
+    #  - 0.ru.pool.ntp.org
+    #  - 1.ru.pool.ntp.org
+    #  - ntp2.vniiftri.ru
     # on_time:
     #   - seconds: /1
     #     then:
@@ -74,10 +89,6 @@ time:                                       # https://esphome.io/components/time
     #           id: time_text
     #           state: !lambda 'return id(time_device).now().strftime("%H:%M:%S");' # https://esphome.io/components/time/#strftime
 
-# globals:                                    # https://esphome.io/components/globals
-#   - id: page
-#     type: int
-#     initial_value: "1"
 
 datetime:                                   # https://esphome.io/components/datetime/
   - id: alarm_time_up_working
@@ -140,6 +151,7 @@ datetime:                                   # https://esphome.io/components/date
       - script.execute: script_down_weekend
     web_server_sorting_weight: 31
 
+
 interval:                                   # https://esphome.io/components/interval
   # - interval: 1s
   #   then:
@@ -154,9 +166,13 @@ interval:                                   # https://esphome.io/components/inte
   #             state: !lambda return id(time_device).now().strftime("%H:%M:%S");
   - interval: 10s
     then:
-      - select.next:                        # https://esphome.io/components/select/#select-next-action
-          id: displayScreen
-          cycle: True    
+      - select.next: displayScreen          # https://esphome.io/components/select/#select-next-action
+      - if:                                 # https://esphome.io/automations/actions#if-action
+          condition:
+            not:                            # https://esphome.io/automations/actions#and-or-xor-not-condition
+              time.has_time                 # https://esphome.io/components/time/#time-has-time-condition
+          then:
+            - component.update: time_device # https://esphome.io/automations/actions#component-update-action
       # - lambda: |-
       #     id(page) = (id(page) + 1);
       #     if (id(page) > 2) {
@@ -167,6 +183,7 @@ interval:                                   # https://esphome.io/components/inte
   #     - rtttl.play:
   #         rtttl: !lambda 'return id(buzzerMelode).state;'
 
+
 i2c:                                        # https://esphome.io/components/i2c.html
   - id: bus
     # frequency: 400kHz 
@@ -174,11 +191,23 @@ i2c:                                        # https://esphome.io/components/i2c.
     scl: 22
     scan: true
 
+
 uart:                                       # https://esphome.io/components/uart.html#configuration-variables
   - id: mhz19_uart
     rx_pin: 16
     tx_pin: 17
     baud_rate: 9600
+
+
+globals:                                    # https://esphome.io/components/globals
+  - id: id_band
+    type: int
+    initial_value: "1018"
+
+  - id: id_volume
+    type: int
+    initial_value: "0"
+
 
 select:                                     # https://esphome.io/components/select/
   - id: displayScreen
@@ -196,8 +225,105 @@ select:                                     # https://esphome.io/components/sele
     #       args: ["x.c_str()"]
     web_server_sorting_weight: 100
 
+  - id: id_volume_select
+    platform: template                      # https://esphome.io/components/select/template
+    name: "Громкость"
+    internal: False
+    options:
+      - 0,Кто здесь?
+      - 1,Очень тихо
+      - 2,Очень тихо
+      - 3,Тихо
+      - 4,Тихо
+      - 5,Ниже серединки
+      - 6,Ниже серединки
+      - 7,Серединка
+      - 8,Серединка
+      - 9,Выше серединки
+      - 10,Выше серединки
+      - 11,Громко
+      - 12,Громко
+      - 13,Очень громко
+      - 14,Очень громко
+      - 15,Are you nuts!?
+    optimistic: true
+    # restore_value: True
+    on_value: 
+      then:
+        # https://esphome.io/api/helpers_8h
+        # https://esphome.io/api/helpers_8h_source
+        # https://esphome.io/api/classesphome_1_1select_1_1_select
+        - lambda: id(id_volume) = std::stoi(str_until(x, ','));
+        - component.update: lcd             # https://esphome.io/automations/actions#component-update-action
+
+  - id: id_station_select
+    platform: template                      # https://esphome.io/components/select/template
+    name: "Радиостанция"
+    internal: False
+    options:
+      - 875,Business FM
+      - 879,Like FM
+      - 883,Ретро FM
+      - 887,Юмор FM
+      - 891,Радио Jazz
+      - 895,Радио Калина Красная
+      - 899,Радио Рекорд
+      - 903,Авторадио
+      - 908,Relax FM
+      - 912,Радио Sputnik
+      - 916,Радио Культура
+      - 920,Москва FM
+      - 924,Радио Дача
+      - 928,Радио Карнавал
+      - 932,STUDIO 21
+      - 936,Коммерсант FM
+      - 940,Восток FM
+      - 944,Первое Спортивное Радио
+      - 948,Говорит Москва
+      - 952,Rock FM
+      - 956,Радио Звезда
+      - 960,Дорожное радио
+      - 964,Такси FM
+      - 968,Детское радио
+      - 972,Радио КП
+      - 976,Вести FM
+      - 980,Радио Шоколад
+      - 984,Новое Радио
+      - 988,Радио Romantika
+      - 992,Радио Орфей
+      - 996,Радио Русский Хит
+      - 1001,Серебряннй дождь
+      - 1005,Жара FM
+      - 1012,DFM
+      - 1018,Наше Радио
+      - 1021,Монте-Карло
+      - 1025,Comedy Radio
+      - 1030,Шансон
+      - 1034,Маяк
+      - 1037,Maximum
+      - 1042,Радио ENERGY
+      - 1047,Радио 7
+      - 1050,Радио Гордость
+      - 1053,Capital FM
+      - 1057,Русское радио
+      - 1062,Европа Плюс
+      - 1066,Love Radio
+      - 1070,KISS FM
+      - 1074,Хит FM
+      - 1078,Милицейская волна
+    optimistic: true
+    # restore_value: True
+    on_value: 
+      then:
+        # https://esphome.io/api/helpers_8h
+        # https://esphome.io/api/helpers_8h_source
+        # https://esphome.io/api/classesphome_1_1select_1_1_select
+        - lambda: id(id_band) = std::stoi(str_until(x, ','));
+        - component.update: lcd             # https://esphome.io/automations/actions#component-update-action
+    web_server_sorting_weight: 121
+
   - id: buzzerMelode
-    platform: template
+    platform: template                      # https://esphome.io/components/select/template
     name: "Мелодия"
     internal: False
     options:
@@ -232,7 +358,25 @@ select:                                     # https://esphome.io/components/sele
     #       args: ["x.c_str()"]
     web_server_sorting_weight: 110
 
+
+RDA5807M:
+  - id: rda5807m_id
+    i2c_id: bus
+
+
 sensor:                                     # https://esphome.io/components/sensor/#base-sensor-configuration
+  # - id: rda5807m_id
+  #   platform: rda5807m
+  #   i2c_id: bus
+
+  # - id: rda5807m_id
+  #   platform: custom
+  #   lambda: |-
+  #     auto rda5807m = new RDA5807MComponent();
+  #     App.register_component(rda5807m);
+  #     return {};
+  #   sensors:
+
   - id: mhz19_id
     platform: mhz19                         # https://esphome.io/components/sensor/mhz19
     co2:
@@ -240,7 +384,6 @@ sensor:                                     # https://esphome.io/components/sens
       name: "Качество воздуха [CO2] (MH-Z19)"
       device_class: carbon_monoxide         # https://www.home-assistant.io/integrations/sensor/
       icon: mdi:molecule-co2                # https://pictogrammers.com/library/mdi/
-      # state_topic: "co2/state"
       web_server_sorting_weight: 51
     temperature:
       id: mhz19_Temperature
@@ -275,7 +418,7 @@ sensor:                                     # https://esphome.io/components/sens
       device_class: pressure                # https://www.home-assistant.io/integrations/sensor/
       icon: mdi:gauge                       # https://pictogrammers.com/library/mdi/
       unit_of_measurement: "mm"
-      filters:
+      filters:                              # https://esphome.io/components/sensor/#sensor-filters
         - lambda: return x * 0.750062;
       web_server_sorting_weight: 43
 
@@ -287,18 +430,24 @@ sensor:                                     # https://esphome.io/components/sens
     resolution: 2
     restore_mode: ALWAYS_ZERO
     publish_initial_value: True
+    on_clockwise: 
+      then:
+        - rda5807m.volume_down
+    on_anticlockwise:
+      then:
+        - rda5807m.volume_up
     web_server_sorting_weight: 72
 
   - id: rad_pulse_counter                   # https://devices.esphome.io/devices/geiger-counter
-    platform: pulse_counter
+    platform: pulse_counter                 # https://esphome.io/components/sensor/pulse_counter
     pin: 34
     name: "Радиационный фон"
     unit_of_measurement: 'μSv/h'
     icon: mdi:radioactive-circle-outline    # https://pictogrammers.com/library/mdi/
-    count_mode:
+    count_mode:                             # https://esphome.io/components/sensor/pulse_counter#configuration-variables
       rising_edge: DISABLE
       falling_edge: INCREMENT
-    filters:
+    filters:                                # https://esphome.io/components/sensor/#sensor-filters
       - offset: -12.0 # J305ß Geiger Mueller tube background noise 0.2 pulses / sec x 60 sec = 12 CPM (Counts per Minute)
       - multiply: 0.00812037037037 # Factor: 0.00812037037037
     web_server_sorting_weight: 60
@@ -340,6 +489,7 @@ sensor:                                     # https://esphome.io/components/sens
   #       entity_category: diagnostic
   #       icon: mdi:radioactive-circle-outline  # https://pictogrammers.com/library/mdi/
 
+
 binary_sensor:                              # https://esphome.io/components/binary_sensor/
   - id: pir
     platform: gpio                          # https://esphome.io/components/binary_sensor/gpio
@@ -357,13 +507,17 @@ binary_sensor:                              # https://esphome.io/components/bina
       mode:
           input: True
           pullup: True 
-    filters:
+    filters:                                # https://esphome.io/components/sensor/#sensor-filters
       - delayed_on: 10ms
     on_click: 
       then:
         - script.execute: script_run_working
+    on_double_click:
+      then:
+        - rda5807m.toggle_mute
     web_server_sorting_weight: 71
       
+
 remote_receiver:                            # https://esphome.io/components/remote_receiver
   pin:                                      # https://esphome.io/guides/configuration-types#config-pin-schema
     number: 26
@@ -409,6 +563,7 @@ remote_receiver:                            # https://esphome.io/components/remo
 # 'return (x.command == 0xAD52);'
 # 'return (x.command == 0xB54A);'
 
+
 text_sensor:                                # https://esphome.io/components/text_sensor/template
   # - platform: template
   #   id: time_text
@@ -418,7 +573,7 @@ text_sensor:                                # https://esphome.io/components/text
   #   web_server_sorting_weight: 1
 
   - id: time_up_working_sensor
-    platform: homeassistant
+    platform: homeassistant                 # https://esphome.io/components/text_sensor/homeassistant
     entity_id: input_datetime.alarm_time_up_working
     attribute: datetime
     internal: True
@@ -452,6 +607,7 @@ output:                                     # https://esphome.io/components/outp
     platform: gpio                          # https://esphome.io/components/output/gpio
     pin: 27
 
+
 rtttl:                                      # https://esphome.io/components/rtttl
     id: buzzer
     output: buzzer_output
@@ -462,11 +618,13 @@ rtttl:                                      # https://esphome.io/components/rttt
             id: buzzerMelode
             cycle: True    
 
+
 light:
   - platform: binary                        # https://esphome.io/components/light/binary
     id: led_light
     name: "Индикатор"
     output: led_output
+
 
 display:                                    # https://esphome.io/components/display/lcd_display
   - platform: lcd_pcf8574                   # https://esphome.io/api/classesphome_1_1lcd__base_1_1_l_c_d_display
@@ -623,11 +781,13 @@ display:                                    # https://esphome.io/components/disp
           break;
       }
 
+
 web_server:                                 # https://esphome.io/components/web_server
   port: 80
   version: 3
   log: False
   local: True
+
 
 script:                                     # https://esphome.io/components/script
   - id: script_run_working
@@ -657,5 +817,4 @@ script:                                     # https://esphome.io/components/scri
     mode: single
     then:
       - light.turn_off: led_light
-
 
