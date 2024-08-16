@@ -42,7 +42,7 @@ async def to_code(config):
         }
     ),
 )
-async def dfplayer_volume_up_to_code(config, action_id, template_arg, args):
+async def rda5807m_volume_up_to_code(config, action_id, template_arg, args):
     var = cg.new_Pvariable(action_id, template_arg)
     await cg.register_parented(var, config[CONF_ID])
     return var
