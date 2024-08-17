@@ -2,7 +2,7 @@
 
 ControllerMHZ19::ControllerMHZ19(const char* name, gpio_num_t rx, gpio_num_t tx, SemaphoreHandle_t updateEvent):
                     Controller(name, updateEvent), _serial(1), _mhz19() {
-    _updateTimeInSec = 10;
+    _updateTimeInSec = 60;
     _rx = rx;
     _tx = tx;
     _temperature = 0;
@@ -13,9 +13,6 @@ InitResponse_t ControllerMHZ19::OnInit() {
     _serial.begin(9600, SERIAL_8N1, _rx, _tx);
     _mhz19.begin(_serial);
     _mhz19.autoCalibration();
-    _mhz19.setRange(2000);
-    DelayInMin(20);
-    _mhz19.zeroSpan(2000);
     return OnInitResultStartDelaySec(60);
 }
 

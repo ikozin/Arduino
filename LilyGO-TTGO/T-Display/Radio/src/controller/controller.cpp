@@ -10,26 +10,25 @@ Controller::Controller(const char* name, SemaphoreHandle_t updateEvent) {
 }
 
 void Controller::Start(uint16_t stackDepth) {
-    Lock();
-    InitResponse_t result = OnInit();
-    Unlock();
-    if (result.IsError) {
-        LOGN("%s::ERROR INIT", _name)
-        return;
-    }
-    if (result.IsDone) {
-        return;
-    }
-    if (result.DelaySeconds) {
-        DelayInSec(result.DelaySeconds);
-    }
     xTaskCreate(ControllerHandler, _name, stackDepth, this, 1, &_task);
  }
 
 void Controller::ControllerHandler(void* parameter) {
     assert(parameter);
     Controller* controller = static_cast<Controller*>(parameter);
-    controller->OnHandle();
+    controller->Lock();
+    InitResponse_t result = controller->OnInit();
+    controller->Unlock();
+    if (result.IsError) {
+        LOGN("%s::ERROR INIT", controller->_name)
+        return;
+    }
+    if (!result.IsDone) {
+        if (result.DelaySeconds) {
+            DelayInSec(result.DelaySeconds);
+        }
+        controller->OnHandle();
+    }
     controller->OnDone();
     vTaskDelete(controller->_task);
 }

@@ -70,7 +70,7 @@
 #define BME280_ENABLE
 #define RADSENS_ENABLE
 //#define PIR_ENABLE
-//#define MHZ19_ENABLE
+#define MHZ19_ENABLE
 #define RESET_ENABLE
 #define BUZZER_ENABLE
 #define TIME_ENABLE
@@ -143,8 +143,8 @@ ControllerRadSens ctrlRadSens = ControllerRadSens("CtrlRadSens", updateEvent);
 #endif
 
 #ifdef MHZ19_ENABLE
-#define UART_RX_PIN     GPIO_NUM_25
-#define UART_TX_PIN     GPIO_NUM_26
+#define UART_RX_PIN     GPIO_NUM_26
+#define UART_TX_PIN     GPIO_NUM_25
 ControllerMHZ19 ctrlMHZ19 = ControllerMHZ19("CtrlMHZ19", UART_RX_PIN, UART_TX_PIN, updateEvent);
 #endif
 
