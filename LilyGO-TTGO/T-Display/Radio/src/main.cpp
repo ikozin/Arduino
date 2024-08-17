@@ -10,28 +10,31 @@
 #include "main.h"
 #include "setting.h"
 
-#include "radioStorage.h"
+#include "controller/radioStorage.h"
+#include "controller/controller.h"
+#include "controller/controllerAlarmClock.h"
+#include "controller/controllerBuzzer.h"
+#include "controller/controllerBme280.h"
+#include "controller/controllerRadSens.h"
+#include "controller/controllerMHZ19.h"
+#include "controller/controllerIrRemote.h"
+#include "controller/controllerTime.h"
+#include "controller/controllerRadio.h"
+#include "controller/controllerWeather.h"
+#include "controller/controllerSoftReset.h"
+#include "controller/controllerPIR.h"
 
-#include "controller.h"
-#include "controllerAlarmClock.h"
-#include "controllerBuzzer.h"
-#include "controllerBme280.h"
-#include "controllerRadSens.h"
-#include "controllerMHZ19.h"
-#include "controllerIrRemote.h"
-#include "controllerTime.h"
-#include "controllerRadio.h"
-#include "controllerWeather.h"
-#include "controllerSoftReset.h"
+#include "component/component.h"
+#include "component/componentSoftReset.h"
+#include "component/componentPIR.h"
+#include "component/componentIrRemote.h"
 
-#include "componetIrRemote.h"
-
-#include "view.h"
-#include "viewTime.h"
-#include "viewRadio.h"
-#include "viewBme280.h"
-#include "viewRadsMHZ19.h"
-#include "viewWeather.h"
+#include "view/view.h"
+#include "view/viewTime.h"
+#include "view/viewRadio.h"
+#include "view/viewBme280.h"
+#include "view/viewRadsMHZ19.h"
+#include "view/viewWeather.h"
 
 
 #include <..\..\tools\sdk\esp32\include\lwip\include\apps\esp_sntp.h>
@@ -47,10 +50,28 @@
   #error Ошибка настройки TFT_eSPI, необходимо подключить "User_Setups/Setup25_TTGO_T_Display.h"
 #endif
 
+/*
+    ------
+    | 32 |
+    | 33 |  Reset
+    | 25 |
+    | 26 |
+    | 27 |  Buzzer
+    | 17 |  PIR
+    |  2 |
+    | 15 |
+    | 13 |  IRemote
+    | 12 |
+    ------
+*/
+
 #define RADIO_ENABLE
 // #define WEATHER_ENABLE
 #define BME280_ENABLE
-// #define MHZ19_RADSENS_ENABLE
+#define RADSENS_ENABLE
+//#define PIR_ENABLE
+//#define MHZ19_ENABLE
+#define RESET_ENABLE
 #define BUZZER_ENABLE
 #define TIME_ENABLE
  #define IR_ENABLE
@@ -73,10 +94,10 @@ TFT_eSprite sprite = TFT_eSprite(&tft);
 Preferences prefs = Preferences();
 //AsyncWebServer server = AsyncWebServer(80);
 
-#define ENCODER_PIN_A   37
-#define ENCODER_PIN_B   38
+#define ENCODER_PIN_A   GPIO_NUM_37
+#define ENCODER_PIN_B   GPIO_NUM_38
 ESP32Encoder encoder = ESP32Encoder();
-#define ENCODER_BTN     39
+#define ENCODER_BTN     GPIO_NUM_39
 Button2 btnEncoder = Button2();
 
 String ssid         = ""; // SSID WI-FI
@@ -90,12 +111,12 @@ SemaphoreHandle_t xMutex = xSemaphoreCreateMutex();
 RadioStorage ctrlRadioStorage;
 
 #ifdef IR_ENABLE
-#define IR_PIN  GPIO_NUM_13
+#define IR_PIN          GPIO_NUM_13
 ControllerIrRemote ctrlIrRemote("CtrlIrRemote", IR_PIN);
 #endif
 
 #ifdef BUZZER_ENABLE
-#define BUZZER_PIN  GPIO_NUM_27
+#define BUZZER_PIN      GPIO_NUM_27
 ControllerBuzzer ctrlBuzzer("CtrlBuzzer", BUZZER_PIN);
 #endif
 
@@ -114,27 +135,55 @@ ControllerBme280 ctrlBme280 = ControllerBme280("CtrlBme280");
 ViewBME280 viewBme280 = ViewBME280("ViewBME280", &currentView, &ctrlBme280);
 #endif
 
-#ifdef MHZ19_RADSENS_ENABLE
-
-#define UART_RX_PIN  GPIO_NUM_17
-#define UART_TX_PIN  GPIO_NUM_27
 
 SemaphoreHandle_t updateEvent = xSemaphoreCreateBinary(); 
+
+#ifdef RADSENS_ENABLE
 ControllerRadSens ctrlRadSens = ControllerRadSens("CtrlRadSens", updateEvent);
-ControllerMHZ19 ctrlMHZ19 = ControllerMHZ19("CtrlMHZ19", UART_RX_PIN, UART_TX_PIN, updateEvent);
-ViewRadsMHZ19 viewRadsMHZ19 = ViewRadsMHZ19("ViewRadsMHZ19", &currentView, &ctrlRadSens);
 #endif
+
+#ifdef MHZ19_ENABLE
+#define UART_RX_PIN     GPIO_NUM_25
+#define UART_TX_PIN     GPIO_NUM_26
+ControllerMHZ19 ctrlMHZ19 = ControllerMHZ19("CtrlMHZ19", UART_RX_PIN, UART_TX_PIN, updateEvent);
+#endif
+
+#if defined(RADSENS_ENABLE) || defined(MHZ19_ENABLE)
+
+#ifdef RADSENS_ENABLE
+ControllerRadSens* radSens = &ctrlRadSens;
+#else
+ControllerRadSens* radSens = nullptr;
+#endif
+#ifdef MHZ19_ENABLE
+ControllerMHZ19* mhz19 = &ctrlMHZ19;
+#else
+ControllerMHZ19* mhz19 = nullptr;
+#endif
+
+ViewRadsMHZ19 viewRadsMHZ19 = ViewRadsMHZ19("ViewRadsMHZ19", &currentView, radSens, mhz19);
+#endif
+
 
 #ifdef TIME_ENABLE
 ControllerTime ctrlTime = ControllerTime("CtrlTime", &prefs);
 ViewTime viewTime = ViewTime("ViewTime", &currentView, &ctrlTime);
 #endif
 
-#define RESET_PIN   GPIO_NUM_33
+#ifdef RESET_ENABLE
+#define RESET_PIN       GPIO_NUM_33
 ControllerSoftReset ctrlReset = ControllerSoftReset("CtrlSoftReset", RESET_PIN);
+ComponentSoftReset cmpReset = ComponentSoftReset("cmpReset", &ctrlReset);
+#endif
+
+#ifdef PIR_ENABLE
+#define PIR_PIN         GPIO_NUM_17
+ControllerPIR crtlPIR = ControllerPIR("crtlPIR", PIR_PIN);
+ComponentPIR cmpPIR = ComponentPIR("cmpPIR", &crtlPIR);
+#endif
 
 #if defined(IR_ENABLE) & defined(RADIO_ENABLE)
-ComponetIrRemote cmpIrRemote = ComponetIrRemote("cmpIrRemote", &ctrlIrRemote, &ctrlRadio); 
+ComponentIrRemote cmpIrRemote = ComponentIrRemote("cmpIrRemote", &ctrlIrRemote, &ctrlRadio); 
 #endif
 
 
@@ -151,7 +200,7 @@ View* viewList[] = {
 #ifdef BME280_ENABLE
     &viewBme280,
 #endif
-#ifdef MHZ19_RADSENS_ENABLE
+#if defined(IR_ENABLE) & defined(RADIO_ENABLE)
     &viewRadsMHZ19,
 #endif
 };
@@ -349,9 +398,11 @@ void setup() {
     ctrlBuzzer.Start();
 #endif
 
-#ifdef MHZ19_RADSENS_ENABLE
+#ifdef RADSENS_ENABLE
     ctrlRadSens.SetLockingHandler(xMutex);
     ctrlRadSens.Start();
+#endif
+#ifdef MHZ19_ENABLE
     ctrlMHZ19.SetLockingHandler(xMutex);
     ctrlMHZ19.Start();
 #endif
@@ -359,13 +410,23 @@ void setup() {
     ctrlIrRemote.attachController(&ctrlRadio);
     ctrlIrRemote.Start();
 #endif
+#ifdef PIR_ENABLE
+    crtlPIR.Start();
+#endif
+#ifdef RESET_ENABLE
     ctrlReset.Start();
+#endif
 
     LOGN("Component - Start")
 #if defined(IR_ENABLE) & defined(RADIO_ENABLE)
     cmpIrRemote.Start(ctrlIrRemote.GetEvent());
 #endif
-
+#ifdef PIR_ENABLE
+    cmpPIR.Start(crtlPIR.GetEvent());
+#endif
+#ifdef RESET_ENABLE
+    cmpReset.Start(ctrlReset.GetEvent());
+#endif
 
     LOGN("View - Start")
     sprite.createSprite(TFT_HEIGHT, TFT_WIDTH);
@@ -381,7 +442,7 @@ void setup() {
 #ifdef BME280_ENABLE
     viewBme280.Start(&sprite, ctrlBme280.GetEvent());
 #endif
-#ifdef MHZ19_RADSENS_ENABLE
+#if defined(RADSENS_ENABLE) || defined(MHZ19_ENABLE)
     viewRadsMHZ19.Start(&sprite, ctrlRadSens.GetEvent());
 #endif
 

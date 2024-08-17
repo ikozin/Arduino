@@ -121,7 +121,7 @@ import java.awt.Desktop; // Required to allow sketch to open file windows
 // When the sketch is run it will generate a file called "systemFontList.txt" in the sketch folder, press Ctrl+K to see it.
 // Open the "systemFontList.txt" in a text editor to view the font files and reference numbers for your system.
 
-int fontNumber = 67; // << Use [Number] in brackets from the fonts listed.
+int fontNumber = 402; // << Use [Number] in brackets from the fonts listed.
 
 // OR use font name for ttf files placed in the "Data" folder or the font number seen in IDE Console for system fonts
 //                                                  the font numbers are listed when the sketch is run.
@@ -134,10 +134,10 @@ String fontType = ".ttf";
 
 
 // Define the font size in points for the TFT_eSPI font file
-int  fontSize = 12;
+int  fontSize = 33;
 
 // Font size to use in the Processing sketch display window that pops up (can be different to above)
-int displayFontSize = 12;
+int displayFontSize = 30;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Next we specify which unicode blocks from the the Basic Multilingual Plane (BMP) are included in the final font file. //
@@ -315,13 +315,13 @@ static final int[] unicodeBlocks = {
   //0xFF00, 0xFFEF, //Halfwidth and Fullwidth Forms, 240, 225, Hangul (52 characters), Katakana (55 characters), Latin (52 characters), Common (66 characters)
   //0xFFF0, 0xFFFF, //Specials, 16, 5, Common
 
-  //0x0030, 0x0039, //Example custom range (numbers 0-9)
-  //0x0041, 0x005A, //Example custom range (Upper case A-Z)
-  //0x0061, 0x007A, //Example custom range (Lower case a-z)
+  0x0030, 0x0039, //Example custom range (numbers 0-9)
+  0x0041, 0x005A, //Example custom range (Upper case A-Z)
+  0x0061, 0x007A, //Example custom range (Lower case a-z)
   0x0401, 0x0401,  //Cyrillic
   0x0410, 0x042F,  //Cyrillic
-  //0x0430, 0x044F,  //Cyrillic
-  //0x0451, 0x0451,  //Cyrillic
+  0x0430, 0x044F,  //Cyrillic
+  0x0451, 0x0451,  //Cyrillic
 
   //0x0030, 0x0039, //Example custom range (numbers 0-9)
   //0x0041, 0x005A, //Example custom range (Upper case A-Z)
@@ -332,11 +332,12 @@ static final int[] unicodeBlocks = {
 // Here we specify particular individual Unicodes to be included (appended at end of selected range)
 static final int[] specificUnicodes = {
 0x0020, //  
-//0x0025, // %
-//0x002B, // -
-//0x002C, // ,
-//0x002D, // +
-//0x002E, // .
+0x0025, // %
+0x002B, // -
+0x002C, // ,
+0x002D, // +
+0x002E, // .
+0x002F, // /
 //0x0030, // 0
 //0x0031, // 1
 //0x0032, // 2
@@ -347,7 +348,8 @@ static final int[] specificUnicodes = {
 //0x0037, // 7
 //0x0038, // 8
 //0x0039, // 9
-//0x00B0, // °
+0x00B0, // °
+0x03BC, // μ
 
 
   // Commonly used codes, add or remove // in next line
