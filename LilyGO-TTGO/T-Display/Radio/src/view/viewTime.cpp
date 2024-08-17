@@ -1,6 +1,6 @@
 #include "view/viewTime.h"
 #include "fonts/DIGI56.h"
-#include "fonts/NotoSansSemiBold24.h"
+#include "fonts/NotoSansSemiBold23.h"
 
 const char* dayOfWeeks[] = {
   "ВС",
@@ -56,7 +56,7 @@ void ViewTime::OnHandle() {
     // Serial.println(text);
 
     _sprite->setTextColor(getDateColor(now));
-    _sprite->loadFont(NotoSansSemiBold24);
+    _sprite->loadFont(NotoSansSemiBold23);
     _sprite->drawString(text, TFT_HEIGHT >> 1, 28);
     _sprite->unloadFont();
 }
