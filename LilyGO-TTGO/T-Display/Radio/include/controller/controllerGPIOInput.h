@@ -5,8 +5,7 @@
 class ControllerGPIOInput : public Controller {
     public:
         ControllerGPIOInput(const char* name, gpio_num_t pin,
-            gpio_int_type_t int_type = GPIO_INTR_ANYEDGE, gpio_pull_mode_t pull_mode = GPIO_PULLUP_ONLY,
-            SemaphoreHandle_t updateEvent = nullptr);
+            gpio_int_type_t int_type = GPIO_INTR_ANYEDGE, gpio_pull_mode_t pull_mode = GPIO_PULLUP_ONLY);
     protected:
         virtual InitResponse_t OnInit() override;
         virtual IterationCode_t OnIteration() override { return IterationCode_t::Stop; }

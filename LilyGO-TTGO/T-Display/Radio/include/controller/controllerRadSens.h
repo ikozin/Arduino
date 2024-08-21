@@ -5,7 +5,7 @@
 
 class ControllerRadSens : public Controller {
     public:
-        ControllerRadSens(const char* name, SemaphoreHandle_t updateEvent);
+        ControllerRadSens(const char* name);
     public:
         float getDynamic() const { return _dynamicValue; }
         float getStatic() const { return _staticValue; }

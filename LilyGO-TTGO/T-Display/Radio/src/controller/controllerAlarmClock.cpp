@@ -6,7 +6,7 @@
 ControllerAlarmClock ctrlAlarmClock = ControllerAlarmClock("ctrlAlarm");
 
 ControllerAlarmClock::ControllerAlarmClock(const char* name):
-                        ControllerT(name, nullptr) {
+                        ControllerT(name) {
     _alarmClockCount = 0;
     _timerList = nullptr;
     _alarmClockList = nullptr;

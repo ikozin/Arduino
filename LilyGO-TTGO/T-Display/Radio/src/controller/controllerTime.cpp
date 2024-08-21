@@ -2,7 +2,7 @@
 #include "main.h"
 
 ControllerTime::ControllerTime(const char* name, Preferences* prefs):
-                    Controller(name, nullptr) {
+                    Controller(name) {
     _updateTimeInSec = 1;
     _prefs = prefs;
 }
@@ -46,6 +46,8 @@ void ControllerTime::OnHandle() {
         Lock();
         _currentTime = _rtc.now();
         Unlock();
-        xSemaphoreGive(_updateEvent);
+        for (int i = 0; i < EventListMax && _eventList[i] != nullptr; i++) {
+            xSemaphoreGive(_eventList[i]);
+        }
     }
 }

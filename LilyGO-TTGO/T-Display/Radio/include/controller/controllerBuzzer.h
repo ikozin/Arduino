@@ -5,7 +5,7 @@
 
 class ControllerBuzzer : public Controller {
     public:
-        ControllerBuzzer(const char* name, gpio_num_t pin, rmt_channel_t channel = RMT_CHANNEL_1, SemaphoreHandle_t updateEvent = nullptr);
+        ControllerBuzzer(const char* name, gpio_num_t pin, rmt_channel_t channel = RMT_CHANNEL_1);
     protected:
         virtual InitResponse_t OnInit() override;
         virtual IterationCode_t OnIteration() override;

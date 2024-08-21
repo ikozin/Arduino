@@ -1,7 +1,7 @@
 #include "controller/controllerMHZ19.h"
 
-ControllerMHZ19::ControllerMHZ19(const char* name, gpio_num_t rx, gpio_num_t tx, SemaphoreHandle_t updateEvent):
-                    Controller(name, updateEvent), _serial(1), _mhz19() {
+ControllerMHZ19::ControllerMHZ19(const char* name, gpio_num_t rx, gpio_num_t tx):
+                    Controller(name), _serial(1), _mhz19() {
     _updateTimeInSec = 60;
     _rx = rx;
     _tx = tx;

@@ -1,8 +1,8 @@
 #include "controller/controllerBme280.h"
 #include <Wire.h>
 
-ControllerBme280::ControllerBme280(const char* name, SemaphoreHandle_t updateEvent):
-                    Controller(name, updateEvent) {
+ControllerBme280::ControllerBme280(const char* name):
+                    Controller(name) {
     _updateTimeInSec = 60;
     
     _temperature = 0;

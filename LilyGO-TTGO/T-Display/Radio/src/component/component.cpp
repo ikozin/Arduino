@@ -1,13 +1,15 @@
 #include <typeinfo>
 #include "component/component.h"
 
-Component::Component(const char* name) {
+Component::Component(const char* name, SemaphoreHandle_t updateEvent) {
     _name = name;
+    _updateEvent = (updateEvent == nullptr) ? xSemaphoreCreateBinary() : updateEvent;
 }
 
-void Component::Start(SemaphoreHandle_t updateEvent, uint16_t stackDepth) {
-    assert(updateEvent);
-    _updateEvent = updateEvent;
+void Component::Start(Controller* ctrl, uint16_t stackDepth) {
+    if (ctrl) {
+        ctrl->AddUpdateEvent(GetEvent());
+    }
     xTaskCreate(Handler, this->_name, stackDepth, this, 50, &this->_task);
 }
 
@@ -19,4 +21,5 @@ void Component::Handler(void* parameter) {
         LOGN("%s::OnHandle", component->_name)
         component->OnHandle();
     }
+    vTaskDelete(component->_task);    
 }

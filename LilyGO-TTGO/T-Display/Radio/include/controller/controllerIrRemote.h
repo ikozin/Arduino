@@ -8,7 +8,7 @@
 
 class ControllerIrRemote : public ControllerT<ControllerRadio> {
     public:
-        ControllerIrRemote(const char* name, gpio_num_t pin, rmt_channel_t channel = RMT_CHANNEL_0, SemaphoreHandle_t updateEvent = nullptr);
+        ControllerIrRemote(const char* name, gpio_num_t pin, rmt_channel_t channel = RMT_CHANNEL_0);
     protected:
         virtual InitResponse_t OnInit() override;
         virtual IterationCode_t OnIteration() override;

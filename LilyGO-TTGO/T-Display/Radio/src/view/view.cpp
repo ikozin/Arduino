@@ -1,16 +1,18 @@
 #include <typeinfo>
 #include "view/view.h"
 
-View::View(const char* name, View** currentView) {
+View::View(const char* name, View** currentView, SemaphoreHandle_t updateEvent) {
     _name = name;
     _currentView = currentView;
+    _updateEvent = (updateEvent == nullptr) ? xSemaphoreCreateBinary() : updateEvent;
 }
 
-void View::Start(TFT_eSprite* sprite, SemaphoreHandle_t updateEvent, uint16_t stackDepth) {
+void View::Start(TFT_eSprite* sprite, Controller* ctrl, uint16_t stackDepth) {
     assert(sprite);
-    assert(updateEvent);
     _sprite = sprite;
-    _updateEvent = updateEvent;
+    if (ctrl) {
+        ctrl->AddUpdateEvent(GetEvent());
+    }
     xTaskCreate(ViewHandler, this->_name, stackDepth, this, 100, &this->_task);
 }
 
@@ -25,4 +27,5 @@ void View::ViewHandler(void* parameter) {
             page->_sprite->pushSprite(0, 0);
         }
     }
+    vTaskDelete(page->_task);
 }

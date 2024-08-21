@@ -54,8 +54,8 @@
     ------
     | 32 |
     | 33 |  Reset
-    | 25 |
-    | 26 |
+    | 25 |  MHZ19
+    | 26 |  MHZ19
     | 27 |  Buzzer
     | 17 |  PIR
     |  2 |
@@ -135,17 +135,14 @@ ControllerBme280 ctrlBme280 = ControllerBme280("CtrlBme280");
 ViewBME280 viewBme280 = ViewBME280("ViewBME280", &currentView, &ctrlBme280);
 #endif
 
-
-SemaphoreHandle_t updateEvent = xSemaphoreCreateBinary(); 
-
 #ifdef RADSENS_ENABLE
-ControllerRadSens ctrlRadSens = ControllerRadSens("CtrlRadSens", updateEvent);
+ControllerRadSens ctrlRadSens = ControllerRadSens("CtrlRadSens");
 #endif
 
 #ifdef MHZ19_ENABLE
 #define UART_RX_PIN     GPIO_NUM_26
 #define UART_TX_PIN     GPIO_NUM_25
-ControllerMHZ19 ctrlMHZ19 = ControllerMHZ19("CtrlMHZ19", UART_RX_PIN, UART_TX_PIN, updateEvent);
+ControllerMHZ19 ctrlMHZ19 = ControllerMHZ19("CtrlMHZ19", UART_RX_PIN, UART_TX_PIN);
 #endif
 
 #if defined(RADSENS_ENABLE) || defined(MHZ19_ENABLE)
@@ -419,33 +416,38 @@ void setup() {
 
     LOGN("Component - Start")
 #if defined(IR_ENABLE) & defined(RADIO_ENABLE)
-    cmpIrRemote.Start(ctrlIrRemote.GetEvent());
+    cmpIrRemote.Start(&ctrlIrRemote);
 #endif
 #ifdef PIR_ENABLE
-    cmpPIR.Start(crtlPIR.GetEvent());
+    cmpPIR.Start(&crtlPIR);
 #endif
 #ifdef RESET_ENABLE
-    cmpReset.Start(ctrlReset.GetEvent());
+    cmpReset.Start(&ctrlReset);
 #endif
 
     LOGN("View - Start")
     sprite.createSprite(TFT_HEIGHT, TFT_WIDTH);
 #ifdef TIME_ENABLE
-    viewTime.Start(&sprite, ctrlTime.GetEvent());
+    viewTime.Start(&sprite, &ctrlTime);
 #endif
 #ifdef RADIO_ENABLE
-    viewRadio.Start(&sprite, ctrlRadio.GetEvent());
+    viewRadio.Start(&sprite, &ctrlRadio);
 #endif
 #ifdef WEATHER_ENABLE
-    viewWeather.Start(&sprite, ctrlWeather.GetEvent(), 8192);
+    viewWeather.Start(&sprite, &ctrlWeather, 8192);
 #endif
 #ifdef BME280_ENABLE
-    viewBme280.Start(&sprite, ctrlBme280.GetEvent());
+    viewBme280.Start(&sprite, &ctrlBme280);
 #endif
 #if defined(RADSENS_ENABLE) || defined(MHZ19_ENABLE)
-    viewRadsMHZ19.Start(&sprite, ctrlRadSens.GetEvent());
+#ifdef RADSENS_ENABLE
+    ctrlRadSens.AddUpdateEvent(viewRadsMHZ19.GetEvent());
 #endif
-
+#ifdef MHZ19_ENABLE
+    ctrlMHZ19.AddUpdateEvent(viewRadsMHZ19.GetEvent());
+#endif
+    viewRadsMHZ19.Start(&sprite);
+#endif
 #ifdef RADIO_ENABLE
     currentHandle = &ControllerRadio::changeVolume;
 #endif

@@ -1,7 +1,7 @@
 #include "controller/controllerRadSens.h"
 
-ControllerRadSens::ControllerRadSens(const char* name, SemaphoreHandle_t updateEvent):
-                    Controller(name, updateEvent), _radSens(RS_DEFAULT_I2C_ADDRESS) {
+ControllerRadSens::ControllerRadSens(const char* name):
+                    Controller(name), _radSens(RS_DEFAULT_I2C_ADDRESS) {
     _updateTimeInSec = 60;
     
     _dynamicValue = 0; 

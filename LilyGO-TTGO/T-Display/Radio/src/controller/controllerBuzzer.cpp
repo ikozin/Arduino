@@ -136,8 +136,8 @@ static int getNumber(const char * &data) {
     return number;
 }
 
-ControllerBuzzer::ControllerBuzzer(const char* name, gpio_num_t pin, rmt_channel_t channel, SemaphoreHandle_t updateEvent) :
-                        Controller(name, updateEvent)
+ControllerBuzzer::ControllerBuzzer(const char* name, gpio_num_t pin, rmt_channel_t channel) :
+                        Controller(name)
 {
     _startEvent = xSemaphoreCreateBinary();
     _channel = channel;

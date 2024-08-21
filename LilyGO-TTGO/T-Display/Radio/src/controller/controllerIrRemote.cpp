@@ -52,8 +52,8 @@
 // static rmt_channel_t example_tx_channel = RMT_CHANNEL_0;
 static rmt_channel_t rx_channel = RMT_CHANNEL_0;
 
-ControllerIrRemote::ControllerIrRemote(const char* name, gpio_num_t pin, rmt_channel_t channel, SemaphoreHandle_t updateEvent) :
-                        ControllerT(name, updateEvent) {
+ControllerIrRemote::ControllerIrRemote(const char* name, gpio_num_t pin, rmt_channel_t channel) :
+                        ControllerT(name) {
     _pin = pin;
     _channel = channel;
     _addr = 0;

@@ -2,7 +2,7 @@
 #include "main.h"
 
 ControllerRadio::ControllerRadio(const char* name, Preferences* prefs, RadioStorage* storage):
-                    Controller(name, nullptr) {
+                    Controller(name) {
     _prefs = prefs;
     _storage = storage;
     _currentVolume = 0;
@@ -53,7 +53,9 @@ void ControllerRadio::setMute(bool mute) {
     _isMute = mute;
     _radio.SetMute(_isMute);
     _prefs->putBool("mute", _isMute);  
-    xSemaphoreGive(_updateEvent);
+    for (int i = 0; i < EventListMax && _eventList[i] != nullptr; i++) {
+        xSemaphoreGive(_eventList[i]);
+    }
 }
 
 void ControllerRadio::setRadioIndex(uint16_t index) {
@@ -64,7 +66,9 @@ void ControllerRadio::setRadioIndex(uint16_t index) {
     uint16_t band = rec->band;
     _radio.SetChannel(band);
     _prefs->putInt("station", _currentIndex);  
-    xSemaphoreGive(_updateEvent);
+    for (int i = 0; i < EventListMax && _eventList[i] != nullptr; i++) {
+        xSemaphoreGive(_eventList[i]);
+    }
 }
 
 void ControllerRadio::setVolume(uint16_t value) {
@@ -73,5 +77,7 @@ void ControllerRadio::setVolume(uint16_t value) {
     _currentVolume = value;
     _radio.SetVolume(_currentVolume);
     _prefs->putInt("volume", _currentVolume);
-    xSemaphoreGive(_updateEvent);
+    for (int i = 0; i < EventListMax && _eventList[i] != nullptr; i++) {
+        xSemaphoreGive(_eventList[i]);
+    }
 }

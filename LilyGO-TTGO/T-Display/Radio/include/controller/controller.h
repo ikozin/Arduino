@@ -26,17 +26,19 @@ typedef enum IterationCode {
 #define OnInitResultStartDelaySec(delay)    (InitResponse_t){ .DelaySeconds = delay, .IsDone  = 0, .IsError = 0 }
 #define OnInitResultStop                    (InitResponse_t){ .DelaySeconds = 0,     .IsDone  = 1, .IsError = 0 }
 #define OnInitResultERROR                   (InitResponse_t){ .DelaySeconds = 0,     .IsDone  = 0, .IsError = 1 }
+#define EventListMax                        (3)
 
 class Controller {
     public:
-        Controller(const char* name, SemaphoreHandle_t updateEvent);
+        Controller(const char* name);
         void Start(uint16_t stackDepth = 2048);
-        SemaphoreHandle_t GetEvent() const { return _updateEvent; };
+        bool AddUpdateEvent(SemaphoreHandle_t event);
     protected:
-        const char* _name;
-        uint32_t  _updateTimeInSec;
-        SemaphoreHandle_t _updateEvent;
-        TaskHandle_t _task;
+        const char*     _name;
+        TaskHandle_t    _task;
+        uint32_t        _updateTimeInSec;
+        SemaphoreHandle_t   _xMutex = nullptr;
+        SemaphoreHandle_t   _eventList[EventListMax] { nullptr, nullptr, nullptr };
     protected:
         virtual InitResponse_t OnInit() = 0;
         virtual IterationCode_t OnIteration() = 0;
@@ -45,8 +47,6 @@ class Controller {
     protected:
         static void DelayInSec(uint32_t seconds);
         static void DelayInMin(uint32_t minutes);
-    protected:
-        SemaphoreHandle_t  _xMutex = nullptr;
     public:
         void Lock();
         void Unlock();
@@ -58,8 +58,8 @@ class Controller {
 template<typename Type>
 class ControllerT: public Controller {
     public:
-        ControllerT(const char* name, SemaphoreHandle_t updateEvent):
-            Controller(name, updateEvent) {
+        ControllerT(const char* name):
+            Controller(name) {
             _controller = nullptr;
         }
     protected:

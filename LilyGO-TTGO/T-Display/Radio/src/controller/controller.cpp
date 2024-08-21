@@ -1,12 +1,21 @@
 #include "controller/controller.h"
 // https://docs.espressif.com/projects/esp-idf/en/v5.0/esp32/api-reference/system/freertos.html#task-api
 
-Controller::Controller(const char* name, SemaphoreHandle_t updateEvent) {
+Controller::Controller(const char* name) {
     assert(name);
     _task = nullptr;
     _name = name;
     _updateTimeInSec = 0;
-    _updateEvent = (updateEvent == nullptr) ? xSemaphoreCreateBinary() : updateEvent;
+}
+
+bool Controller::AddUpdateEvent(SemaphoreHandle_t event) {
+    for (int i = 0; i < EventListMax; i++) {
+        if (_eventList[i] == nullptr) {
+            _eventList[i] = event;
+            return true;
+        }
+    }
+    return false;
 }
 
 void Controller::Start(uint16_t stackDepth) {
@@ -40,7 +49,9 @@ void Controller::OnHandle() {
         IterationCode_t result  = OnIteration();
         Unlock();
         if (result == IterationCode_t::Ok) {
-            xSemaphoreGive(_updateEvent);
+            for (int i = 0; i < EventListMax && _eventList[i] != nullptr; i++) {
+                xSemaphoreGive(_eventList[i]);
+            }
         }
         if (result == IterationCode_t::Stop) {
             break;

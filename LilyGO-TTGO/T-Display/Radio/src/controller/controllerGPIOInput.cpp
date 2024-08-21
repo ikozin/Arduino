@@ -2,8 +2,8 @@
 
 // https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/peripherals/gpio.html
 
-ControllerGPIOInput::ControllerGPIOInput(const char* name, gpio_num_t pin, gpio_int_type_t int_type, gpio_pull_mode_t pull_mode, SemaphoreHandle_t updateEvent) :
-                        Controller(name, updateEvent) {
+ControllerGPIOInput::ControllerGPIOInput(const char* name, gpio_num_t pin, gpio_int_type_t int_type, gpio_pull_mode_t pull_mode) :
+                        Controller(name) {
     _pin = pin;
     _int_type = int_type;
     _pull_mode = pull_mode;
@@ -31,5 +31,7 @@ InitResponse_t ControllerGPIOInput::OnInit() {
 void IRAM_ATTR ControllerGPIOInput::gpio_isr_handler(void* parameter) {
     ControllerGPIOInput* controller = static_cast<ControllerGPIOInput*>(parameter);
     controller->_state = gpio_get_level(controller->_pin);
-    xSemaphoreGiveFromISR(controller->_updateEvent, nullptr);
+    for (int i = 0; i < EventListMax && controller->_eventList[i] != nullptr; i++) {
+        xSemaphoreGiveFromISR(controller->_eventList[i], nullptr);
+    }
 }
