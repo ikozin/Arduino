@@ -2,14 +2,26 @@
 #include "fonts/CalibriBold12.h"
 #include "fonts/Roboto33.h"
 
-ViewRadsMHZ19::ViewRadsMHZ19(const char* name, View** currentView,  ControllerRadSens* radSens, ControllerMHZ19* mhz19):
-                View(name, currentView) {
-    assert(radSens);
+ViewRadsMHZ19::ViewRadsMHZ19(const char* name, View** currentView,  ControllerRadSens* radSens, ControllerMHZ19* mhz19, SemaphoreHandle_t updateEvent):
+                View(name, currentView, updateEvent) {
     _radSens = radSens;
     _mhz19 = mhz19;
 }
 
-void ViewRadsMHZ19::OnHandle() {
+void ViewRadsMHZ19::Start(TFT_eSprite* sprite, uint16_t stackDepth){
+        assert(sprite);
+        _sprite = sprite;
+        if (_radSens != nullptr) {
+            _radSens->AddUpdateEvent(GetEvent());
+        }
+        if (_mhz19 != nullptr) {
+            _mhz19->AddUpdateEvent(GetEvent());
+        }
+        xTaskCreate(ViewHandler, this->_name, stackDepth, this, 100, &this->_task);
+}
+
+
+void ViewRadsMHZ19::OnDrawHandle() {
     char text[32];
 
     float rad = 0;

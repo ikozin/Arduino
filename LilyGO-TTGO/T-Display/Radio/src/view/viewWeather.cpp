@@ -5,10 +5,6 @@
 
 const int32_t iconSize = 64;
 
-ViewWeather::ViewWeather(const char* name, View** currentView, ControllerWeather* weather) : View(name, currentView) {
-    _weather = weather;
-}
-
 void ViewWeather::drawImageFile(const char* fileName, const int32_t x, const int32_t y, const int32_t size) {
     fs::File f = SPIFFS.open(fileName);
     if (f) {
@@ -21,20 +17,20 @@ void ViewWeather::drawImageFile(const char* fileName, const int32_t x, const int
     }
 }
 
-void ViewWeather::OnHandle() {
+void ViewWeather::OnDrawHandle() {
     //LOGN("ViewWeather::OnHandle")
     _sprite->fillSprite(0x4C7D); //ColorToRGB565(0x4D, 0x8D, 0xEE)
-    if (!_weather->isValid) {
+    if (!_ctrl->isValid) {
         return;
     }
     _sprite->loadFont(FONT_TEXT_32);
     _sprite->setTextColor(TFT_WHITE);
     _sprite->setTextDatum(TL_DATUM);
 
-    int32_t posX = _sprite->textWidth(_weather->weatherDescription);
+    int32_t posX = _sprite->textWidth(_ctrl->weatherDescription);
     posX = (posX < (TFT_HEIGHT - 2)) ? (TFT_HEIGHT - posX) >> 1 : 2;
     _sprite->setTextDatum(TC_DATUM);
-    drawTextBlock(TFT_HEIGHT >> 1, 64, (TFT_HEIGHT - 2), _weather->weatherDescription);
+    drawTextBlock(TFT_HEIGHT >> 1, 64, (TFT_HEIGHT - 2), _ctrl->weatherDescription);
     
     // Для шрифта Colibri56
     // Ширина: для срок от -40° до +40° максимальная = 101
@@ -43,11 +39,11 @@ void ViewWeather::OnHandle() {
     _sprite->setTextColor(TFT_WHITE);
     _sprite->setTextDatum(TL_DATUM);
 
-    posX = ((int32_t)91 - _sprite->textWidth(_weather->weatherTemperature)) >> 1;
-    _sprite->drawString(_weather->weatherTemperature, 80, 10);
+    posX = ((int32_t)91 - _sprite->textWidth(_ctrl->weatherTemperature)) >> 1;
+    _sprite->drawString(_ctrl->weatherTemperature, 80, 10);
     _sprite->unloadFont();
 
-    drawImageFile(_weather->iconFileName.c_str(), 3, 0, 64);
+    drawImageFile(_ctrl->iconFileName.c_str(), 3, 0, 64);
 }
 
 void ViewWeather::drawTextBlock(int32_t left, int32_t top, int32_t width, const String &text) {

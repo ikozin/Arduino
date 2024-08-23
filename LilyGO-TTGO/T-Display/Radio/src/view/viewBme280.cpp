@@ -2,14 +2,7 @@
 #include "fonts/CalibriBold12.h"
 #include "fonts/Roboto33.h"
 
-ViewBME280::ViewBME280(const char* name, View** currentView,  ControllerBme280* bme280) : View(name, currentView) {
-    assert(bme280);
-    _bme280 = bme280;
-}
-
-//#define STUB
-
-void ViewBME280::OnHandle() {
+void ViewBME280::OnDrawHandle() {
     //LOGN("ViewBME280::OnHandle")
     char text[32];
 #ifdef STUB
@@ -17,9 +10,9 @@ void ViewBME280::OnHandle() {
     float humidity      = 23.9;
     float pressure      = 758.0;
 #else
-    float temperature   = _bme280->getTemperature();    //28.7;
-    float humidity      = _bme280->getHumidity();       //23.9;
-    float pressure      = _bme280->getPressure();       //758.0;
+    float temperature   = _ctrl->getTemperature();    //28.7;
+    float humidity      = _ctrl->getHumidity();       //23.9;
+    float pressure      = _ctrl->getPressure();       //758.0;
 #endif
     _sprite->fillSprite(TFT_DARKGREY);
 

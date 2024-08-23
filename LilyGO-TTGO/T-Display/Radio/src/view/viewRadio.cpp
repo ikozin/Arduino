@@ -1,10 +1,6 @@
 #include "view/viewRadio.h"
 #include "fonts/NotoSansSemiBold24.h"
 
-ViewRadio::ViewRadio(const char* name, View** currentView, ControllerRadio* radio) : View(name, currentView) {
-    _radio = radio;
-}
-
 uint8_t unmuteBitmap[] = {
     B00000000, B00000110, B00000000,
     B00000000, B00000110, B00000000,
@@ -23,13 +19,13 @@ uint8_t unmuteBitmap[] = {
     B00000000, B00000110, B00000000,
 };
 
-void ViewRadio::OnHandle() {
+void ViewRadio::OnDrawHandle() {
     //LOGN("ViewRadio::OnHandle")
 
     _sprite->fillSprite(TFT_BLACK);
 
-    RadioStorage* storage = _radio->getStorage();
-    uint16_t index = _radio->getRadioIndex();
+    RadioStorage* storage = _ctrl->getStorage();
+    uint16_t index = _ctrl->getRadioIndex();
     uint16_t band = storage->getItem(index)->band;
     float freq = band / 10.0;
 
@@ -57,12 +53,12 @@ void ViewRadio::OnHandle() {
         _sprite->fillCircle(10, 33 + (i * 14), 2, 0xFBAE);
     }
 
-    if (!_radio->getMute()) {
+    if (!_ctrl->getMute()) {
         _sprite->drawBitmap(216, 10, unmuteBitmap, 24, 15, TFT_WHITE);
     }
 
     _sprite->drawRoundRect(216, 31, 24, 65, 4, TFT_WHITE);
-    uint16_t volume = _radio->getVolume();
+    uint16_t volume = _ctrl->getVolume();
     for(int i = 0; i < volume; i++) {
         uint32_t color = 0x3526;
         if (i > 5)  color = TFT_YELLOW;

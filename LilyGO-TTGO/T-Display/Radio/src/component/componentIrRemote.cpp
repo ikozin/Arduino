@@ -1,5 +1,6 @@
 #include "component/componentIrRemote.h"
 
+
 ComponentIrRemote::ComponentIrRemote(const char* name, ControllerIrRemote* ir_remote, ControllerRadio* radio) : Component(name) {
     _ir_remote = ir_remote;
     _radio = radio;
@@ -15,6 +16,7 @@ void ComponentIrRemote::OnHandle() {
         }
     }
     _lastCommand = cmd;
+    LOGN("%s::OnHandle, CMD=%d", _name, cmd);
     switch (cmd) {
         case 0xf807:            // PREV
             _radio->changeChannel(-1);

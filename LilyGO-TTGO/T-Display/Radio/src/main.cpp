@@ -377,30 +377,27 @@ void setup() {
 
     LOGN("Controller - Start")
 #ifdef TIME_ENABLE
-    ctrlTime.SetLockingHandler(xMutex);
-    ctrlTime.Start();
+    ctrlTime.Start(xMutex);
 #endif
 #ifdef RADIO_ENABLE
     ctrlRadio.Start();
     ctrlAlarmClock.attachController(&ctrlRadio);
-    ctrlAlarmClock.Start(4096);
+    ctrlAlarmClock.Start(2048);
 #endif
 #ifdef WEATHER_ENABLE
     ctrlWeather.Start(8192);
 #endif
 #ifdef BME280_ENABLE
-    ctrlBme280.Start();
+    ctrlBme280.Start(xMutex);
 #endif
 #ifdef BUZZER_ENABLE
     ctrlBuzzer.Start();
 #endif
 
 #ifdef RADSENS_ENABLE
-    ctrlRadSens.SetLockingHandler(xMutex);
-    ctrlRadSens.Start();
+    ctrlRadSens.Start(xMutex);
 #endif
 #ifdef MHZ19_ENABLE
-    ctrlMHZ19.SetLockingHandler(xMutex);
     ctrlMHZ19.Start();
 #endif
 #ifdef IR_ENABLE
@@ -428,24 +425,18 @@ void setup() {
     LOGN("View - Start")
     sprite.createSprite(TFT_HEIGHT, TFT_WIDTH);
 #ifdef TIME_ENABLE
-    viewTime.Start(&sprite, &ctrlTime);
+    viewTime.Start(&sprite);
 #endif
 #ifdef RADIO_ENABLE
-    viewRadio.Start(&sprite, &ctrlRadio);
+    viewRadio.Start(&sprite);
 #endif
 #ifdef WEATHER_ENABLE
-    viewWeather.Start(&sprite, &ctrlWeather, 8192);
+    viewWeather.Start(&sprite, 8192);
 #endif
 #ifdef BME280_ENABLE
-    viewBme280.Start(&sprite, &ctrlBme280);
+    viewBme280.Start(&sprite);
 #endif
 #if defined(RADSENS_ENABLE) || defined(MHZ19_ENABLE)
-#ifdef RADSENS_ENABLE
-    ctrlRadSens.AddUpdateEvent(viewRadsMHZ19.GetEvent());
-#endif
-#ifdef MHZ19_ENABLE
-    ctrlMHZ19.AddUpdateEvent(viewRadsMHZ19.GetEvent());
-#endif
     viewRadsMHZ19.Start(&sprite);
 #endif
 #ifdef RADIO_ENABLE

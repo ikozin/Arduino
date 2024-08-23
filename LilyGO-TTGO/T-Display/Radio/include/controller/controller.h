@@ -32,6 +32,7 @@ class Controller {
     public:
         Controller(const char* name);
         void Start(uint16_t stackDepth = 2048);
+        void Start(SemaphoreHandle_t  xMutex, uint16_t stackDepth = 2048);
         bool AddUpdateEvent(SemaphoreHandle_t event);
     protected:
         const char*     _name;
@@ -50,7 +51,6 @@ class Controller {
     public:
         void Lock();
         void Unlock();
-        void SetLockingHandler(SemaphoreHandle_t xMutex);
     private:
         static void ControllerHandler(void* parameter);
 };

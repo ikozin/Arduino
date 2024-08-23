@@ -19,6 +19,11 @@ bool Controller::AddUpdateEvent(SemaphoreHandle_t event) {
 }
 
 void Controller::Start(uint16_t stackDepth) {
+    Start(nullptr, stackDepth);
+}
+
+void Controller::Start(SemaphoreHandle_t xMutex, uint16_t stackDepth) {
+    _xMutex = xMutex;
     xTaskCreate(ControllerHandler, _name, stackDepth, this, 1, &_task);
  }
 
@@ -78,8 +83,4 @@ void Controller::Unlock() {
     if (_xMutex != nullptr) {
         xSemaphoreGive(_xMutex);
     }
-}
-
-void Controller::SetLockingHandler(SemaphoreHandle_t  xMutex) {
-    _xMutex = xMutex;
 }
