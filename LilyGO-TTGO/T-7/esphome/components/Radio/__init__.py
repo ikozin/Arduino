@@ -22,8 +22,8 @@ CONFIG_SCHEMA = cv.All(
     cv.Schema(
         {
             cv.GenerateID(): cv.declare_id(radio),
-            cv.Optional(CONF_BAND, default=1018): cv.int_,
-            cv.Optional(CONF_VOLUME, default=0): cv.int_,
+            cv.Optional(CONF_BAND, default=1018): cv.int_range(min=760, max=1080),
+            cv.Optional(CONF_VOLUME, default=0): cv.int_range(min=0, max=15),
             cv.Optional(CONF_MUTE, default=True): cv.boolean,
         }
     )
