@@ -6,8 +6,8 @@
 
 class ViewRadsMHZ19 : public View {
     public:
-        ViewRadsMHZ19(const char* name, View** currentView, ControllerRadSens* radSens, ControllerMHZ19* mhz19, SemaphoreHandle_t updateEvent = nullptr);
-        virtual void Start(TFT_eSprite* sprite, uint16_t stackDepth = 4096) override;
+        ViewRadsMHZ19(const char* name, ViewSettig* setting, ControllerRadSens* radSens, ControllerMHZ19* mhz19, SemaphoreHandle_t updateEvent = nullptr);
+        virtual void Start(uint16_t stackDepth = 2048) override;
     protected:
         virtual void OnDrawHandle() override;
     private:

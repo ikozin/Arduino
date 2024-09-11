@@ -1,10 +1,10 @@
 #include "view/view.h"
 #include "controller/controllerWeather.h"
 
-class ViewWeather : public ViewT<ControllerWeather> {
+class ViewWeather : public ViewT {
     public:
-        ViewWeather(const char* name, View** currentView, ControllerWeather* ctrl, SemaphoreHandle_t updateEvent = nullptr): 
-            ViewT(name, currentView, ctrl, updateEvent) { }
+        ViewWeather(const char* name, ViewSettig* setting, ControllerWeather* ctrl, SemaphoreHandle_t updateEvent = nullptr): 
+            ViewT(name, setting, ctrl, 0, updateEvent) { }
     protected:
         virtual void OnDrawHandle() override;
     private:

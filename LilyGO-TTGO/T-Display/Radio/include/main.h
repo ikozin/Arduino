@@ -20,3 +20,8 @@ void setDisplayPageNext(void);
 void setDisplayPagePrev(void);
 
 void logTime();
+
+#define ENCODER_FAKE
+#define BME280_FAKE
+#define RADSENS_FAKE
+#define MHZ19_FAKE

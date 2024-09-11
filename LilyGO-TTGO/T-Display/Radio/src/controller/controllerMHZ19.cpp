@@ -10,17 +10,28 @@ ControllerMHZ19::ControllerMHZ19(const char* name, gpio_num_t rx, gpio_num_t tx)
 }
 
 InitResponse_t ControllerMHZ19::OnInit() {
+#ifdef MHZ19_FAKE
+    _ppm = 600;
+    _temperature = 25;
+    return OnInitResultStart;
+#else
     _serial.begin(9600, SERIAL_8N1, _rx, _tx);
     _mhz19.begin(_serial);
     _mhz19.autoCalibration();
     return OnInitResultStartDelaySec(60);
+#endif
 }
 
 IterationCode_t ControllerMHZ19::OnIteration() {
+#ifdef MHZ19_FAKE
+    _ppm += esp_random() > (UINT32_MAX >> 1) ? 10: -10;
+    _temperature += esp_random() > (UINT32_MAX >> 1) ? 0.5: -0.5;
+#else
     _ppm = _mhz19.getCO2();
     _temperature = _mhz19.getTemperature();
-    LOGN("%s::getCO2, %d", _name, getCO2())
-    LOGN("%s::getTemperature, %f", _name, getTemperature())
+#endif
+    // LOGN("%s::getCO2, %d", _name, getCO2())
+    // LOGN("%s::getTemperature, %f", _name, getTemperature())
 
     return IterationCode_t::Ok;
 }

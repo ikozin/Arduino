@@ -13,6 +13,11 @@
         "tuple": "cpp",
         "utility": "cpp",
         "typeinfo": "cpp",
-        "algorithm": "cpp"
+        "algorithm": "cpp",
+        "string": "cpp",
+        "bitset": "cpp",
+        "string_view": "cpp",
+        "cmath": "cpp",
+        "esp_system.h": "c"
     }
 }

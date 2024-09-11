@@ -4,34 +4,31 @@
 
 void ViewBME280::OnDrawHandle() {
     //LOGN("ViewBME280::OnHandle")
+    ControllerBme280* bme280 = static_cast<ControllerBme280*>(_ctrl);
+
     char text[32];
-#ifdef STUB
-    float temperature   = 28.7;
-    float humidity      = 23.9;
-    float pressure      = 758.0;
-#else
-    float temperature   = _ctrl->getTemperature();    //28.7;
-    float humidity      = _ctrl->getHumidity();       //23.9;
-    float pressure      = _ctrl->getPressure();       //758.0;
-#endif
-    _sprite->fillSprite(TFT_DARKGREY);
+    float temperature   = bme280->getTemperature();    //28.7;
+    float humidity      = bme280->getHumidity();       //23.9;
+    float pressure      = bme280->getPressure();       //758.0;
+    getSetting()->getSprite()->fillSprite(TFT_DARKGREY);
 
     uint16_t y2 = TFT_WIDTH >> 1;
     uint16_t y4 = TFT_WIDTH >> 2;
     uint16_t x2 = TFT_HEIGHT >> 1;
     uint16_t x4 = TFT_HEIGHT >> 2;
-
-    _sprite->setTextColor(TFT_WHITE);
-    _sprite->setTextDatum(CC_DATUM);
-    _sprite->loadFont(Roboto_33);
+    
+    // dtostrf(temperature, 3, 1, text);
+    getSetting()->getSprite()->setTextColor(TFT_WHITE);
+    getSetting()->getSprite()->setTextDatum(CC_DATUM);
+    getSetting()->getSprite()->loadFont(Roboto_33);
     //_sprite->setFreeFont(&Orbitron_Light_32);
     sprintf(text, "%+.1f°", temperature);
-    _sprite->drawString(text, 60, y4 + 7);
+    getSetting()->getSprite()->drawString(text, 60, y4 + 7);
     sprintf(text, "%.1f%%", humidity);
-    _sprite->drawString(text, 180, y4 + 7);
+    getSetting()->getSprite()->drawString(text, 180, y4 + 7);
     sprintf(text, "%.1f мм рт. ст.", pressure);
-    _sprite->drawString(text, x2, y2 + y4 + 7);
-    _sprite->unloadFont();
+    getSetting()->getSprite()->drawString(text, x2, y2 + y4 + 7);
+    getSetting()->getSprite()->unloadFont();
 
-    _sprite->drawFastHLine(0, y2,            TFT_HEIGHT, TFT_WHITE);
+    getSetting()->getSprite()->drawFastHLine(0, y2,            TFT_HEIGHT, TFT_WHITE);
 }

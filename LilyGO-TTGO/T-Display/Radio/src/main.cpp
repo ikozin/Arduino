@@ -18,7 +18,8 @@
 #include "controller/controllerRadSens.h"
 #include "controller/controllerMHZ19.h"
 #include "controller/controllerIrRemote.h"
-#include "controller/controllerTime.h"
+#include "controller/controllerDS3231.h"
+#include "controller/controllerSoftTime.h"
 #include "controller/controllerRadio.h"
 #include "controller/controllerWeather.h"
 #include "controller/controllerSoftReset.h"
@@ -30,7 +31,8 @@
 #include "component/componentIrRemote.h"
 
 #include "view/view.h"
-#include "view/viewTime.h"
+#include "view/viewDS3231.h"
+#include "view/viewSoftTime.h"
 #include "view/viewRadio.h"
 #include "view/viewBme280.h"
 #include "view/viewRadsMHZ19.h"
@@ -65,16 +67,17 @@
     ------
 */
 
-#define RADIO_ENABLE
+#define ENCODER_ENABLE
+// #define RADIO_ENABLE
 // #define WEATHER_ENABLE
 #define BME280_ENABLE
 #define RADSENS_ENABLE
-//#define PIR_ENABLE
+// #define PIR_ENABLE
 #define MHZ19_ENABLE
-#define RESET_ENABLE
+// #define RESET_ENABLE
 #define BUZZER_ENABLE
 #define TIME_ENABLE
- #define IR_ENABLE
+// #define IR_ENABLE
 // #define WIFI_ENABLE
 // #define MQTT_ENABLE
 
@@ -94,17 +97,24 @@ TFT_eSprite sprite = TFT_eSprite(&tft);
 Preferences prefs = Preferences();
 //AsyncWebServer server = AsyncWebServer(80);
 
+#ifdef ENCODER_ENABLE
+#if !defined(ENCODER_FAKE)
 #define ENCODER_PIN_A   GPIO_NUM_37
 #define ENCODER_PIN_B   GPIO_NUM_38
 ESP32Encoder encoder = ESP32Encoder();
 #define ENCODER_BTN     GPIO_NUM_39
 Button2 btnEncoder = Button2();
+#endif
+#endif
 
 String ssid         = ""; // SSID WI-FI
 String pswd         = "";
 
 int16_t viewIndex  = -1;
 View* currentView = nullptr;
+
+ViewSettig viewSettig(&tft, &sprite, &currentView);
+
 
 SemaphoreHandle_t xMutex = xSemaphoreCreateMutex();
 
@@ -122,17 +132,17 @@ ControllerBuzzer ctrlBuzzer("CtrlBuzzer", BUZZER_PIN);
 
 #ifdef RADIO_ENABLE
 ControllerRadio ctrlRadio = ControllerRadio("CtrlRadio", &prefs, &ctrlRadioStorage);
-ViewRadio viewRadio = ViewRadio("ViewRadio", &currentView, &ctrlRadio);
+ViewRadio viewRadio = ViewRadio("ViewRadio", &viewSettig, &ctrlRadio);
 #endif
 
 #ifdef WEATHER_ENABLE
 ControllerWeather ctrlWeather = ControllerWeather("CtrlWeather");
-ViewWeather viewWeather = ViewWeather("ViewWeather", &currentView, &ctrlWeather);
+ViewWeather viewWeather = ViewWeather("ViewWeather", &viewSettig, &ctrlWeather);
 #endif
 
 #ifdef BME280_ENABLE
 ControllerBme280 ctrlBme280 = ControllerBme280("CtrlBme280");
-ViewBME280 viewBme280 = ViewBME280("ViewBME280", &currentView, &ctrlBme280);
+ViewBME280 viewBme280 = ViewBME280("ViewBME280", &viewSettig, &ctrlBme280);
 #endif
 
 #ifdef RADSENS_ENABLE
@@ -158,13 +168,15 @@ ControllerMHZ19* mhz19 = &ctrlMHZ19;
 ControllerMHZ19* mhz19 = nullptr;
 #endif
 
-ViewRadsMHZ19 viewRadsMHZ19 = ViewRadsMHZ19("ViewRadsMHZ19", &currentView, radSens, mhz19);
+ViewRadsMHZ19 viewRadsMHZ19 = ViewRadsMHZ19("ViewRadsMHZ19", &viewSettig, radSens, mhz19);
 #endif
 
 
 #ifdef TIME_ENABLE
-ControllerTime ctrlTime = ControllerTime("CtrlTime", &prefs);
-ViewTime viewTime = ViewTime("ViewTime", &currentView, &ctrlTime);
+// ControllerDS3231 ctrlTime = ControllerDS3231("CtrlDS3231", &prefs);
+// ViewDS3231 viewTime = ViewDS3231("ViewDS3231", &viewSettig, &ctrlTime);
+ControllerSoftTime ctrlTime = ControllerSoftTime("CtrlSoftTime", &prefs);
+ViewSoftTime viewTime = ViewSoftTime("ViewSoftTime", &viewSettig, &ctrlTime);
 #endif
 
 #ifdef RESET_ENABLE
@@ -197,7 +209,7 @@ View* viewList[] = {
 #ifdef BME280_ENABLE
     &viewBme280,
 #endif
-#if defined(IR_ENABLE) & defined(RADIO_ENABLE)
+#if defined(RADSENS_ENABLE) || defined(MHZ19_ENABLE)
     &viewRadsMHZ19,
 #endif
 };
@@ -206,11 +218,11 @@ View* viewList[] = {
 void (ControllerRadio::*currentHandle)(int);
 #endif
 
-
+#ifdef ENCODER_ENABLE
 void btnEncoderClick(Button2& b);
 void btnEncoderDoubleClick(Button2& b);
 void btnEncoderLongClick(Button2& b);
-
+#endif
 // void listDir(const char* dirname);
 
 uint16_t fileData[4096];
@@ -312,6 +324,8 @@ void setup() {
     }
 #endif
 
+#ifdef ENCODER_ENABLE
+#if !defined(ENCODER_FAKE)
     encoder.attachSingleEdge(ENCODER_PIN_A, ENCODER_PIN_B);
     btnEncoder.begin(ENCODER_BTN);
     if (btnEncoder.isPressedRaw()) {
@@ -319,9 +333,11 @@ void setup() {
         setSettings(prefs, tft, server);
 #endif
     }
-
-    // prefs.putString("ssid", "...");
-    // prefs.putString("pswd", "...");
+#endif
+#endif
+ 
+    //prefs.putString("ssid", "...");
+    //prefs.putString("pswd", "...");
     // prefs.putInt("tz", 10800);
     // prefs.putInt("station", 32);
     // prefs.putInt("volume", 2);
@@ -425,35 +441,52 @@ void setup() {
     LOGN("View - Start")
     sprite.createSprite(TFT_HEIGHT, TFT_WIDTH);
 #ifdef TIME_ENABLE
-    viewTime.Start(&sprite);
+    viewTime.Start(2048);
 #endif
 #ifdef RADIO_ENABLE
-    viewRadio.Start(&sprite);
+    viewRadio.Start();
 #endif
 #ifdef WEATHER_ENABLE
-    viewWeather.Start(&sprite, 8192);
+    viewWeather.Start(8192);
 #endif
 #ifdef BME280_ENABLE
-    viewBme280.Start(&sprite);
+    viewBme280.Start(2048);
 #endif
 #if defined(RADSENS_ENABLE) || defined(MHZ19_ENABLE)
-    viewRadsMHZ19.Start(&sprite);
+    viewRadsMHZ19.Start(2048);
 #endif
 #ifdef RADIO_ENABLE
     currentHandle = &ControllerRadio::changeVolume;
 #endif
+#ifdef ENCODER_ENABLE
+#if !defined(ENCODER_FAKE)
     btnEncoder.setClickHandler(btnEncoderClick);
     btnEncoder.setDoubleClickHandler(btnEncoderDoubleClick);
     btnEncoder.setLongClickTime(500);
     btnEncoder.setLongClickHandler(btnEncoderLongClick);  
+#else
+    pinMode(GPIO_NUM_35,  INPUT);
+#endif
+#endif
 
     setDisplayPage(prefs.getInt("page", 0));
 }
 
 void loop() {
+#ifdef ENCODER_ENABLE
+#if !defined(ENCODER_FAKE)
     btnEncoder.loop();
     int dir = encoder.getCount();
     encoder.setCount(0);
+#else
+    if (digitalRead(GPIO_NUM_35) == LOW) {
+        setDisplayPageNext();
+        delay(200);
+    }
+#endif
+#else
+    int dir =0;
+#endif
 #ifdef RADIO_ENABLE
     (&ctrlRadio->*currentHandle)(dir);
 #endif

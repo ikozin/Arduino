@@ -11,7 +11,7 @@ void ViewWeather::drawImageFile(const char* fileName, const int32_t x, const int
         size_t len = f.size();
         if (len <= sizeof(fileData)) {
             f.read((uint8_t*)fileData, len);
-            _sprite->pushImage(x, y, size, size, fileData);
+            getSetting()->getSprite()->pushImage(x, y, size, size, fileData);
         }
         f.close();
     }
@@ -19,31 +19,33 @@ void ViewWeather::drawImageFile(const char* fileName, const int32_t x, const int
 
 void ViewWeather::OnDrawHandle() {
     //LOGN("ViewWeather::OnHandle")
-    _sprite->fillSprite(0x4C7D); //ColorToRGB565(0x4D, 0x8D, 0xEE)
-    if (!_ctrl->isValid) {
+    ControllerWeather* weather  = static_cast<ControllerWeather*>(_ctrl);
+
+    getSetting()->getSprite()->fillSprite(0x4C7D); //ColorToRGB565(0x4D, 0x8D, 0xEE)
+    if (!weather->isValid) {
         return;
     }
-    _sprite->loadFont(FONT_TEXT_32);
-    _sprite->setTextColor(TFT_WHITE);
-    _sprite->setTextDatum(TL_DATUM);
+    getSetting()->getSprite()->loadFont(FONT_TEXT_32);
+    getSetting()->getSprite()->setTextColor(TFT_WHITE);
+    getSetting()->getSprite()->setTextDatum(TL_DATUM);
 
-    int32_t posX = _sprite->textWidth(_ctrl->weatherDescription);
+    int32_t posX = getSetting()->getSprite()->textWidth(weather->weatherDescription);
     posX = (posX < (TFT_HEIGHT - 2)) ? (TFT_HEIGHT - posX) >> 1 : 2;
-    _sprite->setTextDatum(TC_DATUM);
-    drawTextBlock(TFT_HEIGHT >> 1, 64, (TFT_HEIGHT - 2), _ctrl->weatherDescription);
+    getSetting()->getSprite()->setTextDatum(TC_DATUM);
+    drawTextBlock(TFT_HEIGHT >> 1, 64, (TFT_HEIGHT - 2), weather->weatherDescription);
     
     // Для шрифта Colibri56
     // Ширина: для срок от -40° до +40° максимальная = 101
     // Высота: 48
-    _sprite->loadFont(FONT_DIGIT_56);
-    _sprite->setTextColor(TFT_WHITE);
-    _sprite->setTextDatum(TL_DATUM);
+    getSetting()->getSprite()->loadFont(FONT_DIGIT_56);
+    getSetting()->getSprite()->setTextColor(TFT_WHITE);
+    getSetting()->getSprite()->setTextDatum(TL_DATUM);
 
-    posX = ((int32_t)91 - _sprite->textWidth(_ctrl->weatherTemperature)) >> 1;
-    _sprite->drawString(_ctrl->weatherTemperature, 80, 10);
-    _sprite->unloadFont();
+    posX = ((int32_t)91 - getSetting()->getSprite()->textWidth(weather->weatherTemperature)) >> 1;
+    getSetting()->getSprite()->drawString(weather->weatherTemperature, 80, 10);
+    getSetting()->getSprite()->unloadFont();
 
-    drawImageFile(_ctrl->iconFileName.c_str(), 3, 0, 64);
+    drawImageFile(weather->iconFileName.c_str(), 3, 0, 64);
 }
 
 void ViewWeather::drawTextBlock(int32_t left, int32_t top, int32_t width, const String &text) {
@@ -56,7 +58,7 @@ void ViewWeather::drawTextBlock(int32_t left, int32_t top, int32_t width, const 
         pos = buf.indexOf(' ');
         pos = (pos == -1) ? buf.length() : (pos + 1); 
         item =  buf.substring(0, pos); 
-        length = _sprite->textWidth(item);
+        length = getSetting()->getSprite()->textWidth(item);
         buf.remove(0, pos);
 
         while (buf.length() > 0 && length <=  width - 2) {
@@ -64,7 +66,7 @@ void ViewWeather::drawTextBlock(int32_t left, int32_t top, int32_t width, const 
             pos = (pos == -1) ? buf.length() : (pos + 1);
 
             subItem = buf.substring(0, pos);
-            subItemLen = _sprite->textWidth(subItem);
+            subItemLen = getSetting()->getSprite()->textWidth(subItem);
 
             if (length + subItemLen >= width - 2) {
                 break;
@@ -73,7 +75,7 @@ void ViewWeather::drawTextBlock(int32_t left, int32_t top, int32_t width, const 
             length += subItemLen;
             item.concat(subItem);
         }
-        _sprite->drawString(item, left, top);
-        top += _sprite->fontHeight() + 2;
+        getSetting()->getSprite()->drawString(item, left, top);
+        top += getSetting()->getSprite()->fontHeight() + 2;
     }
 }

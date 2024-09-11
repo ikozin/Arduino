@@ -1,13 +1,13 @@
-#include "controller/controllerTime.h"
+#include "controller/controllerDS3231.h"
 #include "main.h"
 
-ControllerTime::ControllerTime(const char* name, Preferences* prefs):
+ControllerDS3231::ControllerDS3231(const char* name, Preferences* prefs):
                     Controller(name) {
     _updateTimeInSec = 1;
     _prefs = prefs;
 }
 
-InitResponse_t ControllerTime::OnInit() {
+InitResponse_t ControllerDS3231::OnInit() {
     if (_rtc.begin()) {
         time_t now;
         struct tm tm;
@@ -38,7 +38,7 @@ InitResponse_t ControllerTime::OnInit() {
     return OnInitResultERROR;
 }
 
-void ControllerTime::OnHandle() {
+void ControllerDS3231::OnHandle() {
     uint32_t delay = _updateTimeInSec * 1000 / portTICK_PERIOD_MS; 
     portTickType xLastWakeTime = xTaskGetTickCount();
     for (;;) {
