@@ -40,7 +40,12 @@ void ViewRadsMHZ19::OnDrawHandle() {
     // } else if (rad > 20) {
     //     backColor = TFT_YELLOW;
     // }
-    getSetting()->getSprite()->fillSprite(TFT_DARKGREY);
+
+    uint32_t backColor = 0x024E;
+    getSetting()->getSprite()->fillSprite(TFT_BLACK);
+    getSetting()->getSprite()->drawSmoothRoundRect(5, 5, 15, 10, 112, 125, TFT_RED, TFT_GREEN);
+    // getSetting()->getSprite()->fillSmoothRoundRect(5, 5, 112, 125, 15, backColor);
+    // getSetting()->getSprite()->fillSmoothRoundRect(123, 5, 112, 125, 15, backColor);
 
     uint16_t y2 = TFT_WIDTH >> 1;
     uint16_t x2 = TFT_HEIGHT >> 1;

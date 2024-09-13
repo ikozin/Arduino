@@ -19,8 +19,16 @@ void ViewBME280::OnDrawHandle() {
     uint32_t backColor = 0x024E;
 
     getSetting()->getSprite()->fillSprite(TFT_BLACK);
+    // getSetting()->getSprite()->fillSmoothRoundRect(7, 7, 112, 60, 15, TFT_DARKGREY);
+    // // getSetting()->getSprite()->fillSmoothRoundRect(6, 6, 112, 60, 15, TFT_DARKGREY);
     getSetting()->getSprite()->fillSmoothRoundRect(5, 5, 112, 60, 15, backColor);
+
+    // getSetting()->getSprite()->fillSmoothRoundRect(125, 7, 112, 60, 15, TFT_DARKGREY);
+    // // getSetting()->getSprite()->fillSmoothRoundRect(124, 6, 112, 60, 15, TFT_DARKGREY);
     getSetting()->getSprite()->fillSmoothRoundRect(123, 5, 112, 60, 15, backColor);
+
+    // getSetting()->getSprite()->fillSmoothRoundRect(7, 72, 230, 60, 15, TFT_DARKGREY);
+    // // getSetting()->getSprite()->fillSmoothRoundRect(6, 71, 230, 60, 15, TFT_DARKGREY);
     getSetting()->getSprite()->fillSmoothRoundRect(5, 70, 230, 60, 15, backColor);
     
     // getSetting()->getSprite()->fillSmoothCircle(5+10,5+25,5,TFT_ORANGE);
