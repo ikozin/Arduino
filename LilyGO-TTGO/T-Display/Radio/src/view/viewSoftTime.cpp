@@ -28,6 +28,9 @@ char* ViewSoftTime::months[] = {
     (char*)"Декабря",
 };
 
+const uint32_t backColor = TFT_WHITE;
+const uint32_t textColor = TFT_BLACK;
+
 ViewSoftTime::ViewSoftTime(const char* name, ViewSettig* setting, ControllerSoftTime* ctrl, SemaphoreHandle_t updateEvent): 
                             ViewT(name, setting, ctrl, (uint64_t)50000, updateEvent), _textSprite(setting->getDisplay()) {
     _textSprite.createSprite(TFT_HEIGHT, 24);
@@ -36,13 +39,13 @@ ViewSoftTime::ViewSoftTime(const char* name, ViewSettig* setting, ControllerSoft
 
 uint16_t ViewSoftTime::getDateColor(DateTime& date) {
     uint8_t day = date.dayOfTheWeek();
-    if (day == 0 || day == 6) return TFT_MAGENTA;
-    return TFT_WHITE;
+    if (day == 0 || day == 6) return TFT_RED;
+    return textColor;
 }
 
 void ViewSoftTime::OnInit() {
     _textSprite.loadFont(NotoSansSemiBold23);
-    _textSprite.setTextColor(TFT_WHITE, TFT_BLACK);
+    _textSprite.setTextColor(textColor, backColor);
 }
 
 void ViewSoftTime::OnDrawHandle() {
@@ -71,9 +74,8 @@ void ViewSoftTime::OnDrawHandle() {
 
     // sprintf(text, "%02d:%02d", now.hour(), now.minute());
     // Serial.println(text);
-
-    getSetting()->getSprite()->fillSprite(TFT_BLACK);
-    getSetting()->getSprite()->setTextColor(TFT_WHITE);
+    getSetting()->getSprite()->fillSprite(backColor);
+    getSetting()->getSprite()->setTextColor(textColor);
     getSetting()->getSprite()->setTextDatum(CC_DATUM);
     getSetting()->getSprite()->setFreeFont(&DS_DIGI56pt7b);
     getSetting()->getSprite()->drawString(text, TFT_HEIGHT >> 1, (TFT_WIDTH >> 1) + 20);
@@ -93,7 +95,7 @@ void ViewSoftTime::OnDrawHandle() {
     // sprintf(text, "%s %d %s %d", dayOfWeeks[now.dayOfTheWeek()], now.day(), months[now.month() - 1], now.year());
     // Serial.println(text);
 
-    _textSprite.fillSprite(TFT_BLACK);
+    _textSprite.fillSprite(backColor);
     // _textSprite.setTextColor(TFT_WHITE, TFT_BLACK);
     // _textSprite.loadFont(NotoSansSemiBold23);
     // _textSprite.loadFont(NotoSansSemiBold23);
