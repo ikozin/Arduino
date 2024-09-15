@@ -8,16 +8,7 @@ ControllerSoftTime::ControllerSoftTime(const char* name, Preferences* prefs):
 }
 
 InitResponse_t ControllerSoftTime::OnInit() {
-    // struct tm timeinfo;
-    // getLocalTime(&timeinfo);
-    // _currentTime = DateTime(
-    //     timeinfo.tm_year,
-    //     timeinfo.tm_mon,
-    //     timeinfo.tm_mday, 
-    //     timeinfo.tm_hour,
-    //     timeinfo.tm_min,
-    //     timeinfo.tm_sec);
-    _currentTime = DateTime(2024, 9, 6, 17, 30, 0);
+    _currentTime = DateTime(2000, 1, 1, 0, 0, 0);
     return OnInitResultStart;
 }
 
@@ -27,15 +18,6 @@ void ControllerSoftTime::OnHandle() {
     for (;;) {
         xTaskDelayUntil(&xLastWakeTime, delay);
         Lock();
-        // struct tm timeinfo;
-        // getLocalTime(&timeinfo);
-        // _currentTime = DateTime(
-        //     timeinfo.tm_year,
-        //     timeinfo.tm_mon,
-        //     timeinfo.tm_mday, 
-        //     timeinfo.tm_hour,
-        //     timeinfo.tm_min,
-        //     timeinfo.tm_sec);
         _currentTime = _currentTime + TimeSpan(1);
         Unlock();
         for (int i = 0; i < EventListMax && _eventList[i] != nullptr; i++) {

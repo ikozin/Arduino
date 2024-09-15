@@ -54,31 +54,40 @@
 
 /*
     ------
-    | 32 |
-    | 33 |  Reset
-    | 25 |  MHZ19
-    | 26 |  MHZ19
-    | 27 |  Buzzer
     | 17 |  PIR
     |  2 |
     | 15 |
     | 13 |  IRemote
     | 12 |
+    | 32 |
+    | 33 |  Reset
+    | 25 |  MHZ19
+    | 26 |  MHZ19
+    | 27 |  Buzzer
     ------
+
+    -----------------------------------
+    |SDA|SCL|GND|+3V|         |GND|+3V|
+    | X | X | X | X | DS3231  | - | - |
+    | X | X | X | X | RadSens | - | - |
+    | X | X | X | X | BME280  | - | - |
+    | X | X | X | X | RDA5807 | - | - |
+    -----------------------------------
+
 */
 
 #define ENCODER_ENABLE
-// #define RADIO_ENABLE
+#define RADIO_ENABLE
 // #define WEATHER_ENABLE
 #define BME280_ENABLE
 #define RADSENS_ENABLE
 // #define PIR_ENABLE
-#define MHZ19_ENABLE
+// #define MHZ19_ENABLE
 // #define RESET_ENABLE
 #define BUZZER_ENABLE
 #define TIME_ENABLE
-// #define IR_ENABLE
-// #define WIFI_ENABLE
+#define IR_ENABLE
+#define WIFI_ENABLE
 // #define MQTT_ENABLE
 
 #if defined(WEATHER_ENABLE)
@@ -173,10 +182,10 @@ ViewRadsMHZ19 viewRadsMHZ19 = ViewRadsMHZ19("ViewRadsMHZ19", &viewSettig, radSen
 
 
 #ifdef TIME_ENABLE
-// ControllerDS3231 ctrlTime = ControllerDS3231("CtrlDS3231", &prefs);
-// ViewDS3231 viewTime = ViewDS3231("ViewDS3231", &viewSettig, &ctrlTime);
-ControllerSoftTime ctrlTime = ControllerSoftTime("CtrlSoftTime", &prefs);
-ViewSoftTime viewTime = ViewSoftTime("ViewSoftTime", &viewSettig, &ctrlTime);
+ControllerDS3231 ctrlTime = ControllerDS3231("CtrlDS3231", &prefs);
+ViewDS3231 viewTime = ViewDS3231("ViewDS3231", &viewSettig, &ctrlTime);
+// ControllerSoftTime ctrlTime = ControllerSoftTime("CtrlSoftTime", &prefs);
+// ViewSoftTime viewTime = ViewSoftTime("ViewSoftTime", &viewSettig, &ctrlTime);
 #endif
 
 #ifdef RESET_ENABLE
@@ -336,8 +345,8 @@ void setup() {
 #endif
 #endif
  
-    //prefs.putString("ssid", "...");
-    //prefs.putString("pswd", "...");
+    // prefs.putString("ssid", "...");
+    // prefs.putString("pswd", "...");
     // prefs.putInt("tz", 10800);
     // prefs.putInt("station", 32);
     // prefs.putInt("volume", 2);

@@ -10,9 +10,9 @@ ControllerRadSens::ControllerRadSens(const char* name):
 
 InitResponse_t ControllerRadSens::OnInit() {
 #ifdef RADSENS_FAKE
-    _dynamicValue = 5; 
-    _staticValue = 5;
-    _impulseValue = 5;
+    _dynamicValue = 55; 
+    _staticValue = 55;
+    _impulseValue = 55;
     return OnInitResultStart;
 #else
     return _radSens.init() ? OnInitResultStart : OnInitResultERROR;
