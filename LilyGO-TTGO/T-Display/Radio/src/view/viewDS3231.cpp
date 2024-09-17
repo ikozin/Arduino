@@ -35,12 +35,12 @@ uint16_t ViewDS3231::getDateColor(DateTime& date) {
 
 void ViewDS3231::OnDrawHandle() {
     //LOGN("ViewDS3231::OnHandle")
-    ControllerDS3231* ds3231 = static_cast<ControllerDS3231*>(_ctrl);
+    ControllerTime* time = static_cast<ControllerTime*>(_ctrl);
     
     int value;
     char text[32], buffer[8];
 
-    DateTime now = ds3231->getDateTime();
+    DateTime now = time->getDateTime();
 
     text[0] = '\0';
     value = now.hour();

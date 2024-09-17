@@ -2,9 +2,7 @@
 #include "main.h"
 
 ControllerSoftTime::ControllerSoftTime(const char* name, Preferences* prefs):
-                    Controller(name) {
-    _updateTimeInSec = 1;
-    _prefs = prefs;
+                    ControllerTime(name, prefs) {
 }
 
 InitResponse_t ControllerSoftTime::OnInit() {
@@ -20,8 +18,6 @@ void ControllerSoftTime::OnHandle() {
         Lock();
         _currentTime = _currentTime + TimeSpan(1);
         Unlock();
-        for (int i = 0; i < EventListMax && _eventList[i] != nullptr; i++) {
-            xSemaphoreGive(_eventList[i]);
-        }
+        FireUpdateEvent();
     }
 }

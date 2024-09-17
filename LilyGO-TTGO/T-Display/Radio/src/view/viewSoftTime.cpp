@@ -31,7 +31,7 @@ char* ViewSoftTime::months[] = {
 const uint32_t backColor = TFT_WHITE;
 const uint32_t textColor = TFT_BLACK;
 
-ViewSoftTime::ViewSoftTime(const char* name, ViewSettig* setting, ControllerSoftTime* ctrl, SemaphoreHandle_t updateEvent): 
+ViewSoftTime::ViewSoftTime(const char* name, ViewSettig* setting, ControllerTime* ctrl, SemaphoreHandle_t updateEvent): 
                             ViewT(name, setting, ctrl, (uint64_t)50000, updateEvent), _textSprite(setting->getDisplay()) {
     _textSprite.createSprite(TFT_HEIGHT, 24);
     _textX = TFT_HEIGHT-1;
@@ -50,12 +50,12 @@ void ViewSoftTime::OnInit() {
 
 void ViewSoftTime::OnDrawHandle() {
     // LOGN("ViewSoftTime::OnDrawHandle")
-    ControllerSoftTime* softtime = static_cast<ControllerSoftTime*>(_ctrl);
+    ControllerTime* time = static_cast<ControllerTime*>(_ctrl);
 
     int value;
     char text[32], buffer[8];
 
-    DateTime now = softtime->getDateTime();
+    DateTime now = time->getDateTime();
 
     text[0] = '\0';
     value = now.hour();

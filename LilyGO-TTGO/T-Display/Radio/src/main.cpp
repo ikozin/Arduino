@@ -33,6 +33,7 @@
 #include "view/view.h"
 #include "view/viewDS3231.h"
 #include "view/viewSoftTime.h"
+#include "view/viewTileTime.h"
 #include "view/viewRadio.h"
 #include "view/viewBme280.h"
 #include "view/viewRadsMHZ19.h"
@@ -183,7 +184,8 @@ ViewRadsMHZ19 viewRadsMHZ19 = ViewRadsMHZ19("ViewRadsMHZ19", &viewSettig, radSen
 
 #ifdef TIME_ENABLE
 ControllerDS3231 ctrlTime = ControllerDS3231("CtrlDS3231", &prefs);
-ViewDS3231 viewTime = ViewDS3231("ViewDS3231", &viewSettig, &ctrlTime);
+// ViewDS3231 viewTime = ViewDS3231("ViewDS3231", &viewSettig, &ctrlTime);
+ViewTileTime viewTime = ViewTileTime("ViewTileTime", &viewSettig, &ctrlTime);
 // ControllerSoftTime ctrlTime = ControllerSoftTime("CtrlSoftTime", &prefs);
 // ViewSoftTime viewTime = ViewSoftTime("ViewSoftTime", &viewSettig, &ctrlTime);
 #endif

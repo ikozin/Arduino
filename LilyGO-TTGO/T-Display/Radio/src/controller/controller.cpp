@@ -18,6 +18,12 @@ bool Controller::AddUpdateEvent(SemaphoreHandle_t event) {
     return false;
 }
 
+void Controller::FireUpdateEvent() {
+    for (int i = 0; i < EventListMax && _eventList[i] != nullptr; i++) {
+        xSemaphoreGive(_eventList[i]);
+    }
+}
+
 void Controller::Start(uint16_t stackDepth) {
     Start(nullptr, stackDepth);
 }
@@ -54,9 +60,7 @@ void Controller::OnHandle() {
         IterationCode_t result  = OnIteration();
         Unlock();
         if (result == IterationCode_t::Ok) {
-            for (int i = 0; i < EventListMax && _eventList[i] != nullptr; i++) {
-                xSemaphoreGive(_eventList[i]);
-            }
+            FireUpdateEvent();
         }
         if (result == IterationCode_t::Stop) {
             break;

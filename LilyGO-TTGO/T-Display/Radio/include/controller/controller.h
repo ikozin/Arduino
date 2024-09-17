@@ -41,6 +41,8 @@ class Controller {
         SemaphoreHandle_t   _xMutex = nullptr;
         SemaphoreHandle_t   _eventList[EventListMax] { nullptr, nullptr, nullptr };
     protected:
+        void FireUpdateEvent();
+    protected:
         virtual InitResponse_t OnInit() = 0;
         virtual IterationCode_t OnIteration() = 0;
         virtual void OnDone() {};
