@@ -20,9 +20,9 @@ void ViewRadsMHZ19::Start(uint16_t stackDepth){
 
 
 void ViewRadsMHZ19::OnDrawHandle() {
-    //LOGN("ViewRadsMHZ19::OnHandle")
+    // LOGN("%s::OnDrawHandle", typeid(this).name);
 
-    char text[32];
+    char text[8];
 
     float rad = 0;
     if (_radSens) {
@@ -33,7 +33,6 @@ void ViewRadsMHZ19::OnDrawHandle() {
         co2 = _mhz19->getCO2();
     }
 
-    // float rad = _radSens->getStatic();
     // uint32_t backColor = TFT_DARKGREY; //TFT_DARKGREEN;
     // if (rad > 30) {
     //     backColor = TFT_RED;
@@ -41,14 +40,19 @@ void ViewRadsMHZ19::OnDrawHandle() {
     //     backColor = TFT_YELLOW;
     // }
 
-    uint32_t backColor = 0x024E;
+    uint32_t backColor = TFT_DARKCYAN;
     getSetting()->getSprite()->fillSprite(TFT_BLACK);
-    getSetting()->getSprite()->drawSmoothRoundRect(5, 5, 15, 10, 112, 125, TFT_RED, TFT_GREEN);
+    // getSetting()->getSprite()->drawSmoothRoundRect(5, 5, 15, 10, 112, 125, TFT_RED, backColor);
+
+
+    getSetting()->getSprite()->fillSmoothRoundRect(5, 5, 112, 125, 15, TFT_RED, backColor);
+    getSetting()->getSprite()->fillSmoothRoundRect(123, 5, 112, 125, 15, TFT_YELLOW, backColor);
+
     // getSetting()->getSprite()->fillSmoothRoundRect(5, 5, 112, 125, 15, backColor);
     // getSetting()->getSprite()->fillSmoothRoundRect(123, 5, 112, 125, 15, backColor);
 
-    uint16_t y2 = TFT_WIDTH >> 1;
-    uint16_t x2 = TFT_HEIGHT >> 1;
+    uint16_t y2 = 67;
+    uint16_t x2 = 120;
 
     //_sprite->drawFastVLine(x2, 0, TFT_WIDTH, TFT_WHITE);
 
@@ -57,10 +61,10 @@ void ViewRadsMHZ19::OnDrawHandle() {
     getSetting()->getSprite()->loadFont(Roboto_33);
 
     sprintf(text, "%d", co2);
-    getSetting()->getSprite()->drawString(text, 60, y2);
+    getSetting()->getSprite()->drawString(text, 60, 67);
 
     sprintf(text, "%.0f", rad);    //μR/h
-    getSetting()->getSprite()->drawString(text, 180, y2);
+    getSetting()->getSprite()->drawString(text, 180, 67);
 
 
     // _sprite->unloadFont();
@@ -81,11 +85,5 @@ void ViewRadsMHZ19::OnDrawHandle() {
     // _sprite->fillRect(0,  y2, x2 - 36, 12, TFT_WHITE);
     // _sprite->fillRect(x2, y2, x2 - 36, 12, TFT_WHITE);
 
-    // _sprite->setTextColor(TFT_BLUE);
-    // _sprite->loadFont(calibri_bold_12);
-    // _sprite->drawString("ТЕМПЕРАТУРА", 4,      2);
-    // _sprite->drawString("ВЛАЖНОСТЬ",   x2 + 4, 2);
-    // _sprite->drawString("ДАВЛЕНИЕ",    4,      y2 + 2);
-    // _sprite->drawString("РАДИАЦИЯ",    x2 + 4, y2 + 2);
     getSetting()->getSprite()->unloadFont();
 }

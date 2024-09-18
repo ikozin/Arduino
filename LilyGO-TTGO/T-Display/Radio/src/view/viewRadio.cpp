@@ -20,7 +20,7 @@ uint8_t unmuteBitmap[] = {
 };
 
 void ViewRadio::OnDrawHandle() {
-    //LOGN("ViewRadio::OnHandle")
+    // LOGN("%s::OnDrawHandle", typeid(this).name);
     ControllerRadio* radio = static_cast<ControllerRadio*>(_ctrl);
 
     getSetting()->getSprite()->fillSprite(TFT_BLACK);

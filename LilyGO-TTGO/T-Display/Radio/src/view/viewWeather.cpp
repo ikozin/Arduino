@@ -18,7 +18,7 @@ void ViewWeather::drawImageFile(const char* fileName, const int32_t x, const int
 }
 
 void ViewWeather::OnDrawHandle() {
-    //LOGN("ViewWeather::OnHandle")
+    // LOGN("%s::OnDrawHandle", typeid(this).name);
     ControllerWeather* weather  = static_cast<ControllerWeather*>(_ctrl);
 
     getSetting()->getSprite()->fillSprite(0x4C7D); //ColorToRGB565(0x4D, 0x8D, 0xEE)

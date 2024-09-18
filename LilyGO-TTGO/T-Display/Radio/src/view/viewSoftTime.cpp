@@ -49,7 +49,7 @@ void ViewSoftTime::OnInit() {
 }
 
 void ViewSoftTime::OnDrawHandle() {
-    // LOGN("ViewSoftTime::OnDrawHandle")
+    // LOGN("%s::OnDrawHandle", typeid(this).name);
     ControllerTime* time = static_cast<ControllerTime*>(_ctrl);
 
     int value;

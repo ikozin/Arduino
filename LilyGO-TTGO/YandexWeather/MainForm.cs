@@ -42,6 +42,7 @@ namespace YandexWeather
                     var link = new Uri(new Uri(url), fileName);
                     try
                     {
+                        // client.DefaultRequestHeaders.Add("X-Yandex-Weather-Key", "837f22c6-d139-4aa2-8579-e3712309b744");
                         var data = client.GetByteArrayAsync(link).GetAwaiter().GetResult();
                         fileName = Path.Combine(folderBrowserDialog.SelectedPath, fileName);
                         File.WriteAllBytes(fileName, data);
@@ -171,7 +172,7 @@ namespace YandexWeather
                 ClearLog();
 
                 using HttpClient client = new();
-                client.DefaultRequestHeaders.Add("X-Yandex-API-Key", comboBoxApiKey.Text);
+                client.DefaultRequestHeaders.Add("X-Yandex-Weather-Key", comboBoxApiKey.Text);
                 var data = client.GetStringAsync(comboBoxApiUrl.Text).GetAwaiter().GetResult();
                 var info = JsonConvert.DeserializeObject(data);
                 WriteLog(JsonConvert.SerializeObject(info, Formatting.Indented));

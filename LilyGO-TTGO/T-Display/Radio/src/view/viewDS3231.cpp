@@ -34,7 +34,7 @@ uint16_t ViewDS3231::getDateColor(DateTime& date) {
 }
 
 void ViewDS3231::OnDrawHandle() {
-    //LOGN("ViewDS3231::OnHandle")
+    // LOGN("%s::OnDrawHandle", typeid(this).name);
     ControllerTime* time = static_cast<ControllerTime*>(_ctrl);
     
     int value;

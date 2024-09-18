@@ -35,17 +35,17 @@ namespace YandexWeather
             System.Windows.Forms.Button btnApiLoad;
             System.Windows.Forms.GroupBox groupBoxSvg;
             System.Windows.Forms.Button btnSvg;
-            this.comboBoxPngUrl = new System.Windows.Forms.ComboBox();
-            this.comboBoxApiKey = new System.Windows.Forms.ComboBox();
-            this.comboBoxApiUrl = new System.Windows.Forms.ComboBox();
-            this.labelBackColor = new System.Windows.Forms.Label();
-            this.labelSize = new System.Windows.Forms.Label();
-            this.numericUpDownSvgSize = new System.Windows.Forms.NumericUpDown();
-            this.textBoxSvgColor = new System.Windows.Forms.TextBox();
-            this.comboBoxSvgUrl = new System.Windows.Forms.ComboBox();
-            this.textBoxLog = new System.Windows.Forms.TextBox();
-            this.folderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
-            this.colorDialog = new System.Windows.Forms.ColorDialog();
+            comboBoxPngUrl = new System.Windows.Forms.ComboBox();
+            comboBoxApiKey = new System.Windows.Forms.ComboBox();
+            comboBoxApiUrl = new System.Windows.Forms.ComboBox();
+            labelBackColor = new System.Windows.Forms.Label();
+            labelSize = new System.Windows.Forms.Label();
+            numericUpDownSvgSize = new System.Windows.Forms.NumericUpDown();
+            textBoxSvgColor = new System.Windows.Forms.TextBox();
+            comboBoxSvgUrl = new System.Windows.Forms.ComboBox();
+            textBoxLog = new System.Windows.Forms.TextBox();
+            folderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
+            colorDialog = new System.Windows.Forms.ColorDialog();
             groupBoxPng = new System.Windows.Forms.GroupBox();
             btnPng = new System.Windows.Forms.Button();
             groupBoxApi = new System.Windows.Forms.GroupBox();
@@ -55,13 +55,13 @@ namespace YandexWeather
             groupBoxPng.SuspendLayout();
             groupBoxApi.SuspendLayout();
             groupBoxSvg.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownSvgSize)).BeginInit();
-            this.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)numericUpDownSvgSize).BeginInit();
+            SuspendLayout();
             // 
             // groupBoxPng
             // 
             groupBoxPng.Controls.Add(btnPng);
-            groupBoxPng.Controls.Add(this.comboBoxPngUrl);
+            groupBoxPng.Controls.Add(comboBoxPngUrl);
             groupBoxPng.Dock = System.Windows.Forms.DockStyle.Top;
             groupBoxPng.Location = new System.Drawing.Point(0, 0);
             groupBoxPng.Name = "groupBoxPng";
@@ -72,40 +72,30 @@ namespace YandexWeather
             // 
             // btnPng
             // 
-            btnPng.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            btnPng.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
             btnPng.Location = new System.Drawing.Point(700, 26);
             btnPng.Name = "btnPng";
             btnPng.Size = new System.Drawing.Size(94, 29);
             btnPng.TabIndex = 1;
             btnPng.Text = "Load";
             btnPng.UseVisualStyleBackColor = true;
-            btnPng.Click += new System.EventHandler(this.btnPng_Click);
+            btnPng.Click += btnPng_Click;
             // 
             // comboBoxPngUrl
             // 
-            this.comboBoxPngUrl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.comboBoxPngUrl.FormattingEnabled = true;
-            this.comboBoxPngUrl.Items.AddRange(new object[] {
-            "https://yastatic.net/weather/i/icons/blueye/48/*.png",
-            "",
-            "https://yastatic.net/weather/i/icons/funky/png/black/48/*.png",
-            "https://yastatic.net/weather/i/icons/funky/png/dark/48/*.png",
-            "https://yastatic.net/weather/i/icons/funky/png/flat/48/*.png",
-            "https://yastatic.net/weather/i/icons/funky/png/light/48/*.png",
-            "",
-            "https://yastatic.net/weather/i/icons/funky/png/dark/64/*.png",
-            "https://yastatic.net/weather/i/icons/funky/png/light/64/*.png"});
-            this.comboBoxPngUrl.Location = new System.Drawing.Point(6, 26);
-            this.comboBoxPngUrl.Name = "comboBoxPngUrl";
-            this.comboBoxPngUrl.Size = new System.Drawing.Size(683, 28);
-            this.comboBoxPngUrl.TabIndex = 0;
+            comboBoxPngUrl.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            comboBoxPngUrl.FormattingEnabled = true;
+            comboBoxPngUrl.Items.AddRange(new object[] { "https://yastatic.net/weather/i/icons/funky/png/light/64/*.png", "https://yastatic.net/weather/i/icons/funky/png/dark/64/*.png", "https://yastatic.net/weather/i/icons/funky/png/circle/64/*.png", "https://yastatic.net/weather/i/icons/funky/png/flat/64/*.png", "https://yastatic.net/weather/i/icons/funky/png/light/96/*.png", "https://yastatic.net/weather/i/icons/funky/png/dark/96/*.png", "https://yastatic.net/weather/i/icons/funky/png/circle/96/*.png", "https://yastatic.net/weather/i/icons/funky/png/flat/96/*.png" });
+            comboBoxPngUrl.Location = new System.Drawing.Point(6, 26);
+            comboBoxPngUrl.Name = "comboBoxPngUrl";
+            comboBoxPngUrl.Size = new System.Drawing.Size(683, 28);
+            comboBoxPngUrl.TabIndex = 0;
             // 
             // groupBoxApi
             // 
             groupBoxApi.Controls.Add(btnApiLoad);
-            groupBoxApi.Controls.Add(this.comboBoxApiKey);
-            groupBoxApi.Controls.Add(this.comboBoxApiUrl);
+            groupBoxApi.Controls.Add(comboBoxApiKey);
+            groupBoxApi.Controls.Add(comboBoxApiUrl);
             groupBoxApi.Dock = System.Windows.Forms.DockStyle.Top;
             groupBoxApi.Location = new System.Drawing.Point(0, 174);
             groupBoxApi.Name = "groupBoxApi";
@@ -122,38 +112,34 @@ namespace YandexWeather
             btnApiLoad.TabIndex = 2;
             btnApiLoad.Text = "Load";
             btnApiLoad.UseVisualStyleBackColor = true;
-            btnApiLoad.Click += new System.EventHandler(this.btnApiLoad_Click);
+            btnApiLoad.Click += btnApiLoad_Click;
             // 
             // comboBoxApiKey
             // 
-            this.comboBoxApiKey.FormattingEnabled = true;
-            this.comboBoxApiKey.Items.AddRange(new object[] {
-            "ce09edeb-132e-40d6-a0ae-1c1026b2466e"});
-            this.comboBoxApiKey.Location = new System.Drawing.Point(6, 60);
-            this.comboBoxApiKey.Name = "comboBoxApiKey";
-            this.comboBoxApiKey.Size = new System.Drawing.Size(683, 28);
-            this.comboBoxApiKey.TabIndex = 1;
+            comboBoxApiKey.FormattingEnabled = true;
+            comboBoxApiKey.Items.AddRange(new object[] { "837f22c6-d139-4aa2-8579-e3712309b744" });
+            comboBoxApiKey.Location = new System.Drawing.Point(6, 60);
+            comboBoxApiKey.Name = "comboBoxApiKey";
+            comboBoxApiKey.Size = new System.Drawing.Size(683, 28);
+            comboBoxApiKey.TabIndex = 1;
             // 
             // comboBoxApiUrl
             // 
-            this.comboBoxApiUrl.FormattingEnabled = true;
-            this.comboBoxApiUrl.Items.AddRange(new object[] {
-            "https://api.weather.yandex.ru/v2/forecast?lat=55.783483&lon=37.473015&limit=2&hou" +
-                "rs=false",
-            "https://api.weather.yandex.ru/v1/forecast?lat=55.783483&lon=37.473015&limit=2"});
-            this.comboBoxApiUrl.Location = new System.Drawing.Point(6, 26);
-            this.comboBoxApiUrl.Name = "comboBoxApiUrl";
-            this.comboBoxApiUrl.Size = new System.Drawing.Size(683, 28);
-            this.comboBoxApiUrl.TabIndex = 0;
+            comboBoxApiUrl.FormattingEnabled = true;
+            comboBoxApiUrl.Items.AddRange(new object[] { "https://api.weather.yandex.ru/v2/forecast?lat=55.783230&lon=37.473060", "https://api.weather.yandex.ru/v2/forecast?lat=55.783230&lon=37.473060&lang=ru_RU&limit=1" });
+            comboBoxApiUrl.Location = new System.Drawing.Point(6, 26);
+            comboBoxApiUrl.Name = "comboBoxApiUrl";
+            comboBoxApiUrl.Size = new System.Drawing.Size(683, 28);
+            comboBoxApiUrl.TabIndex = 0;
             // 
             // groupBoxSvg
             // 
-            groupBoxSvg.Controls.Add(this.labelBackColor);
-            groupBoxSvg.Controls.Add(this.labelSize);
-            groupBoxSvg.Controls.Add(this.numericUpDownSvgSize);
-            groupBoxSvg.Controls.Add(this.textBoxSvgColor);
+            groupBoxSvg.Controls.Add(labelBackColor);
+            groupBoxSvg.Controls.Add(labelSize);
+            groupBoxSvg.Controls.Add(numericUpDownSvgSize);
+            groupBoxSvg.Controls.Add(textBoxSvgColor);
             groupBoxSvg.Controls.Add(btnSvg);
-            groupBoxSvg.Controls.Add(this.comboBoxSvgUrl);
+            groupBoxSvg.Controls.Add(comboBoxSvgUrl);
             groupBoxSvg.Dock = System.Windows.Forms.DockStyle.Top;
             groupBoxSvg.Location = new System.Drawing.Point(0, 68);
             groupBoxSvg.Name = "groupBoxSvg";
@@ -164,113 +150,95 @@ namespace YandexWeather
             // 
             // labelBackColor
             // 
-            this.labelBackColor.AutoSize = true;
-            this.labelBackColor.Location = new System.Drawing.Point(12, 63);
-            this.labelBackColor.Name = "labelBackColor";
-            this.labelBackColor.Size = new System.Drawing.Size(82, 20);
-            this.labelBackColor.TabIndex = 5;
-            this.labelBackColor.Text = "Цвет фона";
+            labelBackColor.AutoSize = true;
+            labelBackColor.Location = new System.Drawing.Point(12, 63);
+            labelBackColor.Name = "labelBackColor";
+            labelBackColor.Size = new System.Drawing.Size(82, 20);
+            labelBackColor.TabIndex = 5;
+            labelBackColor.Text = "Цвет фона";
             // 
             // labelSize
             // 
-            this.labelSize.AutoSize = true;
-            this.labelSize.Location = new System.Drawing.Point(239, 62);
-            this.labelSize.Name = "labelSize";
-            this.labelSize.Size = new System.Drawing.Size(60, 20);
-            this.labelSize.TabIndex = 4;
-            this.labelSize.Text = "Размер";
+            labelSize.AutoSize = true;
+            labelSize.Location = new System.Drawing.Point(239, 62);
+            labelSize.Name = "labelSize";
+            labelSize.Size = new System.Drawing.Size(60, 20);
+            labelSize.TabIndex = 4;
+            labelSize.Text = "Размер";
             // 
             // numericUpDownSvgSize
             // 
-            this.numericUpDownSvgSize.Location = new System.Drawing.Point(305, 60);
-            this.numericUpDownSvgSize.Maximum = new decimal(new int[] {
-            240,
-            0,
-            0,
-            0});
-            this.numericUpDownSvgSize.Name = "numericUpDownSvgSize";
-            this.numericUpDownSvgSize.Size = new System.Drawing.Size(121, 27);
-            this.numericUpDownSvgSize.TabIndex = 3;
-            this.numericUpDownSvgSize.Value = new decimal(new int[] {
-            64,
-            0,
-            0,
-            0});
+            numericUpDownSvgSize.Location = new System.Drawing.Point(305, 60);
+            numericUpDownSvgSize.Maximum = new decimal(new int[] { 240, 0, 0, 0 });
+            numericUpDownSvgSize.Name = "numericUpDownSvgSize";
+            numericUpDownSvgSize.Size = new System.Drawing.Size(121, 27);
+            numericUpDownSvgSize.TabIndex = 3;
+            numericUpDownSvgSize.Value = new decimal(new int[] { 64, 0, 0, 0 });
             // 
             // textBoxSvgColor
             // 
-            this.textBoxSvgColor.Location = new System.Drawing.Point(100, 59);
-            this.textBoxSvgColor.Name = "textBoxSvgColor";
-            this.textBoxSvgColor.Size = new System.Drawing.Size(125, 27);
-            this.textBoxSvgColor.TabIndex = 2;
-            this.textBoxSvgColor.Text = "#4D8DEE";
-            this.textBoxSvgColor.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.textBoxSvgColor_MouseDoubleClick);
+            textBoxSvgColor.Location = new System.Drawing.Point(100, 59);
+            textBoxSvgColor.Name = "textBoxSvgColor";
+            textBoxSvgColor.Size = new System.Drawing.Size(125, 27);
+            textBoxSvgColor.TabIndex = 2;
+            textBoxSvgColor.Text = "#4D8DEE";
+            textBoxSvgColor.MouseDoubleClick += textBoxSvgColor_MouseDoubleClick;
             // 
             // btnSvg
             // 
-            btnSvg.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            btnSvg.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
             btnSvg.Location = new System.Drawing.Point(700, 26);
             btnSvg.Name = "btnSvg";
             btnSvg.Size = new System.Drawing.Size(94, 29);
             btnSvg.TabIndex = 1;
             btnSvg.Text = "Load";
             btnSvg.UseVisualStyleBackColor = true;
-            btnSvg.Click += new System.EventHandler(this.btnSvg_Click);
+            btnSvg.Click += btnSvg_Click;
             // 
             // comboBoxSvgUrl
             // 
-            this.comboBoxSvgUrl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.comboBoxSvgUrl.FormattingEnabled = true;
-            this.comboBoxSvgUrl.Items.AddRange(new object[] {
-            "https://yastatic.net/weather/i/icons/svg/*.svg",
-            "",
-            "https://yastatic.net/weather/i/icons/funky/black/*.svg",
-            "https://yastatic.net/weather/i/icons/funky/light/*.svg",
-            "https://yastatic.net/weather/i/icons/funky/dark/*.svg",
-            "",
-            "https://yastatic.net/weather/i/icons/blueye/black/svg/*.svg",
-            "https://yastatic.net/weather/i/icons/blueye/color/svg/*.svg"});
-            this.comboBoxSvgUrl.Location = new System.Drawing.Point(6, 26);
-            this.comboBoxSvgUrl.Name = "comboBoxSvgUrl";
-            this.comboBoxSvgUrl.Size = new System.Drawing.Size(682, 28);
-            this.comboBoxSvgUrl.TabIndex = 0;
+            comboBoxSvgUrl.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            comboBoxSvgUrl.FormattingEnabled = true;
+            comboBoxSvgUrl.Items.AddRange(new object[] { "https://yastatic.net/weather/i/icons/funky/light/*.svg", "https://yastatic.net/weather/i/icons/funky/dark/*.svg", "https://yastatic.net/weather/i/icons/funky/circle/*.svg", "https://yastatic.net/weather/i/icons/funky/flat/*.svg" });
+            comboBoxSvgUrl.Location = new System.Drawing.Point(6, 26);
+            comboBoxSvgUrl.Name = "comboBoxSvgUrl";
+            comboBoxSvgUrl.Size = new System.Drawing.Size(682, 28);
+            comboBoxSvgUrl.TabIndex = 0;
             // 
             // textBoxLog
             // 
-            this.textBoxLog.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.textBoxLog.Location = new System.Drawing.Point(0, 268);
-            this.textBoxLog.Multiline = true;
-            this.textBoxLog.Name = "textBoxLog";
-            this.textBoxLog.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.textBoxLog.Size = new System.Drawing.Size(800, 391);
-            this.textBoxLog.TabIndex = 1;
-            this.textBoxLog.WordWrap = false;
+            textBoxLog.Dock = System.Windows.Forms.DockStyle.Fill;
+            textBoxLog.Location = new System.Drawing.Point(0, 268);
+            textBoxLog.Multiline = true;
+            textBoxLog.Name = "textBoxLog";
+            textBoxLog.ScrollBars = System.Windows.Forms.ScrollBars.Both;
+            textBoxLog.Size = new System.Drawing.Size(800, 391);
+            textBoxLog.TabIndex = 1;
+            textBoxLog.WordWrap = false;
             // 
             // colorDialog
             // 
-            this.colorDialog.AnyColor = true;
-            this.colorDialog.FullOpen = true;
+            colorDialog.AnyColor = true;
+            colorDialog.FullOpen = true;
             // 
             // MainForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 659);
-            this.Controls.Add(this.textBoxLog);
-            this.Controls.Add(groupBoxApi);
-            this.Controls.Add(groupBoxSvg);
-            this.Controls.Add(groupBoxPng);
-            this.Name = "MainForm";
-            this.Text = "Yandex Weather";
+            AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
+            AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            ClientSize = new System.Drawing.Size(800, 659);
+            Controls.Add(textBoxLog);
+            Controls.Add(groupBoxApi);
+            Controls.Add(groupBoxSvg);
+            Controls.Add(groupBoxPng);
+            Name = "MainForm";
+            Text = "Yandex Weather";
             groupBoxPng.ResumeLayout(false);
             groupBoxApi.ResumeLayout(false);
             groupBoxSvg.ResumeLayout(false);
             groupBoxSvg.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownSvgSize)).EndInit();
-            this.ResumeLayout(false);
-            this.PerformLayout();
-
+            ((System.ComponentModel.ISupportInitialize)numericUpDownSvgSize).EndInit();
+            ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion

@@ -10576,8 +10576,9 @@ uint16_t ViewTileTime::getDateColor(DateTime& date) {
 }
 
 void ViewTileTime::OnDrawHandle() {
-    // LOGN("ViewTileTime::OnDrawHandle")
+    // LOGN("%s::OnDrawHandle", typeid(this).name);
     ControllerTime* time = static_cast<ControllerTime*>(_ctrl);
+
     int value;
     char text[8], buffer[8];
     String digit("   ");
