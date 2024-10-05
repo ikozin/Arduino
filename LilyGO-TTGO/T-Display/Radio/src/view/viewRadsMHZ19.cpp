@@ -23,13 +23,9 @@ void ViewRadsMHZ19::OnDrawHandle() {
     if (_radSens) {
         rad = _radSens->getDynamic();
     }
-    int co2 = 600;
+    int co2 = 0;
     if (_mhz19) {
         co2 = _mhz19->getCO2();
-    }
-    co2 += cnt++;
-    if (co2 > 1400) {
-        cnt = 0;
     }
     
     getSetting()->getSprite()->loadFont(RobotoBold_33);

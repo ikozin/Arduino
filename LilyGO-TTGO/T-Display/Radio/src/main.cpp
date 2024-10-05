@@ -83,7 +83,7 @@
 #define BME280_ENABLE
 #define RADSENS_ENABLE
 // #define PIR_ENABLE
-// #define MHZ19_ENABLE
+#define MHZ19_ENABLE
 // #define RESET_ENABLE
 #define BUZZER_ENABLE
 #define TIME_ENABLE
@@ -249,18 +249,18 @@ TimerHandle_t wifiReconnectTimer;
 AsyncWebServer server(80);
 
 void connectToWifi() {
-    Serial.println("Connecting to Wi-Fi...");
+    // Serial.println("Connecting to Wi-Fi...");
     WiFi.begin(ssid.c_str(), pswd.c_str());
 }
 
 #ifdef MQTT_ENABLE
 void connectToMqtt() {
-    Serial.println("Connecting to MQTT...");
+    // Serial.println("Connecting to MQTT...");
     mqttClient.connect();
 }
 
 void onMqttDisconnect(AsyncMqttClientDisconnectReason reason) {
-    Serial.println("Disconnected from MQTT.");
+    // Serial.println("Disconnected from MQTT.");
     if (WiFi.isConnected()) {
         xTimerStart(mqttReconnectTimer, 0);
     }
@@ -271,16 +271,16 @@ void WiFiEvent(WiFiEvent_t event) {
     // Serial.printf("[WiFi-event] event: %d\n", event);
     switch(event) {
         case SYSTEM_EVENT_STA_GOT_IP:
-            Serial.println("\r\nWiFi connected");
-            Serial.print("IP address:");
-            Serial.println(WiFi.localIP());
-            configTime(prefs.getInt("tz", 10800), 0, "ntp2.vniiftri.ru");
+            // Serial.println("\r\nWiFi connected");
+            // Serial.print("IP address:");
+            // Serial.println(WiFi.localIP());
+            configTime(prefs.getInt("tz", 10800), 0, "ntp1.vniiftri.ru", "ntp2.vniiftri.ru");
 #ifdef MQTT_ENABLE
             connectToMqtt();
 #endif
             break;
         case SYSTEM_EVENT_STA_DISCONNECTED:
-            Serial.println("\r\nWiFi lost connection");
+            // Serial.println("\r\nWiFi lost connection");
 #ifdef MQTT_ENABLE
             xTimerStop(mqttReconnectTimer, 0); // ensure we don't reconnect to MQTT while reconnecting to Wi-Fi
 #endif
