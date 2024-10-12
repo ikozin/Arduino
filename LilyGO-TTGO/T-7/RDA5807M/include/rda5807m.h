@@ -1,3 +1,6 @@
+#pragma once
+
+#include <Arduino.h>
 
 //https://tsibrov.blogspot.com/2019/11/rda5807m-part1.html
 
@@ -177,3 +180,30 @@ typedef union rda_regf{
   uint16_t value;
 } rda_regf_t;
 */
+
+class Rda5807M {
+  public:
+    Rda5807M();
+    void Init();
+    void SetChannel(uint16_t value);
+    void SetVolume(uint16_t value);
+    void SetMute(bool value);
+    void SetHardMute(bool value);
+    void Seek(uint16_t seekth, uint16_t softblend, bool seekUp);
+
+    uint16_t GetChannel();
+    uint8_t GetVolume();
+    bool GetMute();
+    bool GetHardMute();
+    uint8_t GetRssi();
+    uint16_t GetSeekTh();
+    uint16_t GetSoftBlend();
+  private:
+    const int WaitTime = 5;
+  private:
+    SemaphoreHandle_t _mutex;
+  private:
+    void waitTune();
+    uint16_t getRegister(uint8_t reg);
+    void setRegister(uint8_t reg, const uint16_t value);
+};
