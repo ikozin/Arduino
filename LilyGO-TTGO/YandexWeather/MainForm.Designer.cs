@@ -126,7 +126,7 @@ namespace YandexWeather
             // comboBoxApiUrl
             // 
             comboBoxApiUrl.FormattingEnabled = true;
-            comboBoxApiUrl.Items.AddRange(new object[] { "https://api.weather.yandex.ru/v2/forecast?lat=55.783230&lon=37.473060", "https://api.weather.yandex.ru/v2/forecast?lat=55.783230&lon=37.473060&lang=ru_RU&limit=1" });
+            comboBoxApiUrl.Items.AddRange(new object[] { "https://api.weather.yandex.ru/v2/forecast?lat=55.783230&lon=37.473060&limit=1&hours=false&lang=ru_RU" });
             comboBoxApiUrl.Location = new System.Drawing.Point(6, 26);
             comboBoxApiUrl.Name = "comboBoxApiUrl";
             comboBoxApiUrl.Size = new System.Drawing.Size(683, 28);
