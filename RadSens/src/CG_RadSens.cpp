@@ -83,7 +83,8 @@ void CG_RadSens::updatePulses()
     uint8_t res[2];
     if (i2c_read(RS_PULSE_COUNTER_RG, res, 2))
     {
-        _pulse_cnt += (res[0] << 8) | res[1];
+        _new_cnt = (res[0] << 8) | res[1];
+        _pulse_cnt += _new_cnt;
     }
 }
 
@@ -93,6 +94,19 @@ uint32_t CG_RadSens::getNumberOfPulses()
 {
     updatePulses();
     return _pulse_cnt;
+}
+
+/*Get current number of pulses*/
+uint32_t CG_RadSens::getNumberOfNewPulses()
+{
+    updatePulses();
+    return _new_cnt;
+}
+
+/*Reset accumulated count*/
+void CG_RadSens::resetPulses()
+{
+    _pulse_cnt = 0;
 }
 
 /*Get sensor address.*/
@@ -183,7 +197,53 @@ bool CG_RadSens::setHVGeneratorState(bool state)
 #endif
     return false;
 }
-
+/*Control register for a low power mode. By
+default, it is in the disabled? state. To enable the LP mode,
+write 1 to the register, and 0 to disable it. If you try to write other
+values, the command is ignored.
+ * @param state  true - LP on / false - LP off
+ */
+bool CG_RadSens::setLPmode(bool state)
+{
+#if defined(ARDUINO)
+    Wire.beginTransmission(_sensor_address);
+#if (ARDUINO >= 100)
+    Wire.write(RS_LMP_MODE_RG);
+    if (state)
+    {
+        Wire.write(1);
+    }
+    else
+    {
+        Wire.write(0);
+    }
+#else
+    Wire.send(RS_LMP_MODE_RG);
+    if (state)
+    {
+        Wire.send(1);
+    }
+    else
+    {
+        Wire.send(0);
+    }
+#endif
+    if (Wire.endTransmission(true) == 0)
+        return true; //"true" sends stop message after transmission & releases I2C bus
+#elif defined(__arm__)
+    if (state)
+    {
+        if (wiringPiI2CWriteReg8(_fd, RS_LMP_MODE_RG, 1) > 0)
+            return true;
+    }
+    else
+    {
+        if (wiringPiI2CWriteReg8(_fd, RS_LMP_MODE_RG, 0) > 0)
+            return true;
+    }
+#endif
+    return false;
+}
 /*Contains the value coefficient used for calculating
 the radiation intensity. If necessary (for example, when installing a different
 type of counter), the necessary sensitivity value in
@@ -303,8 +363,9 @@ bool CG_RadSens::i2c_read(uint8_t RegAddr, uint8_t *dest, uint8_t num)
 #if defined(ARDUINO)
     Wire.beginTransmission(_sensor_address);
     Wire.write(RegAddr);
-    Wire.endTransmission();
-    if (Wire.requestFrom(_sensor_address, num))
+    if (Wire.endTransmission() != 0)
+        return false;
+    if (Wire.requestFrom(_sensor_address, num) == num)
     {
         for (int i = 0; i < num; i++)
             dest[i] = Wire.read();

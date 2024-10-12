@@ -73,6 +73,10 @@ values, the command is ignored.
 Size: 8 bit
 Access: R/W*/
 #define RS_LED_CONTROL_RG 0x14
+/*Control register for a low power mode. to enable send 1 to the register, and 0 to disable)
+Size: 8 bit
+Access: R/W*/
+#define RS_LMP_MODE_RG 0x0C
 
 class CG_RadSens
 {
@@ -84,6 +88,7 @@ private:
     uint8_t _chip_id = 0;
     uint8_t _firmware_ver = 0;
     uint32_t _pulse_cnt = 0;
+    uint32_t _new_cnt = 0;
     bool i2c_read(uint8_t RegAddr, uint8_t *dest, uint8_t num);
     void updatePulses();
 
@@ -96,11 +101,14 @@ public:
     float getRadIntensyDynamic();
     float getRadIntensyStatic();
     uint32_t getNumberOfPulses();
+    uint32_t getNumberOfNewPulses();
+    void resetPulses();
     uint8_t getSensorAddress();
     bool getHVGeneratorState();
     bool getLedState();
     uint16_t getSensitivity();
     bool setHVGeneratorState(bool state);
+    bool setLPmode(bool state);
     bool setSensitivity(uint16_t sens);
     bool setLedState(bool state);
 };
