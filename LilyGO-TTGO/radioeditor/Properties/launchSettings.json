@@ -1,8 +1,0 @@
-{
-  "profiles": {
-    "radioeditor": {
-      "commandName": "Project",
-      "commandLineArgs": "/i:radiolist.json /o:radiolist.dat"
-    }
-  }
-}
