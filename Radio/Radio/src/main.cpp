@@ -564,19 +564,19 @@ void showRadioStation() {
 }
 
 void radioButtons() {
-    if (digitalRead(buttonPin1) == LOW) {
+    if (digitalRead(pinVolumeUp) == LOW) {
         volume --;
         showRadioVolume();
     }
-    if (digitalRead(buttonPin2) == LOW) {
+    if (digitalRead(pinVolumeDown) == LOW) {
         volume ++;
         showRadioVolume();
     }
-    if (digitalRead(buttonPin3) == LOW) {
+    if (digitalRead(pinStationUp) == LOW) {
         index --;
         showRadioStation();
     }
-    if (digitalRead(buttonPin4) == LOW) {
+    if (digitalRead(pinStationDown) == LOW) {
         index ++;
         showRadioStation();
     }
@@ -732,10 +732,10 @@ void setup() {
     Serial.println(F("Initialize Buttons"));
     pinMode(controlPin, INPUT_PULLUP);
     attachInterrupt(1, switchmode, FALLING);
-    pinMode(buttonPin1, INPUT_PULLUP);
-    pinMode(buttonPin2, INPUT_PULLUP);
-    pinMode(buttonPin3, INPUT_PULLUP);
-    pinMode(buttonPin4, INPUT_PULLUP);
+    pinMode(pinVolumeUp, INPUT_PULLUP);
+    pinMode(pinVolumeDown, INPUT_PULLUP);
+    pinMode(pinStationUp, INPUT_PULLUP);
+    pinMode(pinStationDown, INPUT_PULLUP);
     Serial.println(F("Initialize Video"));
     lcd.begin(lcdLines);
     lcd.clear();

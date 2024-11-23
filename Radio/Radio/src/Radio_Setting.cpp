@@ -22,7 +22,7 @@ boolean showDigitalEditor(char* text, int length, char space)
 	while (mode == MODE_SETTING)
 	{
 		delay(200);
-		if (digitalRead(buttonPin1) == LOW)
+		if (digitalRead(pinVolumeUp) == LOW)
 		{
 			if (index < 0 || index > length - 1)
 			{
@@ -35,7 +35,7 @@ boolean showDigitalEditor(char* text, int length, char space)
 			lcd.write(c);
 			lcd.setCursor(x + index, 1);
 		}
-		if (digitalRead(buttonPin2) == LOW)
+		if (digitalRead(pinVolumeDown) == LOW)
 		{
 			if (index < 0 || index > length - 1)
 			{
@@ -49,7 +49,7 @@ boolean showDigitalEditor(char* text, int length, char space)
 			lcd.setCursor(x + index, 1);
 		}
 
-		if (digitalRead(buttonPin3) == LOW)
+		if (digitalRead(pinStationUp) == LOW)
 		{
 			index--;
 			if (index < 0)
@@ -64,7 +64,7 @@ boolean showDigitalEditor(char* text, int length, char space)
 			else while (text[index] == space) index--;
 			lcd.setCursor(x + index, 1);
 		}
-		if (digitalRead(buttonPin4) == LOW)
+		if (digitalRead(pinStationDown) == LOW)
 		{
 			index++;
 			if (index >= length)
@@ -100,7 +100,7 @@ boolean showWeekEditor(char* text)
 	while (mode == MODE_SETTING)
 	{
 		delay(200);
-		if (digitalRead(buttonPin1) == LOW || digitalRead(buttonPin2) == LOW)
+		if (digitalRead(pinVolumeUp) == LOW || digitalRead(pinVolumeDown) == LOW)
 		{
 			if (index < 0 || index > 19)
 			{
@@ -115,7 +115,7 @@ boolean showWeekEditor(char* text)
 			lcd.setCursor(index, 1);
 		}
 
-		if (digitalRead(buttonPin3) == LOW)
+		if (digitalRead(pinStationUp) == LOW)
 		{
 			index -= 3;
 			if (index < 0)
@@ -129,7 +129,7 @@ boolean showWeekEditor(char* text)
 			}
 			lcd.setCursor(index, 1);
 		}
-		if (digitalRead(buttonPin4) == LOW)
+		if (digitalRead(pinStationDown) == LOW)
 		{
 			index += 3;
 			if (index > 18)
@@ -167,20 +167,20 @@ void show_choice_list(byte actionCount, ActionInit pActionInit, ActionSelect pAc
 	pActionInit(selected);
 	while (mode == MODE_SETTING)
 	{
-		if (digitalRead(buttonPin1) == LOW)
+		if (digitalRead(pinVolumeUp) == LOW)
 		{
 			selected++;
 			selected = constrain(selected, 0, actionCount);
 			showSettingsSelected(selected);
 		}
-		if (digitalRead(buttonPin2) == LOW)
+		if (digitalRead(pinVolumeDown) == LOW)
 		{
 			selected--;
 			selected = constrain(selected, 0, actionCount);
 			showSettingsSelected(selected);
 		}
 
-		if (digitalRead(buttonPin3) == LOW || digitalRead(buttonPin4) == LOW)
+		if (digitalRead(pinStationUp) == LOW || digitalRead(pinStationDown) == LOW)
 		{
 			switch (selected)
 			{
@@ -301,17 +301,17 @@ void subselect_correct()
 
 	while (mode == MODE_SETTING)
 	{
-		if (digitalRead(buttonPin1) == LOW)
+		if (digitalRead(pinVolumeUp) == LOW)
 		{
 			selected++;
 			selected = constrain(selected, 0, 1);
 		}
-		if (digitalRead(buttonPin2) == LOW)
+		if (digitalRead(pinVolumeDown) == LOW)
 		{
 			selected--;
 			selected = constrain(selected, 0, 1);
 		}
-		if (digitalRead(buttonPin3) == LOW)
+		if (digitalRead(pinStationUp) == LOW)
 		{
 			if (selected == 0)
 			{
@@ -330,7 +330,7 @@ void subselect_correct()
 				break;
 			}
 		}
-		if (digitalRead(buttonPin4) == LOW)
+		if (digitalRead(pinStationDown) == LOW)
 		{
 			if (selected == 0)
 			{

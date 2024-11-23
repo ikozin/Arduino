@@ -18,10 +18,10 @@ const int radioSEN = 8;
 const int radioRST = 9;
 
 const int controlPin = 3; // 3 or 2 only!!! так как используется прерывание
-const int buttonPin1 = 4;
-const int buttonPin2 = 5;
-const int buttonPin3 = 6;
-const int buttonPin4 = 7;
+const int pinStationUp = 4;
+const int pinStationDown = 5;
+const int pinVolumeUp = 7;
+const int pinVolumeDown = 6;
 
 const byte MODE_CLOCK = 0;
 const byte MODE_ALARM = 1;
