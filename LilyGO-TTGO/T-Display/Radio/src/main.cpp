@@ -83,7 +83,7 @@
 #define BME280_ENABLE
 #define RADSENS_ENABLE
 // #define PIR_ENABLE
-#define MHZ19_ENABLE
+// #define MHZ19_ENABLE
 // #define RESET_ENABLE
 #define BUZZER_ENABLE
 #define TIME_ENABLE
@@ -109,10 +109,10 @@ Preferences prefs = Preferences();
 
 #ifdef ENCODER_ENABLE
 #if !defined(ENCODER_FAKE)
-#define ENCODER_PIN_A   GPIO_NUM_37
+#define ENCODER_PIN_A   GPIO_NUM_36
 #define ENCODER_PIN_B   GPIO_NUM_38
 ESP32Encoder encoder = ESP32Encoder();
-#define ENCODER_BTN     GPIO_NUM_39
+#define ENCODER_BTN     GPIO_NUM_32
 Button2 btnEncoder = Button2();
 #endif
 #endif
