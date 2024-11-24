@@ -62,7 +62,7 @@ void Radio::setup() {
 }
 
 void Radio::dump_config() {
-    ESP_LOGCONFIG(TAG, "Radio:");
+    ESP_LOGCONFIG(TAG, "Radio");
     LOG_I2C_DEVICE(this);
     if (this->is_failed()) {
         ESP_LOGE(TAG, "Communication with Radio failed!");
