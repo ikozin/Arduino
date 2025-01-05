@@ -70,7 +70,7 @@ typedef struct _key_ {
     matrix_t matrix;
 } key_t;
 
-const key_t keymapOrion128_Main[] PROGMEM = {
+const key_t keymapOrion128_Eng[] PROGMEM = {
 {  0x11, KEY_Home },                // HOME
 {  0x15, KEY_Left },                // LEFT
 {  0x16, KEY_Right },               // RIGHT
@@ -151,30 +151,49 @@ const key_t keymapOrion128_Main[] PROGMEM = {
 {  0x65, KEY_F5 },                  // F5
 };
 
-const key_t keymapOrion128_Shift[] PROGMEM = {
-{  0x30, KEY_OpenL },               // 0 )
-{  0x31, KEY_Excla },               // 1 !
-{  0x32, KEY_At },                  // 2 @
-{  0x33, KEY_Octot },               // 3 #
-{  0x34, KEY_Dolla },               // 4 $
-{  0x35, KEY_Perce },               // 5 %
-{  0x36, KEY_Circ },                // 6 ^
-{  0x37, KEY_Amper },               // 7 &
-{  0x38, KEY_Aster},                // 8 *
-{  0x39, KEY_ClosR },               // 9 (
+const key_t keymapOrion128_Rus[] PROGMEM = {
+{  0x11, KEY_Home },                // HOME
+{  0x15, KEY_Left },                // LEFT
+{  0x16, KEY_Right },               // RIGHT
+{  0x17, KEY_Up },                  // UP
+{  0x18, KEY_Down },                // DOWN
+{  0x1A, KEY_Back },                // DEL
+{  0x1B, KEY_AP2 },                 // ESC
+{  0x1C, KEY_Back },                // BACKSPACE
+{  0x1D, KEY_Tab },                 // TAB
+{  0x1E, KEY_ENTER },               // ENTER
+{  0x1F, KEY_Space },               // SPACE
+{  0x20, KEY_0 },                   // KP0
+{  0x21, KEY_1 },                   // KP1
+{  0x22, KEY_2 },                   // KP2
+{  0x23, KEY_3 },                   // KP3
+{  0x24, KEY_4 },                   // KP4
+{  0x25, KEY_5 },                   // KP5
+{  0x26, KEY_6 },                   // KP6
+{  0x27, KEY_7 },                   // KP7
+{  0x28, KEY_8 },                   // KP8
+{  0x29, KEY_9 },                   // KP9
+{  0x2A, KEY_Dot },                 // KP_DOT
+{  0x2B, KEY_ENTER },               // KP_ENTER
+{  0x2C, KEY_Plus },                // KP_PLUS
+{  0x2D, KEY_Minus },               // KP_MINUS
+{  0x2E, KEY_Aster },               // KP_TIMES
+{  0x2F, KEY_Slash },               // KP_DIV
+{  0x30, KEY_0 },                   // 0 )
+{  0x31, KEY_1 },                   // 1 !
+{  0x32, KEY_2 },                   // 2 @
+{  0x33, KEY_3 },                   // 3 #
+{  0x34, KEY_4 },                   // 4 $
+{  0x35, KEY_5 },                   // 5 %
+{  0x36, KEY_6 },                   // 6 ^
+{  0x37, KEY_7 },                   // 7 &
+{  0x38, KEY_8 },                   // 8 *
+{  0x39, KEY_9 },                   // 9 (
 {  0x3A, KEY_Quote },               // ' "
-{  0x3B, KEY_Less },                // , <
-{  0x3C, KEY_UnLin },               // - _
-{  0x3D, KEY_Great },               // . >
-{  0x3E, KEY_Quest },               // / ?
-{  0x5B, KEY_Colon },               // ; :
-{  0x5C, KEY_BaSl },                // "\\"
-{  0x5F, KEY_Plus },                // = +
-};
-
-const key_t keymapOrion128_RU[] PROGMEM = {
-// {  0x32, NO_KEY },                  // 2 @
-// {  0x36, NO_KEY },                  // 6 ^
+{  0x3B, KEY_Comma },               // , <
+{  0x3C, KEY_Minus },               // - _
+{  0x3D, KEY_Dot },                 // . >
+{  0x3E, KEY_Slash },               // / ?
 {  0x41, KEY_F },                   // A - Ф -> F
 {  0x42, KEY_I },                   // B - И -> I
 {  0x43, KEY_S },                   // C - С -> S
@@ -204,11 +223,40 @@ const key_t keymapOrion128_RU[] PROGMEM = {
 {  0x5C, KEY_Slash },               // "\\"
 {  0x5D, KEY_H },                   // [ - { -> H
 {  0x5E, KEY_X },                   // ] - } -> X
+{  0x5F, KEY_Equal },               // = +
+{  0x61, KEY_F1 },                  // F1
+{  0x62, KEY_F2 },                  // F2
+{  0x63, KEY_F3 },                  // F3
+{  0x64, KEY_F4 },                  // F4
+{  0x65, KEY_F5 },                  // F5
 };
 
-uint8_t table_main[128];
+const key_t keymapOrion128_Shift[] PROGMEM = {
+{  0x30, KEY_OpenL },               // 0 )
+{  0x31, KEY_Excla },               // 1 !
+{  0x32, KEY_At },                  // 2 @
+{  0x33, KEY_Octot },               // 3 #
+{  0x34, KEY_Dolla },               // 4 $
+{  0x35, KEY_Perce },               // 5 %
+{  0x36, KEY_Circ },                // 6 ^
+{  0x37, KEY_Amper },               // 7 &
+{  0x38, KEY_Aster},                // 8 *
+{  0x39, KEY_ClosR },               // 9 (
+{  0x3A, KEY_Quote },               // ' "
+{  0x3B, KEY_Less },                // , <
+{  0x3C, KEY_UnLin },               // - _
+{  0x3D, KEY_Great },               // . >
+{  0x3E, KEY_Quest },               // / ?
+{  0x5B, KEY_Colon },               // ; :
+{  0x5C, KEY_BaSl },                // "\\"
+{  0x5F, KEY_Plus },                // = +
+};
+
+
+uint8_t table_eng[128];
+uint8_t table_rus[128];
 uint8_t table_shift[128];
-uint8_t table_ru[128];
+uint8_t *table_current = NULL;
 
 bool isRuLand = false;
 
@@ -262,11 +310,12 @@ void setTable(uint8_t * table, size_t tableSize, const key_t* map, size_t mapSiz
 }
 
 void setup() {
-    setTable(table_main, sizeof(table_main) / sizeof(table_main[0]),  keymapOrion128_Main, sizeof(keymapOrion128_Main) / sizeof(keymapOrion128_Main[0]));
+    setTable(table_eng, sizeof(table_eng) / sizeof(table_eng[0]),  keymapOrion128_Eng, sizeof(keymapOrion128_Eng) / sizeof(keymapOrion128_Eng[0]));
+    setTable(table_rus, sizeof(table_rus) / sizeof(table_rus[0]),  keymapOrion128_Rus, sizeof(keymapOrion128_Rus) / sizeof(keymapOrion128_Rus[0]));
     setTable(table_shift, sizeof(table_shift) / sizeof(table_shift[0]),  keymapOrion128_Shift, sizeof(keymapOrion128_Shift) / sizeof(keymapOrion128_Shift[0]));
-    setTable(table_ru, sizeof(table_ru) / sizeof(table_ru[0]),  keymapOrion128_RU, sizeof(keymapOrion128_RU) / sizeof(keymapOrion128_RU[0]));
 
     isRuLand = false;
+    table_current = table_eng;
  
     keyboard.begin(3, 2);
     keyboard.resetKey();
@@ -435,14 +484,14 @@ void loop() {
     uint16_t code = getScanCode();
     if (code == PS2_KEY_ACK) return;
 
-    uint8_t index = (uint8_t)code;
+    uint8_t index = (uint8_t)(code & 0xFF);
 
     // Обрабатываем сброс
     if (index == PS2_KEY_F12) {
         gio::low(RESET_ORION);
-        delay(100);
-        gio::high(RESET_ORION);
-        delay(500);
+        //delay(100);
+        // gio::high(RESET_ORION);
+        // delay(500);
         resetFunc();
         return;
     }
@@ -451,13 +500,12 @@ void loop() {
     if (index == PS2_KEY_CAPS) {
         gio::toggle(LANG_ORION);
         isRuLand = !isRuLand;
+        table_current = isRuLand ? table_rus : table_eng; 
         return;
     }
 
-    matrix_t value = { .value = table_main[index]};
-    if (isRuLand && table_ru[index] != NO_KEY) {
-        value.value = table_ru[index];
-    }
+    matrix_t value = { .value = table_current[index]};
+
     if ((code & PS2_SHIFT) == PS2_SHIFT) {
         if (table_shift[index] != NO_KEY) {
             value.value = table_shift[index];
@@ -505,16 +553,4 @@ void loop() {
     Serial.print(" shift: ");  Serial.print(value.shift);
     Serial.println();
 #endif
-    // matrix_t value;
-    // for (int i = 0; i < 64; i++) {
-    //     value.value = table[i];
-    //     if (value.value == NO_KEY) continue;
-    //     if (value.shift) gio::low(SHIFT_ORION);
-    //     SetAddr_MT8826(value.value & 0x7F);
-    //     SetKey_MT8826(true);
-    //     delay(800);
-    //     SetKey_MT8826(false);
-    //     if (value.shift) gio::high(SHIFT_ORION);
-    //     delay(400);
-    // }
 }

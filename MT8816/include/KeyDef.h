@@ -4,6 +4,8 @@ constexpr const uint8_t reverse_row(uint8_t row) {
     return 7 - row;
 };
 
+#define KEY_EMPTY   { .value = NO_KEY }
+
 #define KEY_Home    {reverse_row(7), 0}         // ↖
 #define KEY_CTP     {reverse_row(7), 1}         // СТР
 #define KEY_AP2     {reverse_row(7), 2}         // АР2
