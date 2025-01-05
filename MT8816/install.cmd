@@ -1,0 +1,1 @@
+xcopy "ATmega328P_BB_8Mhz.json" "C:\.platformio\platforms\atmelavr\boards\" /Y
