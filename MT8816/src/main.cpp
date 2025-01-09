@@ -360,7 +360,23 @@ void setup() {
 
 #ifdef DEBUG_CONSOLE
 void decode(uint8_t key) {
+    if (key == 0x01) Serial.print("NUM");
+    if (key == 0x02) Serial.print("SCROLL");
+    if (key == 0x03) Serial.print("CAPS");
+    if (key == 0x04) Serial.print("PRINT");
+    if (key == 0x06) Serial.print("SHIFT LEFT");
+    if (key == 0x07) Serial.print("SHIFT RIGHT");
+    if (key == 0x08) Serial.print("CTRL LEFT");
+    if (key == 0x09) Serial.print("CTRL RIGHT");
+    if (key == 0x0A) Serial.print("ALT LEFT");
+    if (key == 0x0B) Serial.print("ALT RIGHT");
+    if (key == 0x0C) Serial.print("WIN LEFT");
+    if (key == 0x0D) Serial.print("WIN RIGHT");
+    if (key == 0x0E) Serial.print("CONTEXT MENU");
     if (key == 0x11) Serial.print("HOME");
+    if (key == 0x12) Serial.print("END");
+    if (key == 0x13) Serial.print("PAGE UP");
+    if (key == 0x14) Serial.print("PAGE DOWN");
     if (key == 0x15) Serial.print("LEFT");
     if (key == 0x16) Serial.print("RIGHT");
     if (key == 0x17) Serial.print("UP");
@@ -440,6 +456,16 @@ void decode(uint8_t key) {
     if (key == 0x63) Serial.print("F3");
     if (key == 0x64) Serial.print("F4");
     if (key == 0x65) Serial.print("F5");
+    if (key == 0x66) Serial.print("F6");
+    if (key == 0x67) Serial.print("F7");
+    if (key == 0x68) Serial.print("F8");
+    if (key == 0x69) Serial.print("F9");
+    if (key == 0x6A) Serial.print("F10");
+    if (key == 0x6B) Serial.print("F11");
+    if (key == 0x6C) Serial.print("F12");
+    if (key == 0x8C) Serial.print("POWER");
+    if (key == 0x8D) Serial.print("SLEEP");
+    if (key == 0x90) Serial.print("WAKE");
     Serial.println();
 }
 #endif
@@ -482,9 +508,10 @@ matrix_t current_key = { .value = 0 };
 
 void loop() {
     uint16_t code = getScanCode();
-    if (code == PS2_KEY_ACK) return;
-
+    if (code == PS2_KEY_ACK || code == PS2_KEY_BAT) return;
     uint8_t index = (uint8_t)(code & 0xFF);
+
+#ifndef DEBUG_CONSOLE
 
     // Обрабатываем сброс
     if (index == PS2_KEY_F12) {
@@ -497,7 +524,7 @@ void loop() {
     }
     
     // Обрабатываем переключения языка
-    if (index == PS2_KEY_CAPS) {
+    if (index == PS2_KEY_SCROLL) {
         gio::toggle(LANG_ORION);
         isRuLand = !isRuLand;
         table_current = isRuLand ? table_rus : table_eng; 
@@ -545,12 +572,24 @@ void loop() {
     // Сохраняем нажатую
     current_key = value;
 
-#ifdef DEBUG_CONSOLE    
+#else
+    
     index = processKeyCode(code);
+    Serial.print("[");
+    if (code & PS2_BREAK)       Serial.print(" brk");
+    if (code & PS2_SHIFT)       Serial.print(" shf");
+    if (code & PS2_CTRL)        Serial.print(" ctr");
+    if (code & PS2_CAPS)        Serial.print(" cap");
+    if (code & PS2_ALT)         Serial.print(" alt");
+    if (code & PS2_ALT_GR)      Serial.print(" alt");
+    if (code & PS2_GUI)         Serial.print(" gui");
+    if (code & PS2_FUNCTION)    Serial.print(" fun");
+    Serial.print(" ] ");
+
     decode(index);
-    Serial.print(" row: ");  Serial.print(7 - value.row);
-    Serial.print(" col: ");  Serial.print(value.col);
-    Serial.print(" shift: ");  Serial.print(value.shift);
+    // Serial.print(" row: ");  Serial.print(7 - value.row);
+    // Serial.print(" col: ");  Serial.print(value.col);
+    // Serial.print(" shift: ");  Serial.print(value.shift);
     Serial.println();
 #endif
 }
