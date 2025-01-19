@@ -34,8 +34,8 @@ https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/periph
 
 */
 
-gpio_num_t pir_pin  = (gpio_num_t)27;
-gpio_num_t led_pin  = (gpio_num_t)25;
+gpio_num_t led_pin  = (gpio_num_t)LED_BUILTIN;
+gpio_num_t pir_pin  = (gpio_num_t)32;
 
 void IRAM_ATTR gpio_isr_handler(void* parameter) {
     int state = gpio_get_level(pir_pin);
