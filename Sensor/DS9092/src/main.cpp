@@ -26,13 +26,14 @@ https://habr.com/ru/articles/808553/
 https://github.com/orgua/OneWireHub/blob/main/docs/source/device_support.md
 https://wreckage.ru/protocol-ibutton-work-with-1-wire-in-arduino/
 https://www.radiokot.ru/articles/13/
+https://soltau.ru/index.php/arduino/item/394-kak-sdelat-kopiyu
+https://usamodelkina.ru/14759-kak-sdelat-svoimi-rukami-kopirovalschik-kontaktnyh-i-beskontaktnyh-kljuchej-domofona.html
 
+01:06:DA:0B:A0:00:00:0E:CRC: 0E
 01:41:26:51:06:00:00:9D:CRC: 9D
-01:BC:20:51:06:00:00:39:CRC: 39
-01:06:DA:0B:A0:00:00:0E:CRC: 0E
 01:93:CB:50:06:00:00:8E:CRC: 8E
+01:BC:20:51:06:00:00:39:CRC: 39
 01:D5:D6:06:06:00:00:08:CRC: 08
-01:06:DA:0B:A0:00:00:0E:CRC: 0E
 
 */
 
@@ -42,7 +43,6 @@ https://www.radiokot.ru/articles/13/
 
 OneWire ibutton (IBUTTON_PIN);
 byte addr[8];
-byte ReadID[8] = { 0x01, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x2F }; // "Универсальный" ключ. Прошивается последовательность 01:FF:FF:FF:FF:FF:FF:2F
 char text[128];
 
 void setup() {
