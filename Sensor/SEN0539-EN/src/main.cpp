@@ -1,6 +1,32 @@
 #include <Arduino.h>
 #include <DFRobot_DF2301Q.h>
 
+/*
+SEN0539-EN
+
+Параметры
+╔═══════════════╦═══════════╗
+║ Протокол      ║ I2C, UART ║
+╠═══════════════╬═══════════╣
+║ Адрес (I2C)   ║ 0x64      ║
+╠═══════════════╬═══════════╣
+║ Скорость UART ║ 9600      ║
+╠═══════════════╬═══════════╣
+║ Питание       ║ +3V3      ║
+╚═══════════════╩═══════════╝
+
+Распиновка
+╔═════╦═════╦═════╦═════╗
+║ D/T ║ C/R ║ GND ║ VCC ║
+╠═════╬═════╬═════╬═════╣
+║ SDA ║ SCL ║ GND ║ 3V3 ║
+╚═════╩═════╩═════╩═════╝
+
+https://wiki.dfrobot.com/SKU_SEN0539-EN_Gravity_Voice_Recognition_Module_I2C_UART
+https://github.com/DFRobot/DFRobot_DF2301Q
+https://github.com/DFRobot/DFRobot_DF2301Q/tree/master/python/raspberrypi
+
+*/
 
 //I2C communication
 DFRobot_DF2301Q_I2C asr;
@@ -17,7 +43,7 @@ void setup() {
     }
     Serial.println("Begin ok!");
     
-    asr.setVolume(4);
+    asr.setVolume(10);
     asr.setMuteMode(0);
     asr.setWakeTime(20);
 
