@@ -1,264 +1,118 @@
 #include <Arduino.h>
+#include <Preferences.h>
+#include <WiFi.h>
+// #include <..\..\tools\sdk\esp32\include\lwip\include\apps\esp_sntp.h>
+#include <esp_sntp.h>
+
 #include <TFT_eSPI.h>
+#include <Audio.h>
 
-#ifndef ESP32
-    #error ESP32
+#if !defined(ESP32)
+  #error Select ESP32 DEV Board
 #endif
-
 #if !defined(USER_SETUP_ID) || USER_SETUP_ID != 23
-    #error Setup23_TTGO_TM
+  #error Ошибка настройки TFT_eSPI, необходимо подключить "User_Setups/Setup23_TTGO_TM.h"
 #endif
+
+static const uint8_t LED_BUILTIN = 22;
+#define BUILTIN_LED  LED_BUILTIN // backward compatibility
+#define LED_BUILTIN LED_BUILTIN  // allow testing #ifdef LED_BUILTIN
+// static const uint8_t SDA = 21;
+// static const uint8_t SCL = 22;
+
+#define I2S_DIN       19    // DIN
+#define I2S_BCK       26    // BCK
+#define I2S_LCK       25    // LBCK
 
 TFT_eSPI tft = TFT_eSPI(TFT_WIDTH, TFT_HEIGHT); // 240x320
+TFT_eSprite sprite = TFT_eSprite(&tft);
 
-float p = 3.1415926;
+Preferences prefs = Preferences();
+Audio audio;
 
-void testlines(uint16_t color) {
-    tft.fillScreen(TFT_BLACK);
-    for (int16_t x = 0; x < tft.width(); x += 6) {
-        tft.drawLine(0, 0, x, tft.height() - 1, color);
-    }
-    for (int16_t y = 0; y < tft.height(); y += 6) {
-        tft.drawLine(0, 0, tft.width() - 1, y, color);
-    }
+volatile int station         = 0;
+volatile int volume          = 20;
+volatile bool isMute         = false;
 
-    tft.fillScreen(TFT_BLACK);
-    for (int16_t x = 0; x < tft.width(); x += 6) {
-        tft.drawLine(tft.width() - 1, 0, x, tft.height() - 1, color);
-    }
-    for (int16_t y = 0; y < tft.height(); y += 6) {
-        tft.drawLine(tft.width() - 1, 0, 0, y, color);
-    }
-
-    tft.fillScreen(TFT_BLACK);
-    for (int16_t x = 0; x < tft.width(); x += 6) {
-        tft.drawLine(0, tft.height() - 1, x, 0, color);
-    }
-    for (int16_t y = 0; y < tft.height(); y += 6) {
-        tft.drawLine(0, tft.height() - 1, tft.width() - 1, y, color);
-    }
-
-    tft.fillScreen(TFT_BLACK);
-    for (int16_t x = 0; x < tft.width(); x += 6) {
-        tft.drawLine(tft.width() - 1, tft.height() - 1, x, 0, color);
-    }
-    for (int16_t y = 0; y < tft.height(); y += 6) {
-        tft.drawLine(tft.width() - 1, tft.height() - 1, 0, y, color);
-    }
-}
-
-void testdrawtext(const char *text, uint16_t color) {
-    tft.setCursor(0, 0);
-    tft.setTextColor(color);
-    tft.setTextWrap(true);
-    tft.print(text);
-}
-
-void testfastlines(uint16_t color1, uint16_t color2) {
-    tft.fillScreen(TFT_BLACK);
-    for (int16_t y = 0; y < tft.height(); y += 5) {
-        tft.drawFastHLine(0, y, tft.width(), color1);
-    }
-    for (int16_t x = 0; x < tft.width(); x += 5) {
-        tft.drawFastVLine(x, 0, tft.height(), color2);
-    }
-}
-
-void testdrawrects(uint16_t color) {
-    tft.fillScreen(TFT_BLACK);
-    for (int16_t x = 0; x < tft.width(); x += 6) {
-        tft.drawRect(tft.width() / 2 - x / 2, tft.height() / 2 - x / 2, x, x, color);
-    }
-}
-
-void testfillrects(uint16_t color1, uint16_t color2) {
-    tft.fillScreen(TFT_BLACK);
-    for (int16_t x = tft.width() - 1; x > 6; x -= 6) {
-        tft.fillRect(tft.width() / 2 - x / 2, tft.height() / 2 - x / 2, x, x, color1);
-        tft.drawRect(tft.width() / 2 - x / 2, tft.height() / 2 - x / 2, x, x, color2);
-    }
-}
-
-void testfillcircles(uint8_t radius, uint16_t color) {
-    for (int16_t x = radius; x < tft.width(); x += radius * 2) {
-        for (int16_t y = radius; y < tft.height(); y += radius * 2) {
-            tft.fillCircle(x, y, radius, color);
-        }
-    }
-}
-
-void testdrawcircles(uint8_t radius, uint16_t color) {
-    for (int16_t x = 0; x < tft.width() + radius; x += radius * 2) {
-        for (int16_t y = 0; y < tft.height() + radius; y += radius * 2) {
-            tft.drawCircle(x, y, radius, color);
-        }
-    }
-}
-
-void testtriangles() {
-    tft.fillScreen(TFT_BLACK);
-    int color = 0xF800;
-    int t;
-    int w = tft.width() / 2;
-    int x = tft.height() - 1;
-    int y = 0;
-    int z = tft.width();
-    for (t = 0 ; t <= 15; t++) {
-        tft.drawTriangle(w, y, y, x, z, x, color);
-        x -= 4;
-        y += 4;
-        z -= 4;
-        color += 100;
-    }
-}
-
-void testroundrects() {
-    tft.fillScreen(TFT_BLACK);
-    int color = 100;
-    int i;
-    int t;
-    for (t = 0 ; t <= 4; t += 1) {
-        int x = 0;
-        int y = 0;
-        int w = tft.width() - 2;
-        int h = tft.height() - 2;
-        for (i = 0 ; i <= 16; i += 1) {
-            tft.drawRoundRect(x, y, w, h, 5, color);
-            x += 2;
-            y += 3;
-            w -= 4;
-            h -= 6;
-            color += 1100;
-        }
-        color += 100;
-    }
-}
-
-void tftPrintTest() {
-    tft.setTextWrap(false);
-    tft.fillScreen(TFT_BLACK);
-    tft.setCursor(0, 30);
-    tft.setTextColor(TFT_RED);
-    tft.setTextSize(1);
-    tft.println("Hello World!");
-    tft.setTextColor(TFT_YELLOW);
-    tft.setTextSize(2);
-    tft.println("Hello World!");
-    tft.setTextColor(TFT_GREEN);
-    tft.setTextSize(3);
-    tft.println("Hello World!");
-    tft.setTextColor(TFT_BLUE);
-    tft.setTextSize(4);
-    tft.print(1234.567);
-    delay(1500);
-    tft.setCursor(0, 0);
-    tft.fillScreen(TFT_BLACK);
-    tft.setTextColor(TFT_WHITE);
-    tft.setTextSize(0);
-    tft.println("Hello World!");
-    tft.setTextSize(1);
-    tft.setTextColor(TFT_GREEN);
-    tft.print(p, 6);
-    tft.println(" Want pi?");
-    tft.println(" ");
-    tft.print(8675309, HEX); // print 8,675,309 out in HEX!
-    tft.println(" Print HEX!");
-    tft.println(" ");
-    tft.setTextColor(TFT_WHITE);
-    tft.println("Sketch has been");
-    tft.println("running for: ");
-    tft.setTextColor(TFT_MAGENTA);
-    tft.print(millis() / 1000);
-    tft.setTextColor(TFT_WHITE);
-    tft.print(" seconds.");
-}
-
-void mediabuttons() {
-    // play
-    tft.fillScreen(TFT_BLACK);
-    tft.fillRoundRect(25, 10, 78, 60, 8, TFT_WHITE);
-    tft.fillTriangle(42, 20, 42, 60, 90, 40, TFT_RED);
-    delay(500);
-    // pause
-    tft.fillRoundRect(25, 90, 78, 60, 8, TFT_WHITE);
-    tft.fillRoundRect(39, 98, 20, 45, 5, TFT_GREEN);
-    tft.fillRoundRect(69, 98, 20, 45, 5, TFT_GREEN);
-    delay(500);
-    // play color
-    tft.fillTriangle(42, 20, 42, 60, 90, 40, TFT_BLUE);
-    delay(50);
-    // pause color
-    tft.fillRoundRect(39, 98, 20, 45, 5, TFT_RED);
-    tft.fillRoundRect(69, 98, 20, 45, 5, TFT_RED);
-    // play color
-    tft.fillTriangle(42, 20, 42, 60, 90, 40, TFT_GREEN);
-}
+String ssid         = ""; // SSID WI-FI
+String pswd         = "";
 
 void setup() {
-  Serial.begin(115200);
-  Serial.printf("\r\n");
-  Serial.printf("\r\n");
+    Serial.begin(115200);
+    Serial.printf("Start\r\n");
 
-  tft.init();
-  tft.setRotation(0);
-  Serial.println("Initialized");
+    prefs.begin("Main");
 
-  uint16_t time = millis();
-  tft.fillScreen(TFT_BLACK);
-  time = millis() - time;
+    tft.init();
+    tft.setRotation(1);
+    tft.fillScreen(TFT_BLACK);
+    tft.setTextColor(TFT_WHITE, TFT_BLACK);
 
-  Serial.println(time, DEC);
-  delay(500);
+    // boardInfo(tft);
 
-  // large block of text
-  tft.fillScreen(TFT_BLACK);
-  testdrawtext("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur adipiscing ante sed nibh tincidunt feugiat. Maecenas enim massa, fringilla sed malesuada et, malesuada sit amet turpis. Sed porttitor neque ut ante pretium vitae malesuada nunc bibendum. Nullam aliquet ultrices massa eu hendrerit. Ut sed nisi lorem. In vestibulum purus a tortor imperdiet posuere. ", TFT_WHITE);
-  delay(1000);
+    if (SPIFFS.begin(true)) {
+        tft.printf("Total: %d, Free: %d\r\n", SPIFFS.totalBytes(), SPIFFS.totalBytes() - SPIFFS.usedBytes());
+        Serial.printf("Total: %d, Free: %d\r\n", SPIFFS.totalBytes(), SPIFFS.totalBytes() - SPIFFS.usedBytes());
+    }
+    else {
+        //SPIFFS.format();
+        tft.printf("SPIFFS Error\r\n");
+        Serial.printf("SPIFFS Error\r\n");
+    }
 
-  // tft print function
-  tftPrintTest();
-  delay(4000);
+    // prefs.putString("ssid", "...");
+    // prefs.putString("pswd", "...");
+    // prefs.putInt("tz", 10800);
 
-  // a single pixel
-  tft.drawPixel(tft.width() / 2, tft.height() / 2, TFT_GREEN);
-  delay(500);
+    ssid = prefs.getString("ssid", ssid);
+    pswd = prefs.getString("pswd", pswd);
 
-  // line draw test
-  testlines(TFT_YELLOW);
-  delay(500);
+    tft.printf("Wi-Fi SSID: %s\r\n", ssid.c_str());
+    Serial.printf("Wi-Fi SSID: %s\r\n", ssid.c_str());
+    
+    WiFi.disconnect();
+    WiFi.mode(WIFI_STA);
+    WiFi.channel();
+    WiFi.begin(ssid.c_str(), pswd.c_str());
+    while (WiFi.status() != WL_CONNECTED) {
+        tft.printf(".");
+        Serial.printf(".");
+        vTaskDelay(1000 / portTICK_RATE_MS);
+    }
+    tft.printf("\r\nip: %s\r\n", WiFi.localIP().toString().c_str());
+    Serial.printf("\r\nip: %s\r\n", WiFi.localIP().toString().c_str());
+    configTime(prefs.getInt("tz", 10800), 0, "ntp1.vniiftri.ru", "ntp2.vniiftri.ru");
 
-  // optimized lines
-  testfastlines(TFT_RED, TFT_BLUE);
-  delay(500);
+    do vTaskDelay(1000 / portTICK_RATE_MS);
+    while (sntp_get_sync_status() != SNTP_SYNC_STATUS_COMPLETED);
 
-  testdrawrects(TFT_GREEN);
-  delay(500);
+    char text[64];
+    struct tm timeinfo;
+    getLocalTime(&timeinfo);
+    strftime(text, sizeof(text), "%c", &timeinfo);
+    //strftime(text, sizeof(text), "%d.%m.%Y %H:%M:%S ", &timeinfo);
+    tft.printf("%s\r\n", text);
+    Serial.printf("%s\r\n", text);
 
-  testfillrects(TFT_YELLOW, TFT_MAGENTA);
-  delay(500);
+    audio.setPinout(I2S_BCK, I2S_LCK, I2S_DIN);
+    audio.connecttohost("https://nashe1.hostingradio.ru/nashe-128.mp3");
+    audio.setVolume(volume); // 0...21
 
-  tft.fillScreen(TFT_BLACK);
-  testfillcircles(10, TFT_BLUE);
-  testdrawcircles(10, TFT_WHITE);
-  delay(500);
-
-  testroundrects();
-  delay(500);
-
-  testtriangles();
-  delay(500);
-
-  mediabuttons();
-  delay(500);
-
-  Serial.println("done");
-  delay(1000);
-
+    tft.fillScreen(TFT_PURPLE);
+    tft.setTextColor(TFT_WHITE, TFT_PURPLE);
 }
 
 void loop() {
-    tft.invertDisplay(true);
-    delay(500);
-    tft.invertDisplay(false);
-    delay(500);
+    audio.loop();
+    char text[64];
+    struct tm timeinfo;
+    getLocalTime(&timeinfo);
+    strftime(text, sizeof(text), "%H:%M ", &timeinfo);
+    tft.setTextDatum(MC_DATUM);
+    tft.drawString(text, TFT_HEIGHT >> 1, TFT_WIDTH >> 1, 7);
+}
+
+void audio_showstreamtitle(const char *info) {
+    Serial.printf("streamtitle %s\r\n", info);
+    // setScroll(info);
 }
