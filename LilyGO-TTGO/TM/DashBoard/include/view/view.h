@@ -11,18 +11,15 @@ class View;
 
 class ViewSettig {
     public:
-        ViewSettig(TFT_eSPI *tft, TFT_eSprite* sprite, View** currentView) {
+        ViewSettig(TFT_eSPI* tft, View** currentView) {
             _tft = tft;
-            _sprite = sprite;
             _currentView = currentView;
         }
     private:
-        TFT_eSPI *_tft;
-        TFT_eSprite* _sprite;
+        TFT_eSPI* _tft;
         View** _currentView;
     public:
-        TFT_eSPI * getDisplay() const { return _tft; }
-        TFT_eSprite * getSprite() const { return _sprite; }
+        TFT_eSPI* getDisplay() const { return _tft; }
         View** getCurrentView() const { return _currentView; }
 };
 
@@ -51,8 +48,8 @@ class ViewT: public View {
                 View(name, setting, updateEvent) {
             assert(ctrl);
             _ctrl = ctrl;
-             _period = period;
-             _timer = nullptr;
+            _period = period;
+            _timer = nullptr;
         }
         virtual void Start(uint16_t stackDepth = 1024) override {
             if (_period == 0) {
@@ -75,7 +72,7 @@ class ViewT: public View {
         esp_timer_handle_t _timer;
     protected:
         static void TimerCallback(void* parameter) {
-            ViewT* page = static_cast<ViewT*>(parameter);
-            xSemaphoreGive(page->_updateEvent);
+            ViewT* view = static_cast<ViewT*>(parameter);
+            xSemaphoreGive(view->_updateEvent);
         }
 };

@@ -6,11 +6,10 @@
 
 class ControllerTimeSNTP : public ControllerTime {
     public:
-        ControllerTimeSNTP(const char* name, Preferences* prefs);
+        ControllerTimeSNTP(const char* name, Preferences* prefs):
+            ControllerTime(name, prefs) { }
     protected:
         TimerHandle_t _handler = nullptr;
-    protected:
-        static ControllerTimeSNTP * xTimers[NUM_SNTP_TIMERS];
     protected:
         virtual InitResponse_t OnInit() override;
         virtual void OnHandle() override {};

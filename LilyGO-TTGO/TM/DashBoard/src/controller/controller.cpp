@@ -40,7 +40,7 @@ void Controller::ControllerHandler(void* parameter) {
     InitResponse_t result = controller->OnInit();
     controller->Unlock();
     if (result.IsError) {
-        LOGN("%s::ERROR INIT", controller->_name)
+        LOG("%s::ERROR INIT\r\n", controller->_name);
         return;
     }
     if (!result.IsDone) {
@@ -55,7 +55,7 @@ void Controller::ControllerHandler(void* parameter) {
 
 void Controller::OnHandle() {
     for (;;) {
-        // LOGN("%s::OnIteration", _name)
+        LOG("%s::OnIteration\r\n", _name);
         Lock();
         IterationCode_t result  = OnIteration();
         Unlock();
