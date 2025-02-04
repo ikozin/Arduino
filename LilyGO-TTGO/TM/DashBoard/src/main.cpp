@@ -1,29 +1,21 @@
 #include <Arduino.h>
 #include <Preferences.h>
 #include <WiFi.h>
-// #include <..\..\tools\sdk\esp32\include\lwip\include\apps\esp_sntp.h>
 #include <esp_sntp.h>
-#include <TFT_eSPI.h>
-
 #include <Audio.h>
 
+#include "display.h"
 #include "controller\controller.h"
 #include "controller\controllerTimeSNTP.h"
+#include "controller\controllerBme280.h"
+#include "controller\controllerRadio.h"
 
 #include "view\view.h"
 #include "view\viewTimeDigit.h"
 
-
 #if !defined(ESP32)
     #error Select ESP32 DEV Board
 #endif
-#if !defined(USER_SETUP_ID) || USER_SETUP_ID != 23
-    #error Ошибка настройки TFT_eSPI, необходимо подключить "User_Setups/Setup23_TTGO_TM.h"
-#endif
-#if SPI_FREQUENCY != 80000000
-    #error Необходимо исправить "User_Setups/Setup23_TTGO_TM.h", #define SPI_FREQUENCY  80000000
-#endif
-
 
 static const uint8_t LED_BUILTIN = 22;
 #define BUILTIN_LED  LED_BUILTIN // backward compatibility
@@ -31,11 +23,7 @@ static const uint8_t LED_BUILTIN = 22;
 // static const uint8_t SDA = 21;
 // static const uint8_t SCL = 22;
 
-#define I2S_DIN       19    // DIN
-#define I2S_BCK       26    // BCK
-#define I2S_LCK       25    // LBCK
-
-TFT_eSPI tft = TFT_eSPI(TFT_WIDTH, TFT_HEIGHT); // 240x320
+LGFX tft;
 
 Preferences prefs = Preferences();
 Audio audio;
@@ -54,9 +42,10 @@ ViewSettig viewSettig(&tft, &currentView);
 
 SemaphoreHandle_t xMutex = xSemaphoreCreateMutex();
 
-ControllerTimeSNTP ctrlTime("ControllerTimeSNTP", &prefs);
+ControllerTimeSNTP ctrlTime = ControllerTimeSNTP("ControllerTimeSNTP", &prefs);
+ViewTimeDigit viewTime = ViewTimeDigit("ViewTimeDigit", &viewSettig, &ctrlTime);
 
-ViewTimeDigit viewTime("ViewTimeDigit", &viewSettig, &ctrlTime);
+ControllerBme280 ctrlBme280 = ControllerBme280("ControllerBme280");
 
 
 View* viewList[] = {
@@ -86,7 +75,7 @@ void setDisplayPage(int16_t page) {
 
     tft.init();
     tft.setRotation(1);
-    tft.fillScreen(TFT_BLACK);
+    tft.clear(TFT_BLACK);
     tft.setTextColor(TFT_WHITE, TFT_BLACK);
 
     // boardInfo(tft);
@@ -104,6 +93,9 @@ void setDisplayPage(int16_t page) {
     // prefs.putString("ssid", "...");
     // prefs.putString("pswd", "...");
     // prefs.putInt("tz", 10800);
+    prefs.putBool("mute", false);
+    prefs.putInt("volume", 20);
+
 
     ssid = prefs.getString("ssid", ssid);
     pswd = prefs.getString("pswd", pswd);
@@ -138,11 +130,10 @@ void setDisplayPage(int16_t page) {
 
     LOG("Controller - Start\r\n");
     ctrlTime.Start(xMutex);
+    ctrlBme280.Start(xMutex);
 
     LOG("View - Start\r\n");
-
-
-    tft.fillScreen(TFT_BLACK);
+    tft.clear(TFT_BLACK);
 
     viewTime.Start(8192);
 
@@ -164,7 +155,7 @@ void loop() {
     // strftime(text, sizeof(text), "%H:%M ", timeinfo);
     // tft.setTextDatum(MC_DATUM);
     // tft.drawString(text, TFT_HEIGHT >> 1, TFT_WIDTH >> 1, 7);
-    vTaskDelay(pdMS_TO_TICKS(500));
+    vTaskDelay(pdMS_TO_TICKS(100));
 }
 
 void audio_showstreamtitle(const char *info) {

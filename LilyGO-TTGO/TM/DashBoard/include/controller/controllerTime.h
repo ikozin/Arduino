@@ -14,6 +14,6 @@ class ControllerTime : public Controller {
     protected:
         virtual IterationCode_t OnIteration() override { return IterationCode_t::Stop; }
     protected:
-        DateTime _currentTime;
         Preferences* _prefs;
+        DateTime _currentTime;
 };

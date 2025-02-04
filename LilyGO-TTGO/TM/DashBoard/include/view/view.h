@@ -1,7 +1,7 @@
 #pragma once
 
 #include <Arduino.h>
-#include <TFT_eSPI.h>
+#include "display.h"
 #include "esp_timer.h"
 #include "main.h"
 #include "logging.h"
@@ -11,15 +11,15 @@ class View;
 
 class ViewSettig {
     public:
-        ViewSettig(TFT_eSPI* tft, View** currentView) {
+        ViewSettig(LGFX* tft, View** currentView) {
             _tft = tft;
             _currentView = currentView;
         }
     private:
-        TFT_eSPI* _tft;
+        LGFX* _tft;
         View** _currentView;
     public:
-        TFT_eSPI* getDisplay() const { return _tft; }
+        LGFX* getDisplay() const { return _tft; }
         View** getCurrentView() const { return _currentView; }
 };
 

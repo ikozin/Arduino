@@ -31,11 +31,11 @@ char* ViewTimeDigit::months[] = {
 const uint32_t backColor = TFT_WHITE;
 const uint32_t textColor = TFT_BLACK;
 //colours
-const unsigned short back=TFT_WHITE;
-const unsigned short darkG=0x2945;
-const unsigned short lightG=0xBDF7;
-const unsigned short red=0x9820;
-const unsigned short segCol[4]={darkG,darkG,red,red};
+const uint16_t back=TFT_WHITE;
+const uint16_t darkG=0x2945;
+const uint16_t lightG=0xBDF7;
+const uint16_t red=0x9820;
+const uint16_t segCol[4]={darkG,darkG,red,red};
 
 const uint8_t bigFont[] PROGMEM = {
   0x00, 0x00, 0x00, 0xE9, 0x00, 0x00, 0x00, 0x0B, 0x00, 0x00, 0x00, 0x3E, 0x00, 0x00, 0x00, 0x00, 
@@ -10575,6 +10575,7 @@ uint16_t ViewTimeDigit::getDateColor(DateTime& date) {
 void ViewTimeDigit::OnDrawHandle() {
     LOG("%s::OnDrawHandle\r\n", _name);
     ControllerTime* time = static_cast<ControllerTime*>(_ctrl);
+    LGFX* tft = getSetting()->getDisplay();
 
     int value;
     char text[64], buffer[8];
@@ -10597,7 +10598,6 @@ void ViewTimeDigit::OnDrawHandle() {
     }
     strcat(text, buffer);
 
-    TFT_eSPI * const tft = getSetting()->getDisplay();
     if (tft->readPixel(0, 0) != backColor) { 
         tft->fillScreen(backColor);
     }
@@ -10620,8 +10620,7 @@ void ViewTimeDigit::OnDrawHandle() {
             width,                              // W
             height,                             // H
             10,
-            segCol[i],
-            back);
+            segCol[i]);
         tft->fillRect(
             x + (i * (width + x)),              // X
             y + ((height - (space >> 1)) >> 1), // Y
@@ -10631,8 +10630,8 @@ void ViewTimeDigit::OnDrawHandle() {
         tft->setTextColor(back, segCol[i]);
         tft->drawString(
             buffer,
-            x + (i * (width + x)) + 27,
-            y + 56);
+            x + (i * (width + x)) + 28,
+            y + 50);
     }
     // tft->drawString(text, TFT_HEIGHT >> 1, (TFT_WIDTH >> 1) + 20);
     tft->unloadFont();
