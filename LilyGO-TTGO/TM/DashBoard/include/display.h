@@ -16,6 +16,10 @@
 #define TFT_WIDTH  240
 #define TFT_HEIGHT 320
 
+// https://github.com/lovyan03/LovyanGFX
+// https://lovyangfx.readthedocs.io/en/latest/
+// https://adior.ru/index.php/robototekhnika/439-st7789
+
 class LGFX : public lgfx::LGFX_Device {
     private:
         lgfx::Panel_ST7789  _panel_instance;        // Предлагается выбрать контроллер дисплея
