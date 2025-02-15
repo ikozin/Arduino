@@ -3,9 +3,14 @@
 #include <WiFi.h>
 #include <esp_sntp.h>
 #include <TFT_eSPI.h>
-#include "controllerAudio.h"
+#include <ArduinoJson.h>
 
+#include "controllerAudio.h"
 #include "logging.h"
+
+#include "fonts/Segment772.h"
+#include "fonts/Bahnschrift36.h"
+
 
 #if !defined(ESP32)
     #error Select ESP32 DEV Board
@@ -27,9 +32,9 @@ static const uint8_t LED_BUILTIN = 22;
 // static const uint8_t SDA = 21;
 // static const uint8_t SCL = 22;
 
-#define I2S_DIN         19    // DIN
-#define I2S_BCK         26    // BCK
-#define I2S_LCK         25    // LBCK
+// #define I2S_DIN         19    // DIN
+// #define I2S_BCK         26    // BCK
+// #define I2S_LCK         25    // LBCK
 
 #define VOLUME_MAX      21
 
@@ -43,6 +48,20 @@ ControllerAudio ctrlAudo;
 
 String ssid         = ""; // SSID WI-FI
 String pswd         = "";
+JsonDocument doc;
+JsonArray stationList;
+const char * name;
+const char * url;
+
+char text[64];
+
+void fatalError(const char * msg) {
+    tft.printf(msg);
+    LOG(msg);
+    vTaskDelay(pdMS_TO_TICKS(5000));
+    esp_restart();
+}
+
 
 void setup() {
     Serial.begin(115200);
@@ -61,9 +80,23 @@ void setup() {
     }
     else {
         //SPIFFS.format();
-        tft.printf("SPIFFS Error\r\n");
-        LOG("SPIFFS Error\r\n");
+        fatalError("SPIFFS Error\r\n");
     }
+
+    File file = SPIFFS.open("/setting.json");
+    if (file) {
+        // Deserialize the JSON document
+        DeserializationError error = deserializeJson(doc, file);
+        file.close();
+        if (error) {
+            fatalError("Error deserialize setting.json\r\n");
+        }
+    }
+    stationList = doc.as<JsonArray>();
+    tft.printf("Radio list: %d\r\n", stationList.size());
+    LOG("Radio list: %d\r\n", stationList.size());
+
+    
 
     // prefs.putString("ssid", "...");
     // prefs.putString("pswd", "...");
@@ -94,7 +127,6 @@ void setup() {
     while (sntp_get_sync_status() != SNTP_SYNC_STATUS_COMPLETED);
     // while (esp_netif_sntp_sync_wait(pdMS_TO_TICKS(1000)) != ESP_OK);
 
-    char text[64];
     time_t now = time(nullptr);
     struct tm* timeinfo = localtime(&now);
 
@@ -102,22 +134,72 @@ void setup() {
     tft.printf("%s\r\n", text);
     LOG("%s\r\n", text);
 
+    JsonObject station = stationList[1].as<JsonObject>();;
+    name = station["name"].as<const char*>();
+    url = station["url"].as<const char*>();
+
     ctrlAudo.Start();
     ctrlAudo.SetVolume(21);
-    ctrlAudo.SetChannel("https://nashe1.hostingradio.ru/nashe-128.mp3");
+    ctrlAudo.SetChannel(url);
+
+    tft.fillScreen(TFT_BLACK);
+    tft.setTextDatum(CC_DATUM);
+
 }
 
-bool once = true; 
-void loop() {
-    if (once) {
-        vTaskDelay(pdMS_TO_TICKS(5000));
-        ctrlAudo.SetVolume(10);
-        vTaskDelay(pdMS_TO_TICKS(5000));
-        ctrlAudo.SetVolume(15);
-        vTaskDelay(pdMS_TO_TICKS(5000));
-        ctrlAudo.SetVolume(20);
-        once = false;
-        return;
+const uint VR_MIDL_VOL_VAL  (VOLUME_MAX / 3);
+const uint VR_MAX_VOL_VAL   (VR_MIDL_VOL_VAL + VR_MIDL_VOL_VAL);
+const uint VR_BAR_HEIGHT    (6);
+
+void drawVolume(uint32_t x, uint32_t y, uint32_t width, uint16_t volume) {
+    tft.fillRect(x, y, width, (VOLUME_MAX * VR_BAR_HEIGHT) + 6, TFT_BLACK);
+    tft.drawRoundRect(x, y, width, (VOLUME_MAX * VR_BAR_HEIGHT) + 6, 4, TFT_WHITE);
+    for(uint16_t i = 1; i <= volume; i++) {
+        uint32_t color = TFT_GREEN; //0x3526;
+        if (i > VR_MIDL_VOL_VAL)  color = TFT_YELLOW;
+        if (i > VR_MAX_VOL_VAL) color = TFT_RED;
+        tft.fillRect(x + 4, y + (VOLUME_MAX * VR_BAR_HEIGHT) + 4 - (i * VR_BAR_HEIGHT), width - 8, 3, color);
     }
-    delay(1000);
+}
+
+uint16_t volume = 0;
+void loop() {
+
+    uint32_t x = 290;
+    uint32_t y = 100;
+    uint32_t width = 24;
+    drawVolume(x, y, width, VOLUME_MAX);
+
+    time_t now = time(nullptr);
+    struct tm* timeinfo = localtime(&now);
+    
+    strftime(text, sizeof(text), "%H:%M", timeinfo);
+    
+    // uint16_t w = 300;
+    // uint16_t h = 100;
+    // tft.setTextColor(TFT_WHITE, TFT_BLUE);
+    // w = tft.textWidth(text);
+    // h = tft.fontHeight() + 8;
+    // tft.fillRect((TFT_HEIGHT - w) >> 1, (TFT_WIDTH - h) >> 1, w, h, TFT_MAGENTA);
+    // tft.setTextPadding(80);
+
+    stationList.begin();
+    for (size_t i = 0; i < stationList.size(); i++) {
+        
+        JsonObject station = stationList[i].as<JsonObject>();;
+        name = station["name"].as<const char*>();
+        url = station["url"].as<const char*>();
+
+        tft.setTextFont(7);
+        tft.setTextWrap(false, false);
+        tft.setTextPadding(48);
+        tft.drawString(text, TFT_HEIGHT >> 1, TFT_WIDTH >> 1);
+    
+        tft.loadFont(Bahnschrift36);
+        tft.drawString(name, TFT_HEIGHT >> 1, 50);
+        tft.unloadFont();
+            
+        vTaskDelay(pdMS_TO_TICKS(500));
+    }
+    // vTaskDelay(pdMS_TO_TICKS(1000));
 }
