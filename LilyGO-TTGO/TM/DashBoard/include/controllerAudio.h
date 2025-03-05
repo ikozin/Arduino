@@ -27,13 +27,18 @@ class ControllerAudio {
     public:
         ControllerAudio() {
             _queue = xQueueCreate(4, sizeof(AudioCommand_t));
+            _title.reserve(128);
          }
         void Start();
         void SetVolume(uint16_t volume);
         void SetChannel(const char* url);
+        
+        void setTitle(const char* text) { _title = text; }
+        const char* getTitle() const { return _title.c_str(); }
     private:
         Audio _audio;
         QueueHandle_t _queue;
+        String _title;
     private:
         static void Handler(void* parameter);
 };

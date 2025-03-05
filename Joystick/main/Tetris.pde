@@ -433,6 +433,5 @@ public class Tetris extends GameEngine
       "1110",
       "0010",
       "0000",
-  };
-
-}
+    };
+};

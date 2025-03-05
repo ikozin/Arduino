@@ -1,6 +1,9 @@
 {
     "files.associations": {
         "font7srle.c": "cpp",
-        "fstream": "cpp"
+        "fstream": "cpp",
+        "*.tcc": "cpp",
+        "string": "cpp",
+        "vector": "cpp"
     }
 }
