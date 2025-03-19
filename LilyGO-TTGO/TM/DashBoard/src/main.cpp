@@ -26,6 +26,7 @@
 
 // https://docs.espressif.com/projects/esp-idf/en/v5.0/esp32/api-reference/system/freertos.html#task-api
 // https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/system/system_time.html
+// https://docs.espressif.com/projects/esp-idf/en/v5.0/esp32/api-reference/system/freertos.html#event-group-api
 
 static const uint8_t LED_BUILTIN = 22;
 #define BUILTIN_LED  LED_BUILTIN // backward compatibility
@@ -37,11 +38,21 @@ static const uint8_t LED_BUILTIN = 22;
 // #define I2S_BCK         26    // BCK
 // #define I2S_LCK         25    // LBCK
 
-#define VOLUME_MAX      21
+StaticEventGroup_t xEventGroupBuffer;
+EventGroupHandle_t xEventGroup = xEventGroupCreateStatic(&xEventGroupBuffer);
+//EventGroupHandle_t xEventGroup = xEventGroupCreate();
 
 TFT_eSPI tft = TFT_eSPI(TFT_WIDTH, TFT_HEIGHT);
 Preferences prefs = Preferences();
-ControllerAudio ctrlAudo; 
+ControllerAudio ctrlAudo(xEventGroup); 
+
+
+#define BIT_TIME    ( 1 << 0 )
+#define BIT_STATION ( 1 << 1 )
+#define BIT_TRACK   ( 1 << 2 )
+#define BIT_VOLUME  ( 1 << 3 )
+
+#define BIT_ALL     ( BIT_TIME | BIT_STATION | BIT_TRACK | BIT_VOLUME )
 
 volatile uint16_t   station = 0;
 volatile uint16_t   volume  = 20;
@@ -62,6 +73,28 @@ void fatalError(const char * msg) {
     LOG(msg);
     vTaskDelay(pdMS_TO_TICKS(5000));
     esp_restart();
+}
+
+void IRAM_ATTR isr_handler_volume_up(void* parameter) {
+    ControllerAudio* controller = static_cast<ControllerAudio*>(parameter);
+    controller->changeVolume(1);
+
+}
+
+void IRAM_ATTR isr_handler_volume_down(void* parameter) {
+    ControllerAudio* controller = static_cast<ControllerAudio*>(parameter);
+    controller->changeVolume(-1);
+}
+
+void setPinHandler(gpio_num_t pin, gpio_int_type_t int_type, gpio_pull_mode_t pull_mode, gpio_isr_t handler) {
+    gpio_install_isr_service(0);
+    gpio_reset_pin(pin);
+    gpio_pad_select_gpio(pin);
+    gpio_set_direction(pin, GPIO_MODE_INPUT);
+    gpio_set_pull_mode(pin, pull_mode); 
+    gpio_set_intr_type(pin, int_type);
+    gpio_intr_enable(pin);
+    gpio_isr_handler_add(pin, handler, &ctrlAudo);
 }
 
 
@@ -97,8 +130,6 @@ void setup() {
     stationList = doc.as<JsonArray>();
     tft.printf("Radio list: %d\r\n", stationList.size());
     LOG("Radio list: %d\r\n", stationList.size());
-
-    
 
     // prefs.putString("ssid", "...");
     // prefs.putString("pswd", "...");
@@ -140,13 +171,17 @@ void setup() {
     name = station["name"].as<const char*>();
     url = station["url"].as<const char*>();
 
-    ctrlAudo.Start();
-    ctrlAudo.SetVolume(21);
-    ctrlAudo.SetChannel(url);
+    ctrlAudo.start();
+    ctrlAudo.setVolume(21);
+    ctrlAudo.setChannel(url);
+
+    setPinHandler((gpio_num_t)37, GPIO_INTR_NEGEDGE,GPIO_PULLUP_ONLY, isr_handler_volume_up);
+    setPinHandler((gpio_num_t)38, GPIO_INTR_NEGEDGE,GPIO_PULLUP_ONLY, isr_handler_volume_down);
 
     tft.fillScreen(TFT_BLACK);
     tft.setTextWrap(false, false);
 
+    xEventGroupSetBits(xEventGroup, BIT_TIME);
 }
 
 const uint VR_MIDL_VOL_VAL  (VOLUME_MAX / 3);
@@ -163,58 +198,47 @@ void drawVolume(uint32_t x, uint32_t y, uint32_t width, uint16_t volume) {
         tft.fillRect(x + 4, y + (VOLUME_MAX * VR_BAR_HEIGHT) + 4 - (i * VR_BAR_HEIGHT), width - 8, 3, color);
     }
 }
+void drawTrack(int32_t x, int32_t y) {
+    String title = ctrlAudo.getTitle();
+    tft.loadFont(ShareTechMonoRegular32);
+    tft.setTextDatum(ML_DATUM);
+    tft.drawString(title, x, y);
+    tft.unloadFont();
+}
 
-void loop() {
-
-    uint32_t x = 290;
-    uint32_t y = 100;
-    uint32_t width = 24;
-    drawVolume(x, y, width, VOLUME_MAX);
-
-    time_t now = time(nullptr);
-    struct tm* timeinfo = localtime(&now);
-    
+void drawTime(int32_t x, int32_t y, struct tm* timeinfo) {
+    // char text[16];
     strftime(text, sizeof(text), "%H:%M", timeinfo);
-    
     tft.setTextFont(7);
     tft.setTextPadding(48);
     tft.setTextDatum(CC_DATUM);
     tft.drawString(text, TFT_HEIGHT >> 1, TFT_WIDTH >> 1);
+}
 
-    // uint16_t w = 300;
-    // uint16_t h = 100;
-    // tft.setTextColor(TFT_WHITE, TFT_BLUE);
-    // w = tft.textWidth(text);
-    // h = tft.fontHeight() + 8;
-    // tft.fillRect((TFT_HEIGHT - w) >> 1, (TFT_WIDTH - h) >> 1, w, h, TFT_MAGENTA);
-    // tft.setTextPadding(80);
+void loop() {
+    time_t now = time(nullptr);
+    struct tm* timeinfo = localtime(&now);
+    drawTime(TFT_HEIGHT >> 1, TFT_WIDTH >> 1, timeinfo);
 
-    tft.loadFont(ShareTechMonoRegular32);
+    EventBits_t uxBits = xEventGroupWaitBits(xEventGroup, BIT_ALL, pdTRUE, pdFALSE, pdMS_TO_TICKS(500));
+    if (uxBits) {
+        // if (uxBits & BIT_TIME) {
+        //     time_t now = time(nullptr);
+        //     struct tm* timeinfo = localtime(&now);
+        //     drawTime(TFT_HEIGHT >> 1, TFT_WIDTH >> 1, timeinfo);
+        // }
+        if (uxBits & BIT_STATION) {
 
-    uint16_t widthBox = 320;
-    String title = ctrlAudo.getTitle();
-    title.concat("    ");
-    int16_t widthText = tft.textWidth(title);
-    int16_t size = widthText;
-    Serial.printf("%s,%d,%d\r\n", title.c_str(), title.length(), size);
-    do {
-        title.concat(title);
-        size += widthText;
-    } while (widthBox > size);
-    Serial.printf("%s,%d,%d\r\n", title.c_str(), title.length(), size);
-    tft.setTextDatum(ML_DATUM);
-
-    int16_t start = widthText;
-    for (int16_t n = 0; n < 8; n++) {
-        for (int16_t i = start; i >= -widthText; i-=8) {
-            tft.drawString(title, i, 20);
-            vTaskDelay(pdMS_TO_TICKS(100));
         }
-        start = 0;
+        if (uxBits & BIT_TRACK) {
+            drawTrack(0, 20);
+        }
+        if (uxBits & BIT_VOLUME) {
+            drawVolume(290, 100, 24, ctrlAudo.getVolume());
+        }
+        
     }
-
-    tft.unloadFont();
-    vTaskDelay(pdMS_TO_TICKS(1000));
+    // vTaskDelay(pdMS_TO_TICKS(1000));
 }
 
 
