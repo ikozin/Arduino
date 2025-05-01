@@ -58,12 +58,12 @@
     | 17 |  PIR      | +5V |
     |  2 |           |     |
     | 15 |           |     |
-    | 13 |  IRemote  | +5V |
+    | 13 |  IRemote  | +5V |    MP1094
     | 12 |           |     |
     | 32 |           |     |
     | 33 |  Reset    |  -  |
-    | 25 |  MHZ19    |     |
-    | 26 |  MHZ19    |     |
+    | 25 |  MHZ19    | +5V |
+    | 26 |  MHZ19    | +5V |
     | 27 |  Buzzer   |  -  |
     ------------------------
 
@@ -108,8 +108,8 @@ Preferences prefs = Preferences();
 
 #ifdef ENCODER_ENABLE
 #if !defined(ENCODER_FAKE)
-#define ENCODER_PIN_A   GPIO_NUM_36
-#define ENCODER_PIN_B   GPIO_NUM_38
+#define ENCODER_PIN_A   GPIO_NUM_38
+#define ENCODER_PIN_B   GPIO_NUM_36
 ESP32Encoder encoder = ESP32Encoder();
 #define ENCODER_BTN     GPIO_NUM_32
 Button2 btnEncoder = Button2();
@@ -183,8 +183,8 @@ ViewRadsMHZ19 viewRadsMHZ19 = ViewRadsMHZ19("ViewRadsMHZ19", &viewSettig, radSen
 
 #ifdef TIME_ENABLE
 ControllerDS3231 ctrlTime = ControllerDS3231("CtrlDS3231", &prefs);
-// ViewDS3231 viewTime = ViewDS3231("ViewDS3231", &viewSettig, &ctrlTime);
-ViewTileTime viewTime = ViewTileTime("ViewTileTime", &viewSettig, &ctrlTime);
+ViewDS3231 viewTime = ViewDS3231("ViewDS3231", &viewSettig, &ctrlTime);
+// ViewTileTime viewTime = ViewTileTime("ViewTileTime", &viewSettig, &ctrlTime);
 // ControllerSoftTime ctrlTime = ControllerSoftTime("CtrlSoftTime", &prefs);
 // ViewSoftTime viewTime = ViewSoftTime("ViewSoftTime", &viewSettig, &ctrlTime);
 #endif
@@ -438,7 +438,7 @@ void setup() {
 #endif
 
     LOGN("Component - Start")
-#if defined(IR_ENABLE) & defined(RADIO_ENABLE)
+#if defined(IR_ENABLE)
     cmpIrRemote.Start(&ctrlIrRemote);
 #endif
 #ifdef PIR_ENABLE

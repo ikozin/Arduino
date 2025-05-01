@@ -24,4 +24,4 @@ void logTime();
 // #define ENCODER_FAKE
 // #define BME280_FAKE
 // #define RADSENS_FAKE
-// #define MHZ19_FAKE
+#define MHZ19_FAKE
