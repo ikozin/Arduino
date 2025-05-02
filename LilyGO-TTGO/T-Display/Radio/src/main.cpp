@@ -157,28 +157,13 @@ ViewBME280 viewBme280 = ViewBME280("ViewBME280", &viewSettig, &ctrlBme280);
 
 #ifdef RADSENS_ENABLE
 ControllerRadSens ctrlRadSens = ControllerRadSens("CtrlRadSens");
+ViewRadSens viewRadSens = ViewRadSens("ViewRadSens", &viewSettig, &ctrlRadSens);
 #endif
 
 #ifdef MHZ19_ENABLE
 #define UART_RX_PIN     GPIO_NUM_26
 #define UART_TX_PIN     GPIO_NUM_25
 ControllerMHZ19 ctrlMHZ19 = ControllerMHZ19("CtrlMHZ19", UART_RX_PIN, UART_TX_PIN);
-#endif
-
-#if defined(RADSENS_ENABLE) || defined(MHZ19_ENABLE)
-
-#ifdef RADSENS_ENABLE
-ControllerRadSens* radSens = &ctrlRadSens;
-#else
-ControllerRadSens* radSens = nullptr;
-#endif
-#ifdef MHZ19_ENABLE
-ControllerMHZ19* mhz19 = &ctrlMHZ19;
-#else
-ControllerMHZ19* mhz19 = nullptr;
-#endif
-
-ViewRadsMHZ19 viewRadsMHZ19 = ViewRadsMHZ19("ViewRadsMHZ19", &viewSettig, radSens, mhz19);
 #endif
 
 
@@ -220,8 +205,8 @@ View* viewList[] = {
 #ifdef BME280_ENABLE
     &viewBme280,
 #endif
-#if defined(RADSENS_ENABLE) || defined(MHZ19_ENABLE)
-    &viewRadsMHZ19,
+#if defined(RADSENS_ENABLE)
+    &viewRadSens,
 #endif
 };
 
@@ -463,8 +448,8 @@ void setup() {
 #ifdef BME280_ENABLE
     viewBme280.Start(2048);
 #endif
-#if defined(RADSENS_ENABLE) || defined(MHZ19_ENABLE)
-    viewRadsMHZ19.Start(2048);
+#if defined(RADSENS_ENABLE)
+    viewRadSens.Start(2048);
 #endif
 #ifdef RADIO_ENABLE
     currentHandle = &ControllerRadio::changeVolume;
@@ -479,7 +464,6 @@ void setup() {
     pinMode(GPIO_NUM_35,  INPUT);
 #endif
 #endif
-
     setDisplayPage(prefs.getInt("page", 0));
 }
 

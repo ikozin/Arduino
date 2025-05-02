@@ -22,21 +22,17 @@ void ViewRadSens::OnDrawHandle() {
     getSetting()->getSprite()->loadFont(RobotoBold_33);
     getSetting()->getSprite()->fillSprite(TFT_BLACK);
     getSetting()->getSprite()->setTextDatum(CC_DATUM);
-    // getSetting()->getSprite()->drawSmoothRoundRect(5, 5, 15, 10, 112, 125, TFT_RED, backColor);
     
-    getSetting()->getSprite()->fillSmoothRoundRect(5, 5, 112, 125, 15, backColor, TFT_BLACK);
+    getSetting()->getSprite()->fillSmoothRoundRect(5, 5, 230, 125, 15, backColor, TFT_BLACK);
     getSetting()->getSprite()->setTextColor(foreColor);
 
     foreColor = TFT_WHITE;
     backColor = (rad <= 15) ? TFT_GREEN: TFT_RED;
     foreColor = (rad <= 15) ? TFT_BLUE: TFT_BLACK;
-    getSetting()->getSprite()->fillSmoothRoundRect(123, 5, 112, 125, 15, backColor, TFT_BLACK);
+    getSetting()->getSprite()->fillSmoothRoundRect(5, 5, 230, 125, 15, backColor, TFT_BLACK);
     getSetting()->getSprite()->setTextColor(foreColor);
     sprintf(text, "%.0f", rad);    //μR/h
-    getSetting()->getSprite()->drawString(text, 180, 67);
-
-    // getSetting()->getSprite()->fillSmoothRoundRect(5, 5, 112, 125, 15, backColor);
-    // getSetting()->getSprite()->fillSmoothRoundRect(123, 5, 112, 125, 15, backColor);
+    getSetting()->getSprite()->drawString(text, 120, 67);
 
     getSetting()->getSprite()->unloadFont();
 }
