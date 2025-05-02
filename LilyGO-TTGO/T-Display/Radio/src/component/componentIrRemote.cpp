@@ -1,4 +1,5 @@
 #include "component/componentIrRemote.h"
+#include "RemoteControl.h"
 
 
 ComponentIrRemote::ComponentIrRemote(const char* name, ControllerIrRemote* ir_remote, ControllerRadio* radio) : Component(name) {
@@ -8,7 +9,7 @@ ComponentIrRemote::ComponentIrRemote(const char* name, ControllerIrRemote* ir_re
 }
 
 void ComponentIrRemote::OnHandle() {
-    //LOGN("ComponentIrRemote::OnHandle")
+    // LOGN("%s::OnHandle", _name)
     uint8_t cmd =  _ir_remote->GetCommand();
     if (_ir_remote->IsRepeat()) {
         if (_lastCommand == cmd) {
@@ -18,19 +19,19 @@ void ComponentIrRemote::OnHandle() {
     _lastCommand = cmd;
     LOGN("%s::OnHandle, CMD=%d", _name, cmd);
     switch (cmd) {
-        case 7:             // PREV
+        case KEY_PREV:
             _radio->changeChannel(-1);
             break;
-        case 21:            // NEXT
+        case KEY_NEXT:
             _radio->changeChannel(+1);
             break;
-        case 9:             // PLAY/PAUSE
+        case KEY_PLAY:
             _radio->toggleMute();
             break;
-        case 22:            // VOLUME-
+        case KEY_VOL_PREV:
             _radio->changeVolume(-1);
             break;
-        case 25:            // VOLUME+
+        case KEY_VOL_NEXT:
             _radio->changeVolume(+1);
             break;
         default:

@@ -1,22 +1,20 @@
-#include "controller/controllerIrRemote.h"
-#include "TinyIRReceiver.hpp"
+#pragma once
 
-// 
 //  ┌──────────────────────────────┐
 //  │ ┌──────┐  ┌──────┐  ┌──────┐ │
-//  │ │"PWR" │  │"RET" │  │"MOD" │ │
+//  │ │"CH-" │  │ "CH" │  │"CH+" │ │
 //  │ │  69  │  │  70  │  │  71  │ │
 //  │ └──────┘  └──────┘  └──────┘ │
 //  │ ┌──────┐  ┌──────┐  ┌──────┐ │
-//  │ │"TIME"│  │"SEL" │  │ "EQ" │ │
+//  │ │"PREV"│  │"NEXT"│  │"PLAY"│ │
 //  │ │  68  │  │  64  │  │  67  │ │
 //  │ └──────┘  └──────┘  └──────┘ │
 //  │ ┌──────┐  ┌──────┐  ┌──────┐ │
-//  │ │"PREV"│  │"NEXT"│  │"PLAY"│ │
+//  │ │"VOL-"│  │"VOL+"│  │ "EQ" │ │
 //  │ │   7  │  │  21  │  │   9  │ │
 //  │ └──────┘  └──────┘  └──────┘ │
 //  │ ┌──────┐  ┌──────┐  ┌──────┐ │
-//  │ │"VOL-"│  │"VOL+"│  │ "0"  │ │
+//  │ │ "0"  │  │"100" │  │"200" │ │
 //  │ │  22  │  │  25  │  │  13  │ │
 //  │ └──────┘  └──────┘  └──────┘ │
 //  │ ┌──────┐  ┌──────┐  ┌──────┐ │
@@ -33,29 +31,24 @@
 //  │ └──────┘  └──────┘  └──────┘ │
 //  └──────────────────────────────┘
 
-ControllerIrRemote::ControllerIrRemote(const char* name, gpio_num_t pin) :
-                        ControllerT(name) {
-    _pin = pin;
-}
-
-InitResponse_t ControllerIrRemote::OnInit() {
-    return (initPCIInterruptForTinyReceiver(this)) ? OnInitResultStart : OnInitResultERROR;
-}
-
-uint8_t ControllerIrRemote::GetAddress() {
-     return TinyIRReceiverData.Address;
-}
-uint8_t ControllerIrRemote::GetCommand() {
-    return TinyIRReceiverData.Command;
-}
-bool ControllerIrRemote::IsRepeat() {
-    return TinyIRReceiverData.Flags & IRDATA_FLAGS_IS_REPEAT;
-}
-
-IRAM_ATTR void handleReceivedTinyIRData(void* parameter) {
-    ControllerIrRemote* controller = static_cast<ControllerIrRemote*>(parameter);
-    for (int i = 0; i < EventListMax && controller->_eventList[i] != nullptr; i++) {
-        xSemaphoreGiveFromISR(controller->_eventList[i], nullptr);
-    }
-}
-
+#define KEY_CH_PREV     69
+#define KEY_CHANNEL     70
+#define KEY_CH_NEXT     71
+#define KEY_PREV        68
+#define KEY_NEXT        64
+#define KEY_PLAY        67
+#define KEY_VOL_PREV     7
+#define KEY_VOL_NEXT    21
+#define KEY_EQ           9
+#define KEY_0           22
+#define KEY_100         25
+#define KEY_200         13
+#define KEY_1           12
+#define KEY_2           24
+#define KEY_3           94
+#define KEY_4            8
+#define KEY_5           28
+#define KEY_6           90
+#define KEY_7           66
+#define KEY_8           82
+#define KEY_9           74

@@ -14,6 +14,8 @@ class ControllerIrRemote : public ControllerT<ControllerRadio> {
     friend IRAM_ATTR void handleReceivedTinyIRData(void* parameter);
     public:
         ControllerIrRemote(const char* name, gpio_num_t pin);
+    private:
+        gpio_num_t  _pin;
     protected:
         virtual InitResponse_t OnInit() override;
         virtual IterationCode_t OnIteration() override { return IterationCode_t::Stop; }

@@ -36,6 +36,7 @@
 #include "view/viewTileTime.h"
 #include "view/viewRadio.h"
 #include "view/viewBme280.h"
+#include "view/viewRadSens.h"
 #include "view/viewRadsMHZ19.h"
 #include "view/viewWeather.h"
 
