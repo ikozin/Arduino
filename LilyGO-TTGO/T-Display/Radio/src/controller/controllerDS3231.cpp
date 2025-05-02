@@ -23,12 +23,12 @@ InitResponse_t ControllerDS3231::OnInit() {
             time_t t = mktime(&tm);
             struct timeval tv = { .tv_sec = t, .tv_usec = 0 };
             settimeofday(&tv, nullptr);
-            Serial.printf("%s::OnHandle, Setup ESP32: %s\r\n", _name, asctime(&tm));
+            Serial.printf("%s::OnInit, Setup ESP32: %s\r\n", _name, asctime(&tm));
         }
         else {
             _rtc.adjust(DateTime(now + _prefs->getInt("tz", 10800)));
             _currentTime = _rtc.now();
-            Serial.printf("%s::OnHandle, Setup DS3231: %02d:%02d:%02d\r\n",
+            Serial.printf("%s::OnInit, Setup DS3231: %02d:%02d:%02d\r\n",
                              _name, _currentTime.hour(), _currentTime.minute(), _currentTime.second());
         }      
         return OnInitResultStart;

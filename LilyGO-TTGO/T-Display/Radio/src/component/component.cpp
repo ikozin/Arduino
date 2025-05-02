@@ -18,7 +18,7 @@ void Component::Handler(void* parameter) {
     Component* component = static_cast<Component*>(parameter);
     for (;;) {
         xSemaphoreTake(component->_updateEvent, portMAX_DELAY);
-        LOGN("%s::OnHandle", component->_name)
+        // LOGN("%s::OnHandle", component->_name)
         component->OnHandle();
     }
     vTaskDelete(component->_task);    

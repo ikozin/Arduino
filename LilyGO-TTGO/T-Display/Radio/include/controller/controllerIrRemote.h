@@ -2,28 +2,23 @@
 
 #include "controller/controller.h"
 #include "controller/controllerRadio.h"
-#include "driver/rmt.h"
-#include "ir_tools.h"
 
+#define IR_RECEIVE_PIN          GPIO_NUM_13
+#define DECODE_NEC
+#define SEND_PWM_BY_TIMER
+#define NO_LED_FEEDBACK_CODE	
+#define MARK_EXCESS_MICROS    20    // Adapt it to your IR receiver module. 20 is recommended for the cheap VS1838 modules.
+#define USE_CALLBACK_FOR_TINY_RECEIVER
 
 class ControllerIrRemote : public ControllerT<ControllerRadio> {
+    friend IRAM_ATTR void handleReceivedTinyIRData(void* parameter);
     public:
-        ControllerIrRemote(const char* name, gpio_num_t pin, rmt_channel_t channel = RMT_CHANNEL_0);
+        ControllerIrRemote(const char* name, gpio_num_t pin);
     protected:
         virtual InitResponse_t OnInit() override;
-        virtual IterationCode_t OnIteration() override;
-        virtual void OnDone() override;
-    private:
-        gpio_num_t      _pin;
-        rmt_channel_t   _channel;
-        uint32_t        _addr;
-        uint32_t        _cmd;
-        bool            _repeat;
-        ir_parser_t*    _ir_parser;
-        RingbufHandle_t _rb;
+        virtual IterationCode_t OnIteration() override { return IterationCode_t::Stop; }
     public:
-        uint32_t GetAddress() const { return _addr; }
-        uint32_t GetCommand() const { return _cmd; }
-        bool IsRepeat() const { return _repeat; }
+        uint8_t GetAddress();
+        uint8_t GetCommand();
+        bool IsRepeat();
 };
-

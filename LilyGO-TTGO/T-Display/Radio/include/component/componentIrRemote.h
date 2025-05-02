@@ -2,7 +2,6 @@
 
 #include "component/component.h"
 #include "controller/controllerIrRemote.h"
-
 #include "controller/controllerRadio.h"
 
 class ComponentIrRemote : public Component {
@@ -11,7 +10,7 @@ class ComponentIrRemote : public Component {
     protected:
         virtual void OnHandle() override;
     private:
-        uint32_t _lastCommand;
+        uint8_t _lastCommand;
         ControllerIrRemote* _ir_remote;
         ControllerRadio* _radio;
 };

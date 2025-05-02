@@ -9,7 +9,7 @@ ComponentIrRemote::ComponentIrRemote(const char* name, ControllerIrRemote* ir_re
 
 void ComponentIrRemote::OnHandle() {
     //LOGN("ComponentIrRemote::OnHandle")
-    uint32_t cmd =  _ir_remote->GetCommand();
+    uint8_t cmd =  _ir_remote->GetCommand();
     if (_ir_remote->IsRepeat()) {
         if (_lastCommand == cmd) {
             return;
@@ -18,19 +18,19 @@ void ComponentIrRemote::OnHandle() {
     _lastCommand = cmd;
     LOGN("%s::OnHandle, CMD=%d", _name, cmd);
     switch (cmd) {
-        case 0xf807:            // PREV
+        case 7:             // PREV
             _radio->changeChannel(-1);
             break;
-        case 0xea15:            // NEXT
+        case 21:            // NEXT
             _radio->changeChannel(+1);
             break;
-        case 0xf609:            // PLAY/PAUSE
+        case 9:             // PLAY/PAUSE
             _radio->toggleMute();
             break;
-        case 0xe916:            // VOLUME-
+        case 22:            // VOLUME-
             _radio->changeVolume(-1);
             break;
-        case 0xe619:            // VOLUME+
+        case 25:            // VOLUME+
             _radio->changeVolume(+1);
             break;
         default:
