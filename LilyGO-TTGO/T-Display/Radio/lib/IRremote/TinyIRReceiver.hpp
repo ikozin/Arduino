@@ -373,6 +373,21 @@ bool initPCIInterruptForTinyReceiver(void* parameter) {
 // Default for all NON AVR platforms
 #define USE_ATTACH_INTERRUPT
 
+// https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/peripherals/gpio.html
+void attachInterruptArgExt(gpio_num_t pin, void (*handler)(void*), void * arg, gpio_int_type_t mode) {
+    // gpio_install_isr_service(0);
+    gpio_reset_pin(pin);
+    gpio_isr_handler_remove(pin);
+    gpio_pad_select_gpio(pin);
+    gpio_set_direction(pin, GPIO_MODE_INPUT);
+    gpio_set_pull_mode(pin, GPIO_FLOATING); 
+    gpio_set_intr_type(pin, mode);
+    gpio_intr_enable(pin);
+
+    gpio_isr_handler_add(pin, handler, arg);
+}
+
+
 /**
  * Initializes hardware interrupt generation according to IR_RECEIVE_PIN or use attachInterrupt() function.
  * @return true if interrupt was successfully enabled
@@ -381,12 +396,12 @@ bool enablePCIInterruptForTinyReceiver(void* parameter) {
     if(digitalPinToInterrupt(IR_RECEIVE_PIN) == NOT_AN_INTERRUPT){
         return false;
     }
-    attachInterruptArg(digitalPinToInterrupt(IR_RECEIVE_PIN), IRPinChangeInterruptHandler, parameter, CHANGE);
+    attachInterruptArgExt(IR_RECEIVE_PIN, IRPinChangeInterruptHandler, parameter, GPIO_INTR_ANYEDGE);
     return true;
 }
 
 void disablePCIInterruptForTinyReceiver() {
-    detachInterrupt(digitalPinToInterrupt(IR_RECEIVE_PIN));
+    // detachInterrupt(IR_RECEIVE_PIN);
 }
 
 void dummyFunctionToAvoidCompilerErrors() {

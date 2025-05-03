@@ -39,7 +39,7 @@ ControllerIrRemote::ControllerIrRemote(const char* name, gpio_num_t pin) :
 }
 
 InitResponse_t ControllerIrRemote::OnInit() {
-    return (initPCIInterruptForTinyReceiver(this)) ? OnInitResultStart : OnInitResultERROR;
+    return (initPCIInterruptForTinyReceiver(this)) ? OnInitResultStop : OnInitResultERROR;
 }
 
 uint8_t ControllerIrRemote::GetAddress() {

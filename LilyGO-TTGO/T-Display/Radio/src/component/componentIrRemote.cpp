@@ -17,7 +17,7 @@ void ComponentIrRemote::OnHandle() {
         }
     }
     _lastCommand = cmd;
-    LOGN("%s::OnHandle, CMD=%d", _name, cmd);
+    // LOGN("%s::OnHandle, CMD=%d", _name, cmd);
     switch (cmd) {
         case KEY_PREV:
             _radio->changeChannel(-1);

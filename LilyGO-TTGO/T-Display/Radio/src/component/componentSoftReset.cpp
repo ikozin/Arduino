@@ -7,6 +7,6 @@ ComponentSoftReset::ComponentSoftReset(const char* name, ControllerSoftReset* re
 
 void ComponentSoftReset::OnHandle() {
     int state = _reset->getState();
-    LOGN("%s::getState, %d", _name, state)
-    esp_restart();
+    LOGN("%s::OnHandle, %d", _name, state)
+    ESP.restart();
 }

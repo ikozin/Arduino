@@ -54,6 +54,7 @@
   #error Ошибка настройки TFT_eSPI, необходимо подключить "User_Setups/Setup25_TTGO_T_Display.h"
 #endif
 
+// https://docs.espressif.com/projects/arduino-esp32/en/latest/api/gpio.html
 /*
     ------------------------
     | 17 |  PIR      | +5V |
@@ -61,11 +62,11 @@
     | 15 |           |     |
     | 13 |  IRemote  | +5V |    MP1094
     | 12 |           |     |
-    | 32 |           |     |
-    | 33 |  Reset    |  -  |
     | 25 |  MHZ19    | +5V |
     | 26 |  MHZ19    | +5V |
-    | 27 |  Buzzer   |  -  |
+    | 27 |  Buzzer   |     |
+    ------------------------
+    | 33 |  Reset    |     |
     ------------------------
 
     -----------------------------------
@@ -84,7 +85,7 @@
 #define RADSENS_ENABLE
 // #define PIR_ENABLE
 // #define MHZ19_ENABLE
-// #define RESET_ENABLE
+#define RESET_ENABLE
 #define BUZZER_ENABLE
 #define TIME_ENABLE
 #define IR_ENABLE
@@ -286,9 +287,10 @@ void boardInfo(Print& stream) {
 }
 
 void setup() {
-    Serial.begin(115200);
+    gpio_install_isr_service(0);
 
-    boardInfo(Serial);
+    Serial.begin(115200);
+    // boardInfo(Serial);
 
     // pinMode(TFT_BL, OUTPUT);                // Set backlight pin to output mode
     // digitalWrite(TFT_BL, TFT_BACKLIGHT_ON); // Turn backlight on. TFT_BACKLIGHT_ON has been set in the TFT_eSPI library in the User Setup file TTGO_T_Display.h

@@ -15,9 +15,10 @@ ControllerGPIOInput::ControllerGPIOInput(const char* name, gpio_num_t pin, gpio_
 // GPIO_INTR_ANYEDGE - по любому изменению
 // GPIO_INTR_LOW_LEVEL - по низкому уровню
 // GPIO_INTR_HIGH_LEVEL - по высокому уровню
+// https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/peripherals/gpio.html
 
 InitResponse_t ControllerGPIOInput::OnInit() {
-    gpio_install_isr_service(0);
+    // gpio_install_isr_service(0);
     gpio_reset_pin(_pin);
     gpio_pad_select_gpio(_pin);
     gpio_set_direction(_pin, GPIO_MODE_INPUT);
