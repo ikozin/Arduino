@@ -10558,8 +10558,6 @@ const uint8_t bigFont[] PROGMEM = {
 0x00, 0xFF, 0xFF, 0xFF, 0xFF, 0x00, 0x09, 0x41, 0x67, 0x65, 0x6E, 0x63, 0x79, 0x20, 0x46, 0x42, 
 0x00, 0x0C, 0x41, 0x67, 0x65, 0x6E, 0x63, 0x79, 0x46, 0x42, 0x2D, 0x52, 0x65, 0x67, 0x01};
 
-
-
 //colours
 unsigned short back=TFT_WHITE;
 unsigned short darkG=0x2945;
@@ -10571,27 +10569,27 @@ ViewTileTime::ViewTileTime(const char* name, ViewSettig* setting, ControllerTime
             ViewT(name, setting, ctrl, 0, updateEvent) {
 };
 
-uint16_t ViewTileTime::getDateColor(DateTime& date) {
+uint16_t ViewTileTime::getDateColor(TimeData& date) {
     return TFT_BLACK;
 }
 
 void ViewTileTime::OnDrawHandle() {
-    // LOGN("%s::OnDrawHandle", typeid(this).name);
+    // LOGN("%s::OnDrawHandle", _name);
     ControllerTime* time = static_cast<ControllerTime*>(_ctrl);
 
     int value;
     char text[8], buffer[8];
     String digit("   ");
 
-    DateTime now = time->getDateTime();
+    TimeData now = time->GetData();
     text[0] = '\0';
-    value = now.hour();
+    value = now.hour;
     itoa(value, buffer, 10);
     if (value < 10) {
         strcat(text, "0");
     }
     strcat(text, buffer);
-    value = now.minute();
+    value = now.minute;
     itoa(value, buffer, 10);
     if (value < 10) {
         strcat(text, "0");

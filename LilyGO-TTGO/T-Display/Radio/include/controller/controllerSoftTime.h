@@ -8,5 +8,4 @@ class ControllerSoftTime : public ControllerTime {
         ControllerSoftTime(const char* name, Preferences* prefs);
     protected:
         virtual InitResponse_t OnInit() override;
-        virtual void OnHandle() override;
 };

@@ -10,7 +10,7 @@ class ViewDS3231 : public ViewT {
     protected:
         virtual void OnDrawHandle() override;
     private:
-        uint16_t getDateColor(DateTime& date);
+        uint16_t getDateColor(TimeData& date);
     private:
         static char* dayOfWeeks[];
         static char* months[];

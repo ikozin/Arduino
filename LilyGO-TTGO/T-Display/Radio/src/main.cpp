@@ -16,18 +16,15 @@
 #include "controller/controllerBuzzer.h"
 #include "controller/controllerBme280.h"
 #include "controller/controllerRadSens.h"
-#include "controller/controllerMHZ19.h"
 #include "controller/controllerIrRemote.h"
 #include "controller/controllerDS3231.h"
 #include "controller/controllerSoftTime.h"
 #include "controller/controllerRadio.h"
 #include "controller/controllerWeather.h"
 #include "controller/controllerSoftReset.h"
-#include "controller/controllerPIR.h"
 
 #include "component/component.h"
 #include "component/componentSoftReset.h"
-#include "component/componentPIR.h"
 #include "component/componentIrRemote.h"
 
 #include "view/view.h"
@@ -37,7 +34,6 @@
 #include "view/viewRadio.h"
 #include "view/viewBme280.h"
 #include "view/viewRadSens.h"
-#include "view/viewRadsMHZ19.h"
 #include "view/viewWeather.h"
 
 
@@ -57,13 +53,13 @@
 // https://docs.espressif.com/projects/arduino-esp32/en/latest/api/gpio.html
 /*
     ------------------------
-    | 17 |  PIR      | +5V |
+    | 17 |           |     |
     |  2 |           |     |
     | 15 |           |     |
     | 13 |  IRemote  | +5V |    MP1094
     | 12 |           |     |
-    | 25 |  MHZ19    | +5V |
-    | 26 |  MHZ19    | +5V |
+    | 25 |           | +5V |
+    | 26 |           | +5V |
     | 27 |  Buzzer   |     |
     ------------------------
     | 33 |  Reset    |     |
@@ -83,8 +79,6 @@
 // #define WEATHER_ENABLE
 #define BME280_ENABLE
 #define RADSENS_ENABLE
-// #define PIR_ENABLE
-// #define MHZ19_ENABLE
 #define RESET_ENABLE
 #define BUZZER_ENABLE
 #define TIME_ENABLE
@@ -126,51 +120,43 @@ View* currentView = nullptr;
 
 ViewSettig viewSettig(&tft, &sprite, &currentView);
 
-
 SemaphoreHandle_t xMutex = xSemaphoreCreateMutex();
 
 RadioStorage ctrlRadioStorage;
 
 #ifdef IR_ENABLE
 #define IR_PIN          GPIO_NUM_13
-ControllerIrRemote ctrlIrRemote("CtrlIrRemote", IR_PIN);
+ControllerIrRemote ctrlIrRemote = ControllerIrRemote("ctrlIrRemote", IR_PIN);
 #endif
 
 #ifdef BUZZER_ENABLE
 #define BUZZER_PIN      GPIO_NUM_27
-ControllerBuzzer ctrlBuzzer("CtrlBuzzer", BUZZER_PIN);
+ControllerBuzzer ctrlBuzzer = ControllerBuzzer("ctrlBuzzer", BUZZER_PIN);
 #endif
 
 #ifdef RADIO_ENABLE
-ControllerRadio ctrlRadio = ControllerRadio("CtrlRadio", &prefs, &ctrlRadioStorage);
-ViewRadio viewRadio = ViewRadio("ViewRadio", &viewSettig, &ctrlRadio);
+ControllerRadio ctrlRadio = ControllerRadio("ctrlRadio", &prefs, &ctrlRadioStorage);
+ViewRadio viewRadio = ViewRadio("viewRadio", &viewSettig, &ctrlRadio);
 #endif
 
 #ifdef WEATHER_ENABLE
-ControllerWeather ctrlWeather = ControllerWeather("CtrlWeather");
-ViewWeather viewWeather = ViewWeather("ViewWeather", &viewSettig, &ctrlWeather);
+ControllerWeather ctrlWeather = ControllerWeather("ctrlWeather");
+ViewWeather viewWeather = ViewWeather("viewWeather", &viewSettig, &ctrlWeather);
 #endif
 
 #ifdef BME280_ENABLE
-ControllerBme280 ctrlBme280 = ControllerBme280("CtrlBme280");
-ViewBME280 viewBme280 = ViewBME280("ViewBME280", &viewSettig, &ctrlBme280);
+ControllerBme280 ctrlBme280 = ControllerBme280("ctrlBme280");
+ViewBME280 viewBme280 = ViewBME280("viewBme280", &viewSettig, &ctrlBme280);
 #endif
 
 #ifdef RADSENS_ENABLE
-ControllerRadSens ctrlRadSens = ControllerRadSens("CtrlRadSens");
-ViewRadSens viewRadSens = ViewRadSens("ViewRadSens", &viewSettig, &ctrlRadSens);
+ControllerRadSens ctrlRadSens = ControllerRadSens("ctrlRadSens");
+ViewRadSens viewRadSens = ViewRadSens("viewRadSens", &viewSettig, &ctrlRadSens);
 #endif
-
-#ifdef MHZ19_ENABLE
-#define UART_RX_PIN     GPIO_NUM_26
-#define UART_TX_PIN     GPIO_NUM_25
-ControllerMHZ19 ctrlMHZ19 = ControllerMHZ19("CtrlMHZ19", UART_RX_PIN, UART_TX_PIN);
-#endif
-
 
 #ifdef TIME_ENABLE
-ControllerDS3231 ctrlTime = ControllerDS3231("CtrlDS3231", &prefs);
-ViewDS3231 viewTime = ViewDS3231("ViewDS3231", &viewSettig, &ctrlTime);
+ControllerDS3231 ctrlTime = ControllerDS3231("ctrlTime", &prefs);
+ViewDS3231 viewTime = ViewDS3231("viewTime", &viewSettig, &ctrlTime);
 // ViewTileTime viewTime = ViewTileTime("ViewTileTime", &viewSettig, &ctrlTime);
 // ControllerSoftTime ctrlTime = ControllerSoftTime("CtrlSoftTime", &prefs);
 // ViewSoftTime viewTime = ViewSoftTime("ViewSoftTime", &viewSettig, &ctrlTime);
@@ -178,20 +164,13 @@ ViewDS3231 viewTime = ViewDS3231("ViewDS3231", &viewSettig, &ctrlTime);
 
 #ifdef RESET_ENABLE
 #define RESET_PIN       GPIO_NUM_33
-ControllerSoftReset ctrlReset = ControllerSoftReset("CtrlSoftReset", RESET_PIN);
+ControllerSoftReset ctrlReset = ControllerSoftReset("ctrlReset", RESET_PIN);
 ComponentSoftReset cmpReset = ComponentSoftReset("cmpReset", &ctrlReset);
-#endif
-
-#ifdef PIR_ENABLE
-#define PIR_PIN         GPIO_NUM_17
-ControllerPIR crtlPIR = ControllerPIR("crtlPIR", PIR_PIN);
-ComponentPIR cmpPIR = ComponentPIR("cmpPIR", &crtlPIR);
 #endif
 
 #if defined(IR_ENABLE) & defined(RADIO_ENABLE)
 ComponentIrRemote cmpIrRemote = ComponentIrRemote("cmpIrRemote", &ctrlIrRemote, &ctrlRadio); 
 #endif
-
 
 View* viewList[] = {
 #ifdef TIME_ENABLE
@@ -405,35 +384,26 @@ void setup() {
     ctrlBme280.Start(xMutex);
 #endif
 #ifdef BUZZER_ENABLE
-    ctrlBuzzer.Start();
+    ctrlBuzzer.Start(1024);
 #endif
 
 #ifdef RADSENS_ENABLE
     ctrlRadSens.Start(xMutex);
 #endif
-#ifdef MHZ19_ENABLE
-    ctrlMHZ19.Start();
-#endif
 #ifdef IR_ENABLE
     ctrlIrRemote.attachController(&ctrlRadio);
-    ctrlIrRemote.Start();
-#endif
-#ifdef PIR_ENABLE
-    crtlPIR.Start();
+    ctrlIrRemote.Start(1024);
 #endif
 #ifdef RESET_ENABLE
-    ctrlReset.Start();
+    ctrlReset.Start(1024);
 #endif
 
     LOGN("Component - Start")
 #if defined(IR_ENABLE)
     cmpIrRemote.Start(&ctrlIrRemote);
 #endif
-#ifdef PIR_ENABLE
-    cmpPIR.Start(&crtlPIR);
-#endif
 #ifdef RESET_ENABLE
-    cmpReset.Start(&ctrlReset);
+    cmpReset.Start(&ctrlReset, 1024);
 #endif
 
     LOGN("View - Start")
@@ -450,7 +420,7 @@ void setup() {
 #ifdef BME280_ENABLE
     viewBme280.Start(2048);
 #endif
-#if defined(RADSENS_ENABLE)
+#ifdef RADSENS_ENABLE
     viewRadSens.Start(2048);
 #endif
 #ifdef RADIO_ENABLE

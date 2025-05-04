@@ -1,18 +1,21 @@
 #include "controller/controllerRadSens.h"
 
 ControllerRadSens::ControllerRadSens(const char* name):
-                    Controller(name), _radSens(RS_DEFAULT_I2C_ADDRESS) {
+                    Controller(name), ISensorWindow(), _radSens(RS_DEFAULT_I2C_ADDRESS) {
     _updateTimeInSec = 60;
-    _dynamicValue = 0; 
-    _staticValue = 0;
-    _impulseValue = 0;
+    _value = { .Dynamic = 0, .Static = 0, .Impulse = 0 }; 
 }
 
 InitResponse_t ControllerRadSens::OnInit() {
 #ifdef RADSENS_FAKE
-    _dynamicValue = 55; 
-    _staticValue = 55;
-    _impulseValue = 55;
+    for (int i = 0; i < Size(); i++) {
+        _value = {
+            .Dynamic = (float)(random() % 20),
+            .Static = (float)(random() % 20),
+            .Impulse = (float)(random() % 20)
+        }; 
+        AddValue(_value);
+    }
     return OnInitResultStart;
 #else
     return _radSens.init() ? OnInitResultStart : OnInitResultERROR;
@@ -21,17 +24,17 @@ InitResponse_t ControllerRadSens::OnInit() {
 
 IterationCode_t ControllerRadSens::OnIteration() {
 #ifdef RADSENS_FAKE
-    _dynamicValue += esp_random() > (UINT32_MAX >> 1) ? 1: -1; 
-    _staticValue += esp_random() > (UINT32_MAX >> 1) ? 1: -1;
-    _impulseValue += esp_random() > (UINT32_MAX >> 1) ? 1: -1;
+    _value = {
+        .Dynamic = (float)(random() % 20),
+        .Static = (float)(random() % 20),
+        .Impulse = (float)(random() % 20)
+    };
 #else
-    _dynamicValue = _radSens.getRadIntensyDynamic(); 
-    _staticValue = _radSens.getRadIntensyStatic();
-    _impulseValue = _radSens.getNumberOfPulses();
+    float dynamicValue = _radSens.getRadIntensyDynamic(); 
+    float staticValue = _radSens.getRadIntensyStatic();
+    float impulseValue = _radSens.getNumberOfPulses();
+    _value = { .Dynamic = dynamicValue, .Static = staticValue, .Impulse = impulseValue };
 #endif
-    // LOGN("%s::getDynamic, %f", _name, getDynamic())
-    // LOGN("%s::getStatic, %f", _name, getStatic())
-    // LOGN("%s::getImpulse, %f", _name, getImpulse())
-
+    AddValue(_value);
     return IterationCode_t::Ok;
 }

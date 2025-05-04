@@ -5,6 +5,10 @@
 #include "logging.h"
 #include "main.h"
 
+#include "IUpdater.h"
+#include "ISensor.h"
+#include "ISensorWindow.h"
+
 typedef enum InitCode {
     INIT_ERROR = -1,
     INIT_OK = 0,
@@ -28,20 +32,16 @@ typedef enum IterationCode {
 #define OnInitResultERROR                   (InitResponse_t){ .DelaySeconds = 0,     .IsDone  = 0, .IsError = 1 }
 #define EventListMax                        (3)
 
-class Controller {
+class Controller: public IUpdater {
     public:
         Controller(const char* name);
         void Start(uint16_t stackDepth = 2048);
         void Start(SemaphoreHandle_t  xMutex, uint16_t stackDepth = 2048);
-        bool AddUpdateEvent(SemaphoreHandle_t event);
     protected:
         const char*     _name;
         TaskHandle_t    _task;
         uint32_t        _updateTimeInSec;
         SemaphoreHandle_t   _xMutex = nullptr;
-        SemaphoreHandle_t   _eventList[EventListMax] { nullptr, nullptr, nullptr };
-    protected:
-        void FireUpdateEvent();
     protected:
         virtual InitResponse_t OnInit() = 0;
         virtual IterationCode_t OnIteration() = 0;

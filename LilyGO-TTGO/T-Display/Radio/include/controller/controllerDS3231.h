@@ -8,7 +8,6 @@ class ControllerDS3231 : public ControllerTime {
         ControllerDS3231(const char* name, Preferences* prefs);
     protected:
         virtual InitResponse_t OnInit() override;
-        virtual void OnHandle() override;
     private:
         RTC_DS3231 _rtc;
 };

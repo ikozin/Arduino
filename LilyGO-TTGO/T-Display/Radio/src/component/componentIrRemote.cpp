@@ -10,8 +10,9 @@ ComponentIrRemote::ComponentIrRemote(const char* name, ControllerIrRemote* ir_re
 
 void ComponentIrRemote::OnHandle() {
     // LOGN("%s::OnHandle", _name)
-    uint8_t cmd =  _ir_remote->GetCommand();
-    if (_ir_remote->IsRepeat()) {
+    IrData value = _ir_remote->GetData();
+    uint8_t cmd =  value.Command;
+    if (value.IsRepeat) {
         if (_lastCommand == cmd) {
             return;
         }

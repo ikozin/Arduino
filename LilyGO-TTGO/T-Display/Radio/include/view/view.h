@@ -17,12 +17,12 @@ class ViewSettig {
             _currentView = currentView;
         }
     private:
-        TFT_eSPI *_tft;
+        TFT_eSPI*_tft;
         TFT_eSprite* _sprite;
         View** _currentView;
     public:
-        TFT_eSPI * getDisplay() const { return _tft; }
-        TFT_eSprite * getSprite() const { return _sprite; }
+        TFT_eSPI* getDisplay() const { return _tft; }
+        TFT_eSprite* getSprite() const { return _sprite; }
         View** getCurrentView() const { return _currentView; }
 };
 
@@ -56,7 +56,7 @@ class ViewT: public View {
         }
         virtual void Start(uint16_t stackDepth = 1024) override {
             if (_period == 0) {
-                _ctrl->AddUpdateEvent(GetEvent());
+                static_cast<IUpdater*>(_ctrl)->AddUpdateEvent(GetEvent());
             } else {
                 const esp_timer_create_args_t periodic_timer_args = {
                     .callback = &TimerCallback,

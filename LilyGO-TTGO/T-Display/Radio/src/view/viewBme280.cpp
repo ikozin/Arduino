@@ -2,13 +2,14 @@
 #include "fonts/Roboto33.h"
 
 void ViewBME280::OnDrawHandle() {
-    // LOGN("%s::OnDrawHandle", typeid(this).name);
+    // LOGN("%s::OnDrawHandle", _name);
     ControllerBme280* bme280 = static_cast<ControllerBme280*>(_ctrl);
 
     char text[8];
-    float temperature   = bme280->getTemperature();
-    float humidity      = bme280->getHumidity();
-    float pressure      = bme280->getPressure();
+    Bme280Data data = bme280->GetData();
+    float temperature   = data.Temperature;
+    float humidity      = data.Humidity;
+    float pressure      = data.Pressure;
 
     uint32_t backColor = TFT_DARKCYAN;
 
@@ -31,6 +32,7 @@ void ViewBME280::OnDrawHandle() {
     }
 
     getSetting()->getSprite()->loadFont(RobotoBold_33);
+
     getSetting()->getSprite()->setTextDatum(CC_DATUM);
     
     getSetting()->getSprite()->setTextColor(colorTemp);

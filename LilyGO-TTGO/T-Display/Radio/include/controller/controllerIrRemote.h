@@ -10,7 +10,13 @@
 #define MARK_EXCESS_MICROS    20    // Adapt it to your IR receiver module. 20 is recommended for the cheap VS1838 modules.
 #define USE_CALLBACK_FOR_TINY_RECEIVER
 
-class ControllerIrRemote : public ControllerT<ControllerRadio> {
+typedef struct _IrData_ {
+    uint8_t Address;
+    uint8_t Command;
+    bool IsRepeat;
+} IrData;
+
+class ControllerIrRemote : public ControllerT<ControllerRadio>, public ISensor<IrData> {
     friend IRAM_ATTR void handleReceivedTinyIRData(void* parameter);
     public:
         ControllerIrRemote(const char* name, gpio_num_t pin);
@@ -19,8 +25,4 @@ class ControllerIrRemote : public ControllerT<ControllerRadio> {
     protected:
         virtual InitResponse_t OnInit() override;
         virtual IterationCode_t OnIteration() override { return IterationCode_t::Stop; }
-    public:
-        uint8_t GetAddress();
-        uint8_t GetCommand();
-        bool IsRepeat();
 };

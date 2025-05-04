@@ -36,24 +36,21 @@
 ControllerIrRemote::ControllerIrRemote(const char* name, gpio_num_t pin) :
                         ControllerT(name) {
     _pin = pin;
+    _value = { .Address = 0, .Command = 0, .IsRepeat = false };
 }
 
 InitResponse_t ControllerIrRemote::OnInit() {
     return (initPCIInterruptForTinyReceiver(this)) ? OnInitResultStop : OnInitResultERROR;
 }
 
-uint8_t ControllerIrRemote::GetAddress() {
-     return TinyIRReceiverData.Address;
-}
-uint8_t ControllerIrRemote::GetCommand() {
-    return TinyIRReceiverData.Command;
-}
-bool ControllerIrRemote::IsRepeat() {
-    return TinyIRReceiverData.Flags & IRDATA_FLAGS_IS_REPEAT;
-}
-
 IRAM_ATTR void handleReceivedTinyIRData(void* parameter) {
     ControllerIrRemote* controller = static_cast<ControllerIrRemote*>(parameter);
+    controller->_value = {
+        .Address = TinyIRReceiverData.Address,
+        .Command = TinyIRReceiverData.Command,
+        .IsRepeat = (TinyIRReceiverData.Flags & IRDATA_FLAGS_IS_REPEAT)
+    };
+
     for (int i = 0; i < EventListMax && controller->_eventList[i] != nullptr; i++) {
         xSemaphoreGiveFromISR(controller->_eventList[i], nullptr);
     }

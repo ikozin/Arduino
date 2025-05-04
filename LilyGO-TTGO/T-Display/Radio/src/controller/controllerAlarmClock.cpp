@@ -22,7 +22,7 @@ IterationCode_t ControllerAlarmClock::OnIteration() {
         DynamicJsonDocument  doc(2048);
         DeserializationError error = deserializeJson(doc, f);
         if (error) {
-            LOGN("Failed to read file, using default configuration");
+            // LOGN("Failed to read file, using default configuration");
         }
         else {
             JsonArray array = doc.as<JsonArray>();
@@ -62,7 +62,7 @@ IterationCode_t ControllerAlarmClock::OnIteration() {
 
 void ControllerAlarmClock::startTimer(int index) {
     alarmClockItem_t alarm = _alarmClockList[index];
-    LOGN("%s::startTimer [%d]=0x%llX", _name, index, alarm.value);
+    // LOGN("%s::startTimer [%d]=0x%llX", _name, index, alarm.value);
     TickType_t period = getTimerPeriod(&alarm);
     _timerList[index] = xTimerCreate("Timer", period, pdFALSE, reinterpret_cast<void *>(index), timerCallback);
     xTimerStart(_timerList[index], 0);
@@ -72,7 +72,7 @@ void ControllerAlarmClock::timerCallback(TimerHandle_t pxTimer) {
     int32_t index = (int32_t)pvTimerGetTimerID(pxTimer);
     xTimerDelete(pxTimer, 0);
     alarmClockItem_t alarm = ctrlAlarmClock._alarmClockList[index];
-    LOGN("timerCallback [%d], alarm[%d]=0x%llX", index, index, alarm.value);
+    // LOGN("timerCallback [%d], alarm[%d]=0x%llX", index, index, alarm.value);
     if (ctrlAlarmClock._controller != nullptr) {
         if (alarm.IsMute)       ctrlAlarmClock._controller->setMute(true);
         if (alarm.Index != -1)  ctrlAlarmClock._controller->setRadioIndex(alarm.Index);
@@ -108,10 +108,10 @@ TickType_t ControllerAlarmClock::getTimerPeriod(alarmClockItem_t* pAlarm) {
             wday_mask = nextDay(wday_mask, &next);
         }
     }
-#ifdef DEBUG_CONSOLE
-    char text[64];
-    strftime(text, sizeof(text), "%d.%m.%Y %H:%M:%S ", localtime(&next));
-    Serial.printf("%s::getTimerPeriod %s\r\n", _name, text);
-#endif
+// #ifdef DEBUG_CONSOLE
+//     char text[64];
+//     strftime(text, sizeof(text), "%d.%m.%Y %H:%M:%S ", localtime(&next));
+//     Serial.printf("%s::getTimerPeriod %s\r\n", _name, text);
+// #endif
     return (next - timer) * 1000;
 }

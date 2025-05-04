@@ -7,6 +7,7 @@ ControllerGPIOInput::ControllerGPIOInput(const char* name, gpio_num_t pin, gpio_
     _pin = pin;
     _int_type = int_type;
     _pull_mode = pull_mode;
+    _value = 0;
 }
 
 // GPIO_INTR_DISABLE - отключено
@@ -31,7 +32,7 @@ InitResponse_t ControllerGPIOInput::OnInit() {
 
 void IRAM_ATTR ControllerGPIOInput::gpio_isr_handler(void* parameter) {
     ControllerGPIOInput* controller = static_cast<ControllerGPIOInput*>(parameter);
-    controller->_state = gpio_get_level(controller->_pin);
+    controller->_value = gpio_get_level(controller->_pin);
     for (int i = 0; i < EventListMax && controller->_eventList[i] != nullptr; i++) {
         xSemaphoreGiveFromISR(controller->_eventList[i], nullptr);
     }

@@ -4,17 +4,12 @@
 ControllerBme280::ControllerBme280(const char* name):
                     Controller(name) {
     _updateTimeInSec = 60;
-    
-    _temperature = 0;
-    _humidity = 0;
-    _pressure = 0;
+    _value = { .Temperature = 0, .Humidity = 0, .Pressure = 0 };
 }
 
 InitResponse_t ControllerBme280::OnInit() {
 #ifdef BME280_FAKE
-    _temperature = 25;
-    _humidity = 30;
-    _pressure = 670;
+    _value = { .Temperature = 25, .Humidity = 30, .Pressure = 670 };
     return OnInitResultStart;
 #else
     if ( _bme.begin(BME280_PORT, &Wire)) {
@@ -31,18 +26,16 @@ InitResponse_t ControllerBme280::OnInit() {
 
 IterationCode_t ControllerBme280::OnIteration() {
 #ifdef BME280_FAKE
-    _temperature += esp_random() > (UINT32_MAX >> 1) ? 0.5: -0.5;
-    _humidity += esp_random() > (UINT32_MAX >> 1) ? 0.5: -0.5;
-    _pressure += esp_random() > (UINT32_MAX >> 1) ? 1.5: -1.5;
+    float temperature += esp_random() > (UINT32_MAX >> 1) ? 0.5: -0.5;
+    float humidity += esp_random() > (UINT32_MAX >> 1) ? 0.5: -0.5;
+    float pressure += esp_random() > (UINT32_MAX >> 1) ? 1.5: -1.5;
+    _value = { .Temperature = temperature, .Humidity = humidity, .Pressure = pressure };
 #else
-    _temperature = _bme.readTemperature();
-    _humidity = _bme.readHumidity();
-    _pressure = _bme.readPressure() / 1000.0F * 7.50062;
+    _value = {
+        .Temperature = _bme.readTemperature(),
+        .Humidity = _bme.readHumidity(),
+        .Pressure = (float)(_bme.readPressure() / 1000.0F * 7.50062)
+    };
 #endif
-
-    // LOGN("%s::getTemperature, %f", _name, getTemperature())
-    // LOGN("%s::getHumidity, %f", _name, getHumidity())
-    // LOGN("%s::getPressure, %f", _name, getPressure())
-
     return IterationCode_t::Ok;
 }

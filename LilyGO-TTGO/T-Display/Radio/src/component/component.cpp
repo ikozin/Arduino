@@ -8,7 +8,7 @@ Component::Component(const char* name, SemaphoreHandle_t updateEvent) {
 
 void Component::Start(Controller* ctrl, uint16_t stackDepth) {
     if (ctrl) {
-        ctrl->AddUpdateEvent(GetEvent());
+        static_cast<IUpdater*>(ctrl)->AddUpdateEvent(GetEvent());        
     }
     xTaskCreate(Handler, this->_name, stackDepth, this, 50, &this->_task);
 }

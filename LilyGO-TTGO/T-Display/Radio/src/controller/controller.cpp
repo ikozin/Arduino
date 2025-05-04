@@ -8,22 +8,6 @@ Controller::Controller(const char* name) {
     _updateTimeInSec = 0;
 }
 
-bool Controller::AddUpdateEvent(SemaphoreHandle_t event) {
-    for (int i = 0; i < EventListMax; i++) {
-        if (_eventList[i] == nullptr) {
-            _eventList[i] = event;
-            return true;
-        }
-    }
-    return false;
-}
-
-void Controller::FireUpdateEvent() {
-    for (int i = 0; i < EventListMax && _eventList[i] != nullptr; i++) {
-        xSemaphoreGive(_eventList[i]);
-    }
-}
-
 void Controller::Start(uint16_t stackDepth) {
     Start(nullptr, stackDepth);
 }
