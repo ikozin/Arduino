@@ -36,15 +36,18 @@ void ViewBME280::OnDrawHandle() {
     getSetting()->getSprite()->setTextDatum(CC_DATUM);
     
     getSetting()->getSprite()->setTextColor(colorTemp);
-    sprintf(text, "%+.1f°", temperature);
+    dtostrf(temperature, 3, 1, text);
+    // sprintf(text, "%+.1f°", temperature);
     getSetting()->getSprite()->drawString(text, 120, 38);
 
     getSetting()->getSprite()->setTextColor(TFT_WHITE);
-    sprintf(text, "%.1f", pressure);
+    dtostrf(pressure, 3, 1, text);
+    // sprintf(text, "%.1f", pressure);
     getSetting()->getSprite()->drawString(text, 60, 107);
 
     getSetting()->getSprite()->setTextColor(TFT_WHITE);
-    sprintf(text, "%.1f%%", humidity);
+    dtostrf(humidity, 3, 1, text);
+    // sprintf(text, "%.1f%%", humidity);
     getSetting()->getSprite()->drawString(text, 180, 107);
 
     getSetting()->getSprite()->unloadFont();

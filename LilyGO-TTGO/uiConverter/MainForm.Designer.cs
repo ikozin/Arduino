@@ -224,6 +224,7 @@ namespace uiConverter
             // numericPosY
             // 
             numericPosY.Location = new System.Drawing.Point(95, 71);
+            numericPosY.Maximum = new decimal(new int[] { 240, 0, 0, 0 });
             numericPosY.Name = "numericPosY";
             numericPosY.Size = new System.Drawing.Size(104, 27);
             numericPosY.TabIndex = 4;
@@ -231,6 +232,7 @@ namespace uiConverter
             // numericPosX
             // 
             numericPosX.Location = new System.Drawing.Point(93, 37);
+            numericPosX.Maximum = new decimal(new int[] { 240, 0, 0, 0 });
             numericPosX.Name = "numericPosX";
             numericPosX.Size = new System.Drawing.Size(106, 27);
             numericPosX.TabIndex = 2;
