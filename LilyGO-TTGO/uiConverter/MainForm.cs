@@ -12,6 +12,7 @@ namespace uiConverter
     public partial class MainForm : Form
     {
         private Bitmap _bitmap = null;
+
         public MainForm()
         {
             InitializeComponent();
@@ -26,8 +27,6 @@ namespace uiConverter
 
             textBoxWidth.Text = _bitmap.Width.ToString();
             textBoxHeight.Text = _bitmap.Height.ToString();
-            numericPosX.Value = 0;
-            numericPosY.Value = 0;
             textBoxBackColor.Text = ColorTranslator.ToHtml(_bitmap.GetPixel(0, 0));
             textBoxForeColor.Text = ColorTranslator.ToHtml(Color.FromArgb(0, 0, 0));
             btnSave.Enabled = true;
@@ -38,6 +37,7 @@ namespace uiConverter
         {
             return int.Parse(comboBoxScale.SelectedItem.ToString());
         }
+
         private bool LoadImage(string fileName, bool silent = false)
         {
             try
@@ -56,6 +56,7 @@ namespace uiConverter
             }
             return true;
         }
+
         private bool ScaleImage(Bitmap bitmap, bool silent = false)
         {
             try
@@ -98,6 +99,22 @@ namespace uiConverter
             return true;
         }
 
+        private void StreamToClipboard(MemoryStream memory)
+        {
+            const int length = 16;
+            memory.Seek(0, SeekOrigin.Begin);
+            using BinaryReader reader = new(memory);
+            StringBuilder text = new((int)reader.BaseStream.Length * 6 + (int)reader.BaseStream.Length / (length - 1));
+            for (int i = 0; i < reader.BaseStream.Length; i++)
+            {
+                if (i % length == 0) text.AppendLine();
+                byte b = reader.ReadByte();
+                text.AppendFormat("0x{0:X2}, ", b);
+            }
+            text.AppendLine();
+            Clipboard.SetText(text.ToString());
+        }
+
         private void btnSave_Click(object sender, EventArgs e)
         {
             var fileName = Path.ChangeExtension(openFileDlg.FileName, "raw");
@@ -116,6 +133,24 @@ namespace uiConverter
                 libConverter.rgb565 tool = new libConverter.rgb565();
                 tool.WriteData(stream, _bitmap, checkBoxSwap.Checked, (ushort)_bitmap.Width, (ushort)_bitmap.Height);
             }
+        }
+
+        private void btnHexClip_Click(object sender, EventArgs e)
+        {
+            if (_bitmap == null) return;
+            using MemoryStream memory = new();
+            libConverter.rgb565 tool = new();
+            tool.WriteData(memory, _bitmap, checkBoxSwap.Checked);
+            StreamToClipboard(memory);
+        }
+
+        private void btnHexClipWH_Click(object sender, EventArgs e)
+        {
+            if (_bitmap == null) return;
+            using MemoryStream memory = new();
+            libConverter.rgb565 tool = new();
+            tool.WriteData(memory, _bitmap, checkBoxSwap.Checked, (ushort)_bitmap.Width, (ushort)_bitmap.Height);
+            StreamToClipboard(memory);
         }
 
         private void comboBoxSizeMode_SelectionChangeCommitted(object sender, EventArgs e)
@@ -150,26 +185,6 @@ namespace uiConverter
                 if (e.Location.Y > _bitmap.Height - 1) return;
                 textBox.Text = ColorTranslator.ToHtml(_bitmap.GetPixel(e.Location.X, e.Location.Y));
             }
-        }
-
-        private void btnHexClip_Click(object sender, EventArgs e)
-        {
-            if (_bitmap == null) return;
-            const int length = 16;
-            using MemoryStream memory = new();
-            libConverter.rgb565 tool = new();
-            tool.WriteData(memory, _bitmap, checkBoxSwap.Checked);
-            memory.Seek(0, SeekOrigin.Begin);
-            using BinaryReader reader = new(memory);
-            StringBuilder text = new((int)reader.BaseStream.Length * 6 + (int)reader.BaseStream.Length / length);
-            for (int i = 0; i < reader.BaseStream.Length; i++)
-            {
-                if (i % length == 0) text.AppendLine();
-                byte b = reader.ReadByte();
-                text.AppendFormat("0x{0:X2}, ", b);
-            }
-            text.AppendLine();
-            Clipboard.SetText(text.ToString());
         }
     }
 }

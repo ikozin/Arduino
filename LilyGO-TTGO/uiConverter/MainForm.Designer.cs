@@ -30,8 +30,6 @@ namespace uiConverter
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
-            System.Windows.Forms.Label labelPositionX;
-            System.Windows.Forms.Label labelPositionY;
             System.Windows.Forms.Label labelWidth;
             System.Windows.Forms.Label labelHeight;
             System.Windows.Forms.Label labelBackColor;
@@ -39,6 +37,7 @@ namespace uiConverter
             System.Windows.Forms.Panel panelMain;
             System.Windows.Forms.Button btnLoad;
             System.Windows.Forms.Panel panelView;
+            btnHexClip = new System.Windows.Forms.Button();
             btnSaveWH = new System.Windows.Forms.Button();
             btnSave = new System.Windows.Forms.Button();
             panelInfo = new System.Windows.Forms.Panel();
@@ -46,8 +45,6 @@ namespace uiConverter
             textBoxBackColor = new System.Windows.Forms.TextBox();
             textBoxHeight = new System.Windows.Forms.TextBox();
             textBoxWidth = new System.Windows.Forms.TextBox();
-            numericPosY = new System.Windows.Forms.NumericUpDown();
-            numericPosX = new System.Windows.Forms.NumericUpDown();
             checkBoxSwap = new System.Windows.Forms.CheckBox();
             pictureBox = new System.Windows.Forms.PictureBox();
             panelViewTool = new System.Windows.Forms.Panel();
@@ -56,9 +53,7 @@ namespace uiConverter
             openFileDlg = new System.Windows.Forms.OpenFileDialog();
             toolTip = new System.Windows.Forms.ToolTip(components);
             folderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
-            btnHexClip = new System.Windows.Forms.Button();
-            labelPositionX = new System.Windows.Forms.Label();
-            labelPositionY = new System.Windows.Forms.Label();
+            btnHexClipWH = new System.Windows.Forms.Button();
             labelWidth = new System.Windows.Forms.Label();
             labelHeight = new System.Windows.Forms.Label();
             labelBackColor = new System.Windows.Forms.Label();
@@ -68,53 +63,33 @@ namespace uiConverter
             panelView = new System.Windows.Forms.Panel();
             panelMain.SuspendLayout();
             panelInfo.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)numericPosY).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)numericPosX).BeginInit();
             panelView.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBox).BeginInit();
             panelViewTool.SuspendLayout();
             SuspendLayout();
             // 
-            // labelPositionX
-            // 
-            labelPositionX.AutoSize = true;
-            labelPositionX.Location = new System.Drawing.Point(12, 39);
-            labelPositionX.Name = "labelPositionX";
-            labelPositionX.Size = new System.Drawing.Size(74, 20);
-            labelPositionX.TabIndex = 1;
-            labelPositionX.Text = "Position X";
-            // 
-            // labelPositionY
-            // 
-            labelPositionY.AutoSize = true;
-            labelPositionY.Location = new System.Drawing.Point(12, 73);
-            labelPositionY.Name = "labelPositionY";
-            labelPositionY.Size = new System.Drawing.Size(73, 20);
-            labelPositionY.TabIndex = 3;
-            labelPositionY.Text = "Position Y";
-            // 
             // labelWidth
             // 
             labelWidth.AutoSize = true;
-            labelWidth.Location = new System.Drawing.Point(12, 110);
+            labelWidth.Location = new System.Drawing.Point(15, 15);
             labelWidth.Name = "labelWidth";
-            labelWidth.Size = new System.Drawing.Size(119, 20);
+            labelWidth.Size = new System.Drawing.Size(49, 20);
             labelWidth.TabIndex = 23;
-            labelWidth.Text = "Width (Max 240)";
+            labelWidth.Text = "Width";
             // 
             // labelHeight
             // 
             labelHeight.AutoSize = true;
-            labelHeight.Location = new System.Drawing.Point(12, 145);
+            labelHeight.Location = new System.Drawing.Point(15, 50);
             labelHeight.Name = "labelHeight";
-            labelHeight.Size = new System.Drawing.Size(124, 20);
+            labelHeight.Size = new System.Drawing.Size(54, 20);
             labelHeight.TabIndex = 25;
-            labelHeight.Text = "Height (Max 135)";
+            labelHeight.Text = "Height";
             // 
             // labelBackColor
             // 
             labelBackColor.AutoSize = true;
-            labelBackColor.Location = new System.Drawing.Point(12, 185);
+            labelBackColor.Location = new System.Drawing.Point(15, 90);
             labelBackColor.Name = "labelBackColor";
             labelBackColor.Size = new System.Drawing.Size(76, 20);
             labelBackColor.TabIndex = 30;
@@ -123,7 +98,7 @@ namespace uiConverter
             // labelForeColor
             // 
             labelForeColor.AutoSize = true;
-            labelForeColor.Location = new System.Drawing.Point(12, 222);
+            labelForeColor.Location = new System.Drawing.Point(15, 127);
             labelForeColor.Name = "labelForeColor";
             labelForeColor.Size = new System.Drawing.Size(74, 20);
             labelForeColor.TabIndex = 32;
@@ -131,20 +106,32 @@ namespace uiConverter
             // 
             // panelMain
             // 
+            panelMain.Controls.Add(btnHexClipWH);
             panelMain.Controls.Add(btnHexClip);
             panelMain.Controls.Add(btnSaveWH);
             panelMain.Controls.Add(btnSave);
             panelMain.Controls.Add(btnLoad);
             panelMain.Controls.Add(panelInfo);
+            panelMain.Controls.Add(checkBoxSwap);
             panelMain.Dock = System.Windows.Forms.DockStyle.Left;
             panelMain.Location = new System.Drawing.Point(0, 0);
             panelMain.Name = "panelMain";
             panelMain.Size = new System.Drawing.Size(227, 481);
             panelMain.TabIndex = 0;
             // 
+            // btnHexClip
+            // 
+            btnHexClip.Location = new System.Drawing.Point(12, 150);
+            btnHexClip.Name = "btnHexClip";
+            btnHexClip.Size = new System.Drawing.Size(209, 29);
+            btnHexClip.TabIndex = 4;
+            btnHexClip.Text = "HEX to Clipboard";
+            btnHexClip.UseVisualStyleBackColor = true;
+            btnHexClip.Click += btnHexClip_Click;
+            // 
             // btnSaveWH
             // 
-            btnSaveWH.Location = new System.Drawing.Point(12, 82);
+            btnSaveWH.Location = new System.Drawing.Point(12, 115);
             btnSaveWH.Name = "btnSaveWH";
             btnSaveWH.Size = new System.Drawing.Size(209, 29);
             btnSaveWH.TabIndex = 3;
@@ -154,7 +141,7 @@ namespace uiConverter
             // 
             // btnSave
             // 
-            btnSave.Location = new System.Drawing.Point(12, 47);
+            btnSave.Location = new System.Drawing.Point(12, 80);
             btnSave.Name = "btnSave";
             btnSave.Size = new System.Drawing.Size(209, 29);
             btnSave.TabIndex = 0;
@@ -183,20 +170,15 @@ namespace uiConverter
             panelInfo.Controls.Add(labelHeight);
             panelInfo.Controls.Add(textBoxWidth);
             panelInfo.Controls.Add(labelWidth);
-            panelInfo.Controls.Add(numericPosY);
-            panelInfo.Controls.Add(labelPositionY);
-            panelInfo.Controls.Add(numericPosX);
-            panelInfo.Controls.Add(labelPositionX);
-            panelInfo.Controls.Add(checkBoxSwap);
             panelInfo.Enabled = false;
-            panelInfo.Location = new System.Drawing.Point(0, 213);
+            panelInfo.Location = new System.Drawing.Point(0, 235);
             panelInfo.Name = "panelInfo";
-            panelInfo.Size = new System.Drawing.Size(227, 268);
+            panelInfo.Size = new System.Drawing.Size(227, 246);
             panelInfo.TabIndex = 0;
             // 
             // textBoxForeColor
             // 
-            textBoxForeColor.Location = new System.Drawing.Point(95, 219);
+            textBoxForeColor.Location = new System.Drawing.Point(98, 124);
             textBoxForeColor.Name = "textBoxForeColor";
             textBoxForeColor.Size = new System.Drawing.Size(104, 27);
             textBoxForeColor.TabIndex = 33;
@@ -206,7 +188,7 @@ namespace uiConverter
             // 
             // textBoxBackColor
             // 
-            textBoxBackColor.Location = new System.Drawing.Point(95, 182);
+            textBoxBackColor.Location = new System.Drawing.Point(98, 87);
             textBoxBackColor.Name = "textBoxBackColor";
             textBoxBackColor.Size = new System.Drawing.Size(104, 27);
             textBoxBackColor.TabIndex = 31;
@@ -215,43 +197,27 @@ namespace uiConverter
             // 
             // textBoxHeight
             // 
-            textBoxHeight.Location = new System.Drawing.Point(138, 142);
+            textBoxHeight.Location = new System.Drawing.Point(98, 47);
             textBoxHeight.Name = "textBoxHeight";
             textBoxHeight.ReadOnly = true;
-            textBoxHeight.Size = new System.Drawing.Size(61, 27);
+            textBoxHeight.Size = new System.Drawing.Size(104, 27);
             textBoxHeight.TabIndex = 26;
             // 
             // textBoxWidth
             // 
-            textBoxWidth.Location = new System.Drawing.Point(138, 107);
+            textBoxWidth.Location = new System.Drawing.Point(98, 12);
             textBoxWidth.Name = "textBoxWidth";
             textBoxWidth.ReadOnly = true;
-            textBoxWidth.Size = new System.Drawing.Size(61, 27);
+            textBoxWidth.Size = new System.Drawing.Size(104, 27);
             textBoxWidth.TabIndex = 24;
-            // 
-            // numericPosY
-            // 
-            numericPosY.Location = new System.Drawing.Point(95, 71);
-            numericPosY.Maximum = new decimal(new int[] { 240, 0, 0, 0 });
-            numericPosY.Name = "numericPosY";
-            numericPosY.Size = new System.Drawing.Size(104, 27);
-            numericPosY.TabIndex = 4;
-            // 
-            // numericPosX
-            // 
-            numericPosX.Location = new System.Drawing.Point(93, 37);
-            numericPosX.Maximum = new decimal(new int[] { 240, 0, 0, 0 });
-            numericPosX.Name = "numericPosX";
-            numericPosX.Size = new System.Drawing.Size(106, 27);
-            numericPosX.TabIndex = 2;
             // 
             // checkBoxSwap
             // 
             checkBoxSwap.Checked = true;
             checkBoxSwap.CheckState = System.Windows.Forms.CheckState.Checked;
-            checkBoxSwap.Location = new System.Drawing.Point(12, 12);
+            checkBoxSwap.Location = new System.Drawing.Point(12, 50);
             checkBoxSwap.Name = "checkBoxSwap";
-            checkBoxSwap.Size = new System.Drawing.Size(106, 24);
+            checkBoxSwap.Size = new System.Drawing.Size(209, 24);
             checkBoxSwap.TabIndex = 0;
             checkBoxSwap.Text = "Swap Bytes";
             checkBoxSwap.UseVisualStyleBackColor = true;
@@ -313,15 +279,15 @@ namespace uiConverter
             // 
             openFileDlg.Filter = "All files|*.*";
             // 
-            // btnHexClip
+            // btnHexClipWH
             // 
-            btnHexClip.Location = new System.Drawing.Point(12, 117);
-            btnHexClip.Name = "btnHexClip";
-            btnHexClip.Size = new System.Drawing.Size(209, 29);
-            btnHexClip.TabIndex = 4;
-            btnHexClip.Text = "HEX to Clipboard";
-            btnHexClip.UseVisualStyleBackColor = true;
-            btnHexClip.Click += btnHexClip_Click;
+            btnHexClipWH.Location = new System.Drawing.Point(12, 185);
+            btnHexClipWH.Name = "btnHexClipWH";
+            btnHexClipWH.Size = new System.Drawing.Size(209, 29);
+            btnHexClipWH.TabIndex = 5;
+            btnHexClipWH.Text = "HEX to Clipboard (W + H)";
+            btnHexClipWH.UseVisualStyleBackColor = true;
+            btnHexClipWH.Click += btnHexClipWH_Click;
             // 
             // MainForm
             // 
@@ -335,8 +301,6 @@ namespace uiConverter
             panelMain.ResumeLayout(false);
             panelInfo.ResumeLayout(false);
             panelInfo.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)numericPosY).EndInit();
-            ((System.ComponentModel.ISupportInitialize)numericPosX).EndInit();
             panelView.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)pictureBox).EndInit();
             panelViewTool.ResumeLayout(false);
@@ -351,8 +315,6 @@ namespace uiConverter
         private System.Windows.Forms.Button btnLoad;
         private System.Windows.Forms.Panel panelInfo;
         private System.Windows.Forms.CheckBox checkBoxSwap;
-        private System.Windows.Forms.NumericUpDown numericPosY;
-        private System.Windows.Forms.NumericUpDown numericPosX;
         private System.Windows.Forms.TextBox textBoxBackColor;
         private System.Windows.Forms.TextBox textBoxHeight;
         private System.Windows.Forms.TextBox textBoxWidth;
@@ -365,6 +327,7 @@ namespace uiConverter
         private System.Windows.Forms.Button btnSaveWH;
         private System.Windows.Forms.ComboBox comboBoxScale;
         private System.Windows.Forms.Button btnHexClip;
+        private System.Windows.Forms.Button btnHexClipWH;
     }
 }
 
