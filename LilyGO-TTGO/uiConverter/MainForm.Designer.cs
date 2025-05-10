@@ -37,9 +37,10 @@ namespace uiConverter
             System.Windows.Forms.Label labelBackColor;
             System.Windows.Forms.Label labelForeColor;
             System.Windows.Forms.Panel panelMain;
-            System.Windows.Forms.Button btnBatch;
             System.Windows.Forms.Button btnLoad;
-            btnSaveRaw = new System.Windows.Forms.Button();
+            System.Windows.Forms.Panel panelView;
+            btnSaveWH = new System.Windows.Forms.Button();
+            btnSave = new System.Windows.Forms.Button();
             panelInfo = new System.Windows.Forms.Panel();
             textBoxForeColor = new System.Windows.Forms.TextBox();
             textBoxBackColor = new System.Windows.Forms.TextBox();
@@ -49,9 +50,13 @@ namespace uiConverter
             numericPosX = new System.Windows.Forms.NumericUpDown();
             checkBoxSwap = new System.Windows.Forms.CheckBox();
             pictureBox = new System.Windows.Forms.PictureBox();
+            panelViewTool = new System.Windows.Forms.Panel();
+            comboBoxScale = new System.Windows.Forms.ComboBox();
+            comboBoxSizeMode = new System.Windows.Forms.ComboBox();
             openFileDlg = new System.Windows.Forms.OpenFileDialog();
             toolTip = new System.Windows.Forms.ToolTip(components);
             folderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
+            btnHexClip = new System.Windows.Forms.Button();
             labelPositionX = new System.Windows.Forms.Label();
             labelPositionY = new System.Windows.Forms.Label();
             labelWidth = new System.Windows.Forms.Label();
@@ -59,13 +64,15 @@ namespace uiConverter
             labelBackColor = new System.Windows.Forms.Label();
             labelForeColor = new System.Windows.Forms.Label();
             panelMain = new System.Windows.Forms.Panel();
-            btnBatch = new System.Windows.Forms.Button();
             btnLoad = new System.Windows.Forms.Button();
+            panelView = new System.Windows.Forms.Panel();
             panelMain.SuspendLayout();
             panelInfo.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)numericPosY).BeginInit();
             ((System.ComponentModel.ISupportInitialize)numericPosX).BeginInit();
+            panelView.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBox).BeginInit();
+            panelViewTool.SuspendLayout();
             SuspendLayout();
             // 
             // labelPositionX
@@ -124,43 +131,44 @@ namespace uiConverter
             // 
             // panelMain
             // 
-            panelMain.Controls.Add(btnBatch);
-            panelMain.Controls.Add(btnSaveRaw);
+            panelMain.Controls.Add(btnHexClip);
+            panelMain.Controls.Add(btnSaveWH);
+            panelMain.Controls.Add(btnSave);
             panelMain.Controls.Add(btnLoad);
             panelMain.Controls.Add(panelInfo);
             panelMain.Dock = System.Windows.Forms.DockStyle.Left;
             panelMain.Location = new System.Drawing.Point(0, 0);
             panelMain.Name = "panelMain";
-            panelMain.Size = new System.Drawing.Size(210, 385);
+            panelMain.Size = new System.Drawing.Size(227, 481);
             panelMain.TabIndex = 0;
             // 
-            // btnBatch
+            // btnSaveWH
             // 
-            btnBatch.Location = new System.Drawing.Point(12, 82);
-            btnBatch.Name = "btnBatch";
-            btnBatch.Size = new System.Drawing.Size(187, 29);
-            btnBatch.TabIndex = 3;
-            btnBatch.Text = "Batch (swap:true)";
-            btnBatch.UseVisualStyleBackColor = true;
-            btnBatch.Click += btnBatch_Click;
+            btnSaveWH.Location = new System.Drawing.Point(12, 82);
+            btnSaveWH.Name = "btnSaveWH";
+            btnSaveWH.Size = new System.Drawing.Size(209, 29);
+            btnSaveWH.TabIndex = 3;
+            btnSaveWH.Text = "Save (Width+Height)...";
+            btnSaveWH.UseVisualStyleBackColor = true;
+            btnSaveWH.Click += btnSaveWH_Click;
             // 
-            // btnSaveRaw
+            // btnSave
             // 
-            btnSaveRaw.Location = new System.Drawing.Point(12, 47);
-            btnSaveRaw.Name = "btnSaveRaw";
-            btnSaveRaw.Size = new System.Drawing.Size(187, 29);
-            btnSaveRaw.TabIndex = 0;
-            btnSaveRaw.Text = "Save RAW";
-            btnSaveRaw.UseVisualStyleBackColor = true;
-            btnSaveRaw.Click += btnSaveRaw_Click;
+            btnSave.Location = new System.Drawing.Point(12, 47);
+            btnSave.Name = "btnSave";
+            btnSave.Size = new System.Drawing.Size(209, 29);
+            btnSave.TabIndex = 0;
+            btnSave.Text = "Save ...";
+            btnSave.UseVisualStyleBackColor = true;
+            btnSave.Click += btnSave_Click;
             // 
             // btnLoad
             // 
             btnLoad.Location = new System.Drawing.Point(12, 12);
             btnLoad.Name = "btnLoad";
-            btnLoad.Size = new System.Drawing.Size(187, 29);
+            btnLoad.Size = new System.Drawing.Size(209, 29);
             btnLoad.TabIndex = 2;
-            btnLoad.Text = "Load";
+            btnLoad.Text = "Load ...";
             btnLoad.UseVisualStyleBackColor = true;
             btnLoad.Click += btnLoad_Click;
             // 
@@ -181,9 +189,9 @@ namespace uiConverter
             panelInfo.Controls.Add(labelPositionX);
             panelInfo.Controls.Add(checkBoxSwap);
             panelInfo.Enabled = false;
-            panelInfo.Location = new System.Drawing.Point(0, 121);
+            panelInfo.Location = new System.Drawing.Point(0, 213);
             panelInfo.Name = "panelInfo";
-            panelInfo.Size = new System.Drawing.Size(210, 264);
+            panelInfo.Size = new System.Drawing.Size(227, 268);
             panelInfo.TabIndex = 0;
             // 
             // textBoxForeColor
@@ -248,27 +256,79 @@ namespace uiConverter
             checkBoxSwap.Text = "Swap Bytes";
             checkBoxSwap.UseVisualStyleBackColor = true;
             // 
+            // panelView
+            // 
+            panelView.Controls.Add(pictureBox);
+            panelView.Controls.Add(panelViewTool);
+            panelView.Dock = System.Windows.Forms.DockStyle.Fill;
+            panelView.Location = new System.Drawing.Point(227, 0);
+            panelView.Name = "panelView";
+            panelView.Size = new System.Drawing.Size(568, 481);
+            panelView.TabIndex = 2;
+            // 
             // pictureBox
             // 
             pictureBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             pictureBox.Dock = System.Windows.Forms.DockStyle.Fill;
-            pictureBox.Location = new System.Drawing.Point(210, 0);
+            pictureBox.Location = new System.Drawing.Point(0, 41);
             pictureBox.Name = "pictureBox";
-            pictureBox.Size = new System.Drawing.Size(395, 385);
+            pictureBox.Size = new System.Drawing.Size(568, 440);
+            pictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
             pictureBox.TabIndex = 1;
             pictureBox.TabStop = false;
             pictureBox.MouseClick += pictureBox_MouseClick;
+            // 
+            // panelViewTool
+            // 
+            panelViewTool.Controls.Add(comboBoxScale);
+            panelViewTool.Controls.Add(comboBoxSizeMode);
+            panelViewTool.Dock = System.Windows.Forms.DockStyle.Top;
+            panelViewTool.Location = new System.Drawing.Point(0, 0);
+            panelViewTool.Name = "panelViewTool";
+            panelViewTool.Size = new System.Drawing.Size(568, 41);
+            panelViewTool.TabIndex = 2;
+            // 
+            // comboBoxScale
+            // 
+            comboBoxScale.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            comboBoxScale.FormattingEnabled = true;
+            comboBoxScale.Items.AddRange(new object[] { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10" });
+            comboBoxScale.Location = new System.Drawing.Point(194, 6);
+            comboBoxScale.Name = "comboBoxScale";
+            comboBoxScale.Size = new System.Drawing.Size(151, 28);
+            comboBoxScale.TabIndex = 1;
+            comboBoxScale.SelectionChangeCommitted += comboBoxScale_SelectionChangeCommitted;
+            // 
+            // comboBoxSizeMode
+            // 
+            comboBoxSizeMode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            comboBoxSizeMode.FormattingEnabled = true;
+            comboBoxSizeMode.Location = new System.Drawing.Point(6, 6);
+            comboBoxSizeMode.Name = "comboBoxSizeMode";
+            comboBoxSizeMode.Size = new System.Drawing.Size(151, 28);
+            comboBoxSizeMode.TabIndex = 0;
+            comboBoxSizeMode.SelectionChangeCommitted += comboBoxSizeMode_SelectionChangeCommitted;
             // 
             // openFileDlg
             // 
             openFileDlg.Filter = "All files|*.*";
             // 
+            // btnHexClip
+            // 
+            btnHexClip.Location = new System.Drawing.Point(12, 117);
+            btnHexClip.Name = "btnHexClip";
+            btnHexClip.Size = new System.Drawing.Size(209, 29);
+            btnHexClip.TabIndex = 4;
+            btnHexClip.Text = "HEX to Clipboard";
+            btnHexClip.UseVisualStyleBackColor = true;
+            btnHexClip.Click += btnHexClip_Click;
+            // 
             // MainForm
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            ClientSize = new System.Drawing.Size(605, 385);
-            Controls.Add(pictureBox);
+            ClientSize = new System.Drawing.Size(795, 481);
+            Controls.Add(panelView);
             Controls.Add(panelMain);
             Name = "MainForm";
             Text = "LilyGO-TTGO T-Display [135 x 240]";
@@ -277,7 +337,9 @@ namespace uiConverter
             panelInfo.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)numericPosY).EndInit();
             ((System.ComponentModel.ISupportInitialize)numericPosX).EndInit();
+            panelView.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)pictureBox).EndInit();
+            panelViewTool.ResumeLayout(false);
             ResumeLayout(false);
         }
 
@@ -285,7 +347,7 @@ namespace uiConverter
 
         private System.Windows.Forms.Panel panelMain;
         private System.Windows.Forms.PictureBox pictureBox;
-        private System.Windows.Forms.Button btnSaveRaw;
+        private System.Windows.Forms.Button btnSave;
         private System.Windows.Forms.Button btnLoad;
         private System.Windows.Forms.Panel panelInfo;
         private System.Windows.Forms.CheckBox checkBoxSwap;
@@ -297,8 +359,12 @@ namespace uiConverter
         private System.Windows.Forms.TextBox textBoxForeColor;
         private System.Windows.Forms.OpenFileDialog openFileDlg;
         private System.Windows.Forms.ToolTip toolTip;
-        private System.Windows.Forms.Button btnBatch;
         private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog;
+        private System.Windows.Forms.Panel panelViewTool;
+        private System.Windows.Forms.ComboBox comboBoxSizeMode;
+        private System.Windows.Forms.Button btnSaveWH;
+        private System.Windows.Forms.ComboBox comboBoxScale;
+        private System.Windows.Forms.Button btnHexClip;
     }
 }
 

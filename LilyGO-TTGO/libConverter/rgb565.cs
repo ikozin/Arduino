@@ -11,20 +11,13 @@ namespace libConverter
             return (ushort)(((color.R & 0b11111000) << 8) | ((color.G & 0b11111100) << 3) | (color.B >> 3));
         }
 
-        public void WriteBitmap(Stream stream, Bitmap bitmap, bool swap, Color transparentColor, Color backColor)
+        public void WriteData(Stream stream, Bitmap bitmap, bool swap)
         {
             for (int y = 0; y < bitmap.Height; y++)
             {
                 for (int x = 0; x < bitmap.Width; x++)
                 {
                     Color pixel = bitmap.GetPixel(x, y);
-                    if (transparentColor != Color.Empty)
-                    {
-                        if (pixel == transparentColor)
-                        {
-                            pixel = backColor;
-                        }
-                    }
                     ushort rgb565 = ColorToRGB565(pixel);
                     byte[] buf = BitConverter.GetBytes(rgb565);
                     if (swap)
@@ -37,18 +30,23 @@ namespace libConverter
             stream.Flush();
         }
 
-        public void WriteRawData(Stream stream, Bitmap bitmap, bool swap, ushort posX, ushort posY, Color foreColor, Color backColor)
+        public void WriteData(Stream stream, Bitmap bitmap, bool swap, ushort width, ushort height)
+        {
+            foreach (var item in BitConverter.GetBytes((ushort)bitmap.Width)) stream.WriteByte(item);
+            foreach (var item in BitConverter.GetBytes((ushort)bitmap.Height)) stream.WriteByte(item);
+            WriteData(stream, bitmap, swap);
+        }
+
+        public void WriteData(Stream stream, Bitmap bitmap, bool swap, ushort posX, ushort posY, Color foreColor, Color backColor)
         {
             ushort rgb565;
             rgb565 = ColorToRGB565(foreColor);
             foreach (var item in BitConverter.GetBytes(rgb565)) stream.WriteByte(item);
             rgb565 = ColorToRGB565(backColor);
             foreach (var item in BitConverter.GetBytes(rgb565)) stream.WriteByte(item);
-            foreach (var item in BitConverter.GetBytes((ushort)posX)) stream.WriteByte(item);
-            foreach (var item in BitConverter.GetBytes((ushort)posY)) stream.WriteByte(item);
-            foreach (var item in BitConverter.GetBytes((ushort)bitmap.Width)) stream.WriteByte(item);
-            foreach (var item in BitConverter.GetBytes((ushort)bitmap.Height)) stream.WriteByte(item);
-            WriteBitmap(stream, bitmap, swap, Color.Empty, Color.Empty);
+            foreach (var item in BitConverter.GetBytes(posX)) stream.WriteByte(item);
+            foreach (var item in BitConverter.GetBytes(posY)) stream.WriteByte(item);
+            WriteData(stream, bitmap, swap, (ushort)bitmap.Width, (ushort)bitmap.Height);
         }
     }
 }
