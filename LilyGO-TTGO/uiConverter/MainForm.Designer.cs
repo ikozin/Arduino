@@ -37,23 +37,24 @@ namespace uiConverter
             System.Windows.Forms.Panel panelMain;
             System.Windows.Forms.Button btnLoad;
             System.Windows.Forms.Panel panelView;
+            System.Windows.Forms.Label labelScale;
+            btnHexClipWH = new System.Windows.Forms.Button();
             btnHexClip = new System.Windows.Forms.Button();
             btnSaveWH = new System.Windows.Forms.Button();
             btnSave = new System.Windows.Forms.Button();
             panelInfo = new System.Windows.Forms.Panel();
             textBoxForeColor = new System.Windows.Forms.TextBox();
             textBoxBackColor = new System.Windows.Forms.TextBox();
-            textBoxHeight = new System.Windows.Forms.TextBox();
-            textBoxWidth = new System.Windows.Forms.TextBox();
             checkBoxSwap = new System.Windows.Forms.CheckBox();
             pictureBox = new System.Windows.Forms.PictureBox();
             panelViewTool = new System.Windows.Forms.Panel();
             comboBoxScale = new System.Windows.Forms.ComboBox();
             comboBoxSizeMode = new System.Windows.Forms.ComboBox();
+            textBoxWidth = new System.Windows.Forms.TextBox();
+            textBoxHeight = new System.Windows.Forms.TextBox();
             openFileDlg = new System.Windows.Forms.OpenFileDialog();
             toolTip = new System.Windows.Forms.ToolTip(components);
             folderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
-            btnHexClipWH = new System.Windows.Forms.Button();
             labelWidth = new System.Windows.Forms.Label();
             labelHeight = new System.Windows.Forms.Label();
             labelBackColor = new System.Windows.Forms.Label();
@@ -61,6 +62,7 @@ namespace uiConverter
             panelMain = new System.Windows.Forms.Panel();
             btnLoad = new System.Windows.Forms.Button();
             panelView = new System.Windows.Forms.Panel();
+            labelScale = new System.Windows.Forms.Label();
             panelMain.SuspendLayout();
             panelInfo.SuspendLayout();
             panelView.SuspendLayout();
@@ -70,17 +72,15 @@ namespace uiConverter
             // 
             // labelWidth
             // 
-            labelWidth.AutoSize = true;
-            labelWidth.Location = new System.Drawing.Point(15, 15);
+            labelWidth.Location = new System.Drawing.Point(303, 9);
             labelWidth.Name = "labelWidth";
-            labelWidth.Size = new System.Drawing.Size(49, 20);
+            labelWidth.Size = new System.Drawing.Size(54, 20);
             labelWidth.TabIndex = 23;
             labelWidth.Text = "Width";
             // 
             // labelHeight
             // 
-            labelHeight.AutoSize = true;
-            labelHeight.Location = new System.Drawing.Point(15, 50);
+            labelHeight.Location = new System.Drawing.Point(433, 10);
             labelHeight.Name = "labelHeight";
             labelHeight.Size = new System.Drawing.Size(54, 20);
             labelHeight.TabIndex = 25;
@@ -89,7 +89,7 @@ namespace uiConverter
             // labelBackColor
             // 
             labelBackColor.AutoSize = true;
-            labelBackColor.Location = new System.Drawing.Point(15, 90);
+            labelBackColor.Location = new System.Drawing.Point(17, 6);
             labelBackColor.Name = "labelBackColor";
             labelBackColor.Size = new System.Drawing.Size(76, 20);
             labelBackColor.TabIndex = 30;
@@ -98,7 +98,7 @@ namespace uiConverter
             // labelForeColor
             // 
             labelForeColor.AutoSize = true;
-            labelForeColor.Location = new System.Drawing.Point(15, 127);
+            labelForeColor.Location = new System.Drawing.Point(17, 43);
             labelForeColor.Name = "labelForeColor";
             labelForeColor.Size = new System.Drawing.Size(74, 20);
             labelForeColor.TabIndex = 32;
@@ -119,6 +119,16 @@ namespace uiConverter
             panelMain.Size = new System.Drawing.Size(227, 481);
             panelMain.TabIndex = 0;
             // 
+            // btnHexClipWH
+            // 
+            btnHexClipWH.Location = new System.Drawing.Point(12, 185);
+            btnHexClipWH.Name = "btnHexClipWH";
+            btnHexClipWH.Size = new System.Drawing.Size(209, 29);
+            btnHexClipWH.TabIndex = 5;
+            btnHexClipWH.Text = "HEX to Clipboard (W+H)";
+            btnHexClipWH.UseVisualStyleBackColor = true;
+            btnHexClipWH.Click += btnHexClipWH_Click;
+            // 
             // btnHexClip
             // 
             btnHexClip.Location = new System.Drawing.Point(12, 150);
@@ -135,7 +145,7 @@ namespace uiConverter
             btnSaveWH.Name = "btnSaveWH";
             btnSaveWH.Size = new System.Drawing.Size(209, 29);
             btnSaveWH.TabIndex = 3;
-            btnSaveWH.Text = "Save (Width+Height)...";
+            btnSaveWH.Text = "Save (W+H)...";
             btnSaveWH.UseVisualStyleBackColor = true;
             btnSaveWH.Click += btnSaveWH_Click;
             // 
@@ -166,10 +176,6 @@ namespace uiConverter
             panelInfo.Controls.Add(labelForeColor);
             panelInfo.Controls.Add(textBoxBackColor);
             panelInfo.Controls.Add(labelBackColor);
-            panelInfo.Controls.Add(textBoxHeight);
-            panelInfo.Controls.Add(labelHeight);
-            panelInfo.Controls.Add(textBoxWidth);
-            panelInfo.Controls.Add(labelWidth);
             panelInfo.Enabled = false;
             panelInfo.Location = new System.Drawing.Point(0, 235);
             panelInfo.Name = "panelInfo";
@@ -178,7 +184,7 @@ namespace uiConverter
             // 
             // textBoxForeColor
             // 
-            textBoxForeColor.Location = new System.Drawing.Point(98, 124);
+            textBoxForeColor.Location = new System.Drawing.Point(100, 40);
             textBoxForeColor.Name = "textBoxForeColor";
             textBoxForeColor.Size = new System.Drawing.Size(104, 27);
             textBoxForeColor.TabIndex = 33;
@@ -188,28 +194,12 @@ namespace uiConverter
             // 
             // textBoxBackColor
             // 
-            textBoxBackColor.Location = new System.Drawing.Point(98, 87);
+            textBoxBackColor.Location = new System.Drawing.Point(100, 3);
             textBoxBackColor.Name = "textBoxBackColor";
             textBoxBackColor.Size = new System.Drawing.Size(104, 27);
             textBoxBackColor.TabIndex = 31;
             toolTip.SetToolTip(textBoxBackColor, "Double click to select a color");
             textBoxBackColor.MouseDoubleClick += textBoxColor_MouseDoubleClick;
-            // 
-            // textBoxHeight
-            // 
-            textBoxHeight.Location = new System.Drawing.Point(98, 47);
-            textBoxHeight.Name = "textBoxHeight";
-            textBoxHeight.ReadOnly = true;
-            textBoxHeight.Size = new System.Drawing.Size(104, 27);
-            textBoxHeight.TabIndex = 26;
-            // 
-            // textBoxWidth
-            // 
-            textBoxWidth.Location = new System.Drawing.Point(98, 12);
-            textBoxWidth.Name = "textBoxWidth";
-            textBoxWidth.ReadOnly = true;
-            textBoxWidth.Size = new System.Drawing.Size(104, 27);
-            textBoxWidth.TabIndex = 24;
             // 
             // checkBoxSwap
             // 
@@ -246,22 +236,35 @@ namespace uiConverter
             // 
             // panelViewTool
             // 
+            panelViewTool.Controls.Add(labelScale);
             panelViewTool.Controls.Add(comboBoxScale);
             panelViewTool.Controls.Add(comboBoxSizeMode);
+            panelViewTool.Controls.Add(textBoxWidth);
+            panelViewTool.Controls.Add(labelWidth);
+            panelViewTool.Controls.Add(textBoxHeight);
+            panelViewTool.Controls.Add(labelHeight);
             panelViewTool.Dock = System.Windows.Forms.DockStyle.Top;
             panelViewTool.Location = new System.Drawing.Point(0, 0);
             panelViewTool.Name = "panelViewTool";
             panelViewTool.Size = new System.Drawing.Size(568, 41);
             panelViewTool.TabIndex = 2;
             // 
+            // labelScale
+            // 
+            labelScale.Location = new System.Drawing.Point(175, 10);
+            labelScale.Name = "labelScale";
+            labelScale.Size = new System.Drawing.Size(47, 20);
+            labelScale.TabIndex = 27;
+            labelScale.Text = "Scale";
+            // 
             // comboBoxScale
             // 
             comboBoxScale.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             comboBoxScale.FormattingEnabled = true;
             comboBoxScale.Items.AddRange(new object[] { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10" });
-            comboBoxScale.Location = new System.Drawing.Point(194, 6);
+            comboBoxScale.Location = new System.Drawing.Point(234, 6);
             comboBoxScale.Name = "comboBoxScale";
-            comboBoxScale.Size = new System.Drawing.Size(151, 28);
+            comboBoxScale.Size = new System.Drawing.Size(62, 28);
             comboBoxScale.TabIndex = 1;
             comboBoxScale.SelectionChangeCommitted += comboBoxScale_SelectionChangeCommitted;
             // 
@@ -269,25 +272,31 @@ namespace uiConverter
             // 
             comboBoxSizeMode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             comboBoxSizeMode.FormattingEnabled = true;
-            comboBoxSizeMode.Location = new System.Drawing.Point(6, 6);
+            comboBoxSizeMode.Location = new System.Drawing.Point(57, 6);
             comboBoxSizeMode.Name = "comboBoxSizeMode";
-            comboBoxSizeMode.Size = new System.Drawing.Size(151, 28);
+            comboBoxSizeMode.Size = new System.Drawing.Size(103, 28);
             comboBoxSizeMode.TabIndex = 0;
             comboBoxSizeMode.SelectionChangeCommitted += comboBoxSizeMode_SelectionChangeCommitted;
+            // 
+            // textBoxWidth
+            // 
+            textBoxWidth.Location = new System.Drawing.Point(363, 7);
+            textBoxWidth.Name = "textBoxWidth";
+            textBoxWidth.ReadOnly = true;
+            textBoxWidth.Size = new System.Drawing.Size(59, 27);
+            textBoxWidth.TabIndex = 24;
+            // 
+            // textBoxHeight
+            // 
+            textBoxHeight.Location = new System.Drawing.Point(493, 7);
+            textBoxHeight.Name = "textBoxHeight";
+            textBoxHeight.ReadOnly = true;
+            textBoxHeight.Size = new System.Drawing.Size(59, 27);
+            textBoxHeight.TabIndex = 26;
             // 
             // openFileDlg
             // 
             openFileDlg.Filter = "All files|*.*";
-            // 
-            // btnHexClipWH
-            // 
-            btnHexClipWH.Location = new System.Drawing.Point(12, 185);
-            btnHexClipWH.Name = "btnHexClipWH";
-            btnHexClipWH.Size = new System.Drawing.Size(209, 29);
-            btnHexClipWH.TabIndex = 5;
-            btnHexClipWH.Text = "HEX to Clipboard (W + H)";
-            btnHexClipWH.UseVisualStyleBackColor = true;
-            btnHexClipWH.Click += btnHexClipWH_Click;
             // 
             // MainForm
             // 
@@ -304,6 +313,7 @@ namespace uiConverter
             panelView.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)pictureBox).EndInit();
             panelViewTool.ResumeLayout(false);
+            panelViewTool.PerformLayout();
             ResumeLayout(false);
         }
 
