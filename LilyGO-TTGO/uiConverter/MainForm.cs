@@ -20,6 +20,14 @@ namespace uiConverter
             comboBoxScale.SelectedIndex = 0;
         }
 
+        private void btnFileToClip_Click(object sender, EventArgs e)
+        {
+            if (openFileDlg.ShowDialog(this) != DialogResult.OK) return;
+            FileStream fs = File.OpenRead(openFileDlg.FileName);
+            StreamToClipboard(fs);
+
+        }
+
         private void btnLoad_Click(object sender, EventArgs e)
         {
             if (openFileDlg.ShowDialog(this) != DialogResult.OK) return;
@@ -99,7 +107,7 @@ namespace uiConverter
             return true;
         }
 
-        private void StreamToClipboard(MemoryStream memory)
+        private void StreamToClipboard(Stream memory)
         {
             const int length = 16;
             memory.Seek(0, SeekOrigin.Begin);

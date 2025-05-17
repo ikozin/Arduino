@@ -41,6 +41,7 @@ IterationCode_t ControllerAlarmClock::OnIteration() {
                     _alarmClockList[i].IsMute = object["Mute"].as<int>();
                     _alarmClockList[i].Volume = object["Volume"].as<int>();
                     _alarmClockList[i].Index = object["Index"].as<int>();
+                    _alarmClockList[i].Buzzer = object["Buzzer"].as<int>();
 
                     _alarmClockList[i].Monday = object["Mo"].as<int>();
                     _alarmClockList[i].Tuesday= object["Tu"].as<int>();

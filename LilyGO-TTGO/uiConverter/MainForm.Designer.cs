@@ -38,6 +38,7 @@ namespace uiConverter
             System.Windows.Forms.Button btnLoad;
             System.Windows.Forms.Panel panelView;
             System.Windows.Forms.Label labelScale;
+            btnFileToClip = new System.Windows.Forms.Button();
             btnHexClipWH = new System.Windows.Forms.Button();
             btnHexClip = new System.Windows.Forms.Button();
             btnSaveWH = new System.Windows.Forms.Button();
@@ -106,6 +107,7 @@ namespace uiConverter
             // 
             // panelMain
             // 
+            panelMain.Controls.Add(btnFileToClip);
             panelMain.Controls.Add(btnHexClipWH);
             panelMain.Controls.Add(btnHexClip);
             panelMain.Controls.Add(btnSaveWH);
@@ -119,9 +121,19 @@ namespace uiConverter
             panelMain.Size = new System.Drawing.Size(227, 481);
             panelMain.TabIndex = 0;
             // 
+            // btnFileToClip
+            // 
+            btnFileToClip.Location = new System.Drawing.Point(12, 9);
+            btnFileToClip.Name = "btnFileToClip";
+            btnFileToClip.Size = new System.Drawing.Size(209, 29);
+            btnFileToClip.TabIndex = 6;
+            btnFileToClip.Text = "File to Clipboard ...";
+            btnFileToClip.UseVisualStyleBackColor = true;
+            btnFileToClip.Click += btnFileToClip_Click;
+            // 
             // btnHexClipWH
             // 
-            btnHexClipWH.Location = new System.Drawing.Point(12, 185);
+            btnHexClipWH.Location = new System.Drawing.Point(12, 240);
             btnHexClipWH.Name = "btnHexClipWH";
             btnHexClipWH.Size = new System.Drawing.Size(209, 29);
             btnHexClipWH.TabIndex = 5;
@@ -131,7 +143,7 @@ namespace uiConverter
             // 
             // btnHexClip
             // 
-            btnHexClip.Location = new System.Drawing.Point(12, 150);
+            btnHexClip.Location = new System.Drawing.Point(12, 205);
             btnHexClip.Name = "btnHexClip";
             btnHexClip.Size = new System.Drawing.Size(209, 29);
             btnHexClip.TabIndex = 4;
@@ -141,7 +153,7 @@ namespace uiConverter
             // 
             // btnSaveWH
             // 
-            btnSaveWH.Location = new System.Drawing.Point(12, 115);
+            btnSaveWH.Location = new System.Drawing.Point(12, 170);
             btnSaveWH.Name = "btnSaveWH";
             btnSaveWH.Size = new System.Drawing.Size(209, 29);
             btnSaveWH.TabIndex = 3;
@@ -151,7 +163,7 @@ namespace uiConverter
             // 
             // btnSave
             // 
-            btnSave.Location = new System.Drawing.Point(12, 80);
+            btnSave.Location = new System.Drawing.Point(12, 135);
             btnSave.Name = "btnSave";
             btnSave.Size = new System.Drawing.Size(209, 29);
             btnSave.TabIndex = 0;
@@ -161,7 +173,7 @@ namespace uiConverter
             // 
             // btnLoad
             // 
-            btnLoad.Location = new System.Drawing.Point(12, 12);
+            btnLoad.Location = new System.Drawing.Point(12, 67);
             btnLoad.Name = "btnLoad";
             btnLoad.Size = new System.Drawing.Size(209, 29);
             btnLoad.TabIndex = 2;
@@ -177,9 +189,9 @@ namespace uiConverter
             panelInfo.Controls.Add(textBoxBackColor);
             panelInfo.Controls.Add(labelBackColor);
             panelInfo.Enabled = false;
-            panelInfo.Location = new System.Drawing.Point(0, 235);
+            panelInfo.Location = new System.Drawing.Point(0, 290);
             panelInfo.Name = "panelInfo";
-            panelInfo.Size = new System.Drawing.Size(227, 246);
+            panelInfo.Size = new System.Drawing.Size(227, 191);
             panelInfo.TabIndex = 0;
             // 
             // textBoxForeColor
@@ -205,7 +217,7 @@ namespace uiConverter
             // 
             checkBoxSwap.Checked = true;
             checkBoxSwap.CheckState = System.Windows.Forms.CheckState.Checked;
-            checkBoxSwap.Location = new System.Drawing.Point(12, 50);
+            checkBoxSwap.Location = new System.Drawing.Point(12, 105);
             checkBoxSwap.Name = "checkBoxSwap";
             checkBoxSwap.Size = new System.Drawing.Size(209, 24);
             checkBoxSwap.TabIndex = 0;
@@ -338,6 +350,7 @@ namespace uiConverter
         private System.Windows.Forms.ComboBox comboBoxScale;
         private System.Windows.Forms.Button btnHexClip;
         private System.Windows.Forms.Button btnHexClipWH;
+        private System.Windows.Forms.Button btnFileToClip;
     }
 }
 
