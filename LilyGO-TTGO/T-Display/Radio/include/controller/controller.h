@@ -1,9 +1,8 @@
 #pragma once
 // https://docs.espressif.com/projects/esp-idf/en/v5.0/esp32/api-reference/system/freertos.html#task-api
 
-#include <Arduino.h>
-#include "logging.h"
 #include "main.h"
+#include "logging.h"
 
 #include "IUpdater.h"
 #include "ISensor.h"

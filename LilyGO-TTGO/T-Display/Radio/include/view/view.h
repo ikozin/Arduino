@@ -1,11 +1,8 @@
 #pragma once
 
-#include <Arduino.h>
-#include <TFT_eSPI.h>
-#include "esp_timer.h"
-#include "main.h"
-#include "logging.h"
 #include "controller/controller.h"
+#include "setting.h"
+#include "esp_timer.h"
 
 class View;
 

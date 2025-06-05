@@ -1,5 +1,5 @@
 #pragma once
-#include <Arduino.h>
+
 #include "main.h"
 
 #define EventListMax    (3)

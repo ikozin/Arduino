@@ -1,5 +1,5 @@
-#include "setting.h"
 #include "main.h"
+#include "setting.h"
 #include "controller/controllerAlarmClock.h"
 
 #define SSID "ESP32-Radio"

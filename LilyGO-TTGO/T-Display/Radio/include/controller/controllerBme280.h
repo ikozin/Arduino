@@ -12,7 +12,7 @@ typedef struct _Bme280Data_ {
     float Pressure;
 } Bme280Data;
 
-class ControllerBme280 : public Controller, public ISensor<Bme280Data> {
+class ControllerBme280 : public Controller, public ISensorWindow<Bme280Data, 30> {
     public:
         ControllerBme280(const char* name);
     protected:

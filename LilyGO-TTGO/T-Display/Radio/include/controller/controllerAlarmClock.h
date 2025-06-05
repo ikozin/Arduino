@@ -2,7 +2,6 @@
 
 #include "controller/controller.h"
 #include "controller/controllerRadio.h"
-#include <Arduino.h>
 
 #define     FS_ALARMLIST_FILE   "/alarm.json"
 

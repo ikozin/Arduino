@@ -1,14 +1,9 @@
-#include <Arduino.h>
-//#include <WiFi.h>
-#include <Preferences.h>
-#include <SPIFFS.h>
-#include <Button2.h>
-#include <TFT_eSPI.h>
-#include <ESP32Encoder.h>
-#include <AsyncMqttClient.h>
-//#include <ESPAsyncWebServer.h>
 #include "main.h"
 #include "setting.h"
+
+#include <Button2.h>
+#include <ESP32Encoder.h>
+#include <AsyncMqttClient.h>
 
 #include "controller/radioStorage.h"
 #include "controller/controller.h"

@@ -9,7 +9,14 @@ ControllerBme280::ControllerBme280(const char* name):
 
 InitResponse_t ControllerBme280::OnInit() {
 #ifdef BME280_FAKE
-    _value = { .Temperature = 25, .Humidity = 30, .Pressure = 670 };
+    for (int i = 0; i < Size(); i++) {
+        _value = {
+            .Temperature = (float)(random() % 20),
+            .Humidity = (float)(random() % 20),
+            .Pressure = (float)(random() % 20)
+        }; 
+        AddValue(_value);
+    }
     return OnInitResultStart;
 #else
     if ( _bme.begin(BME280_PORT, &Wire)) {
@@ -37,5 +44,6 @@ IterationCode_t ControllerBme280::OnIteration() {
         .Pressure = (float)(_bme.readPressure() / 1000.0F * 7.50062)
     };
 #endif
+    AddValue(_value);
     return IterationCode_t::Ok;
 }
