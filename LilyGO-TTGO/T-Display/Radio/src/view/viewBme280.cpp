@@ -6,10 +6,10 @@ void ViewBME280::OnDrawHandle() {
     ControllerBme280* bme280 = static_cast<ControllerBme280*>(_ctrl);
 
     char text[8];
-    Bme280Data data = bme280->GetData();
-    float temperature   = data.Temperature;
-    float humidity      = data.Humidity;
-    float pressure      = data.Pressure;
+    Bme280Data value = bme280->GetValue();
+    float temperature   = value.Temperature;
+    float humidity      = value.Humidity;
+    float pressure      = value.Pressure;
 
     uint32_t backColor = TFT_DARKCYAN;
 

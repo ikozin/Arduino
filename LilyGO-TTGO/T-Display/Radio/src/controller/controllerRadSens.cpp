@@ -8,6 +8,7 @@ ControllerRadSens::ControllerRadSens(const char* name):
 
 InitResponse_t ControllerRadSens::OnInit() {
 #ifdef RADSENS_FAKE
+    LOGN("FAKE START (%s)", _name);
     int16_t step = 1;
     int16_t min = 4;
     int16_t max = 14;
@@ -25,6 +26,7 @@ InitResponse_t ControllerRadSens::OnInit() {
             step = -step;
         }
     }
+    LOGN("FAKE END (%s)", _name);
     return OnInitResultStart;
 #else
     return _radSens.init() ? OnInitResultStart : OnInitResultERROR;
@@ -34,6 +36,7 @@ InitResponse_t ControllerRadSens::OnInit() {
 IterationCode_t ControllerRadSens::OnIteration() {
 #ifdef RADSENS_FAKE
     _value = (float)(random() % 20);
+    LOGN("FAKE NEW (%s)", _name);
 #else
     _value = _radSens.getRadIntensyStatic();
 #endif

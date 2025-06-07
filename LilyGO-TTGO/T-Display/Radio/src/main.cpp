@@ -8,27 +8,28 @@
 #include "controller/radioStorage.h"
 #include "controller/controller.h"
 #include "controller/controllerAlarmClock.h"
-#include "controller/controllerBuzzer.h"
 #include "controller/controllerBme280.h"
-#include "controller/controllerRadSens.h"
-#include "controller/controllerIrRemote.h"
+#include "controller/controllerBuzzer.h"
 #include "controller/controllerDS3231.h"
-#include "controller/controllerSoftTime.h"
+#include "controller/controllerIrRemote.h"
 #include "controller/controllerRadio.h"
-#include "controller/controllerWeather.h"
+#include "controller/controllerRadSens.h"
 #include "controller/controllerSoftReset.h"
+#include "controller/controllerSoftTime.h"
+#include "controller/controllerWeather.h"
 
 #include "component/component.h"
-#include "component/componentSoftReset.h"
 #include "component/componentIrRemote.h"
+#include "component/componentSoftReset.h"
 
 #include "view/view.h"
-#include "view/viewDS3231.h"
-#include "view/viewSoftTime.h"
-#include "view/viewTileTime.h"
-#include "view/viewRadio.h"
 #include "view/viewBme280.h"
+#include "view/viewDS3231.h"
+#include "view/viewRadio.h"
 #include "view/viewRadSens.h"
+#include "view/viewSoftTime.h"
+#include "view/viewTemperature.h"
+#include "view/viewTileTime.h"
 #include "view/viewWeather.h"
 
 
@@ -142,6 +143,7 @@ ViewWeather viewWeather = ViewWeather("viewWeather", &viewSettig, &ctrlWeather);
 #ifdef BME280_ENABLE
 ControllerBme280 ctrlBme280 = ControllerBme280("ctrlBme280");
 ViewBME280 viewBme280 = ViewBME280("viewBme280", &viewSettig, &ctrlBme280);
+ViewTemperature viewTemperature = ViewTemperature("ViewTemperature", &viewSettig, &ctrlBme280);
 #endif
 
 #ifdef RADSENS_ENABLE
@@ -179,6 +181,7 @@ View* viewList[] = {
 #endif
 #ifdef BME280_ENABLE
     &viewBme280,
+    &viewTemperature,
 #endif
 #if defined(RADSENS_ENABLE)
     &viewRadSens,
@@ -414,6 +417,7 @@ void setup() {
 #endif
 #ifdef BME280_ENABLE
     viewBme280.Start(2048);
+    viewTemperature.Start(2048);
 #endif
 #ifdef RADSENS_ENABLE
     viewRadSens.Start(2048);

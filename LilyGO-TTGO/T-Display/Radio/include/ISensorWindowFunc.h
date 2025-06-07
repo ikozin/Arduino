@@ -10,18 +10,19 @@ class ISensorWindowFunc : public ISensor<DataType> {
             _length = DataSize;
             _slice = SliceSize;
             _index = 0;
-            _sliceIndex = 0;
+            _sliceIndex = -1;
             _func = new SliceFunc();
         }
     protected:
         DataType                    _data[DataSize];
         size_t                      _length;
         size_t                      _slice;
-        size_t                      _index;
-        size_t                      _sliceIndex;
+        int16_t                     _index;
+        int16_t                     _sliceIndex;
         IWindowFunction<DataType>*  _func;
     public:
-        int Size() const { return _length; }
+        size_t Size() const { return _length; }
+        size_t Slice() const { return _slice; }
         DataType* GetWindow() const { return (DataType*)_data; }
     protected:
         void AddValue(DataType val) {
@@ -44,6 +45,6 @@ class ISensorWindowFunc : public ISensor<DataType> {
                 val = _func->Calc(val);
             }
             _data[_index] = val;
-            // LOGN("Index=%d, Slice=%d, Val=%.1f\r\n", _index, _sliceIndex, val);
+            // LOGN("Index=%d, Slice=%d, Val=%.1f", _index, _sliceIndex, val);
         }
 };
