@@ -1,15 +1,11 @@
 #pragma once
 
 #include "controller/controller.h"
+#include "winfunc/CurrentValueWinFunc.h"
 #include <CG_RadSens.h>
 
-typedef struct _RadSensData_ {
-    float Dynamic;
-    float Static;
-    float Impulse;
-} RadSensData;
 
-class ControllerRadSens : public Controller, public ISensorWindow<RadSensData, 30> {
+class ControllerRadSens : public Controller, public ISensorWindowFunc<float, 30, CurrentValueWinFunc, 1> {
     public:
         ControllerRadSens(const char* name);
     protected:

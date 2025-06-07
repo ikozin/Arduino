@@ -7,6 +7,7 @@
 #include "IUpdater.h"
 #include "ISensor.h"
 #include "ISensorWindow.h"
+#include "ISensorWindowFunc.h"
 
 typedef enum InitCode {
     INIT_ERROR = -1,

@@ -8,19 +8,18 @@ template<typename DataType,
     uint32_t ColorBorder, uint32_t ColorNormal, uint32_t ColorMax>
 class IViewGraph {
     protected:
-        virtual float ExtractValue(DataType value) = 0; 
-
         void DrawGraph(TFT_eSprite* sprite, DataType* data, size_t size) {
             for (size_t i = 0; i < size; i++) {
-                uint32_t value = ExtractValue(data[i]) * Multiplier;
-                // LOG("%d (%.1f) ", value, ExtractValue(data[i]));
+                uint32_t value = data[i] * Multiplier;
+                // LOG("%d (%.1f) ", value, data[i]);
+                // LOG("%.1f ", data[i]);
                 if (value > 0) {
                     if (value > Height) value = Height;
                     uint32_t color = (value >= MaxValue * Multiplier) ? ColorMax : ColorNormal;
                     sprite->fillRect(PosX + (i * (ColWidth + 1)), PosY - value, ColWidth, value, color);
                 }
             }
-            // LOGN("");
+            // LOGN("\r\n");
             sprite->drawFastHLine(PosX, PosY - (MaxValue * Multiplier), (ColWidth + 1) * size, ColorMax);
             sprite->drawRect(PosX - 1, PosY - Height - 1, (ColWidth + 1) * size + 2, Height + 2, ColorBorder);
         }

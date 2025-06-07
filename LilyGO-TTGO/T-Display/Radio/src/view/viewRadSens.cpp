@@ -142,11 +142,9 @@ void ViewRadSens::OnDrawHandle() {
     ControllerRadSens* _radSens = static_cast<ControllerRadSens*>(_ctrl);
     char text[8];
 
-    RadSensData* data = _radSens->GetWindow();
+    float* data = _radSens->GetWindow();
     size_t size =_radSens->Size();
-
-    RadSensData value = _radSens->GetData();
-    float radcounter =  ExtractValue(value); 
+    float radcounter = _radSens->GetData(); 
     
     getSetting()->getSprite()->loadFont(RobotoBold_33);
     getSetting()->getSprite()->fillSprite(TFT_BLACK);
