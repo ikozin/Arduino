@@ -2,51 +2,192 @@
 #include <Keyboard.h>
 #include <GyverIO.h>
 
-#define MAX_KEY 16
+#define MAX_KEY         16
+#define FUNC_KEYCODE    0xFF
 
-typedef struct _KEYDATA_ {
-    int16_t     pin;
-    int16_t     value;
-    uint32_t    time;
-} KEYDATA;
+volatile char   valueKeyCode    = 0;
+int8_t  indexFuncKey    = -1;
 
-
-KEYDATA keys[MAX_KEY] = {
-    { .pin = 2, .value = 1, .time = 0 },    // PD1
-    { .pin = 3, .value = 1, .time = 0 },    // PD0
-    { .pin = 4, .value = 1, .time = 0 },    // PD4
-    { .pin = 5, .value = 1, .time = 0 },    // PC6
-    { .pin = 6, .value = 1, .time = 0 },    // PD7
-    { .pin = 7, .value = 1, .time = 0 },    // PE6
-    { .pin = 8, .value = 1, .time = 0 },    // PB4
-    { .pin = 9, .value = 1, .time = 0 },    // PB5
-    { .pin = 10, .value = 1, .time = 0 },    // PB6
-    { .pin = 14, .value = 1, .time = 0 },    // PB3
-    { .pin = 15, .value = 1, .time = 0 },    // PB1
-    { .pin = 16, .value = 1, .time = 0 },    // PB2
-    { .pin = 18, .value = 1, .time = 0 },    // PF7
-    { .pin = 19, .value = 1, .time = 0 },    // PF6
-    { .pin = 20, .value = 1, .time = 0 },    // PF5
-    { .pin = 21, .value = 1, .time = 0 },    // PF4
+uint16_t layoutDef[MAX_KEY] {
+    FUNC_KEYCODE,
+    KEY_UP_ARROW,
+    KEY_DOWN_ARROW,
+    KEY_LEFT_ARROW,
+    KEY_RIGHT_ARROW,
+    KEY_BACKSPACE,
+    KEY_TAB,
+    KEY_RETURN,
+    'i',
+    'j',
+    'k',
+    'l',
+    'm',
+    'n',
+    'o',
+    'p',
 };
 
+typedef struct _KEYDATA_ {
+    uint32_t    time;
+    uint8_t     pin;
+    uint8_t     pressed;
+    uint8_t     keyCode;
+} KEYDATA;
+
+KEYDATA keys[MAX_KEY] = {
+    { .time = 0, .pin =  2, .pressed = 0, .keyCode = 0 },
+    { .time = 0, .pin =  3, .pressed = 0, .keyCode = 0 },
+    { .time = 0, .pin =  4, .pressed = 0, .keyCode = 0 },
+    { .time = 0, .pin =  5, .pressed = 0, .keyCode = 0 },
+    { .time = 0, .pin =  6, .pressed = 0, .keyCode = 0 },
+    { .time = 0, .pin =  7, .pressed = 0, .keyCode = 0 },
+    { .time = 0, .pin =  8, .pressed = 0, .keyCode = 0 },
+    { .time = 0, .pin =  9, .pressed = 0, .keyCode = 0 },
+    { .time = 0, .pin = 10, .pressed = 0, .keyCode = 0 },
+    { .time = 0, .pin = 14, .pressed = 0, .keyCode = 0 },
+    { .time = 0, .pin = 15, .pressed = 0, .keyCode = 0 },
+    { .time = 0, .pin = 16, .pressed = 0, .keyCode = 0 },
+    { .time = 0, .pin = 18, .pressed = 0, .keyCode = 0 },
+    { .time = 0, .pin = 19, .pressed = 0, .keyCode = 0 },
+    { .time = 0, .pin = 20, .pressed = 0, .keyCode = 0 },
+    { .time = 0, .pin = 21, .pressed = 0, .keyCode = 0 },
+};
+
+char text[512];
+
+void setLayout(uint16_t layout[]) {
+    for (int16_t i = 0; i < MAX_KEY; i++) {
+        keys[i].keyCode = layout[i];
+        if (layout[i] == FUNC_KEYCODE) {
+            indexFuncKey = i;
+            Serial.println(indexFuncKey);
+        }
+    }
+}
 void setup() {
-    Serial.begin(115200);
+    // Для мониторинга скорость ДОЛЖНА быть 9600, после заливки порт меняется,
+    // специфика работы micro, по скрости порта определяется режим
+    Serial.begin(9600);
+    while (!Serial);
+    Serial.println(F("Start"));
+
     Keyboard.begin();
     for (int i = 0; i < MAX_KEY; i++) {
         gio::init(keys[i].pin, INPUT_PULLUP);
     }
-    Serial.println(F("Start"));
+    setLayout(layoutDef);
+}
+
+bool proccessFunkKeyRelease(uint8_t code) {
+    switch (code) {
+        case KEY_UP_ARROW:
+        case KEY_DOWN_ARROW:
+        case KEY_LEFT_ARROW:
+        case KEY_RIGHT_ARROW:
+            return true;
+    }
+    return false;
+}
+
+bool proccessFunkKeyPress(uint8_t code) {
+    switch (code) {
+        case KEY_UP_ARROW:
+            if (valueKeyCode > 0) {
+                Keyboard.write(KEY_BACKSPACE);
+            }
+            if (valueKeyCode == 0) {
+                valueKeyCode = 'a' - 1;
+            }
+            valueKeyCode += 1;
+            if (valueKeyCode > 'z') {
+                valueKeyCode = 'a';
+            }
+            Keyboard.write(valueKeyCode);
+            return true;
+
+        case KEY_DOWN_ARROW:
+            if (valueKeyCode > 0) {
+                Keyboard.write(KEY_BACKSPACE);
+            }
+            if (valueKeyCode == 0) {
+                valueKeyCode = 'z' + 1;
+            }
+            valueKeyCode --;
+            if (valueKeyCode < 'a') {
+                valueKeyCode = 'z';
+            }
+            Keyboard.write(valueKeyCode);
+            return true;
+
+        case KEY_LEFT_ARROW:
+            if (valueKeyCode > 0) {
+                Keyboard.write(KEY_BACKSPACE);
+            }
+            if (valueKeyCode == 0) {
+                valueKeyCode = 'm';
+            }
+            valueKeyCode -= 4;
+            if (valueKeyCode < 'a') {
+                valueKeyCode = 'z';
+            }
+            Keyboard.write(valueKeyCode);
+            return true;
+
+        case KEY_RIGHT_ARROW:
+            if (valueKeyCode > 0) {
+                Keyboard.write(KEY_BACKSPACE);
+            }
+            if (valueKeyCode == 0) {
+                valueKeyCode = 'm';
+            }
+            valueKeyCode += 4;
+            if (valueKeyCode > 'z') {
+                valueKeyCode = 'a';
+            }
+            Keyboard.write(valueKeyCode);
+            return true;
+    }
+    return false;
 }
 
 void loop() {
     uint32_t time = millis();
     for (int i = 0; i < MAX_KEY; i++) {
-        int16_t value = gio::read(keys[i].pin);
-        if (value != keys[i].value) {
+        uint8_t value = !gio::read(keys[i].pin);
+        if (value != keys[i].pressed) {
             if (time - keys[i].time > 50) {
-                Serial.println(keys[i].pin);
-                keys[i].value = value;
+                keys[i].pressed = value;
+                if (keys[i].keyCode) {
+
+                    if (keys[i].keyCode == FUNC_KEYCODE) {
+                        if (!value) {
+                            Keyboard.releaseAll();
+                            valueKeyCode = 0;
+                        }
+                    }
+                    else {
+                        if (value) {
+                            if (keys[indexFuncKey].pressed) {
+                                proccessFunkKeyPress(keys[i].keyCode);
+                            }
+                            else {
+                                Keyboard.press(keys[i].keyCode);
+                                sprintf(text, "index=%d, pin=%d, value=%d, code=%02X =press", i, keys[i].pin, value, (uint8_t)keys[i].keyCode);
+                                Serial.println(text);
+                            }
+                        }
+                        else {
+                            if (keys[indexFuncKey].pressed) {
+                                proccessFunkKeyRelease(keys[i].keyCode);
+                            }
+                            else {
+                                Keyboard.release(keys[i].keyCode);
+                                sprintf(text, "index=%d, pin=%d, value=%d, code=%02X =release", i, keys[i].pin, value, (uint8_t)keys[i].keyCode);
+                                Serial.println(text);
+                            }
+                        }
+                    }
+                }
             }
             keys[i].time = time;
         }
