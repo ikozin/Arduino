@@ -1,16 +1,34 @@
+// https://github.com/GyverLibs/NecDecoder
+// https://github.com/Arduino-IRremote/Arduino-IRremote
+// https://github.com/crankyoldgit/IRremoteESP8266
+
+//
+//      DAT VCC GND
+//       │   │   │
+//  ┌────┴───┴───┴────┐
+//  │  ┌───┬───┬───┐  │
+//  │  │DAT│VCC│GND│  │
+//  │  ├───┼───┼───┤▐ │
+//  │  │DAT│GND│VCC│  │
+//  │  ├───┼───┼───┤▐ │
+//  │  │GND│DAT│VCC│  │
+//  │  └───┴───┴───┘  │
+//  └─────────────────┘
+
+// https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/system/freertos_idf.html#c.xSemaphoreCreateBinary
+
 #include <Arduino.h>
 #define PIN 26
 
 SemaphoreHandle_t updateEvent = xSemaphoreCreateBinary();
 
 #define AlexGyver_NecDecoder
-//#define Arduino_IRremote
-//#define IR_ESP8266
+// #define Arduino_IRremote
+// #define IR_ESP8266
+// #define IR_CUSTOM
 
 #ifdef AlexGyver_NecDecoder
 #include <NecDecoder.h>
-
-// https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/system/freertos_idf.html#c.xSemaphoreCreateBinary
 
 const int pinIR = PIN;
 NecDecoder ir_recv;
@@ -148,5 +166,45 @@ void loop() {
     Serial.println();    // Blank line between entries
     yield();             // Feed the WDT (again)
   }
+}
+#endif
+
+#ifdef IR_CUSTOM
+const int pinIR = PIN;
+
+volatile uint8_t n = 0;
+volatile uint16_t keycode = 0;
+uint32_t last;
+
+
+IRAM_ATTR void ir_interrupt(void) {
+
+    uint32_t tm = micros() - last;
+    last = micros();
+    n += 1;
+    if (tm > 3000) {
+        keycode = 0;
+        n = 0;
+    }
+    if (n > 8) {
+        if (tm > 1500) keycode += 1;
+        keycode = keycode << 1;
+    }
+    if (n == 32) {
+        xSemaphoreGiveFromISR(updateEvent, nullptr);
+    }
+}
+
+void setup() {
+    Serial.begin(115200);
+    pinMode(pinIR, INPUT);
+    attachInterrupt(pinIR, ir_interrupt, FALLING);
+    // attachInterruptArg(pinIR, ir_interrupt, NULL, FALLING);
+}
+
+void loop() {
+    xSemaphoreTake(updateEvent, portMAX_DELAY);      
+    Serial.print("0x");
+    Serial.println(keycode, HEX);
 }
 #endif

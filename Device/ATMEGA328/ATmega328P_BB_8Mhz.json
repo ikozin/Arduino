@@ -1,0 +1,29 @@
+{
+	"build": {
+		"core": "arduino",
+		"extra_flags": "-DARDUINO_AVR_ATmega328P -DARDUINO_AVR_ATmega328P_BB8",
+		"f_cpu": "8000000L",
+		"mcu": "atmega328p",
+		"variant": "standard"
+	},
+	"frameworks": [
+		"arduino"
+	],
+	"fuses": {
+		"efuse": "0xFD",
+		"hfuse": "0xD0",
+		"lfuse": "0xD2",
+		"lock": "0x0F"
+	},
+	"name": "ATmega328P_BB_8Mhz",
+	"upload": {
+		"maximum_ram_size": 2048,
+		"maximum_size": 32256,
+		"protocol": "arduino",
+		"require_upload_port": true,
+		"speed": 57600,
+		"flags": "-v -e"
+	},
+	"url": "https://www.microchip.com/wwwproducts/en/ATmega328P",
+	"vendor": "Microchip"
+}
