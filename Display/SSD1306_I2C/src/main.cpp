@@ -29,10 +29,12 @@
 #define Gyver_Lib
 
 #ifdef Adafruit_Lib
-AdafruitDemoLib demo;
+// AdafruitDemoLib<128, 32> demo;
+AdafruitDemoLib<128, 64> demo;
 #endif
 #ifdef Gyver_Lib
-GyverDemoLib demo;
+// GyverDemoLib<SSD1306_128x32> demo;
+GyverDemoLib<SSD1306_128x64> demo;
 #endif
 
 void setup() {

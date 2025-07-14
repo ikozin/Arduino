@@ -147,7 +147,6 @@ void commandWrite() {
     Serial.flush();
 }
 
-
 void commandHelp() {
     Serial.println(F("H, ?, HELP - вывод подсказки по командам"));
     Serial.println(F("LB, LOAD BASE - загрузка данных через COM порт в BASE64 формате"));
@@ -186,7 +185,6 @@ void proccessCommand(String& command) {
         return;
     }
 }
-
 
 void setup() {
     cmd.reserve(127);

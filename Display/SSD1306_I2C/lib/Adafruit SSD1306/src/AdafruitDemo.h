@@ -7,17 +7,22 @@
 #include <Adafruit_SSD1306.h>
 
 
+template <int _WIDTH, int _HEIGHT>
 class AdafruitDemoLib {
     public:
-        AdafruitDemoLib();
-    protected:
-        const int SCREEN_WIDTH = 128;
-        const int SCREEN_HEIGHT = 64;
-        const int SCREEN_ADDRESS = 0x3C;
-        const int OLED_RESET = -1;
+        AdafruitDemoLib() : display(_WIDTH, _HEIGHT, &Wire) {}
     public:
-        void setup(void);
-        void loop(void);
+        void setup(void) {
+            display.begin(SSD1306_SWITCHCAPVCC, 0x3C);
+            display.clearDisplay();
+            display.setTextSize(1);
+            display.setTextColor(SSD1306_WHITE);
+            display.println("Hello World!");
+            display.println("Привет МИР!");
+            display.println("0123456789");
+            display.display();
+        }
+        void loop(void) const {};
     private:
         Adafruit_SSD1306 display;
 };
