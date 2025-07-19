@@ -2,7 +2,10 @@
 #include <Keyboard.h>
 #include <GyverIO.h>
 
-//#define DEBUG_INFO
+// #define DEBUG_INFO
+#define PCB_V_1_0
+// #define PCB_V_2_0
+
 #define MAX_KEY         16
 #define FUNC_KEYCODE    0xFF
 
@@ -39,18 +42,17 @@ typedef struct _KEYDATA_ {
 } KEYDATA;
 
 
-/*
-Распиновка кнопок на плате
-┌─────┬─────┬─────┬─────┐
-│  D2 │  D3 │ D21 │ D10 │
-├─────┼─────┼─────┼─────┤
-│  D4 │  D5 │ D20 │ D16 │
-├─────┼─────┼─────┼─────┤
-│  D6 │  D7 │ D19 │ D14 │
-├─────┼─────┼─────┼─────┤
-│  D8 │  D9 │ D18 │ D15 │
-└─────┴─────┴─────┴─────┘
-*/
+#ifdef PCB_V_1_0
+// Распиновка кнопок на плате v1.0
+// ┌─────┬─────┬─────┬─────┐
+// │  D2 │  D3 │ D21 │ D10 │
+// ├─────┼─────┼─────┼─────┤
+// │  D4 │  D5 │ D20 │ D16 │
+// ├─────┼─────┼─────┼─────┤
+// │  D6 │  D7 │ D19 │ D14 │
+// ├─────┼─────┼─────┼─────┤
+// │  D8 │  D9 │ D18 │ D15 │
+// └─────┴─────┴─────┴─────┘
 KEYDATA keys[MAX_KEY] = {
     { .time = 0, .pin =  2, .pressed = 0, .keyCode = 0 },
     { .time = 0, .pin =  3, .pressed = 0, .keyCode = 0 },
@@ -72,6 +74,42 @@ KEYDATA keys[MAX_KEY] = {
     { .time = 0, .pin = 18, .pressed = 0, .keyCode = 0 },
     { .time = 0, .pin = 15, .pressed = 0, .keyCode = 0 },
 };
+#endif
+
+#ifdef PCB_V_2_0
+// Распиновка кнопок на плате v2.0
+// ┌─────┬─────┬─────┬─────┐
+// │  D2 │  D9 │ D18 │ D10 │
+// ├─────┼─────┼─────┼─────┤
+// │  D3 │  D8 │ D19 │ D16 │
+// ├─────┼─────┼─────┼─────┤
+// │  D4 │  D7 │ D20 │ D14 │
+// ├─────┼─────┼─────┼─────┤
+// │  D5 │  D6 │ D21 │ D15 │
+// └─────┴─────┴─────┴─────┘
+KEYDATA keys[MAX_KEY] = {
+    { .time = 0, .pin =  2, .pressed = 0, .keyCode = 0 },
+    { .time = 0, .pin =  9, .pressed = 0, .keyCode = 0 },
+    { .time = 0, .pin = 18, .pressed = 0, .keyCode = 0 },
+    { .time = 0, .pin = 10, .pressed = 0, .keyCode = 0 },
+
+    { .time = 0, .pin =  3, .pressed = 0, .keyCode = 0 },
+    { .time = 0, .pin =  8, .pressed = 0, .keyCode = 0 },
+    { .time = 0, .pin = 19, .pressed = 0, .keyCode = 0 },
+    { .time = 0, .pin = 16, .pressed = 0, .keyCode = 0 },
+
+
+    { .time = 0, .pin =  4, .pressed = 0, .keyCode = 0 },
+    { .time = 0, .pin =  7, .pressed = 0, .keyCode = 0 },
+    { .time = 0, .pin = 20, .pressed = 0, .keyCode = 0 },
+    { .time = 0, .pin = 14, .pressed = 0, .keyCode = 0 },
+
+    { .time = 0, .pin =  5, .pressed = 0, .keyCode = 0 },
+    { .time = 0, .pin =  6, .pressed = 0, .keyCode = 0 },
+    { .time = 0, .pin = 21, .pressed = 0, .keyCode = 0 },
+    { .time = 0, .pin = 15, .pressed = 0, .keyCode = 0 },
+};
+#endif
 
 #ifdef DEBUG_INFO
 char text[512];
