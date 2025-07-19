@@ -2,6 +2,7 @@
 #include <Keyboard.h>
 #include <GyverIO.h>
 
+//#define DEBUG_INFO
 #define MAX_KEY         16
 #define FUNC_KEYCODE    0xFF
 
@@ -9,22 +10,25 @@ volatile char   valueKeyCode    = 0;
 int8_t  indexFuncKey    = -1;
 
 uint16_t layoutDef[MAX_KEY] {
-    FUNC_KEYCODE,
-    KEY_UP_ARROW,
-    KEY_DOWN_ARROW,
-    KEY_LEFT_ARROW,
-    KEY_RIGHT_ARROW,
+    KEY_ESC,
     KEY_BACKSPACE,
     KEY_TAB,
     KEY_RETURN,
-    'i',
-    'j',
-    'k',
-    'l',
-    'm',
-    'n',
-    'o',
-    'p',
+
+    ' ',
+    ' ',
+    ' ',
+    ' ',
+
+    ' ',
+    'q',
+    KEY_UP_ARROW,
+    'e',
+    
+    FUNC_KEYCODE,
+    KEY_LEFT_ARROW,
+    KEY_DOWN_ARROW,
+    KEY_RIGHT_ARROW,
 };
 
 typedef struct _KEYDATA_ {
@@ -34,42 +38,64 @@ typedef struct _KEYDATA_ {
     uint8_t     keyCode;
 } KEYDATA;
 
+
+/*
+Распиновка кнопок на плате
+┌─────┬─────┬─────┬─────┐
+│  D2 │  D3 │ D21 │ D10 │
+├─────┼─────┼─────┼─────┤
+│  D4 │  D5 │ D20 │ D16 │
+├─────┼─────┼─────┼─────┤
+│  D6 │  D7 │ D19 │ D14 │
+├─────┼─────┼─────┼─────┤
+│  D8 │  D9 │ D18 │ D15 │
+└─────┴─────┴─────┴─────┘
+*/
 KEYDATA keys[MAX_KEY] = {
     { .time = 0, .pin =  2, .pressed = 0, .keyCode = 0 },
     { .time = 0, .pin =  3, .pressed = 0, .keyCode = 0 },
+    { .time = 0, .pin = 21, .pressed = 0, .keyCode = 0 },
+    { .time = 0, .pin = 10, .pressed = 0, .keyCode = 0 },
+
     { .time = 0, .pin =  4, .pressed = 0, .keyCode = 0 },
     { .time = 0, .pin =  5, .pressed = 0, .keyCode = 0 },
+    { .time = 0, .pin = 20, .pressed = 0, .keyCode = 0 },
+    { .time = 0, .pin = 16, .pressed = 0, .keyCode = 0 },
+
     { .time = 0, .pin =  6, .pressed = 0, .keyCode = 0 },
     { .time = 0, .pin =  7, .pressed = 0, .keyCode = 0 },
+    { .time = 0, .pin = 19, .pressed = 0, .keyCode = 0 },
+    { .time = 0, .pin = 14, .pressed = 0, .keyCode = 0 },
+
     { .time = 0, .pin =  8, .pressed = 0, .keyCode = 0 },
     { .time = 0, .pin =  9, .pressed = 0, .keyCode = 0 },
-    { .time = 0, .pin = 10, .pressed = 0, .keyCode = 0 },
-    { .time = 0, .pin = 14, .pressed = 0, .keyCode = 0 },
-    { .time = 0, .pin = 15, .pressed = 0, .keyCode = 0 },
-    { .time = 0, .pin = 16, .pressed = 0, .keyCode = 0 },
     { .time = 0, .pin = 18, .pressed = 0, .keyCode = 0 },
-    { .time = 0, .pin = 19, .pressed = 0, .keyCode = 0 },
-    { .time = 0, .pin = 20, .pressed = 0, .keyCode = 0 },
-    { .time = 0, .pin = 21, .pressed = 0, .keyCode = 0 },
+    { .time = 0, .pin = 15, .pressed = 0, .keyCode = 0 },
 };
 
+#ifdef DEBUG_INFO
 char text[512];
+#endif
 
 void setLayout(uint16_t layout[]) {
     for (int16_t i = 0; i < MAX_KEY; i++) {
         keys[i].keyCode = layout[i];
         if (layout[i] == FUNC_KEYCODE) {
             indexFuncKey = i;
+#ifdef DEBUG_INFO
             Serial.println(indexFuncKey);
+#endif
         }
     }
 }
 void setup() {
+#ifdef DEBUG_INFO
     // Для мониторинга скорость ДОЛЖНА быть 9600, после заливки порт меняется,
     // специфика работы micro, по скрости порта определяется режим
     Serial.begin(9600);
     while (!Serial);
     Serial.println(F("Start"));
+#endif
 
     Keyboard.begin();
     for (int i = 0; i < MAX_KEY; i++) {
@@ -172,8 +198,10 @@ void loop() {
                             }
                             else {
                                 Keyboard.press(keys[i].keyCode);
+#ifdef DEBUG_INFO
                                 sprintf(text, "index=%d, pin=%d, value=%d, code=%02X =press", i, keys[i].pin, value, (uint8_t)keys[i].keyCode);
                                 Serial.println(text);
+#endif
                             }
                         }
                         else {
@@ -182,8 +210,10 @@ void loop() {
                             }
                             else {
                                 Keyboard.release(keys[i].keyCode);
+#ifdef DEBUG_INFO
                                 sprintf(text, "index=%d, pin=%d, value=%d, code=%02X =release", i, keys[i].pin, value, (uint8_t)keys[i].keyCode);
                                 Serial.println(text);
+#endif
                             }
                         }
                     }
