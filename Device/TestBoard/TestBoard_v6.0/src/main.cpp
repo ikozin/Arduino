@@ -209,7 +209,7 @@ void setup() {
     // }
 
     // Initialize Serial
-    Serial.begin(57600);
+    Serial.begin(115200);
     while (!Serial);
     delay(2000); // Pause for 2 seconds
     
