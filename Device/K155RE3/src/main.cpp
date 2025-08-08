@@ -18,7 +18,6 @@
 #define DELAY_MS(d)      for (int i = 0; i < (d); i++) delayMicroseconds(1000);
 
 // #define ECHO
-#define ROMSIZE         32
 
 #define LED1_PIN        39
 #define LED2_PIN        40
@@ -26,14 +25,43 @@
 
 GyverOLED<SSD1306_128x32, OLED_BUFFER>   oled(0x3C);
 
-uint8_t data[ROMSIZE] {};
+uint8_t data[256] {};
+
+/*
+         К155РЕ3                    К556РТ4                   
+    ┌────┬─────┬────┐          ┌────┬─────┬────┐              
+ 10 ┤  1 │ ROM │ 1  ├ 1     15 ┤ A1 │ ROM │ 1  ├ 12
+ 11 ┤  2 │     │ 2  ├ 2      7 ┤ A2 │     │ 2  ├ 11
+ 12 ┤  4 │     │ 3  ├ 3      6 ┤ A3 │     │ 3  ├ 10
+ 13 ┤  8 │     │ 4  ├ 4      5 ┤ A4 │     │ 4  ├ 9
+ 14 ┤ 16 │     │ 5  ├ 5      4 ┤ A5 │     │    │
+    │    │     │ 6  ├ 6      3 ┤ A6 │     │    │
+    ├────┤     │ 7  ├ 7      2 ┤ A7 │     │    │
+ 15 ┤ ~E │     │ 8  ├ 9      1 ┤ A8 │     │    │
+    └────┴─────┴────┘          ├────┤     │    │
+                            13 ┤ W  │     │    │
+                            14 ┤ CE │     │    │
+                               └────┴─────┴────┘
+*/
+typedef struct {
+    uint16_t word;
+    uint16_t error;    
+} HexCovertResult;
+
+typedef struct {
+    const size_t  chip_size;
+    const uint8_t shift;
+    const uint8_t bit_size;
+    const char*   name;
+} EEPROM_SETTING;
+
+EEPROM_SETTING k155re3 { .chip_size = 32, .shift = 3, .bit_size = 8, .name = "К155РЕ3" };
+EEPROM_SETTING k566rt4 { .chip_size = 256, .shift = 0, .bit_size = 4, .name = "К556РТ4" };
+EEPROM_SETTING *setting = &k155re3;
 
 String cmd;
 char terminator = 0;
 char text[64];
-
-uint16_t chip_size = ROMSIZE;
-uint8_t chip_addr_shift = 3; 
 
 inline void setLeds(bool led1, bool led2) {
     gio::write(LED1_PIN, led1);
@@ -44,10 +72,12 @@ inline void EEPROM_setWrite(bool isWrite) {
     gio::write(WR_PIN, !isWrite);
 }
 
+// data = PINL
 inline uint8_t EEPROM_getData() {
     return PINL;
 }
 
+// PORTC = data
 inline void EEPROM_setData(uint8_t data) {
     PORTC = ~data;
 }
@@ -60,22 +90,49 @@ inline void EEPROM_setAddress(uint8_t addr) {
     PORTA = addr;  // Set address
 }
 
-void EEPROM_loadData(size_t chip_size, uint8_t* data, uint8_t shift, uint8_t bit_size) {
+bool EEPROM_TestAddres(uint8_t* data, EEPROM_SETTING *eeprom) {
+    setLeds(false, false);
+    EEPROM_setAddress(0);
+
+    for (uint16_t addr = 0; addr < eeprom->chip_size; addr++) {
+        EEPROM_setAddress(addr << eeprom->shift);
+        Serial.println(addr, HEX);
+        DELAY_MS(2000);
+    }
+    return true;
+}
+
+bool EEPROM_TestData(uint8_t* data, EEPROM_SETTING *eeprom) {
+    setLeds(false, false);
+    EEPROM_setAddress(0);
+
+    for (int n = 0; n < eeprom->bit_size; n++) {
+        const uint8_t mask = bit(n);
+        EEPROM_setData(mask);
+        DELAY_MS(500);
+    }
+    EEPROM_setData(0xFF);
+    return true;
+}
+
+void EEPROM_loadData(uint8_t* data, EEPROM_SETTING *eeprom) {
     setLeds(false, false);
     EEPROM_setData(0xFF);
-    uint16_t mask = bit(bit_size + 1) - 1;
-    for (uint16_t addr = 0; addr < chip_size; addr++) {
-        EEPROM_setAddress(addr << shift);
+    uint16_t mask = bit(eeprom->bit_size + 1) - 1;
+    for (uint16_t addr = 0; addr < eeprom->chip_size; addr++) {
+        EEPROM_setAddress(addr << eeprom->shift);
         DELAY_MS(50);
         const uint8_t value = EEPROM_getData();
         data[addr] = value & mask;
     }
 }
 
-bool EEPROM_saveData(size_t chip_size, uint8_t* data, uint8_t shift, uint8_t bit_size) {
+bool EEPROM_saveData(uint8_t* data, EEPROM_SETTING *eeprom) {
     setLeds(false, false);
-    for (uint16_t addr = 0; addr < chip_size; addr++) {
-        EEPROM_setAddress(addr << shift);
+    EEPROM_setAddress(0);
+
+    for (uint16_t addr = 0; addr < eeprom->chip_size; addr++) {
+        EEPROM_setAddress(addr << eeprom->shift);
         DELAY_MS(50);
         const uint8_t value = data[addr];
         uint8_t current = EEPROM_getData();
@@ -84,7 +141,7 @@ bool EEPROM_saveData(size_t chip_size, uint8_t* data, uint8_t shift, uint8_t bit
         Serial.println(text);
         Serial.flush();
 
-        for (int n = 0; n < bit_size; n++) {
+        for (int n = 0; n < eeprom->bit_size; n++) {
             const uint8_t mask = bit(n);
             if ((value & mask) == 0) continue;
             if ((current & mask) != 0) continue;
@@ -120,36 +177,100 @@ bool EEPROM_saveData(size_t chip_size, uint8_t* data, uint8_t shift, uint8_t bit
             return false;
         }
     }
+    EEPROM_setAddress(0);
     return true;
 }
 
-void oledEEPROM() {
+void oledEEPROM(EEPROM_SETTING* eeprom) {
     oled.clear();
-    oled.setCursor(1, 1);
-    oled.print("К155РЕ3 (32x8)");
+    oled.setCursor(24, 1);
+    oled.setScale(2);
+    oled.print(eeprom->name);
+    oled.setScale(1);
     oled.rect(0, 0, 127, 31, OLED_STROKE);
     oled.update();
 }
+
 void commandK155RE3() {
+    setting = &k155re3;
     Serial.println(F("EEPROM = К155РЕ3 (EEPROM:32x8)"));
     Serial.println(F("OK"));
     Serial.flush();
+    oledEEPROM(setting);
 }
 
 void commandK556RT4() {
+    setting = &k566rt4;
     Serial.println(F("EEPROM = К556РТ4 (EEPROM:256x4)"));
     Serial.println(F("OK"));
     Serial.flush();
+    oledEEPROM(setting);
 }
 
-void commandLoadData() {
+uint16_t hexToWord(char** buffer, int maxLen = 4) {
+    uint16_t word = 0;
+    char symb = **buffer;
+    if (!isxdigit(symb)) return word;
+    word = isdigit(symb)? (symb - '0') : (symb - 'A' + 10);
+    while ((symb = *(++(*buffer))) != '\0' && --maxLen > 0) {
+        if (!isxdigit(symb)) break;
+        word <<= 4;
+        word |= isdigit(symb)? (symb - '0') : (symb - 'A' + 10);
+    }
+    return word;
+}
+
+// 0000: 81 CF A2 8A CC 98 90 CB 80 88 C0 94 B1 86 B0 F0
+// 0000: 7E 30 5D 75 33 67 6F 34 7F 77 3F 6B 4E 79 4F 0F
+
+// 0000: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+// 0010: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+// 0000: FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF
+// 0010: FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF
+void commandLoadData(EEPROM_SETTING* eeprom) {
     Serial.println(F("Enter data:"));
     Serial.flush();
     while (!Serial.available()) delay(100);
     cmd = Serial.readStringUntil(terminator);
+    Serial.println(cmd);
+    Serial.flush();
+
+    cmd.toUpperCase();
+    cmd.trim();
+
+    char* buffer = cmd.begin();
+    uint16_t address = hexToWord(&buffer);
+    if (address > eeprom->chip_size) {
+        Serial.println(F("Error address"));
+        return;
+    }
+    if (*buffer++ != ':') {
+        Serial.println(F("Error data format (:)"));
+        return;
+    }
+    while (*buffer != '\0') {
+        while (isblank(*buffer)) buffer++;
+        data[address++] = (uint8_t)hexToWord(&buffer);
+        if (address > eeprom->chip_size) {
+            Serial.println(F("Error address"));
+            return;
+        }
+    }
+    Serial.println(F("OK"));
+    Serial.flush();
+    return;
 }
 
-void commandLoadIntelHex() {
+// :1000000081CFA28ACC9890CB8088C094B186B0F082
+// :1000000000000000000000000000000000000000F0
+// :00000001FF
+// :1000000000000000000000000000000000000000F0
+// :1000000000000000000000000000000000000000F0
+// :00000001FF
+// :10000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF100
+// :10000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF100
+// :00000001FF
+void commandLoadIntelHex(EEPROM_SETTING* eeprom) {
     Serial.println(F("Enter IntelHex data:"));
     Serial.flush();
     while (true) {
@@ -159,52 +280,41 @@ void commandLoadIntelHex() {
         uint8_t ext  = 0;
         uint16_t addr = 0;
         uint16_t sum  = 0;
-        char symb;
-    
+        
+        while (!Serial.available()) delay(100);
+        delay(2000);
         cmd = Serial.readStringUntil(terminator);
+        Serial.println(cmd);
+        Serial.flush();
+        cmd.toUpperCase();
         cmd.trim();
+
         if (cmd.length() == 0) break;
         if (cmd.length() < 11) {
             Serial.println(F("Error data format (length)"));
             return;
         }
-        symb = cmd[0];
-        if (symb != ':') {
+        char* buffer = cmd.begin();
+        if (*buffer++ != ':') {
             Serial.println(F("Error data format (start)"));
             return;
         }
-
-        symb = cmd[1];
-        size = (isdigit(symb)? symb - '0' : (symb - 'A' + 10)) << 4;
-        symb = cmd[2];
-        size |= isdigit(symb)? symb - '0' : (symb - 'A' + 10);
+        size = hexToWord(&buffer, 2);
         sum += size;
-        if (size > ROMSIZE) {
+        if (size > eeprom->chip_size) {
             Serial.println(F("Error data (size)"));
             return;
         }
 
-        symb = cmd[3];
-        value = (isdigit(symb)? symb - '0' : (symb - 'A' + 10)) << 4;
-        symb = cmd[4];
-        value |= isdigit(symb)? symb - '0' : (symb - 'A' + 10);
-        sum += value;
-        addr = value << 8;
-        symb = cmd[5];
-        value = (isdigit(symb)? symb - '0' : (symb - 'A' + 10)) << 4;
-        symb = cmd[6];
-        value |= isdigit(symb)? symb - '0' : (symb - 'A' + 10);
-        sum += value;
-        addr |= value;
-        if (addr + size > ROMSIZE) {
+        addr = hexToWord(&buffer);
+        sum += addr & 0xFF;
+        sum += addr >> 8;
+        if (addr + size > eeprom->chip_size) {
             Serial.println(F("Error data (overflow)"));
             return;
         }
-
-        symb = cmd[7];
-        type = (isdigit(symb)? symb - '0' : (symb - 'A' + 10)) << 4;
-        symb = cmd[8];
-        type |= isdigit(symb)? symb - '0' : (symb - 'A' + 10);
+        
+        type = hexToWord(&buffer, 2);
         sum += type;
         if (type != 0 && type != 1) {
             Serial.println(F("Error data (type)"));
@@ -215,18 +325,12 @@ void commandLoadIntelHex() {
             return;
         }
         for (int i = 0; i < size; i++) {
-            symb = cmd[9 + (i << 1)];
-            value = (isdigit(symb)? symb - '0' : (symb - 'A' + 10)) << 4;
-            symb = cmd[10 + (i << 1)];
-            value |= isdigit(symb)? symb - '0' : (symb - 'A' + 10);
+            value = hexToWord(&buffer, 2);
             sum += value;
             data[addr + i] = value;
         }
     
-        symb = cmd[9 + (size << 1)];
-        ext = (isdigit(symb)? symb - '0' : (symb - 'A' + 10)) << 4;
-        symb = cmd[10 + (size << 1)];
-        ext |= isdigit(symb)? symb - '0' : (symb - 'A' + 10);
+        ext = hexToWord(&buffer, 2);
         sum += ext;
         if ((sum & 0xFF) != 0) {
             Serial.print(F("Error data format (checksum):"));
@@ -242,24 +346,30 @@ void commandLoadIntelHex() {
     Serial.flush();
 }
 
-void commandLoadBase64() {
+// gc+iisyYkMuAiMCUsYaw8AAAAAAAAAAAAAAAAAAAAAA=
+// AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=
+// //////////////////////////////////////////8=
+void commandLoadBase64(EEPROM_SETTING* eeprom) {
     Serial.println(F("Enter base64 data:"));
     while (!Serial.available()) delay(100);
     cmd = Serial.readStringUntil(terminator);
+    Serial.println(cmd);
+    Serial.flush();
+    cmd.trim();
     size_t dlen = su::b64::decodedLen((void *)cmd.c_str(), cmd.length());
-    if (dlen != ROMSIZE) {
+    if (dlen != eeprom->chip_size) {
         sprintf(text, "Error Read. decoded length data = %d", cmd.length());
         Serial.println(text);
         return;
     }
-    su::b64::decode(data);
+    su::b64::decode(data, cmd.c_str());
     Serial.println(F("OK"));
     Serial.flush();
 }
 
-void commandDump() {
+void commandDump(EEPROM_SETTING* eeprom) {
     Serial.print(F("      00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F"));
-    for (size_t i = 0; i < ROMSIZE; i++) {
+    for (size_t i = 0; i < eeprom->chip_size; i++) {
         if (i % 16 == 0) {
             Serial.println();
             sprintf(text, "[%02X]:", i);
@@ -273,18 +383,70 @@ void commandDump() {
     Serial.flush();
 }
 
+void commandDumpBase(EEPROM_SETTING* eeprom) {
+    cmd = "";
+    su::b64::encode(cmd, data, eeprom->chip_size, false);
+    Serial.println(F("BASE64:"));
+    Serial.println(cmd);
+    Serial.println(F("OK"));
+    Serial.flush();
+}
+
+void commandDumpIntel(EEPROM_SETTING* eeprom) {
+    cmd = "";
+    uint8_t type = 0;
+    uint8_t block_size = 16;
+    uint16_t addr = 0;
+    Serial.println(F("IntelHex:"));
+    uint8_t* buffer = &data[0];    
+
+    for (size_t n = 0; n < eeprom->chip_size / block_size; n++) {
+        uint16_t sum  = block_size + (addr & 0xFF) + (addr >> 8) + type;
+        sprintf(text, ":%02X%04X%02X", block_size, addr, type);
+        Serial.print(text);
+        for (size_t i = 0; i < block_size; i++) {
+            uint8_t value = buffer[i];
+            sprintf(text, "%02X", value);
+            Serial.print(text);
+            sum += value;        
+        }
+        buffer += block_size;
+        sum = 0x100 - (sum & 0xFF);
+        sprintf(text, "%02X", sum);
+        Serial.println(text);
+    }
+    Serial.println(":00000001FF");
+    Serial.println(F("OK"));
+    Serial.flush();
+}
+
 void commandRead() {
-    EEPROM_loadData(ROMSIZE, data, 3, 8);
+    EEPROM_loadData(data, setting);
     Serial.println(F("OK"));
     Serial.flush();
 }
 
 void commandWrite() {
-    bool isDone = EEPROM_saveData(ROMSIZE, data, 3, 8);
+    bool isDone = EEPROM_saveData(data, setting);
     if (isDone) Serial.println(F("OK"));
     else Serial.println(F("ERROR"));
     Serial.flush();
 }
+
+void commandTestData(EEPROM_SETTING* eeprom) {
+    bool isDone = EEPROM_TestData(data, setting);
+    if (isDone) Serial.println(F("OK"));
+    else Serial.println(F("ERROR"));
+    Serial.flush();
+}
+
+void commandTestAddress(EEPROM_SETTING* eeprom) {
+    bool isDone = EEPROM_TestAddres(data, setting);
+    if (isDone) Serial.println(F("OK"));
+    else Serial.println(F("ERROR"));
+    Serial.flush();
+}
+
 
 void commandHelp() {
     Serial.println(F("H, ?, HELP - вывод подсказки по командам"));
@@ -294,8 +456,12 @@ void commandHelp() {
     Serial.println(F("LB, LOAD BASE - загрузка данных через COM порт в BASE64 формате"));
     Serial.println(F("LX, LOAD HEX  - загрузка данных через COM порт в Intel Hex формате"));
     Serial.println(F("D, DUMP  - просмотр данных для записи(прожига)"));
+    Serial.println(F("DB, DUMP BASE - просмотр данных для записи(прожига) в BASE64 формате"));
+    Serial.println(F("DX, DUMP HEX - просмотр данных для записи(прожига) в Intel Hex формате"));
     Serial.println(F("R, READ  - считывание данных из EEPROM"));
     Serial.println(F("W, WRITE - запись(прожиг) данных в EEPROM"));
+    Serial.println(F("TD, TEST DATA - тест шины данных"));
+    Serial.println(F("TA, TEST ADDRESS - тест шины адреса"));
     Serial.flush();
 }
 
@@ -315,19 +481,27 @@ void proccessCommand(String& command) {
         return;
     }
     if (command == "A" || command.startsWith("ADDR")) {
-        commandLoadData();
+        commandLoadData(setting);
         return;
     }
     if (command == "LB" || command.startsWith("LOAD BASE")) {
-        commandLoadBase64();
+        commandLoadBase64(setting);
         return;
     }
     if (command == "LX" || command.startsWith("LOAD HEX")) {
-        commandLoadIntelHex();
+        commandLoadIntelHex(setting);
         return;
     }
     if (command == "D" || command.startsWith("DUMP")) {
-        commandDump();
+        commandDump(setting);
+        return;
+    }
+    if (command == "DB" || command.startsWith("DUMP BASE")) {
+        commandDumpBase(setting);
+        return;
+    }
+    if (command == "DX" || command.startsWith("DUMP HEX")) {
+        commandDumpIntel(setting);
         return;
     }
     if (command == "R" || command.startsWith("READ")) {
@@ -338,9 +512,18 @@ void proccessCommand(String& command) {
         commandWrite();
         return;
     }
+    if (command == "TD" || command.startsWith("TEST DATA")) {
+        commandTestData(setting);
+        return;
+    }
+    if (command == "TA" || command.startsWith("TEST ADDRESS")) {
+        commandTestAddress(setting);
+        return;
+    }
 }
 
 void setup() {
+    cmd.reserve(1024);
     oled.init(SDA, SCL);    // инициализация
     Wire.setClock(800000L); // макс. 800'000
     oled.flipV(true);
@@ -368,6 +551,7 @@ void setup() {
     gio::init(WR_PIN, OUTPUT);
     
     EEPROM_setWrite(false);
+    EEPROM_setData(0xFF);
     EEPROM_setAddress(0);
 
     setLeds(true, true);
@@ -386,8 +570,7 @@ void setup() {
     Serial.println(F("START"));
 
     commandK155RE3();
-
-    oledEEPROM();
+    
     //commandWrite();
 }
 
