@@ -39,8 +39,8 @@ uint8_t data[256] {};
     ├────┤     │ 7  ├ 7      2 ┤ A7 │     │    │
  15 ┤ ~E │     │ 8  ├ 9      1 ┤ A8 │     │    │
     └────┴─────┴────┘          ├────┤     │    │
-                            13 ┤ W  │     │    │
-                            14 ┤ CE │     │    │
+                            13 ┤ ~W │     │    │
+                            14 ┤~CE │     │    │
                                └────┴─────┴────┘
 */
 typedef struct {
@@ -50,13 +50,12 @@ typedef struct {
 
 typedef struct {
     const size_t  chip_size;
-    const uint8_t shift;
     const uint8_t bit_size;
     const char*   name;
 } EEPROM_SETTING;
 
-EEPROM_SETTING k155re3 { .chip_size = 32, .shift = 3, .bit_size = 8, .name = "К155РЕ3" };
-EEPROM_SETTING k566rt4 { .chip_size = 256, .shift = 0, .bit_size = 4, .name = "К556РТ4" };
+EEPROM_SETTING k155re3 { .chip_size = 32, .bit_size = 8, .name = "К155РЕ3" };
+EEPROM_SETTING k566rt4 { .chip_size = 256, .bit_size = 4, .name = "К556РТ4" };
 EEPROM_SETTING *setting = &k155re3;
 
 String cmd;
@@ -84,9 +83,6 @@ inline void EEPROM_setData(uint8_t data) {
 
 // PORTA = address
 inline void EEPROM_setAddress(uint8_t addr) {
-    addr = (addr & 0xF0) >> 4 | (addr & 0x0F) << 4;
-    addr = (addr & 0xCC) >> 2 | (addr & 0x33) << 2;
-    addr = (addr & 0xAA) >> 1 | (addr & 0x55) << 1;
     PORTA = addr;  // Set address
 }
 
@@ -95,9 +91,9 @@ bool EEPROM_TestAddres(uint8_t* data, EEPROM_SETTING *eeprom) {
     EEPROM_setAddress(0);
 
     for (uint16_t addr = 0; addr < eeprom->chip_size; addr++) {
-        EEPROM_setAddress(addr << eeprom->shift);
+        EEPROM_setAddress(addr);
         Serial.println(addr, HEX);
-        DELAY_MS(2000);
+        DELAY_MS(500);
     }
     return true;
 }
@@ -120,7 +116,7 @@ void EEPROM_loadData(uint8_t* data, EEPROM_SETTING *eeprom) {
     EEPROM_setData(0xFF);
     uint16_t mask = bit(eeprom->bit_size + 1) - 1;
     for (uint16_t addr = 0; addr < eeprom->chip_size; addr++) {
-        EEPROM_setAddress(addr << eeprom->shift);
+        EEPROM_setAddress(addr);
         DELAY_MS(50);
         const uint8_t value = EEPROM_getData();
         data[addr] = value & mask;
@@ -132,7 +128,7 @@ bool EEPROM_saveData(uint8_t* data, EEPROM_SETTING *eeprom) {
     EEPROM_setAddress(0);
 
     for (uint16_t addr = 0; addr < eeprom->chip_size; addr++) {
-        EEPROM_setAddress(addr << eeprom->shift);
+        EEPROM_setAddress(addr);
         DELAY_MS(50);
         const uint8_t value = data[addr];
         uint8_t current = EEPROM_getData();
