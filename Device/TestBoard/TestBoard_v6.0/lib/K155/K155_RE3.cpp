@@ -25,6 +25,22 @@ const static TDeviceVal PROGMEM values_155_re3[] =
   { .value = (uint16_t)13, .result = (uint16_t)0 },
   { .value = (uint16_t)14, .result = (uint16_t)0 },
   { .value = (uint16_t)15, .result = (uint16_t)0 },
+  { .value = (uint16_t)16, .result = (uint16_t)0 },
+  { .value = (uint16_t)17, .result = (uint16_t)0 },
+  { .value = (uint16_t)18, .result = (uint16_t)0 },
+  { .value = (uint16_t)19, .result = (uint16_t)0 },
+  { .value = (uint16_t)20, .result = (uint16_t)0 },
+  { .value = (uint16_t)21, .result = (uint16_t)0 },
+  { .value = (uint16_t)22, .result = (uint16_t)0 },
+  { .value = (uint16_t)23, .result = (uint16_t)0 },
+  { .value = (uint16_t)24, .result = (uint16_t)0 },
+  { .value = (uint16_t)25, .result = (uint16_t)0 },
+  { .value = (uint16_t)26, .result = (uint16_t)0 },
+  { .value = (uint16_t)27, .result = (uint16_t)0 },
+  { .value = (uint16_t)28, .result = (uint16_t)0 },
+  { .value = (uint16_t)29, .result = (uint16_t)0 },
+  { .value = (uint16_t)30, .result = (uint16_t)0 },
+  { .value = (uint16_t)31, .result = (uint16_t)0 },
 };
 
 K155RE3::K155RE3(void) {

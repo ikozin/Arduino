@@ -10,6 +10,7 @@ Disp1637_6 oled(DIO_PIN, CLK_PIN);
 
 void setup() {
     Serial.begin(115200);
+    oled.power(true);
     oled.clear();
     oled.brightness(7);
 }
