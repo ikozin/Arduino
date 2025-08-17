@@ -55,15 +55,15 @@ typedef GyverOLED<SSD1306_128x64, OLED_NO_BUFFER, OLED_SPI, OLED_CS, OLED_DC, OL
 #define PIN_LED_RED     (41)  //PG0
 #define PIN_LED_GREEN   (40)  //PG1
 
+extern char text[128];
 #if defined(DEBUG_CONSOLE)
-  extern char text[128];
-  #define debug_println(...)    {Serial.println(__VA_ARGS__); Serial.flush();}
-  #define debug_print(...)      {Serial.print(__VA_ARGS__); Serial.flush();}
-  #define debug_printf(...)    {sprintf(text, __VA_ARGS__); Serial.print(text); Serial.flush();}
+    #define debug_println(...)    {Serial.println(__VA_ARGS__); Serial.flush();}
+    #define debug_print(...)      {Serial.print(__VA_ARGS__); Serial.flush();}
+    #define debug_printf(...)    {sprintf(text, __VA_ARGS__); Serial.print(text); Serial.flush();}
 #else
-  #define debug_println(...)
-  #define debug_print(...)
-  #define debug_printf(...)
+    #define debug_println(...)
+    #define debug_print(...)
+    #define debug_printf(...)
 #endif
 
 #define PIN_ENC_BTN         (38)  //PD7
@@ -103,7 +103,7 @@ class TDevice : public IDevice {
     size_t _devices_count;
     size_t _values_count;
 
-    int test_device(const TDevicePin *device, const TDeviceVal *value);
+    virtual int test_device(const TDevicePin *device, const TDeviceVal *value);
 
     virtual void loadStorage(void);
     virtual void clearStorage(void);

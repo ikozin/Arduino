@@ -2,9 +2,9 @@
 
 #include <Dip16_ROM.h>
 
-class K155RE3: public Dip16_ROM {
+class K556RT4: public Dip16_ROM {
     public:
-        K155RE3(void);
+        K556RT4(void);
     protected:
         virtual const __FlashStringHelper * menu(void) override;
         virtual const __FlashStringHelper * title(void) override;
