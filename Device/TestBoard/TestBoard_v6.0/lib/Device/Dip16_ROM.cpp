@@ -21,7 +21,7 @@ int Dip16_ROM::test_device(const TDevicePin *device, const TDeviceVal *data) {
         for (int n = 0; n < _bits_data; n++) {
             int pin = getPin(device->Output[n]);
             if (pin == 0) break;
-            if (digitalRead(pin)) bitSet(value, n);
+            if (gio::read(pin)) bitSet(value, n);
         }
         sprintf(text, " %02X", value);
         Serial.print(text);

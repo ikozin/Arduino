@@ -1,8 +1,6 @@
 #include "Device.h"
 
-#if defined(DEBUG_CONSOLE)
-char text[128];
-#endif
+char text[256];
 
 TDevicePin TDevice::_storageDevice[MAX_DEVICE] = { 0 };
 TDeviceVal TDevice::_storageValue[MAX_VALUE] = { 0 };
@@ -91,7 +89,7 @@ int TDevice::test_device(const TDevicePin *device, const TDeviceVal *data) {
     for (int n = 0; n < PIN_SIZE; n++) {
         int pin = getPin(device->Output[n]);
         if (pin == 0) break;
-        int result = digitalRead(pin);
+        int result = gio::read(pin);
         int expected = bitRead(data->result, n);
         errorCount += (result != expected) ? 1 : 0;
         debug_printf("%d(%d) = %d,%d%s\r\n", device->Output[n], pin, result, expected, (result == expected) ? "" : " - ОШИБКА");

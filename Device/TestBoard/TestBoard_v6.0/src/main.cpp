@@ -104,8 +104,6 @@ void encoderPackageAction();
 void displayMenu(GyverDisplay& display, int index) {
     gio::low(PIN_LED_GREEN);
     gio::low(PIN_LED_RED);
-    // digitalWrite(PIN_LED_GREEN, LOW);
-    // digitalWrite(PIN_LED_RED, LOW);
     int line = 0;
     if (size > 7) {
         line = (index - 3 >= 0) ? index - 3 : 0;
@@ -161,15 +159,11 @@ void encoderPackageAction() {
         case EB_CLICK:
             gio::low(PIN_LED_GREEN);
             gio::low(PIN_LED_RED);
-            // digitalWrite(PIN_LED_GREEN, LOW);
-            // digitalWrite(PIN_LED_RED, LOW);
             result = packList[index]->test(display);
             if (result == 0) {
                 gio::high(PIN_LED_GREEN);
-                // digitalWrite(PIN_LED_GREEN, HIGH);
             } else {
                 gio::high(PIN_LED_RED);
-                // digitalWrite(PIN_LED_RED, HIGH);
             }
             break;
         case EB_TURN:
@@ -199,8 +193,6 @@ void setup() {
 
     gio::mode(PIN_LED_GREEN, OUTPUT);
     gio::mode(PIN_LED_RED, OUTPUT);
-    // pinMode(PIN_LED_GREEN, OUTPUT);
-    // pinMode(PIN_LED_RED, OUTPUT);
 
     //encoder.init(INPUT_PULLUP, INPUT_PULLUP, LOW);
     encoder.attach(encoderMenuAction);
@@ -227,32 +219,22 @@ void setup() {
 void testLed() {
     gio::high(PIN_LED_GREEN);
     gio::high(PIN_LED_RED);
-    // digitalWrite(PIN_LED_GREEN, HIGH);
-    // digitalWrite(PIN_LED_RED, HIGH);
     delay(250);
 
     gio::low(PIN_LED_GREEN);
     gio::low(PIN_LED_RED);
-    // digitalWrite(PIN_LED_GREEN, LOW);
-    // digitalWrite(PIN_LED_RED, LOW);
     delay(250);
 
     gio::high(PIN_LED_GREEN);
     gio::low(PIN_LED_RED);
-    // digitalWrite(PIN_LED_GREEN, HIGH);
-    // digitalWrite(PIN_LED_RED, LOW);
     delay(250);
 
     gio::low(PIN_LED_GREEN);
     gio::high(PIN_LED_RED);
-    // digitalWrite(PIN_LED_GREEN, LOW);
-    // digitalWrite(PIN_LED_RED, HIGH);
     delay(250);
 
     gio::low(PIN_LED_GREEN);
     gio::low(PIN_LED_RED);
-    // digitalWrite(PIN_LED_GREEN, LOW);
-    // digitalWrite(PIN_LED_RED, LOW);
     delay(250);
 }
 

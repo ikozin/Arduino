@@ -55,7 +55,8 @@ typedef GyverOLED<SSD1306_128x64, OLED_NO_BUFFER, OLED_SPI, OLED_CS, OLED_DC, OL
 #define PIN_LED_RED     (41)  //PG0
 #define PIN_LED_GREEN   (40)  //PG1
 
-extern char text[128];
+extern char text[256];
+
 #if defined(DEBUG_CONSOLE)
     #define debug_println(...)    {Serial.println(__VA_ARGS__); Serial.flush();}
     #define debug_print(...)      {Serial.print(__VA_ARGS__); Serial.flush();}
