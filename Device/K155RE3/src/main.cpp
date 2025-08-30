@@ -162,8 +162,8 @@ bool EEPROM_saveData(uint8_t* data, EEPROM_SETTING *eeprom) {
                 Serial.flush();
                 return false;
             }
-
         }
+        DELAY_MS(300 * 1);
         current = EEPROM_getData();
         if (value != current) {
             setLeds(true, true);
@@ -216,11 +216,11 @@ uint16_t hexToWord(char** buffer, int maxLen = 4) {
     return word;
 }
 
-// 0000: 81 CF A2 8A CC 98 90 CB 80 88 C0 94 B1 86 B0 F0
-// 0000: 7E 30 5D 75 33 67 6F 34 7F 77 3F 6B 4E 79 4F 0F
+// 0000: 81 CF 23 0B 4D 19 11 CB 01 09 41 15 B1 07 31 71
 
 // 0000: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
 // 0010: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+
 // 0000: FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF
 // 0010: FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF
 void commandLoadData(EEPROM_SETTING* eeprom) {
@@ -257,7 +257,7 @@ void commandLoadData(EEPROM_SETTING* eeprom) {
     return;
 }
 
-// :1000000081CFA28ACC9890CB8088C094B186B0F082
+// :1000000081CF230B4D1911CB01094115B107317176
 // :1000000000000000000000000000000000000000F0
 // :00000001FF
 // :1000000000000000000000000000000000000000F0
@@ -342,7 +342,7 @@ void commandLoadIntelHex(EEPROM_SETTING* eeprom) {
     Serial.flush();
 }
 
-// gc+iisyYkMuAiMCUsYaw8AAAAAAAAAAAAAAAAAAAAAA=
+// gc8jC00ZEcsBCUEVsQcxcQAAAAAAAAAAAAAAAAAAAAA=
 // AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=
 // //////////////////////////////////////////8=
 void commandLoadBase64(EEPROM_SETTING* eeprom) {

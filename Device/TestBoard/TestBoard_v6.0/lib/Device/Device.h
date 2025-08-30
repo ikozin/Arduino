@@ -1,6 +1,6 @@
 #pragma once
 
-#define DEBUG_CONSOLE
+// #define DEBUG_CONSOLE
 
 #include <Arduino.h>
 #include <avr/pgmspace.h>
