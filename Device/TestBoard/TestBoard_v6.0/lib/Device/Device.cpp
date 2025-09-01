@@ -35,13 +35,13 @@ void TDevice::clearStorage(void) {
 }
 
 void TDevice::info(GyverDisplay& display) {
-  const __FlashStringHelper * text = title();
-  if (text == NULL) return;
-  display.clear();
-  display.setCursor(0, 0);
-  display.println(text);
-  display.update();
-  Serial.println(description());
+    const __FlashStringHelper * text = title();
+    if (text == NULL) return;
+    display.clear();
+    display.setCursor(0, 0);
+    display.println(text);
+    display.update();
+    Serial.println(description());
 }
 
 void TDevice::init() {

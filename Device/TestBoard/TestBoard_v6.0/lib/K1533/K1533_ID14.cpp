@@ -1,32 +1,29 @@
 #include "K1533_ID14.h"
 
-const static TDevicePin PROGMEM pin_map_1533_id14_1[] =
-{
-  // Входы      1   2   S                    Выходы      0   1   2   3
-  { .Input = {  2,  3,  1, 0, 0, 0, 0, 0 }, .Output = {  4,  5,  6,  7, 0, 0, 0, 0 }},
+const static TDevicePin PROGMEM pin_map_1533_id14_1[] = {
+    // Входы      1   2   S                    Выходы      0   1   2   3
+    { .Input = {  2,  3,  1, 0, 0, 0, 0, 0 }, .Output = {  4,  5,  6,  7, 0, 0, 0, 0 }},
 };
 
-const static TDevicePin PROGMEM pin_map_1533_id14_2[] =
-{
-  // Входы      1   2   S                    Выходы      0   1   2   3
-  { .Input = { 14, 13, 15, 0, 0, 0, 0, 0 }, .Output = { 12, 11, 10,  9, 0, 0, 0, 0 }},
+const static TDevicePin PROGMEM pin_map_1533_id14_2[] = {
+    // Входы      1   2   S                    Выходы      0   1   2   3
+    { .Input = { 14, 13, 15, 0, 0, 0, 0, 0 }, .Output = { 12, 11, 10,  9, 0, 0, 0, 0 }},
 };
 
-const static TDeviceVal PROGMEM values_1533_id14[] =
-{  
-  { .value = (uint16_t)B_1_0_0, .result = (uint16_t)B_1_1_1_1 },
-  { .value = (uint16_t)B_1_0_1, .result = (uint16_t)B_1_1_1_1 },
-  { .value = (uint16_t)B_1_1_0, .result = (uint16_t)B_1_1_1_1 },
-  { .value = (uint16_t)B_1_1_1, .result = (uint16_t)B_1_1_1_1 },
+const static TDeviceVal PROGMEM values_1533_id14[] = {  
+    { .value = (uint16_t)B_1_0_0, .result = (uint16_t)B_1_1_1_1 },
+    { .value = (uint16_t)B_1_0_1, .result = (uint16_t)B_1_1_1_1 },
+    { .value = (uint16_t)B_1_1_0, .result = (uint16_t)B_1_1_1_1 },
+    { .value = (uint16_t)B_1_1_1, .result = (uint16_t)B_1_1_1_1 },
 
-  { .value = (uint16_t)B_0_0_0, .result = (uint16_t)B_1_1_1_0 },
-  { .value = (uint16_t)B_0_0_1, .result = (uint16_t)B_1_1_0_1 },
-  { .value = (uint16_t)B_0_1_0, .result = (uint16_t)B_1_0_1_1 },
-  { .value = (uint16_t)B_0_1_1, .result = (uint16_t)B_0_1_1_1 },
+    { .value = (uint16_t)B_0_0_0, .result = (uint16_t)B_1_1_1_0 },
+    { .value = (uint16_t)B_0_0_1, .result = (uint16_t)B_1_1_0_1 },
+    { .value = (uint16_t)B_0_1_0, .result = (uint16_t)B_1_0_1_1 },
+    { .value = (uint16_t)B_0_1_1, .result = (uint16_t)B_0_1_1_1 },
 };
 
 const __FlashStringHelper * K1533ID14::menu(void) {
-  return F("ИД14 (Дешифратор)");
+    return F("ИД14 (Дешифратор)");
 }
 
 const __FlashStringHelper * K1533ID14::description(void) {
@@ -52,7 +49,7 @@ const __FlashStringHelper * K1533ID14::description(void) {
 }
 
 const __FlashStringHelper * K1533ID14::title(void) {
-  return F("KP1533ИД14\r\n2 Дешифратора\r\nDIP16\r\n");
+    return F("KP1533ИД14\r\n2 Дешифратора\r\nDIP16\r\n");
 }
 
 K1533ID14_SubDev sub_1533_id14_dev1(pin_map_1533_id14_1, values_1533_id14, sizeof(values_1533_id14)/sizeof(values_1533_id14[0]));

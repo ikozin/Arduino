@@ -1,30 +1,28 @@
 #include "K1533_LE1_LE5_LE6_LE10_LE11.h"
 
-const static TDevicePin PROGMEM pin_map_1533_le1_le5_le6_le10_le11[] =
-{
-  { .Input = {  2,  3,  0,  0,  0,  0,  0,  0 }, .Output = {  1,  0,  0,  0,  0,  0,  0,  0 }},
-  { .Input = {  5,  6,  0,  0,  0,  0,  0,  0 }, .Output = {  4,  0,  0,  0,  0,  0,  0,  0 }},
-  { .Input = {  8,  9,  0,  0,  0,  0,  0,  0 }, .Output = { 10,  0,  0,  0,  0,  0,  0,  0 }},
-  { .Input = { 11, 12,  0,  0,  0,  0,  0,  0 }, .Output = { 13,  0,  0,  0,  0,  0,  0,  0 }},
+const static TDevicePin PROGMEM pin_map_1533_le1_le5_le6_le10_le11[] = {
+    { .Input = {  2,  3,  0,  0,  0,  0,  0,  0 }, .Output = {  1,  0,  0,  0,  0,  0,  0,  0 }},
+    { .Input = {  5,  6,  0,  0,  0,  0,  0,  0 }, .Output = {  4,  0,  0,  0,  0,  0,  0,  0 }},
+    { .Input = {  8,  9,  0,  0,  0,  0,  0,  0 }, .Output = { 10,  0,  0,  0,  0,  0,  0,  0 }},
+    { .Input = { 11, 12,  0,  0,  0,  0,  0,  0 }, .Output = { 13,  0,  0,  0,  0,  0,  0,  0 }},
 };
 
-const static TDeviceVal PROGMEM values_1533_le1_le5_le6_le10_le11[] =
-{
-  { .value = (uint16_t)0, .result = (uint16_t)1 },
-  { .value = (uint16_t)1, .result = (uint16_t)0 },
-  { .value = (uint16_t)2, .result = (uint16_t)0 },
-  { .value = (uint16_t)3, .result = (uint16_t)0 },
+const static TDeviceVal PROGMEM values_1533_le1_le5_le6_le10_le11[] = {
+    { .value = (uint16_t)0, .result = (uint16_t)1 },
+    { .value = (uint16_t)1, .result = (uint16_t)0 },
+    { .value = (uint16_t)2, .result = (uint16_t)0 },
+    { .value = (uint16_t)3, .result = (uint16_t)0 },
 };
 
 K1533LE1LE5LE6LE10LE11::K1533LE1LE5LE6LE10LE11(void) {
-  _devices = pin_map_1533_le1_le5_le6_le10_le11;
-  _values = values_1533_le1_le5_le6_le10_le11;
-  _devices_count = sizeof(pin_map_1533_le1_le5_le6_le10_le11)/sizeof(pin_map_1533_le1_le5_le6_le10_le11[0]);
-  _values_count = sizeof(values_1533_le1_le5_le6_le10_le11)/sizeof(values_1533_le1_le5_le6_le10_le11[0]);
+    _devices = pin_map_1533_le1_le5_le6_le10_le11;
+    _values = values_1533_le1_le5_le6_le10_le11;
+    _devices_count = sizeof(pin_map_1533_le1_le5_le6_le10_le11)/sizeof(pin_map_1533_le1_le5_le6_le10_le11[0]);
+    _values_count = sizeof(values_1533_le1_le5_le6_le10_le11)/sizeof(values_1533_le1_le5_le6_le10_le11[0]);
 }
 
 const __FlashStringHelper * K1533LE1LE5LE6LE10LE11::menu(void) {
-  return F("ЛE1,5,6,10,11 (2ИЛИ-HE)");
+    return F("ЛE1,5,6,10,11 (2ИЛИ-HE)");
 }
 
 const __FlashStringHelper * K1533LE1LE5LE6LE10LE11::description(void) {
@@ -63,5 +61,5 @@ const __FlashStringHelper * K1533LE1LE5LE6LE10LE11::description(void) {
 }
 
 const __FlashStringHelper * K1533LE1LE5LE6LE10LE11::title(void) {
-  return F("ЛE1 ЛE5 ЛE6 ЛE10 ЛE11\r\n4 элемента 2ИЛИ-HE\r\nDIP14\r\n");
+    return F("ЛE1 ЛE5 ЛE6 ЛE10 ЛE11\r\n4 элемента 2ИЛИ-HE\r\nDIP14\r\n");
 }

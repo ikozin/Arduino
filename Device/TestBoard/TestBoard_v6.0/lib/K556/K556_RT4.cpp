@@ -1,13 +1,11 @@
 #include "K556_RT4.h"
 
-const static TDevicePin PROGMEM pin_map_556_rt4[] =
-{
+const static TDevicePin PROGMEM pin_map_556_rt4[] = {
     // Входы     A0  A1  A2  A3  A4  A5  A6  A7   W  CE                     1   2   3   4
     { .Input = { 15,  7,  6,  5,  4,  3,  2,  1, 13, 14, 0 }, .Output = {  12, 11, 10,  9,  0 }},
 };
 
-const static TDeviceVal PROGMEM values_556_rt4[] =
-{  
+const static TDeviceVal PROGMEM values_556_rt4[] = {  
     //
     { .value = (uint16_t) 0x00, .result = (uint16_t)0 },
 };

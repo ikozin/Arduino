@@ -1027,126 +1027,124 @@
 #define B_1_1_11_1_1111_1   (512 + 256 + 128 + 64 + 32 + 31)
 
 
-const static TDevicePin PROGMEM pin_map_555_ir11a[] =
-{
-  // Входы     DR  D1  D2  D3  D4  DL  SR  SL   R   C
-  { .Input = {  2,  3,  4,  5,  6,  7,  9, 10,  1, 11,  0}, .Output = { 15, 14, 13, 12,  0,  0,  0,  0 }},
+const static TDevicePin PROGMEM pin_map_555_ir11a[] = {
+    // Входы     DR  D1  D2  D3  D4  DL  SR  SL   R   C
+    { .Input = {  2,  3,  4,  5,  6,  7,  9, 10,  1, 11,  0}, .Output = { 15, 14, 13, 12,  0,  0,  0,  0 }},
 };
 
-const static TDeviceVal PROGMEM values_555_ir11a[] =
-{  
-  //-------------------  C R LR L 4321 R -------------------------
-  { .value = (uint16_t)B_0_0_00_1_1111_1, .result = (uint16_t)0 },
-  { .value = (uint16_t)B_0_0_01_1_1111_1, .result = (uint16_t)0 },
-  { .value = (uint16_t)B_0_0_10_1_1111_1, .result = (uint16_t)0 },
-  { .value = (uint16_t)B_0_0_11_1_1111_1, .result = (uint16_t)0 },
-  //-------------------  C R LR L 4321 R -------------------------
-  { .value = (uint16_t)B_1_0_00_1_1111_1, .result = (uint16_t)0 },
-  { .value = (uint16_t)B_0_0_00_1_1111_1, .result = (uint16_t)0 },
-  
-  { .value = (uint16_t)B_1_0_01_1_1111_1, .result = (uint16_t)0 },
-  { .value = (uint16_t)B_0_0_01_1_1111_1, .result = (uint16_t)0 },
+const static TDeviceVal PROGMEM values_555_ir11a[] = {  
+    //-------------------  C R LR L 4321 R -------------------------
+    { .value = (uint16_t)B_0_0_00_1_1111_1, .result = (uint16_t)0 },
+    { .value = (uint16_t)B_0_0_01_1_1111_1, .result = (uint16_t)0 },
+    { .value = (uint16_t)B_0_0_10_1_1111_1, .result = (uint16_t)0 },
+    { .value = (uint16_t)B_0_0_11_1_1111_1, .result = (uint16_t)0 },
+    //-------------------  C R LR L 4321 R -------------------------
+    { .value = (uint16_t)B_1_0_00_1_1111_1, .result = (uint16_t)0 },
+    { .value = (uint16_t)B_0_0_00_1_1111_1, .result = (uint16_t)0 },
+    
+    { .value = (uint16_t)B_1_0_01_1_1111_1, .result = (uint16_t)0 },
+    { .value = (uint16_t)B_0_0_01_1_1111_1, .result = (uint16_t)0 },
 
-  { .value = (uint16_t)B_1_0_10_1_1111_1, .result = (uint16_t)0 },
-  { .value = (uint16_t)B_0_0_10_1_1111_1, .result = (uint16_t)0 },
-  
-  { .value = (uint16_t)B_1_0_11_1_1111_1, .result = (uint16_t)0 },
-  { .value = (uint16_t)B_0_0_11_1_1111_1, .result = (uint16_t)0 },
-  //-------------------  C R LR L 4321 R -------------------------
-  { .value = (uint16_t)B_1_1_11_1_0000_1, .result = (uint16_t)0 },
-  { .value = (uint16_t)B_0_1_11_1_0000_1, .result = (uint16_t)0 },
+    { .value = (uint16_t)B_1_0_10_1_1111_1, .result = (uint16_t)0 },
+    { .value = (uint16_t)B_0_0_10_1_1111_1, .result = (uint16_t)0 },
+    
+    { .value = (uint16_t)B_1_0_11_1_1111_1, .result = (uint16_t)0 },
+    { .value = (uint16_t)B_0_0_11_1_1111_1, .result = (uint16_t)0 },
+    //-------------------  C R LR L 4321 R -------------------------
+    { .value = (uint16_t)B_1_1_11_1_0000_1, .result = (uint16_t)0 },
+    { .value = (uint16_t)B_0_1_11_1_0000_1, .result = (uint16_t)0 },
 
-  { .value = (uint16_t)B_1_1_11_1_0001_1, .result = (uint16_t)1 },
-  { .value = (uint16_t)B_0_1_11_1_0001_1, .result = (uint16_t)1 },
+    { .value = (uint16_t)B_1_1_11_1_0001_1, .result = (uint16_t)1 },
+    { .value = (uint16_t)B_0_1_11_1_0001_1, .result = (uint16_t)1 },
 
-  { .value = (uint16_t)B_1_1_11_1_0010_1, .result = (uint16_t)2 },
-  { .value = (uint16_t)B_0_1_11_1_0010_1, .result = (uint16_t)2 },
+    { .value = (uint16_t)B_1_1_11_1_0010_1, .result = (uint16_t)2 },
+    { .value = (uint16_t)B_0_1_11_1_0010_1, .result = (uint16_t)2 },
 
-  { .value = (uint16_t)B_1_1_11_1_0011_1, .result = (uint16_t)3 },
-  { .value = (uint16_t)B_0_1_11_1_0011_1, .result = (uint16_t)3 },
+    { .value = (uint16_t)B_1_1_11_1_0011_1, .result = (uint16_t)3 },
+    { .value = (uint16_t)B_0_1_11_1_0011_1, .result = (uint16_t)3 },
 
-  { .value = (uint16_t)B_1_1_11_1_0100_1, .result = (uint16_t)4 },
-  { .value = (uint16_t)B_0_1_11_1_0100_1, .result = (uint16_t)4 },
+    { .value = (uint16_t)B_1_1_11_1_0100_1, .result = (uint16_t)4 },
+    { .value = (uint16_t)B_0_1_11_1_0100_1, .result = (uint16_t)4 },
 
-  { .value = (uint16_t)B_1_1_11_1_0101_1, .result = (uint16_t)5 },
-  { .value = (uint16_t)B_0_1_11_1_0101_1, .result = (uint16_t)5 },
+    { .value = (uint16_t)B_1_1_11_1_0101_1, .result = (uint16_t)5 },
+    { .value = (uint16_t)B_0_1_11_1_0101_1, .result = (uint16_t)5 },
 
-  { .value = (uint16_t)B_1_1_11_1_0110_1, .result = (uint16_t)6 },
-  { .value = (uint16_t)B_0_1_11_1_0110_1, .result = (uint16_t)6 },
+    { .value = (uint16_t)B_1_1_11_1_0110_1, .result = (uint16_t)6 },
+    { .value = (uint16_t)B_0_1_11_1_0110_1, .result = (uint16_t)6 },
 
-  { .value = (uint16_t)B_1_1_11_1_0111_1, .result = (uint16_t)7 },
-  { .value = (uint16_t)B_0_1_11_1_0111_1, .result = (uint16_t)7 },
+    { .value = (uint16_t)B_1_1_11_1_0111_1, .result = (uint16_t)7 },
+    { .value = (uint16_t)B_0_1_11_1_0111_1, .result = (uint16_t)7 },
 
-  { .value = (uint16_t)B_1_1_11_1_1000_1, .result = (uint16_t)8 },
-  { .value = (uint16_t)B_0_1_11_1_1000_1, .result = (uint16_t)8 },
+    { .value = (uint16_t)B_1_1_11_1_1000_1, .result = (uint16_t)8 },
+    { .value = (uint16_t)B_0_1_11_1_1000_1, .result = (uint16_t)8 },
 
-  { .value = (uint16_t)B_1_1_11_1_1001_1, .result = (uint16_t)9 },
-  { .value = (uint16_t)B_0_1_11_1_1001_1, .result = (uint16_t)9 },
+    { .value = (uint16_t)B_1_1_11_1_1001_1, .result = (uint16_t)9 },
+    { .value = (uint16_t)B_0_1_11_1_1001_1, .result = (uint16_t)9 },
 
-  { .value = (uint16_t)B_1_1_11_1_1010_1, .result = (uint16_t)10 },
-  { .value = (uint16_t)B_0_1_11_1_1010_1, .result = (uint16_t)10 },
+    { .value = (uint16_t)B_1_1_11_1_1010_1, .result = (uint16_t)10 },
+    { .value = (uint16_t)B_0_1_11_1_1010_1, .result = (uint16_t)10 },
 
-  { .value = (uint16_t)B_1_1_11_1_1011_1, .result = (uint16_t)11 },
-  { .value = (uint16_t)B_0_1_11_1_1011_1, .result = (uint16_t)11 },
+    { .value = (uint16_t)B_1_1_11_1_1011_1, .result = (uint16_t)11 },
+    { .value = (uint16_t)B_0_1_11_1_1011_1, .result = (uint16_t)11 },
 
-  { .value = (uint16_t)B_1_1_11_1_1100_1, .result = (uint16_t)12 },
-  { .value = (uint16_t)B_0_1_11_1_1100_1, .result = (uint16_t)12 },
+    { .value = (uint16_t)B_1_1_11_1_1100_1, .result = (uint16_t)12 },
+    { .value = (uint16_t)B_0_1_11_1_1100_1, .result = (uint16_t)12 },
 
-  { .value = (uint16_t)B_1_1_11_1_1101_1, .result = (uint16_t)13 },
-  { .value = (uint16_t)B_0_1_11_1_1101_1, .result = (uint16_t)13 },
+    { .value = (uint16_t)B_1_1_11_1_1101_1, .result = (uint16_t)13 },
+    { .value = (uint16_t)B_0_1_11_1_1101_1, .result = (uint16_t)13 },
 
-  { .value = (uint16_t)B_1_1_11_1_1110_1, .result = (uint16_t)14 },
-  { .value = (uint16_t)B_0_1_11_1_1110_1, .result = (uint16_t)14 },
+    { .value = (uint16_t)B_1_1_11_1_1110_1, .result = (uint16_t)14 },
+    { .value = (uint16_t)B_0_1_11_1_1110_1, .result = (uint16_t)14 },
 
-  { .value = (uint16_t)B_1_1_11_1_1111_1, .result = (uint16_t)15 },
-  { .value = (uint16_t)B_0_1_11_1_1111_1, .result = (uint16_t)15 },
+    { .value = (uint16_t)B_1_1_11_1_1111_1, .result = (uint16_t)15 },
+    { .value = (uint16_t)B_0_1_11_1_1111_1, .result = (uint16_t)15 },
 
-  { .value = (uint16_t)B_1_1_11_1_0000_1, .result = (uint16_t)0 },
-  { .value = (uint16_t)B_0_1_11_1_0000_1, .result = (uint16_t)0 },
-  //-------------------  C R LR L 4321 R -------------------------
-  { .value = (uint16_t)B_1_1_01_0_0000_1, .result = (uint16_t)1 },
-  { .value = (uint16_t)B_0_1_01_0_0000_1, .result = (uint16_t)1 },
+    { .value = (uint16_t)B_1_1_11_1_0000_1, .result = (uint16_t)0 },
+    { .value = (uint16_t)B_0_1_11_1_0000_1, .result = (uint16_t)0 },
+    //-------------------  C R LR L 4321 R -------------------------
+    { .value = (uint16_t)B_1_1_01_0_0000_1, .result = (uint16_t)1 },
+    { .value = (uint16_t)B_0_1_01_0_0000_1, .result = (uint16_t)1 },
 
-  { .value = (uint16_t)B_1_1_01_0_0000_0, .result = (uint16_t)2 },
-  { .value = (uint16_t)B_0_1_01_0_0000_0, .result = (uint16_t)2 },
+    { .value = (uint16_t)B_1_1_01_0_0000_0, .result = (uint16_t)2 },
+    { .value = (uint16_t)B_0_1_01_0_0000_0, .result = (uint16_t)2 },
 
-  { .value = (uint16_t)B_1_1_01_0_0000_0, .result = (uint16_t)4 },
-  { .value = (uint16_t)B_0_1_01_0_0000_0, .result = (uint16_t)4 },
+    { .value = (uint16_t)B_1_1_01_0_0000_0, .result = (uint16_t)4 },
+    { .value = (uint16_t)B_0_1_01_0_0000_0, .result = (uint16_t)4 },
 
-  { .value = (uint16_t)B_1_1_01_0_0000_0, .result = (uint16_t)8 },
-  { .value = (uint16_t)B_0_1_01_0_0000_0, .result = (uint16_t)8 },
+    { .value = (uint16_t)B_1_1_01_0_0000_0, .result = (uint16_t)8 },
+    { .value = (uint16_t)B_0_1_01_0_0000_0, .result = (uint16_t)8 },
 
-  { .value = (uint16_t)B_1_1_01_0_0000_0, .result = (uint16_t)0 },
-  { .value = (uint16_t)B_0_1_01_0_0000_0, .result = (uint16_t)0 },
-  //-------------------  C R LR L 4321 R -------------------------
-  { .value = (uint16_t)B_1_1_10_1_0000_0, .result = (uint16_t)8 },
-  { .value = (uint16_t)B_0_1_10_1_0000_0, .result = (uint16_t)8 },
+    { .value = (uint16_t)B_1_1_01_0_0000_0, .result = (uint16_t)0 },
+    { .value = (uint16_t)B_0_1_01_0_0000_0, .result = (uint16_t)0 },
+    //-------------------  C R LR L 4321 R -------------------------
+    { .value = (uint16_t)B_1_1_10_1_0000_0, .result = (uint16_t)8 },
+    { .value = (uint16_t)B_0_1_10_1_0000_0, .result = (uint16_t)8 },
 
-  { .value = (uint16_t)B_1_1_10_0_0000_0, .result = (uint16_t)4 },
-  { .value = (uint16_t)B_0_1_10_0_0000_0, .result = (uint16_t)4 },
+    { .value = (uint16_t)B_1_1_10_0_0000_0, .result = (uint16_t)4 },
+    { .value = (uint16_t)B_0_1_10_0_0000_0, .result = (uint16_t)4 },
 
-  { .value = (uint16_t)B_1_1_10_0_0000_0, .result = (uint16_t)2 },
-  { .value = (uint16_t)B_0_1_10_0_0000_0, .result = (uint16_t)2 },
+    { .value = (uint16_t)B_1_1_10_0_0000_0, .result = (uint16_t)2 },
+    { .value = (uint16_t)B_0_1_10_0_0000_0, .result = (uint16_t)2 },
 
-  { .value = (uint16_t)B_1_1_10_0_0000_0, .result = (uint16_t)1 },
-  { .value = (uint16_t)B_0_1_10_0_0000_0, .result = (uint16_t)1 },
+    { .value = (uint16_t)B_1_1_10_0_0000_0, .result = (uint16_t)1 },
+    { .value = (uint16_t)B_0_1_10_0_0000_0, .result = (uint16_t)1 },
 
-  { .value = (uint16_t)B_1_1_10_0_0000_0, .result = (uint16_t)0 },
-  { .value = (uint16_t)B_0_1_10_0_0000_0, .result = (uint16_t)0 },
-  //-------------------  C R LR L 4321 R -------------------------
-  { .value = (uint16_t)B_1_1_00_1_1111_1, .result = (uint16_t)0 },
-  { .value = (uint16_t)B_0_1_00_1_1111_1, .result = (uint16_t)0 },
+    { .value = (uint16_t)B_1_1_10_0_0000_0, .result = (uint16_t)0 },
+    { .value = (uint16_t)B_0_1_10_0_0000_0, .result = (uint16_t)0 },
+    //-------------------  C R LR L 4321 R -------------------------
+    { .value = (uint16_t)B_1_1_00_1_1111_1, .result = (uint16_t)0 },
+    { .value = (uint16_t)B_0_1_00_1_1111_1, .result = (uint16_t)0 },
 };
 
 K555IR11A::K555IR11A(void) {
-  _devices = pin_map_555_ir11a;
-  _values = values_555_ir11a;  
-  _devices_count = sizeof(pin_map_555_ir11a)/sizeof(pin_map_555_ir11a[0]);
-  _values_count = sizeof(values_555_ir11a)/sizeof(values_555_ir11a[0]);
+    _devices = pin_map_555_ir11a;
+    _values = values_555_ir11a;  
+    _devices_count = sizeof(pin_map_555_ir11a)/sizeof(pin_map_555_ir11a[0]);
+    _values_count = sizeof(values_555_ir11a)/sizeof(values_555_ir11a[0]);
 }
 
 const __FlashStringHelper * K555IR11A::menu(void) {
-  return F("ИP11A (Регистр)");
+    return F("ИP11A (Регистр)");
 }
 
 const __FlashStringHelper * K555IR11A::description(void) {
@@ -1174,5 +1172,5 @@ const __FlashStringHelper * K555IR11A::description(void) {
 
 
 const __FlashStringHelper * K555IR11A::title(void) {
-  return F("K555ИP11A\r\nСдвигающий регистр\r\nDIP16\r\n");
+    return F("K555ИP11A\r\nСдвигающий регистр\r\nDIP16\r\n");
 }

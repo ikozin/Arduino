@@ -1,33 +1,31 @@
 #include "K1533_LA4_LA10_LA24.h"
 
-const static TDevicePin PROGMEM pin_map_1533_la4_la10_la24[] =
-{
-  { .Input = {  1,  2, 13,  0,  0,  0,  0,  0 }, .Output = { 12,  0,  0,  0,  0,  0,  0,  0 }},
-  { .Input = {  3,  4,  5,  0,  0,  0,  0,  0 }, .Output = {  6,  0,  0,  0,  0,  0,  0,  0 }},
-  { .Input = {  9, 10, 11,  0,  0,  0,  0,  0 }, .Output = {  8,  0,  0,  0,  0,  0,  0,  0 }},
+const static TDevicePin PROGMEM pin_map_1533_la4_la10_la24[] = {
+    { .Input = {  1,  2, 13,  0,  0,  0,  0,  0 }, .Output = { 12,  0,  0,  0,  0,  0,  0,  0 }},
+    { .Input = {  3,  4,  5,  0,  0,  0,  0,  0 }, .Output = {  6,  0,  0,  0,  0,  0,  0,  0 }},
+    { .Input = {  9, 10, 11,  0,  0,  0,  0,  0 }, .Output = {  8,  0,  0,  0,  0,  0,  0,  0 }},
 };
 
-const static TDeviceVal PROGMEM values_1533_la4_la10_la24[] =
-{
-  { .value = (uint16_t) 0, .result = (uint16_t)1 },
-  { .value = (uint16_t) 1, .result = (uint16_t)1 },
-  { .value = (uint16_t) 2, .result = (uint16_t)1 },
-  { .value = (uint16_t) 3, .result = (uint16_t)1 },
-  { .value = (uint16_t) 4, .result = (uint16_t)1 },
-  { .value = (uint16_t) 5, .result = (uint16_t)1 },
-  { .value = (uint16_t) 6, .result = (uint16_t)1 },
-  { .value = (uint16_t) 7, .result = (uint16_t)0 },
+const static TDeviceVal PROGMEM values_1533_la4_la10_la24[] = {
+    { .value = (uint16_t) 0, .result = (uint16_t)1 },
+    { .value = (uint16_t) 1, .result = (uint16_t)1 },
+    { .value = (uint16_t) 2, .result = (uint16_t)1 },
+    { .value = (uint16_t) 3, .result = (uint16_t)1 },
+    { .value = (uint16_t) 4, .result = (uint16_t)1 },
+    { .value = (uint16_t) 5, .result = (uint16_t)1 },
+    { .value = (uint16_t) 6, .result = (uint16_t)1 },
+    { .value = (uint16_t) 7, .result = (uint16_t)0 },
 };
 
 K1533LA4LA10LA24::K1533LA4LA10LA24(void) {
-  _devices = pin_map_1533_la4_la10_la24;
-  _values = values_1533_la4_la10_la24;
-  _devices_count = sizeof(pin_map_1533_la4_la10_la24)/sizeof(pin_map_1533_la4_la10_la24[0]);
-  _values_count = sizeof(values_1533_la4_la10_la24)/sizeof(values_1533_la4_la10_la24[0]);
+    _devices = pin_map_1533_la4_la10_la24;
+    _values = values_1533_la4_la10_la24;
+    _devices_count = sizeof(pin_map_1533_la4_la10_la24)/sizeof(pin_map_1533_la4_la10_la24[0]);
+    _values_count = sizeof(values_1533_la4_la10_la24)/sizeof(values_1533_la4_la10_la24[0]);
 }
 
 const __FlashStringHelper * K1533LA4LA10LA24::menu(void) {
-  return F("ЛA4,10,24 (3И-HE)");
+    return F("ЛA4,10,24 (3И-HE)");
 }
 
 const __FlashStringHelper * K1533LA4LA10LA24::description(void) {
@@ -64,5 +62,5 @@ const __FlashStringHelper * K1533LA4LA10LA24::description(void) {
 }
 
 const __FlashStringHelper * K1533LA4LA10LA24::title(void) {
-  return F("KP1533ЛA4 ЛA10 ЛA24\r\n3 элемента 3И-HE\r\nDIP14\r\n");
+    return F("KP1533ЛA4 ЛA10 ЛA24\r\n3 элемента 3И-HE\r\nDIP14\r\n");
 }

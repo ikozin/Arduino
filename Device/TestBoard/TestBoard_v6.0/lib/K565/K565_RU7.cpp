@@ -4,24 +4,23 @@
 // https://forum.defence-force.org/viewtopic.php?t=1699&start=45 //
 ///////////////////////////////////////////////////////////////////
 
-const static TDevicePin PROGMEM pin_map_565_ru7[] =
-{
+const static TDevicePin PROGMEM pin_map_565_ru7[] = {
   // Входы     A0  A1  A2  A3  A4  A5  A6  A7  A8  DI RAS CAS  WE                   DO
   { .Input = {  5,  7,  6, 12, 11, 10, 13,  9,  1,  2,  4, 15,  3,  0}, .Output = { 14,  0 }},
 };
 
 K565RU7::K565RU7(void) {
-  _devices = pin_map_565_ru7;
-  _rows = 512;
-  _cols = 512;
+    _devices = pin_map_565_ru7;
+    _rows = 512;
+    _cols = 512;
 
-  _values = NULL;  
-  _devices_count = 1;
-  _values_count = 0;
+    _values = NULL;  
+    _devices_count = 1;
+    _values_count = 0;
 }
 
 const __FlashStringHelper * K565RU7::menu(void) {
-  return F("PУ7 (OЗУ 256Kx1)");
+    return F("PУ7 (OЗУ 256Kx1)");
 }
 
 const __FlashStringHelper * K565RU7::description(void) {
@@ -52,5 +51,5 @@ const __FlashStringHelper * K565RU7::description(void) {
 }
 
 const __FlashStringHelper * K565RU7::title(void) {
-  return F("K565PУ7\r\nOЗУ 256Kx1\r\nDIP16\r\n");
+    return F("K565PУ7\r\nOЗУ 256Kx1\r\nDIP16\r\n");
 }

@@ -76,85 +76,85 @@ extern char text[256];
 #define EXPAND_CHIP
 
 typedef struct {
-  uint8_t Input[PIN_SIZE];
-  uint8_t Output[PIN_SIZE];
+    uint8_t Input[PIN_SIZE];
+    uint8_t Output[PIN_SIZE];
 } TDevicePin;
 
 typedef struct {
-  uint16_t value;
-  uint16_t result;
+    uint16_t value;
+    uint16_t result;
 } TDeviceVal;
 
 class IDevice {
-  public:
-    virtual const __FlashStringHelper * menu(void) = 0;
-    virtual const __FlashStringHelper * title(void) = 0;
-    virtual const __FlashStringHelper * description(void) = 0;
+    public:
+        virtual const __FlashStringHelper * menu(void) = 0;
+        virtual const __FlashStringHelper * title(void) = 0;
+        virtual const __FlashStringHelper * description(void) = 0;
 
-    virtual int test(GyverDisplay& display) = 0;
+        virtual int test(GyverDisplay& display) = 0;
 };
 
 const size_t MAX_DEVICE = 8;
 const size_t MAX_VALUE = 256;
 
 class TDevice : public IDevice {
-  protected:
-    const TDevicePin * _devices;
-    const TDeviceVal * _values;  
-    size_t _devices_count;
-    size_t _values_count;
+    protected:
+        const TDevicePin * _devices;
+        const TDeviceVal * _values;  
+        size_t _devices_count;
+        size_t _values_count;
 
-    virtual int test_device(const TDevicePin *device, const TDeviceVal *value);
+        virtual int test_device(const TDevicePin *device, const TDeviceVal *value);
 
-    virtual void loadStorage(void);
-    virtual void clearStorage(void);
+        virtual void loadStorage(void);
+        virtual void clearStorage(void);
 
-    virtual void info(GyverDisplay& display);
-    virtual void init(void);
-    virtual void done(void);
+        virtual void info(GyverDisplay& display);
+        virtual void init(void);
+        virtual void done(void);
 
-    virtual int getPin(int value) const {
-      return value;
-    }
-  public:
-    TDevice() {
-        _devices = NULL;
-        _values = NULL;  
-        _devices_count = 0;
-        _values_count = 0;
-    }
+        virtual int getPin(int value) const {
+            return value;
+        }
+    public:
+        TDevice() {
+            _devices = NULL;
+            _values = NULL;  
+            _devices_count = 0;
+            _values_count = 0;
+        }
     
-    virtual int check_devices(GyverDisplay& display);
-    virtual int test(GyverDisplay& display) override;
+        virtual int check_devices(GyverDisplay& display);
+        virtual int test(GyverDisplay& display) override;
 
-    static TDevicePin _storageDevice[MAX_DEVICE];
-    static TDeviceVal _storageValue[MAX_VALUE];
+        static TDevicePin _storageDevice[MAX_DEVICE];
+        static TDeviceVal _storageValue[MAX_VALUE];
 };
 
 class TDeviceExt: public TDevice {
-  protected:
-    void set_input(int value);
-    virtual int check_devices(GyverDisplay& display) override;
+    protected:
+        void set_input(int value);
+        virtual int check_devices(GyverDisplay& display) override;
 };
 
 class TDeviceComposite: public TDevice {
-  protected:
-    size_t _count;
-    TDevice ** _composite;
-  public:
-    TDeviceComposite(TDevice ** composite, size_t count)  {
-      _devices_count = 0;
-      _values_count = 0;
-      _composite = composite;
-      _count = count;
-    }
-    virtual int check_devices(GyverDisplay& display) override {
-      int errorCount = 0;
-      info(display);
-      for (size_t i = 0; i < _count; i++) {
-        TDevice * current = _composite[i];
-        errorCount += current->check_devices(display);
-      }
-      return errorCount;
-    }
+    protected:
+        size_t _count;
+        TDevice ** _composite;
+    public:
+        TDeviceComposite(TDevice ** composite, size_t count)  {
+            _devices_count = 0;
+            _values_count = 0;
+            _composite = composite;
+            _count = count;
+        }
+        virtual int check_devices(GyverDisplay& display) override {
+            int errorCount = 0;
+            info(display);
+            for (size_t i = 0; i < _count; i++) {
+                TDevice * current = _composite[i];
+                errorCount += current->check_devices(display);
+            }
+            return errorCount;
+        }
 };

@@ -4,24 +4,23 @@
 // https://forum.defence-force.org/viewtopic.php?t=1699&start=45 //
 ///////////////////////////////////////////////////////////////////
 
-const static TDevicePin PROGMEM pin_map_565_ru5[] =
-{
-  // Входы     A0  A1  A2  A3  A4  A5  A6  A7  DI RAS CAS  WE                   DO
-  { .Input = {  5,  7,  6, 12, 11, 10, 13,  9,  2,  4, 15,  3,  0}, .Output = { 14,  0 }},
+const static TDevicePin PROGMEM pin_map_565_ru5[] = {
+    // Входы     A0  A1  A2  A3  A4  A5  A6  A7  DI RAS CAS  WE                   DO
+    { .Input = {  5,  7,  6, 12, 11, 10, 13,  9,  2,  4, 15,  3,  0}, .Output = { 14,  0 }},
 };
 
 K565RU5::K565RU5(void) {
-  _devices = pin_map_565_ru5;
-  _rows = 256;
-  _cols = 256;
+    _devices = pin_map_565_ru5;
+    _rows = 256;
+    _cols = 256;
 
-  _values = NULL;  
-  _devices_count = 1;
-  _values_count = 0;
+    _values = NULL;  
+    _devices_count = 1;
+    _values_count = 0;
 }
 
 const __FlashStringHelper * K565RU5::menu(void) {
-  return F("PУ5 (OЗУ 64Kx1)");
+    return F("PУ5 (OЗУ 64Kx1)");
 }
 
 const __FlashStringHelper * K565RU5::description(void) {
@@ -51,5 +50,5 @@ const __FlashStringHelper * K565RU5::description(void) {
 }
 
 const __FlashStringHelper * K565RU5::title(void) {
-  return F("K565PУ5\r\nOЗУ 64Kx1\r\nDIP16\r\n");
+    return F("K565PУ5\r\nOЗУ 64Kx1\r\nDIP16\r\n");
 }

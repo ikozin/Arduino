@@ -1,33 +1,31 @@
 #include "K1533_LE4.h"
 
-const static TDevicePin PROGMEM pin_map_1533_le4[] =
-{
-  { .Input = {  1,  2, 13,  0,  0,  0,  0,  0 }, .Output = { 12,  0,  0,  0,  0,  0,  0,  0 }},
-  { .Input = {  3,  4,  5,  0,  0,  0,  0,  0 }, .Output = {  6,  0,  0,  0,  0,  0,  0,  0 }},
-  { .Input = {  9, 10, 11,  0,  0,  0,  0,  0 }, .Output = {  8,  0,  0,  0,  0,  0,  0,  0 }},
+const static TDevicePin PROGMEM pin_map_1533_le4[] = {
+    { .Input = {  1,  2, 13,  0,  0,  0,  0,  0 }, .Output = { 12,  0,  0,  0,  0,  0,  0,  0 }},
+    { .Input = {  3,  4,  5,  0,  0,  0,  0,  0 }, .Output = {  6,  0,  0,  0,  0,  0,  0,  0 }},
+    { .Input = {  9, 10, 11,  0,  0,  0,  0,  0 }, .Output = {  8,  0,  0,  0,  0,  0,  0,  0 }},
 };
 
-const static TDeviceVal PROGMEM values_1533_le4[] =
-{
-  { .value = (uint16_t) 0, .result = (uint16_t) 1 },
-  { .value = (uint16_t) 1, .result = (uint16_t) 0 },
-  { .value = (uint16_t) 2, .result = (uint16_t) 0 },
-  { .value = (uint16_t) 3, .result = (uint16_t) 0 },
-  { .value = (uint16_t) 4, .result = (uint16_t) 0 },
-  { .value = (uint16_t) 5, .result = (uint16_t) 0 },
-  { .value = (uint16_t) 6, .result = (uint16_t) 0 },
-  { .value = (uint16_t) 7, .result = (uint16_t) 0 },
+const static TDeviceVal PROGMEM values_1533_le4[] = {
+    { .value = (uint16_t) 0, .result = (uint16_t) 1 },
+    { .value = (uint16_t) 1, .result = (uint16_t) 0 },
+    { .value = (uint16_t) 2, .result = (uint16_t) 0 },
+    { .value = (uint16_t) 3, .result = (uint16_t) 0 },
+    { .value = (uint16_t) 4, .result = (uint16_t) 0 },
+    { .value = (uint16_t) 5, .result = (uint16_t) 0 },
+    { .value = (uint16_t) 6, .result = (uint16_t) 0 },
+    { .value = (uint16_t) 7, .result = (uint16_t) 0 },
 };
 
 K1533LE4::K1533LE4(void) {
-  _devices = pin_map_1533_le4;
-  _values = values_1533_le4;
-  _devices_count = sizeof(pin_map_1533_le4)/sizeof(pin_map_1533_le4[0]);
-  _values_count = sizeof(values_1533_le4)/sizeof(values_1533_le4[0]);
+    _devices = pin_map_1533_le4;
+    _values = values_1533_le4;
+    _devices_count = sizeof(pin_map_1533_le4)/sizeof(pin_map_1533_le4[0]);
+    _values_count = sizeof(values_1533_le4)/sizeof(values_1533_le4[0]);
 }
 
 const __FlashStringHelper * K1533LE4::menu(void) {
-  return F("ЛE4 (3ИЛИ-HE)");
+    return F("ЛE4 (3ИЛИ-HE)");
 }
 
 const __FlashStringHelper * K1533LE4::description(void) {
@@ -62,5 +60,5 @@ const __FlashStringHelper * K1533LE4::description(void) {
 }
 
 const __FlashStringHelper * K1533LE4::title(void) {
-  return F("KP1533ЛE4\r\n3 элемента 3ИЛИ-HE\r\nDIP14\r\n");
+    return F("KP1533ЛE4\r\n3 элемента 3ИЛИ-HE\r\nDIP14\r\n");
 }

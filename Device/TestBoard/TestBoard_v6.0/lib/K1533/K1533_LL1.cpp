@@ -1,30 +1,28 @@
 #include "K1533_LL1.h"
 
-const static TDevicePin PROGMEM pin_map_1533_ll1[] =
-{
-  { .Input = {  1,  2,  0,  0,  0,  0,  0,  0 }, .Output = {  3,  0,  0,  0,  0,  0,  0,  0 }},
-  { .Input = {  4,  5,  0,  0,  0,  0,  0,  0 }, .Output = {  6,  0,  0,  0,  0,  0,  0,  0 }},
-  { .Input = {  9, 10,  0,  0,  0,  0,  0,  0 }, .Output = {  8,  0,  0,  0,  0,  0,  0,  0 }},
-  { .Input = { 12, 13,  0,  0,  0,  0,  0,  0 }, .Output = { 11,  0,  0,  0,  0,  0,  0,  0 }},
+const static TDevicePin PROGMEM pin_map_1533_ll1[] = {
+    { .Input = {  1,  2,  0,  0,  0,  0,  0,  0 }, .Output = {  3,  0,  0,  0,  0,  0,  0,  0 }},
+    { .Input = {  4,  5,  0,  0,  0,  0,  0,  0 }, .Output = {  6,  0,  0,  0,  0,  0,  0,  0 }},
+    { .Input = {  9, 10,  0,  0,  0,  0,  0,  0 }, .Output = {  8,  0,  0,  0,  0,  0,  0,  0 }},
+    { .Input = { 12, 13,  0,  0,  0,  0,  0,  0 }, .Output = { 11,  0,  0,  0,  0,  0,  0,  0 }},
 };
 
-const static TDeviceVal PROGMEM values_1533_ll1[] =
-{
-  { .value = (uint16_t)0, .result = (uint16_t)0 },
-  { .value = (uint16_t)1, .result = (uint16_t)1 },
-  { .value = (uint16_t)2, .result = (uint16_t)1 },
-  { .value = (uint16_t)3, .result = (uint16_t)1 },
+const static TDeviceVal PROGMEM values_1533_ll1[] = {
+    { .value = (uint16_t)0, .result = (uint16_t)0 },
+    { .value = (uint16_t)1, .result = (uint16_t)1 },
+    { .value = (uint16_t)2, .result = (uint16_t)1 },
+    { .value = (uint16_t)3, .result = (uint16_t)1 },
 };
 
 K1533LL1::K1533LL1(void){
-  _devices = pin_map_1533_ll1;
-  _values = values_1533_ll1;
-  _devices_count = sizeof(pin_map_1533_ll1)/sizeof(pin_map_1533_ll1[0]);
-  _values_count = sizeof(values_1533_ll1)/sizeof(values_1533_ll1[0]);
+    _devices = pin_map_1533_ll1;
+    _values = values_1533_ll1;
+    _devices_count = sizeof(pin_map_1533_ll1)/sizeof(pin_map_1533_ll1[0]);
+    _values_count = sizeof(values_1533_ll1)/sizeof(values_1533_ll1[0]);
 }
 
 const __FlashStringHelper * K1533LL1::menu(void) {
-  return F("ЛЛ1 (2ИЛИ)");
+    return F("ЛЛ1 (2ИЛИ)");
 }
 
 const __FlashStringHelper * K1533LL1::description(void) {
@@ -58,5 +56,5 @@ const __FlashStringHelper * K1533LL1::description(void) {
 }
 
 const __FlashStringHelper * K1533LL1::title(void) {
-  return F("KP1533ЛЛ1\r\n4 элемента 2ИЛИ\r\nDIP14\r\n");
+    return F("KP1533ЛЛ1\r\n4 элемента 2ИЛИ\r\nDIP14\r\n");
 }

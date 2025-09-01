@@ -1,63 +1,61 @@
 #include "K1533_IE5.h"
 
-const static TDevicePin PROGMEM pin_map_1533_ie5[] =
-{
-  // Входы     C1  C2   &   R                     Выходы      1   2   4   8
-  { .Input = { 14,  1,  2,  3,  0,  0,  0,  0 }, .Output = { 12,  9,  8, 11,  0,  0,  0,  0 }},
+const static TDevicePin PROGMEM pin_map_1533_ie5[] = {
+    // Входы     C1  C2   &   R                     Выходы      1   2   4   8
+    { .Input = { 14,  1,  2,  3,  0,  0,  0,  0 }, .Output = { 12,  9,  8, 11,  0,  0,  0,  0 }},
 };
 
-const static TDeviceVal PROGMEM values_1533_ie5[] =
-{  
-  //                      R  & C2 C1                         8  4  2  1
-  { .value = (uint16_t)B__1__1__0__0, .result = (uint16_t)B__0__0__0__0 },
+const static TDeviceVal PROGMEM values_1533_ie5[] = {  
+    //                      R  & C2 C1                         8  4  2  1
+    { .value = (uint16_t)B__1__1__0__0, .result = (uint16_t)B__0__0__0__0 },
 
-  { .value = (uint16_t)B__0__1__0__0, .result = (uint16_t)B__0__0__0__0 },
-  { .value = (uint16_t)B__0__1__0__1, .result = (uint16_t)B__0__0__0__0 },
-  { .value = (uint16_t)B__0__1__0__0, .result = (uint16_t)B__0__0__0__1 },
-  { .value = (uint16_t)B__0__0__0__1, .result = (uint16_t)B__0__0__0__1 },
-  { .value = (uint16_t)B__1__0__0__0, .result = (uint16_t)B__0__0__0__0 },
-  { .value = (uint16_t)B__1__0__0__1, .result = (uint16_t)B__0__0__0__0 },
-  { .value = (uint16_t)B__1__0__0__0, .result = (uint16_t)B__0__0__0__1 },
-  { .value = (uint16_t)B__0__0__0__1, .result = (uint16_t)B__0__0__0__1 },
-  { .value = (uint16_t)B__0__1__0__0, .result = (uint16_t)B__0__0__0__0 },
-  { .value = (uint16_t)B__0__1__0__1, .result = (uint16_t)B__0__0__0__0 },
-  { .value = (uint16_t)B__0__1__0__0, .result = (uint16_t)B__0__0__0__1 },
-  { .value = (uint16_t)B__0__0__0__1, .result = (uint16_t)B__0__0__0__1 },
-  { .value = (uint16_t)B__0__0__0__0, .result = (uint16_t)B__0__0__0__0 },
-  { .value = (uint16_t)B__0__0__0__1, .result = (uint16_t)B__0__0__0__0 },
+    { .value = (uint16_t)B__0__1__0__0, .result = (uint16_t)B__0__0__0__0 },
+    { .value = (uint16_t)B__0__1__0__1, .result = (uint16_t)B__0__0__0__0 },
+    { .value = (uint16_t)B__0__1__0__0, .result = (uint16_t)B__0__0__0__1 },
+    { .value = (uint16_t)B__0__0__0__1, .result = (uint16_t)B__0__0__0__1 },
+    { .value = (uint16_t)B__1__0__0__0, .result = (uint16_t)B__0__0__0__0 },
+    { .value = (uint16_t)B__1__0__0__1, .result = (uint16_t)B__0__0__0__0 },
+    { .value = (uint16_t)B__1__0__0__0, .result = (uint16_t)B__0__0__0__1 },
+    { .value = (uint16_t)B__0__0__0__1, .result = (uint16_t)B__0__0__0__1 },
+    { .value = (uint16_t)B__0__1__0__0, .result = (uint16_t)B__0__0__0__0 },
+    { .value = (uint16_t)B__0__1__0__1, .result = (uint16_t)B__0__0__0__0 },
+    { .value = (uint16_t)B__0__1__0__0, .result = (uint16_t)B__0__0__0__1 },
+    { .value = (uint16_t)B__0__0__0__1, .result = (uint16_t)B__0__0__0__1 },
+    { .value = (uint16_t)B__0__0__0__0, .result = (uint16_t)B__0__0__0__0 },
+    { .value = (uint16_t)B__0__0__0__1, .result = (uint16_t)B__0__0__0__0 },
 
-  //                      R  & C2 C1                         8  4  2  1
-  { .value = (uint16_t)B__1__1__0__0, .result = (uint16_t)B__0__0__0__0 },
-  
-  { .value = (uint16_t)B__0__0__0__0, .result = (uint16_t)B__0__0__0__0 },
-  { .value = (uint16_t)B__0__0__1__0, .result = (uint16_t)B__0__0__0__0 },
-  { .value = (uint16_t)B__0__0__0__0, .result = (uint16_t)B__0__0__1__0 },
-  { .value = (uint16_t)B__0__0__1__0, .result = (uint16_t)B__0__0__1__0 },
-  { .value = (uint16_t)B__0__0__0__0, .result = (uint16_t)B__0__1__0__0 },
-  { .value = (uint16_t)B__0__0__1__0, .result = (uint16_t)B__0__1__0__0 },
-  { .value = (uint16_t)B__0__0__0__0, .result = (uint16_t)B__0__1__1__0 },
-  { .value = (uint16_t)B__0__0__1__0, .result = (uint16_t)B__0__1__1__0 },
-  { .value = (uint16_t)B__0__0__0__0, .result = (uint16_t)B__1__0__0__0 },
-  { .value = (uint16_t)B__0__0__1__0, .result = (uint16_t)B__1__0__0__0 },
-  { .value = (uint16_t)B__0__0__0__0, .result = (uint16_t)B__1__0__1__0 },
-  { .value = (uint16_t)B__0__0__1__0, .result = (uint16_t)B__1__0__1__0 },
-  { .value = (uint16_t)B__0__0__0__0, .result = (uint16_t)B__1__1__0__0 },
-  { .value = (uint16_t)B__0__0__1__0, .result = (uint16_t)B__1__1__0__0 },
-  { .value = (uint16_t)B__0__0__0__0, .result = (uint16_t)B__1__1__1__0 },
-  { .value = (uint16_t)B__0__0__1__0, .result = (uint16_t)B__1__1__1__0 },
-  { .value = (uint16_t)B__0__0__0__0, .result = (uint16_t)B__0__0__0__0 },
+    //                      R  & C2 C1                         8  4  2  1
+    { .value = (uint16_t)B__1__1__0__0, .result = (uint16_t)B__0__0__0__0 },
+
+    { .value = (uint16_t)B__0__0__0__0, .result = (uint16_t)B__0__0__0__0 },
+    { .value = (uint16_t)B__0__0__1__0, .result = (uint16_t)B__0__0__0__0 },
+    { .value = (uint16_t)B__0__0__0__0, .result = (uint16_t)B__0__0__1__0 },
+    { .value = (uint16_t)B__0__0__1__0, .result = (uint16_t)B__0__0__1__0 },
+    { .value = (uint16_t)B__0__0__0__0, .result = (uint16_t)B__0__1__0__0 },
+    { .value = (uint16_t)B__0__0__1__0, .result = (uint16_t)B__0__1__0__0 },
+    { .value = (uint16_t)B__0__0__0__0, .result = (uint16_t)B__0__1__1__0 },
+    { .value = (uint16_t)B__0__0__1__0, .result = (uint16_t)B__0__1__1__0 },
+    { .value = (uint16_t)B__0__0__0__0, .result = (uint16_t)B__1__0__0__0 },
+    { .value = (uint16_t)B__0__0__1__0, .result = (uint16_t)B__1__0__0__0 },
+    { .value = (uint16_t)B__0__0__0__0, .result = (uint16_t)B__1__0__1__0 },
+    { .value = (uint16_t)B__0__0__1__0, .result = (uint16_t)B__1__0__1__0 },
+    { .value = (uint16_t)B__0__0__0__0, .result = (uint16_t)B__1__1__0__0 },
+    { .value = (uint16_t)B__0__0__1__0, .result = (uint16_t)B__1__1__0__0 },
+    { .value = (uint16_t)B__0__0__0__0, .result = (uint16_t)B__1__1__1__0 },
+    { .value = (uint16_t)B__0__0__1__0, .result = (uint16_t)B__1__1__1__0 },
+    { .value = (uint16_t)B__0__0__0__0, .result = (uint16_t)B__0__0__0__0 },
 };
 
 
 K1533IE5::K1533IE5(void) {
-  _devices = pin_map_1533_ie5;
-  _values = values_1533_ie5;  
-  _devices_count = sizeof(pin_map_1533_ie5)/sizeof(pin_map_1533_ie5[0]);
-  _values_count = sizeof(values_1533_ie5)/sizeof(values_1533_ie5[0]);
+    _devices = pin_map_1533_ie5;
+    _values = values_1533_ie5;  
+    _devices_count = sizeof(pin_map_1533_ie5)/sizeof(pin_map_1533_ie5[0]);
+    _values_count = sizeof(values_1533_ie5)/sizeof(values_1533_ie5[0]);
 }
 
 const __FlashStringHelper * K1533IE5::menu(void) {
-  return F("ИE5 (Счетчик)");
+    return F("ИE5 (Счетчик)");
 }
 
 const __FlashStringHelper * K1533IE5::description(void) {
@@ -78,5 +76,5 @@ const __FlashStringHelper * K1533IE5::description(void) {
 }
 
 const __FlashStringHelper * K1533IE5::title(void) {
-  return F("KP1533ИE5\r\nСчетчик двоичный\r\nDIP14\r\n");
+    return F("KP1533ИE5\r\nСчетчик двоичный\r\nDIP14\r\n");
 }
