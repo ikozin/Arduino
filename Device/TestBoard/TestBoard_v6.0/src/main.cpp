@@ -210,8 +210,8 @@ void setup() {
     display.init();
     display.clear();
     display.home();
-    display.flipV(true);
-    display.flipH(true);
+    // display.flipV(true);
+    // display.flipH(true);
 
     displayMenu(display, index);   
 }
