@@ -310,6 +310,11 @@ void setup() {
     }
 #endif
 #endif
+
+#ifdef RESET_ENABLE
+    ctrlReset.Start(1024);
+    cmpReset.Start(&ctrlReset, 1024);
+#endif
  
     // prefs.putString("ssid", "...");
     // prefs.putString("pswd", "...");
@@ -353,8 +358,13 @@ void setup() {
     LOG("\r\nconnected!\r\nip: %s\r\n", WiFi.localIP().toString().c_str())
     configTime(prefs.getInt("tz", 10800), 0, "ntp1.vniiftri.ru", "ntp2.vniiftri.ru");
 
+    int counter = 60;
     do vTaskDelay(1000 / portTICK_RATE_MS);
-    while (sntp_get_sync_status() != SNTP_SYNC_STATUS_COMPLETED);
+    while (sntp_get_sync_status() != SNTP_SYNC_STATUS_COMPLETED && counter--);
+    if (counter == 0) {
+        tft.printf("SNTP ERROR\r\n");
+        LOG("SNTP ERROR\r\n")
+    }
 #endif
 
 #ifdef DEBUG_CONSOLE
@@ -392,16 +402,10 @@ void setup() {
     ctrlIrRemote.attachController(&ctrlRadio);
     ctrlIrRemote.Start(1024);
 #endif
-#ifdef RESET_ENABLE
-    ctrlReset.Start(1024);
-#endif
 
     LOGN("Component - Start")
 #if defined(IR_ENABLE)
     cmpIrRemote.Start(&ctrlIrRemote);
-#endif
-#ifdef RESET_ENABLE
-    cmpReset.Start(&ctrlReset, 1024);
 #endif
 
     LOGN("View - Start")
