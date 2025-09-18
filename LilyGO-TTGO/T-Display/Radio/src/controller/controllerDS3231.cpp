@@ -44,7 +44,8 @@ InitResponse_t ControllerDS3231::OnInit() {
                 .minute = currentTime.minute(),
                 .second = currentTime.second()
             };
-            // Serial.printf("%s::OnInit, Setup DS3231: %02d:%02d:%02d\r\n", _name, _value.hour, _value.minute, _value.second);
+            // Serial.printf("%s::OnInit, Setup DS3231: %02d:%02d:%04d %02d:%02d:%02d\r\n", _name, 
+            //     _value.day, _value.month, _value.year, _value.hour, _value.minute, _value.second);
         }      
         return OnInitResultStart;
     }

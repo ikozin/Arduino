@@ -13,6 +13,7 @@ char* ViewDS3231::dayOfWeeks[] = {
 };
 
 char* ViewDS3231::months[] = {
+    (char*)"",
     (char*)"Января",
     (char*)"Февраля",
     (char*)"Марта",
@@ -57,8 +58,8 @@ void ViewDS3231::OnDrawHandle() {
     }
     strcat(text, buffer);
 
-    // sprintf(text, "%02d:%02d", now.hour, now.minute);
-    // Serial.println(text);
+    sprintf(text, "%02d:%02d", now.hour, now.minute);
+    Serial.println(text);
 
     getSetting()->getSprite()->fillSprite(TFT_BLACK);
     getSetting()->getSprite()->setTextColor(TFT_WHITE);
@@ -72,13 +73,13 @@ void ViewDS3231::OnDrawHandle() {
     itoa(now.day, buffer, 10);
     strcat(text, buffer);
     strcat(text, " ");
-    strcat(text, months[now.month - 1]);
+    strcat(text, months[now.month]);
     strcat(text, " ");
     itoa(now.year, buffer, 10);
     strcat(text, buffer);
 
-    // sprintf(text, "%s %d %s %d", dayOfWeeks[now.dayOfTheWeek], now.day, months[now.month - 1], now.year);
-    // Serial.println(text);
+    sprintf(text, "%s %d %s %d", dayOfWeeks[now.dayOfTheWeek], now.day, months[now.month], now.year);
+    Serial.println(text);
 
     getSetting()->getSprite()->setTextColor(getDateColor(now));
     getSetting()->getSprite()->loadFont(NotoSansSemiBold23);

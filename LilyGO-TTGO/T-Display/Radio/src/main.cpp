@@ -3,7 +3,6 @@
 
 #include <Button2.h>
 #include <ESP32Encoder.h>
-#include <AsyncMqttClient.h>
 
 #include "controller/radioStorage.h"
 #include "controller/controller.h"
@@ -108,8 +107,15 @@ Button2 btnEncoder = Button2();
 #endif
 #endif
 
+#ifdef WIFI_ENABLE
 String ssid         = ""; // SSID WI-FI
 String pswd         = "";
+IPAddress host(192, 168, 2, 11);
+IPAddress gateway(192, 168, 2, 1);
+IPAddress subnet(255, 255, 255, 0);
+IPAddress dns1(85, 21, 192, 5);
+IPAddress dns2(213, 234, 192, 7);
+#endif
 
 int16_t viewIndex  = -1;
 View* currentView = nullptr;
@@ -209,7 +215,7 @@ TimerHandle_t mqttReconnectTimer;
 #endif
 
 TimerHandle_t wifiReconnectTimer;
-AsyncWebServer server(80);
+// AsyncWebServer server(80);
 
 void connectToWifi() {
     // Serial.println("Connecting to Wi-Fi...");
@@ -303,11 +309,11 @@ void setup() {
 #if !defined(ENCODER_FAKE)
     encoder.attachSingleEdge(ENCODER_PIN_A, ENCODER_PIN_B);
     btnEncoder.begin(ENCODER_BTN);
-    if (btnEncoder.isPressedRaw()) {
-#ifdef WIFI_ENABLE
-        setSettings(prefs, tft, server);
-#endif
-    }
+//     if (btnEncoder.isPressedRaw()) {
+// #ifdef WIFI_ENABLE
+//         setSettings(prefs, tft, server);
+// #endif
+//     }
 #endif
 #endif
 
@@ -323,18 +329,29 @@ void setup() {
     // prefs.putInt("volume", 2);
     // prefs.putBool("mute", true);
     // prefs.putInt("page", 0);
+    // prefs.putString("inet_host", "192.168.2.11");
+    // prefs.putString("inet_gateway", "192.168.2.1");
+    // prefs.putString("inet_subnet", "255.255.255.0");
+    // prefs.putString("inet_dns1", "85.21.192.5");
+    // prefs.putString("inet_dns2", "213.234.192.7");
     // prefs.putString("mqtt_broker", "192.168.1.50");
     // prefs.putString("mqtt_user", "...");
     // prefs.putString("mqtt_password", "...");
 
+#ifdef WIFI_ENABLE
     ssid = prefs.getString("ssid", ssid);
     pswd = prefs.getString("pswd", pswd);
 
     tft.printf("Wi-Fi SSID: %s ", ssid.c_str());
     LOGN("Wi-Fi SSID: %s ", ssid.c_str())
 
-#ifdef WIFI_ENABLE
-    // WiFi.disconnect();
+    host.fromString(prefs.getString("inet_host"));
+    gateway.fromString(prefs.getString("inet_gateway"));
+    subnet.fromString(prefs.getString("inet_subnet"));
+    dns1.fromString(prefs.getString("inet_dns1"));
+    dns2.fromString(prefs.getString("inet_dns2"));
+    WiFi.config(host, gateway, subnet, dns1, dns2);
+      // WiFi.disconnect();
     WiFi.mode(WIFI_STA);
 #ifdef MQTT_ENABLE
     // mqttClient.onConnect(onMqttConnect);
