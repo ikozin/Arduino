@@ -1,0 +1,178 @@
+esphome:                                            # https://esphome.io/components/esphome
+  name: tm
+  friendly_name: TM
+  # platformio_options:
+  #   board_build.partitions: huge_app.csv
+
+esp32:                                              # https://esphome.io/components/esp32
+  board: esp32dev   # ESP32-D0WDQ6                    https://registry.platformio.org/platforms/platformio/espressif32/boards
+  flash_size: 4MB   # W25Q32FVSS
+  cpu_frequency: 240MHZ
+  framework:
+    type: arduino                                   # https://esphome.io/components/esp32#arduino-framework
+
+# Enable logging
+logger:                                             # https://esphome.io/components/logger
+  level: VERBOSE 
+
+# Enable Home Assistant API
+api:                                                # https://esphome.io/components/api
+  encryption:
+    key: "v5bxZJBMXgg/63Ll7cuj2y4SCfTcV/dx1TECBPleDIE="
+
+ota:                                                # https://esphome.io/components/ota/
+  - platform: esphome
+    password: "8491c860fa7ec85b54edfad0d465c0b3"
+
+wifi:                                               # https://esphome.io/components/wifi
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+  fast_connect: True
+  manual_ip:
+    static_ip: 192.168.2.30
+    gateway: 192.168.2.1
+    subnet: 255.255.255.0
+
+mqtt:                                             # https://esphome.io/components/mqtt
+  broker: !secret mqtt_broker
+  username: !secret mqtt_user
+  password: !secret mqtt_password
+
+time:                                               # https://esphome.io/components/time/
+  - id: time_device
+    platform: sntp                                  # https://esphome.io/components/time/sntp
+    timezone: Europe/Moscow
+    # servers:
+    #   - ntp1.vniiftri.ru
+    #   - ntp2.vniiftri.ru
+    #   - ntp3.vniiftri.ru
+    servers:
+      - 0.pool.ntp.org
+      - 1.pool.ntp.org
+      - 2.pool.ntp.org
+
+i2c:                                                # https://esphome.io/components/i2c.html
+  - id: id_i2c
+    sda: GPIO21
+    scl: GPIO22
+    scan: False
+
+sensor:                                             # https://esphome.io/components/sensor/
+  - id: bme280
+    platform: bme280_i2c                            # https://esphome.io/components/sensor/bme280
+    i2c_id: id_i2c
+    address: 0x76
+    update_interval: 15s
+    temperature:
+      id: bme280_Temperature
+      name: Температура (BME280)
+      device_class: temperature                     # https://www.home-assistant.io/integrations/sensor/
+      icon: mdi:temperature-celsius                 # https://pictogrammers.com/library/mdi/
+    humidity:
+      id: bme280_Humidity
+      name: "Влажность (BME280)"
+      device_class: humidity                        # https://www.home-assistant.io/integrations/sensor/
+      icon: mdi:water-percent                       # https://pictogrammers.com/library/mdi/
+    pressure:
+      id: bme280_Pressure
+      name: "Давление (BME280)"
+      device_class: pressure                        # https://www.home-assistant.io/integrations/sensor/
+      icon: mdi:gauge                               # https://pictogrammers.com/library/mdi/
+      unit_of_measurement: "mm"
+      filters:
+        - lambda: return x * 0.750062;
+
+i2s_audio:                                          # https://esphome.io/components/media_player/i2s_audio/
+  i2s_lrclk_pin: GPIO25 # LBCK
+  i2s_bclk_pin: GPIO26  # BCK
+
+media_player:                                       # https://esphome.io/components/media_player/
+  - platform: i2s_audio
+    dac_type: external
+    i2s_dout_pin: GPIO19  # DIN
+    mode: stereo 
+    name: "ESPHome I2S Media Player"
+
+binary_sensor:                                      # https://esphome.io/components/binary_sensor/
+  - id: TM_btn_0
+    platform: gpio                                  # https://esphome.io/components/binary_sensor/gpio
+    pin:                                            # https://esphome.io/guides/configuration-types#config-pin-schema
+      number: GPIO37
+      inverted: true
+      mode:
+        input: true
+    filters:                                        # https://esphome.io/components/binary_sensor/#binary-sensor-filters
+      - delayed_on: 10ms
+    on_click:                                       # https://esphome.io/components/binary_sensor/#on_click
+      then:
+        - media_player.stop 
+    name: "TM Button 0"
+  - id: TM_btn_1
+    platform: gpio                                  # https://esphome.io/components/binary_sensor/gpio
+    pin:                                            # https://esphome.io/guides/configuration-types#config-pin-schema
+      number: GPIO38
+      inverted: true
+      mode:
+        input: true
+    filters:                                        # https://esphome.io/components/binary_sensor/#binary-sensor-filters
+      - delayed_on: 10ms
+    on_click:                                       # https://esphome.io/components/binary_sensor/#on_click
+      then:
+        - media_player.play_media: 'http://icecast.vgtrk.cdnvideo.ru/vestifm'
+        - media_player.volume_set: 100%
+    name: "TM Button 1"
+  - id: TM_btn_2
+    platform: gpio                                  # https://esphome.io/components/binary_sensor/gpio
+    pin:                                            # https://esphome.io/guides/configuration-types#config-pin-schema
+      number: GPIO39
+      inverted: true
+      mode:
+        input: true
+    filters:                                        # https://esphome.io/components/binary_sensor/#binary-sensor-filters
+      - delayed_on: 10ms
+    name: "TM Button 2"
+
+
+# interval:                                           # https://esphome.io/components/interval
+#   - interval: 2s
+#     then:
+#       - display.page.show_next: id_display
+#       - component.update: id_display
+
+# spi:                                                # https://esphome.io/components/spi
+#   - id: spi_st7798v
+#     clk_pin: 18
+#     mosi_pin: 23
+
+# display:
+#   - id: id_display
+#     platform: ili9xxx                               # https://github.com/esphome/esphome-docs/blob/current/components/display/ili9xxx.rst
+#     model: st7789v
+#     spi_id: spi_st7798v
+#     cs_pin: GPIO5
+#     dc_pin: GPIO16
+#     reset_pin: GPIO17
+#     rotation: 90
+#     dimensions:
+#       height: 240 # 320
+#       width: 135  # 240
+#       offset_height:  40
+#       offset_width: 52
+#     # Required or the colors are all inverted, and Black screen is White
+#     invert_colors: False
+#     update_interval: 60s
+#     pages:
+#     - id: page_red
+#       lambda: |-
+#         auto c = Color(255, 0, 0);
+#         it.fill(c);
+#     - id: page_green
+#       lambda: |-
+#         auto c = Color(0, 255, 0);
+#         it.fill(c);
+#     - id: page_blue
+#       lambda: |-
+#         auto c = Color(0, 0, 255);
+#         it.fill(c);
+
+  
