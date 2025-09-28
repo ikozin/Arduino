@@ -13,6 +13,19 @@ void ControllerAudio::setTitle(const char* text) {
     xEventGroupSetBits(_xEventGroup, BIT_TRACK);
 }
 
+
+void ControllerAudio::setMute(bool mute) {
+    LOG("ControllerAudio::setMute %d\r\n", mute);
+    AudioCommand_t msg = { .cmd = CMD_SET_MUTE, .mute = mute };
+    xQueueSend(_queue, &msg, portMAX_DELAY);
+}
+
+void ControllerAudio::toggleMute() {
+    LOG("ControllerAudio::toggleMute\r\n");
+    AudioCommand_t msg = { .cmd = CMD_SET_MUTE, .mute = !_mute };
+    xQueueSend(_queue, &msg, portMAX_DELAY);
+}
+
 void ControllerAudio::setVolume(uint16_t volume) {
     LOG("ControllerAudio::SetVolume %d\r\n", volume);
     if (volume > VOLUME_MAX) return;
@@ -50,8 +63,15 @@ void ControllerAudio::Handler(void* parameter) {
                     break;
                 case CMD_SET_VOLUME:
                     controller->_volume = msg.volume;
-                    controller->_audio.setVolume(msg.volume);
+                    if (!controller->_mute) {
+                        controller->_audio.setVolume(msg.volume);
+                    }
                     xEventGroupSetBits(controller->_xEventGroup, BIT_VOLUME);
+                    break;
+                case CMD_SET_MUTE:
+                    controller->_mute = msg.mute;
+                    controller->_audio.setVolume(controller->_mute ? 0: controller->_volume);
+                    xEventGroupSetBits(controller->_xEventGroup, BIT_MUTE);
                     break;
                 
                 default:

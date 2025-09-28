@@ -16,17 +16,20 @@
 
 #define CMD_SET_URL     (1)
 #define CMD_SET_VOLUME  (2)
+#define CMD_SET_MUTE    (3)
 
 #define BIT_TIME    ( 1 << 0 )
 #define BIT_STATION ( 1 << 1 )
 #define BIT_TRACK   ( 1 << 2 )
 #define BIT_VOLUME  ( 1 << 3 )
+#define BIT_MUTE    ( 1 << 4 )
 
 typedef struct AudioCommand{
     uint16_t        cmd;
     union {
         uint16_t    volume;
         const char* url;
+        bool        mute;
     };
 } AudioCommand_t;
 
@@ -36,9 +39,15 @@ class ControllerAudio {
             _xEventGroup = xEventGroup;
             _queue = xQueueCreate(4, sizeof(AudioCommand_t));
             _title.reserve(128);
+            _mute = true;
+            _volume = 0;
          }
         void start();
         void setChannel(const char* url);
+
+        void setMute(bool mute);
+        void toggleMute();
+        const uint16_t getMute() const { return _mute; }
         
         void setVolume(uint16_t volume);
         void changeVolume(int step);
@@ -52,6 +61,7 @@ class ControllerAudio {
         QueueHandle_t _queue;
         String _title;
         uint16_t _volume;
+        bool _mute;
     private:
         static void Handler(void* parameter);
 };

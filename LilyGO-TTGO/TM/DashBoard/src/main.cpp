@@ -1,15 +1,13 @@
 #include <Arduino.h>
 #include <Preferences.h>
 #include <WiFi.h>
+#include <IPAddress.h>
 #include <esp_sntp.h>
-#include <TFT_eSPI.h>
 #include <ArduinoJson.h>
-
 #include "controllerAudio.h"
 #include "logging.h"
+#include "display.h"
 
-#include "fonts/Segment772.h"
-#include "fonts/Bahnschrift36.h"
 #include "fonts/ShareTechMonoRegular32.h"
 
 
@@ -17,12 +15,31 @@
     #error Select ESP32 DEV Board
 #endif
 
-#if USER_SETUP_ID != 23
-    #error Select USER_SETUP_ID 23
-#endif
-#if SPI_FREQUENCY != 80000000
-    #error Set SPI_FREQUENCY = 80000000
-#endif
+#define COLOR_BLACK_DAY     0x00000000
+#define COLOR_RED_DAY       0x00FF0000
+#define COLOR_GREEN_DAY     0x0000FF00
+#define COLOR_BLUE_DAY      0x000000FF
+#define COLOR_WHITE_DAY     (COLOR_RED_DAY | COLOR_GREEN_DAY | COLOR_BLUE_DAY)
+#define COLOR_YELLOW_DAY    (COLOR_RED_DAY | COLOR_GREEN_DAY)
+
+#define COLOR_BLACK_NIGHT   0x00000000
+#define COLOR_RED_NIGHT     0x003F0000
+#define COLOR_GREEN_NIGHT   0x00003F00
+#define COLOR_BLUE_NIGHT    0x0000003F
+#define COLOR_WHITE_NIGHT   (COLOR_RED_NIGHT | COLOR_GREEN_NIGHT | COLOR_BLUE_NIGHT)
+#define COLOR_YELLOW_NIGHT  (COLOR_RED_NIGHT | COLOR_GREEN_NIGHT)
+
+uint32_t palette_day[]      { COLOR_BLACK_DAY,   COLOR_WHITE_DAY,   COLOR_RED_DAY,   COLOR_GREEN_DAY,   COLOR_BLUE_DAY,   COLOR_YELLOW_DAY }; 
+uint32_t palette_night[]    { COLOR_BLACK_NIGHT, COLOR_WHITE_NIGHT, COLOR_RED_NIGHT, COLOR_GREEN_NIGHT, COLOR_BLUE_NIGHT, COLOR_YELLOW_NIGHT };
+
+uint32_t *palette = palette_night;
+
+#define COLOR_BLACK     (palette[0])
+#define COLOR_WHITE     (palette[1])
+#define COLOR_RED       (palette[2])
+#define COLOR_GREEN     (palette[3])
+#define COLOR_BLUE      (palette[4])
+#define COLOR_YELLOW    (palette[5])
 
 // https://docs.espressif.com/projects/esp-idf/en/v5.0/esp32/api-reference/system/freertos.html#task-api
 // https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/system/system_time.html
@@ -42,7 +59,7 @@ StaticEventGroup_t xEventGroupBuffer;
 EventGroupHandle_t xEventGroup = xEventGroupCreateStatic(&xEventGroupBuffer);
 //EventGroupHandle_t xEventGroup = xEventGroupCreate();
 
-TFT_eSPI tft = TFT_eSPI(TFT_WIDTH, TFT_HEIGHT);
+LGFX tft;
 Preferences prefs = Preferences();
 ControllerAudio ctrlAudo(xEventGroup); 
 
@@ -51,15 +68,21 @@ ControllerAudio ctrlAudo(xEventGroup);
 #define BIT_STATION ( 1 << 1 )
 #define BIT_TRACK   ( 1 << 2 )
 #define BIT_VOLUME  ( 1 << 3 )
+#define BIT_MUTE    ( 1 << 4 )
 
-#define BIT_ALL     ( BIT_TIME | BIT_STATION | BIT_TRACK | BIT_VOLUME )
+#define BIT_ALL     ( BIT_TIME | BIT_STATION | BIT_TRACK | BIT_VOLUME | BIT_MUTE )
 
-volatile uint16_t   station = 0;
-volatile uint16_t   volume  = 20;
-volatile bool       isMute  = false;
-
-String ssid         = ""; // SSID WI-FI
-String pswd         = "";
+String ssid = ""; // SSID WI-FI
+String pswd = "";
+uint16_t    station = 0;
+uint16_t    volume  = 2;
+bool        isMute  = false;
+uint16_t    timezone = 10800;
+IPAddress   host = IPAddress(192, 168, 2, 30);
+IPAddress   gateway = IPAddress(192, 168, 2, 1);
+IPAddress   subnet = IPAddress(255, 255, 255, 0);
+IPAddress   dns1 = IPAddress(85, 21, 192, 5);
+IPAddress   dns2 = IPAddress(213, 234, 192, 7);
 
 JsonDocument doc;
 JsonArray stationList;
@@ -106,8 +129,8 @@ void setup() {
 
     tft.init();
     tft.setRotation(1);
-    tft.fillScreen(TFT_BLACK);
-    tft.setTextColor(TFT_WHITE, TFT_BLACK);
+    tft.fillScreen(COLOR_BLACK);
+    tft.setTextColor(COLOR_WHITE, COLOR_BLACK);
     
     if (SPIFFS.begin(true)) {
         tft.printf("Total: %d, Free: %d\r\n", SPIFFS.totalBytes(), SPIFFS.totalBytes() - SPIFFS.usedBytes());
@@ -131,20 +154,35 @@ void setup() {
     tft.printf("Radio list: %d\r\n", stationList.size());
     LOG("Radio list: %d\r\n", stationList.size());
 
-    // prefs.putString("ssid", "...");
-    // prefs.putString("pswd", "...");
-    // prefs.putInt("tz", 10800);
-    // prefs.putBool("mute", false);
-    // prefs.putInt("volume", 20);
+    // prefs.putString("ssid", ssid);
+    // prefs.putString("pswd", pswd);
+    // prefs.putUInt("tz", timezone);
+    // prefs.putUInt("volume", volume);
+    // prefs.putBool("mute", isMute);
+    // prefs.putString("host", host.toString());
+    // prefs.putString("gateway", gateway.toString());
+    // prefs.putString("subnet", subnet.toString());
+    // prefs.putString("dns1", dns1.toString());
+    // prefs.putString("dns2", dns2.toString());
 
     ssid = prefs.getString("ssid", ssid);
     pswd = prefs.getString("pswd", pswd);
+    timezone = prefs.getUInt("tz", timezone);
+    volume = prefs.getUInt("volume", volume);
+    isMute = prefs.getBool("mute", isMute);
+    host.fromString(prefs.getString("host", host.toString()));
+    gateway.fromString(prefs.getString("gateway", gateway.toString()));
+    subnet.fromString(prefs.getString("subnet", subnet.toString()));
+    dns1.fromString(prefs.getString("dns1", dns1.toString()));
+    dns2.fromString(prefs.getString("dns2", dns2.toString()));
 
     tft.printf("Wi-Fi SSID: %s\r\n", ssid.c_str());
     LOG("Wi-Fi SSID: %s\r\n", ssid.c_str());
     
     WiFi.disconnect();
     WiFi.mode(WIFI_STA);
+    WiFi.config(host, gateway, subnet, dns1, dns2);
+
     WiFi.channel();
     WiFi.begin(ssid.c_str(), pswd.c_str());
     while (WiFi.status() != WL_CONNECTED) {
@@ -154,11 +192,10 @@ void setup() {
     }
     tft.printf("\r\nip: %s\r\n", WiFi.localIP().toString().c_str());
     LOG("\r\nip: %s\r\n", WiFi.localIP().toString().c_str());
-    configTime(prefs.getInt("tz", 10800), 0, "ntp1.vniiftri.ru", "ntp2.vniiftri.ru");
+    configTime(timezone, 0, "ntp1.vniiftri.ru", "ntp2.vniiftri.ru", "ntp3.vniiftri.ru");
 
-    do vTaskDelay(pdMS_TO_TICKS(1000));
-    while (sntp_get_sync_status() != SNTP_SYNC_STATUS_COMPLETED);
-    // while (esp_netif_sntp_sync_wait(pdMS_TO_TICKS(1000)) != ESP_OK);
+    // do vTaskDelay(pdMS_TO_TICKS(1000));
+    // while (sntp_get_sync_status() != SNTP_SYNC_STATUS_COMPLETED);
 
     time_t now = time(nullptr);
     struct tm* timeinfo = localtime(&now);
@@ -172,13 +209,14 @@ void setup() {
     url = station["url"].as<const char*>();
 
     ctrlAudo.start();
-    ctrlAudo.setVolume(21);
+    ctrlAudo.setMute(isMute);
+    ctrlAudo.setVolume(volume);
     ctrlAudo.setChannel(url);
 
     setPinHandler((gpio_num_t)37, GPIO_INTR_NEGEDGE,GPIO_PULLUP_ONLY, isr_handler_volume_up);
     setPinHandler((gpio_num_t)38, GPIO_INTR_NEGEDGE,GPIO_PULLUP_ONLY, isr_handler_volume_down);
 
-    tft.fillScreen(TFT_BLACK);
+    tft.fillScreen(COLOR_BLACK);
     tft.setTextWrap(false, false);
 
     xEventGroupSetBits(xEventGroup, BIT_TIME);
@@ -189,21 +227,25 @@ const uint VR_MAX_VOL_VAL   (VR_MIDL_VOL_VAL + VR_MIDL_VOL_VAL);
 const uint VR_BAR_HEIGHT    (6);
 
 void drawVolume(uint32_t x, uint32_t y, uint32_t width, uint16_t volume) {
-    tft.fillRect(x, y, width, (VOLUME_MAX * VR_BAR_HEIGHT) + 6, TFT_BLACK);
-    tft.drawRoundRect(x, y, width, (VOLUME_MAX * VR_BAR_HEIGHT) + 6, 4, TFT_WHITE);
+    tft.startWrite();
+    tft.fillRect(x, y, width, (VOLUME_MAX * VR_BAR_HEIGHT) + 6, COLOR_BLACK);
+    tft.drawRoundRect(x, y, width, (VOLUME_MAX * VR_BAR_HEIGHT) + 6, 4, COLOR_WHITE);
     for(uint16_t i = 1; i <= volume; i++) {
-        uint32_t color = TFT_GREEN; //0x3526;
-        if (i > VR_MIDL_VOL_VAL)  color = TFT_YELLOW;
-        if (i > VR_MAX_VOL_VAL) color = TFT_RED;
+        uint32_t color = COLOR_GREEN;
+        if (i > VR_MIDL_VOL_VAL)  color = COLOR_YELLOW;
+        if (i > VR_MAX_VOL_VAL) color = COLOR_RED;
         tft.fillRect(x + 4, y + (VOLUME_MAX * VR_BAR_HEIGHT) + 4 - (i * VR_BAR_HEIGHT), width - 8, 3, color);
     }
+    tft.endWrite();
 }
 void drawTrack(int32_t x, int32_t y) {
     String title = ctrlAudo.getTitle();
+    tft.startWrite();
     tft.loadFont(ShareTechMonoRegular32);
     tft.setTextDatum(ML_DATUM);
     tft.drawString(title, x, y);
     tft.unloadFont();
+    tft.endWrite();
 }
 
 void drawTime(int32_t x, int32_t y, struct tm* timeinfo) {
@@ -235,6 +277,9 @@ void loop() {
         }
         if (uxBits & BIT_VOLUME) {
             drawVolume(290, 100, 24, ctrlAudo.getVolume());
+        }
+        if (uxBits & BIT_MUTE) {
+
         }
         
     }

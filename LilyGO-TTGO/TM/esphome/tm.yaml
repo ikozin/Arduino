@@ -1,12 +1,13 @@
 esphome:                                            # https://esphome.io/components/esphome
   name: tm
   friendly_name: TM
+  # platformio_options:
+  #   board_build.partitions: huge_app.csv
 
 esp32:                                              # https://esphome.io/components/esp32
   board: esp32dev   # ESP32-D0WDQ6                    https://registry.platformio.org/platforms/platformio/espressif32/boards
   flash_size: 4MB   # W25Q32FVSS
   cpu_frequency: 240MHZ
-  # partitions: "huge_app.csv"
   framework:
     type: arduino                                   # https://esphome.io/components/esp32#arduino-framework
 
@@ -39,13 +40,16 @@ mqtt:                                             # https://esphome.io/component
 
 time:                                               # https://esphome.io/components/time/
   - id: time_device
+    platform: sntp                                  # https://esphome.io/components/time/sntp
     timezone: Europe/Moscow
-    platform: homeassistant                         # https://esphome.io/components/time/homeassistant
-    # platform: sntp                                  # https://esphome.io/components/time/sntp
     # servers:
     #   - ntp1.vniiftri.ru
     #   - ntp2.vniiftri.ru
     #   - ntp3.vniiftri.ru
+    servers:
+      - 0.pool.ntp.org
+      - 1.pool.ntp.org
+      - 2.pool.ntp.org
 
 i2c:                                                # https://esphome.io/components/i2c.html
   - id: id_i2c
@@ -61,7 +65,7 @@ sensor:                                             # https://esphome.io/compone
     update_interval: 15s
     temperature:
       id: bme280_Temperature
-      name: "Температура (BME280)"
+      name: Температура (BME280)
       device_class: temperature                     # https://www.home-assistant.io/integrations/sensor/
       icon: mdi:temperature-celsius                 # https://pictogrammers.com/library/mdi/
     humidity:
@@ -83,7 +87,7 @@ i2s_audio:                                          # https://esphome.io/compone
   i2s_bclk_pin: GPIO26  # BCK
 
 media_player:                                       # https://esphome.io/components/media_player/
-  - platform: i2s_audio                             # https://esphome.io/components/media_player/i2s_audio/
+  - platform: i2s_audio
     dac_type: external
     i2s_dout_pin: GPIO19  # DIN
     mode: stereo 
@@ -114,7 +118,7 @@ binary_sensor:                                      # https://esphome.io/compone
       - delayed_on: 10ms
     on_click:                                       # https://esphome.io/components/binary_sensor/#on_click
       then:
-        - media_player.play_media: 'https://nashe1.hostingradio.ru/nashe-128.mp3'
+        - media_player.play_media: 'http://icecast.vgtrk.cdnvideo.ru/vestifm'
         - media_player.volume_set: 100%
     name: "TM Button 1"
   - id: TM_btn_2
@@ -135,66 +139,40 @@ binary_sensor:                                      # https://esphome.io/compone
 #       - display.page.show_next: id_display
 #       - component.update: id_display
 
-spi:                                                # https://esphome.io/components/spi
+# spi:                                                # https://esphome.io/components/spi
+#   - id: spi_st7798v
+#     clk_pin: 18
+#     mosi_pin: 23
 
-  - id: spi_st7798v
-    clk_pin: 18
-    mosi_pin: 23
+# display:
+#   - id: id_display
+#     platform: ili9xxx                               # https://github.com/esphome/esphome-docs/blob/current/components/display/ili9xxx.rst
+#     model: st7789v
+#     spi_id: spi_st7798v
+#     cs_pin: GPIO5
+#     dc_pin: GPIO16
+#     reset_pin: GPIO17
+#     rotation: 90
+#     dimensions:
+#       height: 240 # 320
+#       width: 135  # 240
+#       offset_height:  40
+#       offset_width: 52
+#     # Required or the colors are all inverted, and Black screen is White
+#     invert_colors: False
+#     update_interval: 60s
+#     pages:
+#     - id: page_red
+#       lambda: |-
+#         auto c = Color(255, 0, 0);
+#         it.fill(c);
+#     - id: page_green
+#       lambda: |-
+#         auto c = Color(0, 255, 0);
+#         it.fill(c);
+#     - id: page_blue
+#       lambda: |-
+#         auto c = Color(0, 0, 255);
+#         it.fill(c);
 
-font:                                               # https://esphome.io/components/font/
-
-  - id: id_font_digit1
-    file: "fonts/DSEG7Classic-Regular.ttf"
-    size: 72
-    bpp: 4
-    glyphs: ["\u0020",0123456789, "\u003A"]
-
-color:
-
-  - id: id_color_black
-    red: 0%
-    green: 0%
-    blue: 0%
-    white: 0%
-
-display:                                            # https://esphome.io/components/display/
-
-  - id: id_display
-    platform: mipi_spi                              # https://esphome.io/components/display/mipi_spi/
-    model: Custom
-    spi_id: spi_st7798v
-    data_rate: 20MHZ
-    init_sequence: []
-    cs_pin: GPIO5
-    dc_pin: GPIO16
-    reset_pin: GPIO17
-    rotation: 90
-    dimensions:
-      height: 240
-      width: 320
-      offset_height:  0
-      offset_width: 0
-    # Required or the colors are all inverted, and Black screen is White
-    invert_colors: False
-    auto_clear_enabled: False
-    update_interval: 60s
-    lambda: |-
-      it.fill(id(id_color_black));
-      auto timeOfDay = id(time_device).now();
-      if (timeOfDay.is_valid()) {
-        it.strftime(160, 120, id(id_font_digit1), TextAlign::CENTER, "%H:%M", timeOfDay);
-      }
-    # update_interval: 60s
-    # pages:
-    # - id: page_red
-    #   lambda: |-
-    #     auto c = Color(255, 0, 0);
-    #     it.fill(c);
-    # - id: page_green
-    #   lambda: |-
-    #     auto c = Color(0, 255, 0);
-    #     it.fill(c);
-    # - id: page_blue
-    #   lambda: |-
-    #     auto c = Color(0, 0, 255);
-    #     it.fill(c);
+  
