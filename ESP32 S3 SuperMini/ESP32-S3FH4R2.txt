@@ -1,0 +1,6 @@
+Ordering Code	In-Package Flash	In-Package PSRAM
+ESP32-S3FH4R2	4 MB (Quad SPI)		2 MB (Quad SPI)
+
+By default, the SPI flash on the chip operates at a maximum clock frequency of 80 MHz and does not
+support the auto suspend feature. If you have a requirement for a higher flash clock frequency of 120
+MHz or if you need the flash auto suspend feature, please contact us.
