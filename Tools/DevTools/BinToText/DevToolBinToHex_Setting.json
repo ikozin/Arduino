@@ -1,0 +1,20 @@
+{
+  "font": "Roboto; 10,2",
+  "langs": [
+    {
+      "lang": "C++",
+      "header": "#include <pgmspace.h>\r\n\r\nconst uint8_t {0}[] PROGMEM = {{",
+      "name": "[^a-zA-Z0-9]",
+      "value": "0x{0:X2}, ",
+      "footer": "};"
+    },
+
+    {
+      "lang": "C#",
+      "header": "byte[] {0} =\r\n{{",
+      "name": "[^a-zA-Z0-9]",
+      "value": "0x{0:X2}, ",
+      "footer": "};"
+    }
+  ]
+}

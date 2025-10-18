@@ -8,6 +8,11 @@ void ControllerAudio::start() {
     xTaskCreatePinnedToCore(Handler, "audio", 4096, this, 2 | portPRIVILEGE_BIT, NULL, 1);
 }
 
+void ControllerAudio::setStation(const char* text) {
+    _station = text;
+    xEventGroupSetBits(_xEventGroup, BIT_STATION);
+}
+
 void ControllerAudio::setTitle(const char* text) {
     _title = text;
     xEventGroupSetBits(_xEventGroup, BIT_TRACK);
@@ -73,7 +78,7 @@ void ControllerAudio::Handler(void* parameter) {
                     controller->_audio.setVolume(controller->_mute ? 0: controller->_volume);
                     xEventGroupSetBits(controller->_xEventGroup, BIT_MUTE);
                     break;
-                
+              
                 default:
                     break;
             }

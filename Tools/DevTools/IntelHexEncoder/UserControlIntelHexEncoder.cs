@@ -1,0 +1,84 @@
+﻿using CommonUI;
+using HexIO;
+using IntelHexEncoder.Setting;
+using System.Globalization;
+using System.Text;
+using System.Text.Json;
+using System.Windows.Forms;
+
+namespace IntelHexEncoder
+{
+    public partial class UserControlIntelHexEncoder : UserControlText
+    {
+        private readonly ToolStrip toolStripMenu = new();
+        private readonly ToolStripLabel toolStripLabelAddress = new();
+        private readonly ToolStripTextBox toolStripTextBoxAddress = new();
+
+        private readonly MainSetting setting;
+        private byte[] memory = [];
+        public UserControlIntelHexEncoder()
+        {
+            InitializeComponent();
+
+            toolStripMenu.SuspendLayout();
+            toolStripMenu.Items.AddRange([toolStripLabelAddress, toolStripTextBoxAddress]);
+            toolStripMenu.Location = new Point(0, 0);
+
+            toolStripLabelAddress.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            toolStripLabelAddress.Text = "Адрес:";
+
+            toolStripTextBoxAddress.Text = "0000";
+
+            toolStripMenu.ResumeLayout(false);
+            toolStripMenu.PerformLayout();
+
+            toolStripContainer.TopToolStripPanel.Controls.Add(toolStripMenu);
+
+            using FileStream file = new("DevToolIntelHexEncoder_Setting.json", FileMode.Open);
+            if (file == null) return;
+            setting = JsonSerializer.Deserialize<MainSetting>(file)!;
+            try
+            {
+                string[] fonts = setting.Font!.Split(';', StringSplitOptions.RemoveEmptyEntries);
+                if (!float.TryParse(fonts[1], out float fontSize)) fontSize = 10;
+                textBoxView.Font = new Font(fonts[0], fontSize, FontStyle.Regular);
+            }
+            catch (Exception)
+            {
+            }
+        }
+
+        private void Convert()
+        {
+            if (!int.TryParse(toolStripTextBoxAddress.Text, NumberStyles.HexNumber, null, out int addr))
+            {
+                MessageBox.Show(this, "Ошибка в адресе", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            using MemoryStream stream = new (memory.Length << 3);
+            using IntelHexStreamWriter writer = new(stream);
+            var chunks = memory.Chunk(16);
+            foreach (var chunk in chunks)
+            {
+                writer.WriteDataRecord((ushort)addr, chunk);
+                addr += chunk.Length;
+            }
+            writer.Close();
+            textBoxView.Text = Encoding.UTF8.GetString(stream.ToArray());
+        }
+        public override void OpenFile(FileStream stream)
+        {
+            memory = new byte[stream.Length];
+            stream.Read(memory, 0, memory.Length);
+            Convert();
+        }
+
+
+
+        public override void SaveFile(FileStream stream)
+        {
+            using StreamWriter writer = new(stream, Encoding.UTF8);
+            writer.Write(textBoxView.Text);
+        }
+    }
+}

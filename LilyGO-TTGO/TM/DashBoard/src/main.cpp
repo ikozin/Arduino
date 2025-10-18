@@ -5,11 +5,11 @@
 #include <esp_sntp.h>
 #include <ArduinoJson.h>
 #include "controllerAudio.h"
-#include "logging.h"
+#include "main.h"
 #include "display.h"
 
 #include "fonts/ShareTechMonoRegular32.h"
-
+#include "fonts/DSEG7Classic_Regular52pt7b.h"
 
 #if !defined(ESP32)
     #error Select ESP32 DEV Board
@@ -63,15 +63,6 @@ LGFX tft;
 Preferences prefs = Preferences();
 ControllerAudio ctrlAudo(xEventGroup); 
 
-
-#define BIT_TIME    ( 1 << 0 )
-#define BIT_STATION ( 1 << 1 )
-#define BIT_TRACK   ( 1 << 2 )
-#define BIT_VOLUME  ( 1 << 3 )
-#define BIT_MUTE    ( 1 << 4 )
-
-#define BIT_ALL     ( BIT_TIME | BIT_STATION | BIT_TRACK | BIT_VOLUME | BIT_MUTE )
-
 String ssid = ""; // SSID WI-FI
 String pswd = "";
 uint16_t    station = 0;
@@ -112,7 +103,7 @@ void IRAM_ATTR isr_handler_volume_down(void* parameter) {
 void setPinHandler(gpio_num_t pin, gpio_int_type_t int_type, gpio_pull_mode_t pull_mode, gpio_isr_t handler) {
     gpio_install_isr_service(0);
     gpio_reset_pin(pin);
-    gpio_pad_select_gpio(pin);
+    //gpio_pad_select_gpio(pin);
     gpio_set_direction(pin, GPIO_MODE_INPUT);
     gpio_set_pull_mode(pin, pull_mode); 
     gpio_set_intr_type(pin, int_type);
@@ -238,12 +229,51 @@ void drawVolume(uint32_t x, uint32_t y, uint32_t width, uint16_t volume) {
     }
     tft.endWrite();
 }
-void drawTrack(int32_t x, int32_t y) {
-    String title = ctrlAudo.getTitle();
+
+void drawStation(int32_t x, int32_t y) {
+    String station = ctrlAudo.getStation();
     tft.startWrite();
-    tft.loadFont(ShareTechMonoRegular32);
+    tft.loadFont(Share_Tech_Mono_Regular32);
     tft.setTextDatum(ML_DATUM);
-    tft.drawString(title, x, y);
+    tft.drawString(station, x, y);
+    tft.unloadFont();
+    tft.endWrite();
+}
+
+String _title;
+int32_t _x = TFT_HEIGHT;
+int32_t _y = 20;
+int32_t _width = 0;
+void drawTrack() {
+    tft.loadFont(Share_Tech_Mono_Regular32);
+    tft.setTextDatum(ML_DATUM);
+    _x = TFT_HEIGHT;
+    _title = ctrlAudo.getTitle();
+    _width = tft.textWidth(_title);
+
+    if (_width < TFT_HEIGHT) {
+        _x = (TFT_HEIGHT - _width) >> 1;
+        _width = 0;
+    } else {
+        _title += "  ";
+        _width += 16;
+    }
+    LOG("Start: %d, %d, %d\r\n", _x, _y, _width);
+    tft.startWrite();
+    tft.drawString(_title, _x, _y);
+    tft.unloadFont();
+    tft.endWrite();
+}
+
+void updateTrack() {
+    if (_width == 0) return;
+    _x-= 16;
+    if (_x < -_width) _x = TFT_HEIGHT;
+    LOG("update: %d\r\n", _x);
+    tft.startWrite();
+    tft.loadFont(Share_Tech_Mono_Regular32);
+    tft.setTextDatum(ML_DATUM);
+    tft.drawString(_title, _x, _y);
     tft.unloadFont();
     tft.endWrite();
 }
@@ -251,10 +281,13 @@ void drawTrack(int32_t x, int32_t y) {
 void drawTime(int32_t x, int32_t y, struct tm* timeinfo) {
     // char text[16];
     strftime(text, sizeof(text), "%H:%M", timeinfo);
-    tft.setTextFont(7);
+    tft.startWrite();
+    tft.loadFont(DSEG7Classic_Regular52pt7b);
     tft.setTextPadding(48);
     tft.setTextDatum(CC_DATUM);
     tft.drawString(text, TFT_HEIGHT >> 1, TFT_WIDTH >> 1);
+    tft.unloadFont();
+    tft.endWrite();
 }
 
 void loop() {
@@ -262,7 +295,7 @@ void loop() {
     struct tm* timeinfo = localtime(&now);
     drawTime(TFT_HEIGHT >> 1, TFT_WIDTH >> 1, timeinfo);
 
-    EventBits_t uxBits = xEventGroupWaitBits(xEventGroup, BIT_ALL, pdTRUE, pdFALSE, pdMS_TO_TICKS(500));
+    EventBits_t uxBits = xEventGroupWaitBits(xEventGroup, BIT_ALL, pdTRUE, pdFALSE, pdMS_TO_TICKS(250));
     if (uxBits) {
         // if (uxBits & BIT_TIME) {
         //     time_t now = time(nullptr);
@@ -270,10 +303,10 @@ void loop() {
         //     drawTime(TFT_HEIGHT >> 1, TFT_WIDTH >> 1, timeinfo);
         // }
         if (uxBits & BIT_STATION) {
-
+            drawStation(0, 200);
         }
         if (uxBits & BIT_TRACK) {
-            drawTrack(0, 20);
+            drawTrack();
         }
         if (uxBits & BIT_VOLUME) {
             drawVolume(290, 100, 24, ctrlAudo.getVolume());
@@ -281,8 +314,8 @@ void loop() {
         if (uxBits & BIT_MUTE) {
 
         }
-        
     }
+    updateTrack();
     // vTaskDelay(pdMS_TO_TICKS(1000));
 }
 
@@ -299,14 +332,20 @@ void loop() {
 //     LOG("eof_mp3 %s\r\n", info);
 //     tft.printf("eof_mp3 %s\r\n", info);
 // }
-// void audio_showstation(const char *info){
-//     LOG("station %s\r\n", info);
-// }
+
+void audio_showstation(const char *info){
+    if (strlen(info) == 0) return;
+    ctrlAudo.setStation(info);
+    LOG("station %s\r\n", info);
+
+}
+
 void audio_showstreamtitle(const char *info){
     if (strlen(info) == 0) return;
     ctrlAudo.setTitle(info);
     LOG("title %s\r\n", info);
 }
+
 // void audio_bitrate(const char *info){
 //     LOG("bitrate %s\r\n", info);
 //     tft.printf("bitrate %s\r\n", info);

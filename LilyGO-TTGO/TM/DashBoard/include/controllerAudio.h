@@ -1,8 +1,11 @@
 #pragma once
 
 #include <Arduino.h>
+#include <SPIFFS.h>
+
 #include <Audio.h>
-#include "logging.h"
+#include "main.h"
+
 
 // https://github.com/schreibfaul1/ESP32-audioI2S
 // https://docs.espressif.com/projects/esp-idf/en/v5.0/esp32/api-reference/system/freertos.html#queue-api
@@ -18,12 +21,6 @@
 #define CMD_SET_VOLUME  (2)
 #define CMD_SET_MUTE    (3)
 
-#define BIT_TIME    ( 1 << 0 )
-#define BIT_STATION ( 1 << 1 )
-#define BIT_TRACK   ( 1 << 2 )
-#define BIT_VOLUME  ( 1 << 3 )
-#define BIT_MUTE    ( 1 << 4 )
-
 typedef struct AudioCommand{
     uint16_t        cmd;
     union {
@@ -38,6 +35,7 @@ class ControllerAudio {
         ControllerAudio(EventGroupHandle_t xEventGroup) {
             _xEventGroup = xEventGroup;
             _queue = xQueueCreate(4, sizeof(AudioCommand_t));
+            _station.reserve(64);
             _title.reserve(128);
             _mute = true;
             _volume = 0;
@@ -53,12 +51,16 @@ class ControllerAudio {
         void changeVolume(int step);
         const uint16_t getVolume() const { return _volume; }
 
+        void setStation(const char* text);
+        const char* getStation() const { return _station.c_str(); }
+
         void setTitle(const char* text);
         const char* getTitle() const { return _title.c_str(); }
     private:
         EventGroupHandle_t _xEventGroup;
         Audio _audio;
         QueueHandle_t _queue;
+        String _station;
         String _title;
         uint16_t _volume;
         bool _mute;
