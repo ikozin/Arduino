@@ -441,106 +441,109 @@
 [440] Serif.bolditalic
 [441] Serif.italic
 [442] Serif.plain
-[443] Showcard Gothic
-[444] SimSun
-[445] SimSun-ExtB
-[446] SimSun-ExtG
-[447] Sitka Banner
-[448] Sitka Banner Bold
-[449] Sitka Banner Bold Italic
-[450] Sitka Banner Italic
-[451] Sitka Display
-[452] Sitka Display Bold
-[453] Sitka Display Bold Italic
-[454] Sitka Display Italic
-[455] Sitka Heading
-[456] Sitka Heading Bold
-[457] Sitka Heading Bold Italic
-[458] Sitka Heading Italic
-[459] Sitka Small
-[460] Sitka Small Bold
-[461] Sitka Small Bold Italic
-[462] Sitka Small Italic
-[463] Sitka Subheading
-[464] Sitka Subheading Bold
-[465] Sitka Subheading Bold Italic
-[466] Sitka Subheading Italic
-[467] Sitka Text
-[468] Sitka Text Bold
-[469] Sitka Text Bold Italic
-[470] Sitka Text Italic
-[471] Snap ITC
-[472] Stencil
-[473] Sylfaen
-[474] Symbol
-[475] Symbol type A
-[476] Symbol type B
-[477] Tahoma
-[478] Tahoma Полужирный
-[479] Tempus Sans ITC
-[480] Times New Roman
-[481] Times New Roman Bold
-[482] Times New Roman Bold Italic
-[483] Times New Roman Italic
-[484] Times New Roman Курсив
-[485] Times New Roman Полужирный
-[486] Times New Roman Полужирный Курсив
-[487] Trebuchet MS
-[488] Trebuchet MS Курсив
-[489] Trebuchet MS Полужирный
-[490] Trebuchet MS Полужирный Курсив
-[491] Tw Cen MT
-[492] Tw Cen MT Condensed
-[493] Tw Cen MT Condensed Extra Bold
-[494] Tw Cen MT Condensed Полужирный
-[495] Tw Cen MT Курсив
-[496] Tw Cen MT Полужирный
-[497] Tw Cen MT Полужирный Курсив
-[498] Verdana
-[499] Verdana Курсив
-[500] Verdana Полужирный
-[501] Verdana Полужирный Курсив
-[502] Viner Hand ITC
-[503] Vivaldi Курсив
-[504] Vladimir Script
-[505] WWWSTICH
-[506] Webdings
-[507] Wide Latin
-[508] Wingdings
-[509] Wingdings 2
-[510] Wingdings 3
-[511] X-Stitch Designer Gold Symbols
-[512] XO Caliburn
-[513] XO Caliburn Bold
-[514] XO Caliburn Bold Italic
-[515] XO Caliburn Italic
-[516] XO Courser
-[517] XO Courser Bold
-[518] XO Courser Bold Italic
-[519] XO Courser Italic
-[520] XO Oriel
-[521] XO Oriel Bold
-[522] XO Oriel Bold Italic
-[523] XO Oriel Condensed
-[524] XO Oriel Condensed Bold
-[525] XO Oriel Condensed Bold Italic
-[526] XO Oriel Condensed Italic
-[527] XO Oriel Italic
-[528] XO Symbol
-[529] XO Tahion
-[530] XO Tahion Bold
-[531] XO Thames
-[532] XO Thames Bold
-[533] XO Thames Bold Italic
-[534] XO Thames Italic
-[535] XO Windy
-[536] Yu Gothic Bold
-[537] Yu Gothic Light
-[538] Yu Gothic Medium
-[539] Yu Gothic Regular
-[540] Yu Gothic UI Bold
-[541] Yu Gothic UI Light
-[542] Yu Gothic UI Regular
-[543] Yu Gothic UI Semibold
-[544] Yu Gothic UI Semilight
-[545] Zolotoe_Runo
+[443] Share Tech CYR Regular
+[444] Share Tech Mono Regular
+[445] ShareTechCYR-Regular
+[446] Showcard Gothic
+[447] SimSun
+[448] SimSun-ExtB
+[449] SimSun-ExtG
+[450] Sitka Banner
+[451] Sitka Banner Bold
+[452] Sitka Banner Bold Italic
+[453] Sitka Banner Italic
+[454] Sitka Display
+[455] Sitka Display Bold
+[456] Sitka Display Bold Italic
+[457] Sitka Display Italic
+[458] Sitka Heading
+[459] Sitka Heading Bold
+[460] Sitka Heading Bold Italic
+[461] Sitka Heading Italic
+[462] Sitka Small
+[463] Sitka Small Bold
+[464] Sitka Small Bold Italic
+[465] Sitka Small Italic
+[466] Sitka Subheading
+[467] Sitka Subheading Bold
+[468] Sitka Subheading Bold Italic
+[469] Sitka Subheading Italic
+[470] Sitka Text
+[471] Sitka Text Bold
+[472] Sitka Text Bold Italic
+[473] Sitka Text Italic
+[474] Snap ITC
+[475] Stencil
+[476] Sylfaen
+[477] Symbol
+[478] Symbol type A
+[479] Symbol type B
+[480] Tahoma
+[481] Tahoma Полужирный
+[482] Tempus Sans ITC
+[483] Times New Roman
+[484] Times New Roman Bold
+[485] Times New Roman Bold Italic
+[486] Times New Roman Italic
+[487] Times New Roman Курсив
+[488] Times New Roman Полужирный
+[489] Times New Roman Полужирный Курсив
+[490] Trebuchet MS
+[491] Trebuchet MS Курсив
+[492] Trebuchet MS Полужирный
+[493] Trebuchet MS Полужирный Курсив
+[494] Tw Cen MT
+[495] Tw Cen MT Condensed
+[496] Tw Cen MT Condensed Extra Bold
+[497] Tw Cen MT Condensed Полужирный
+[498] Tw Cen MT Курсив
+[499] Tw Cen MT Полужирный
+[500] Tw Cen MT Полужирный Курсив
+[501] Verdana
+[502] Verdana Курсив
+[503] Verdana Полужирный
+[504] Verdana Полужирный Курсив
+[505] Viner Hand ITC
+[506] Vivaldi Курсив
+[507] Vladimir Script
+[508] WWWSTICH
+[509] Webdings
+[510] Wide Latin
+[511] Wingdings
+[512] Wingdings 2
+[513] Wingdings 3
+[514] X-Stitch Designer Gold Symbols
+[515] XO Caliburn
+[516] XO Caliburn Bold
+[517] XO Caliburn Bold Italic
+[518] XO Caliburn Italic
+[519] XO Courser
+[520] XO Courser Bold
+[521] XO Courser Bold Italic
+[522] XO Courser Italic
+[523] XO Oriel
+[524] XO Oriel Bold
+[525] XO Oriel Bold Italic
+[526] XO Oriel Condensed
+[527] XO Oriel Condensed Bold
+[528] XO Oriel Condensed Bold Italic
+[529] XO Oriel Condensed Italic
+[530] XO Oriel Italic
+[531] XO Symbol
+[532] XO Tahion
+[533] XO Tahion Bold
+[534] XO Thames
+[535] XO Thames Bold
+[536] XO Thames Bold Italic
+[537] XO Thames Italic
+[538] XO Windy
+[539] Yu Gothic Bold
+[540] Yu Gothic Light
+[541] Yu Gothic Medium
+[542] Yu Gothic Regular
+[543] Yu Gothic UI Bold
+[544] Yu Gothic UI Light
+[545] Yu Gothic UI Regular
+[546] Yu Gothic UI Semibold
+[547] Yu Gothic UI Semilight
+[548] Zolotoe_Runo

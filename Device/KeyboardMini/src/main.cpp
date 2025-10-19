@@ -2,81 +2,56 @@
 #include <Keyboard.h>
 #include <GyverIO.h>
 
+
 // #define DEBUG_INFO
-#define PCB_V_1_0
-// #define PCB_V_2_0
 
 #define MAX_KEY         16
-#define FUNC_KEYCODE    0xFF
+#define FUNC_KEYCODE    0xFFFF
+#define NO_KEYCODE      0x0000
 
 volatile char   valueKeyCode    = 0;
 int8_t  indexFuncKey    = -1;
 
 uint16_t layoutDef[MAX_KEY] {
-    KEY_ESC,
-    KEY_BACKSPACE,
-    KEY_TAB,
-    KEY_RETURN,
+    makeWord(0, KEY_ESC),
+    makeWord(0, KEY_BACKSPACE),
+    makeWord(0, KEY_TAB),
+    makeWord(0, KEY_RETURN),
 
-    ' ',
-    ' ',
-    ' ',
-    ' ',
+    makeWord(KEY_LEFT_CTRL, 'c'),
+    makeWord(KEY_LEFT_CTRL, 'v'),
+    NO_KEYCODE,
+    NO_KEYCODE,
 
-    ' ',
-    'q',
-    KEY_UP_ARROW,
-    'e',
+    makeWord(KEY_LEFT_ALT, 0),
+    makeWord(0, 'q'),
+    makeWord(0, KEY_UP_ARROW),
+    makeWord(0, 'e'),
     
     FUNC_KEYCODE,
-    KEY_LEFT_ARROW,
-    KEY_DOWN_ARROW,
-    KEY_RIGHT_ARROW,
+    makeWord(0, KEY_LEFT_ARROW),
+    makeWord(0, KEY_DOWN_ARROW),
+    makeWord(0, KEY_RIGHT_ARROW),
 };
+
+typedef struct _KEYCODE_EXT_ {
+    uint8_t     lo;
+    uint8_t     hi;
+} KEYCODE_EXT;
+
+typedef union _KEYCODE_ {
+    KEYCODE_EXT ext;
+    uint16_t    word;
+} KEYCODE; 
 
 typedef struct _KEYDATA_ {
     uint32_t    time;
     uint8_t     pin;
     uint8_t     pressed;
-    uint8_t     keyCode;
+    KEYCODE     keyCode; 
 } KEYDATA;
 
 
-#ifdef PCB_V_1_0
-// Распиновка кнопок на плате v1.0
-// ┌─────┬─────┬─────┬─────┐
-// │  D2 │  D3 │ D21 │ D10 │
-// ├─────┼─────┼─────┼─────┤
-// │  D4 │  D5 │ D20 │ D16 │
-// ├─────┼─────┼─────┼─────┤
-// │  D6 │  D7 │ D19 │ D14 │
-// ├─────┼─────┼─────┼─────┤
-// │  D8 │  D9 │ D18 │ D15 │
-// └─────┴─────┴─────┴─────┘
-KEYDATA keys[MAX_KEY] = {
-    { .time = 0, .pin =  2, .pressed = 0, .keyCode = 0 },
-    { .time = 0, .pin =  3, .pressed = 0, .keyCode = 0 },
-    { .time = 0, .pin = 21, .pressed = 0, .keyCode = 0 },
-    { .time = 0, .pin = 10, .pressed = 0, .keyCode = 0 },
-
-    { .time = 0, .pin =  4, .pressed = 0, .keyCode = 0 },
-    { .time = 0, .pin =  5, .pressed = 0, .keyCode = 0 },
-    { .time = 0, .pin = 20, .pressed = 0, .keyCode = 0 },
-    { .time = 0, .pin = 16, .pressed = 0, .keyCode = 0 },
-
-    { .time = 0, .pin =  6, .pressed = 0, .keyCode = 0 },
-    { .time = 0, .pin =  7, .pressed = 0, .keyCode = 0 },
-    { .time = 0, .pin = 19, .pressed = 0, .keyCode = 0 },
-    { .time = 0, .pin = 14, .pressed = 0, .keyCode = 0 },
-
-    { .time = 0, .pin =  8, .pressed = 0, .keyCode = 0 },
-    { .time = 0, .pin =  9, .pressed = 0, .keyCode = 0 },
-    { .time = 0, .pin = 18, .pressed = 0, .keyCode = 0 },
-    { .time = 0, .pin = 15, .pressed = 0, .keyCode = 0 },
-};
-#endif
-
-#ifdef PCB_V_2_0
 // Распиновка кнопок на плате v2.0
 // ┌─────┬─────┬─────┬─────┐
 // │  D2 │  D9 │ D18 │ D10 │
@@ -88,28 +63,27 @@ KEYDATA keys[MAX_KEY] = {
 // │  D5 │  D6 │ D21 │ D15 │
 // └─────┴─────┴─────┴─────┘
 KEYDATA keys[MAX_KEY] = {
-    { .time = 0, .pin =  2, .pressed = 0, .keyCode = 0 },
-    { .time = 0, .pin =  9, .pressed = 0, .keyCode = 0 },
-    { .time = 0, .pin = 18, .pressed = 0, .keyCode = 0 },
-    { .time = 0, .pin = 10, .pressed = 0, .keyCode = 0 },
+    { .time = 0, .pin =  2, .pressed = 0 },
+    { .time = 0, .pin =  9, .pressed = 0 },
+    { .time = 0, .pin = 18, .pressed = 0 },
+    { .time = 0, .pin = 10, .pressed = 0 },
 
-    { .time = 0, .pin =  3, .pressed = 0, .keyCode = 0 },
-    { .time = 0, .pin =  8, .pressed = 0, .keyCode = 0 },
-    { .time = 0, .pin = 19, .pressed = 0, .keyCode = 0 },
-    { .time = 0, .pin = 16, .pressed = 0, .keyCode = 0 },
+    { .time = 0, .pin =  3, .pressed = 0 },
+    { .time = 0, .pin =  8, .pressed = 0 },
+    { .time = 0, .pin = 19, .pressed = 0 },
+    { .time = 0, .pin = 16, .pressed = 0 },
 
 
-    { .time = 0, .pin =  4, .pressed = 0, .keyCode = 0 },
-    { .time = 0, .pin =  7, .pressed = 0, .keyCode = 0 },
-    { .time = 0, .pin = 20, .pressed = 0, .keyCode = 0 },
-    { .time = 0, .pin = 14, .pressed = 0, .keyCode = 0 },
+    { .time = 0, .pin =  4, .pressed = 0 },
+    { .time = 0, .pin =  7, .pressed = 0 },
+    { .time = 0, .pin = 20, .pressed = 0 },
+    { .time = 0, .pin = 14, .pressed = 0 },
 
-    { .time = 0, .pin =  5, .pressed = 0, .keyCode = 0 },
-    { .time = 0, .pin =  6, .pressed = 0, .keyCode = 0 },
-    { .time = 0, .pin = 21, .pressed = 0, .keyCode = 0 },
-    { .time = 0, .pin = 15, .pressed = 0, .keyCode = 0 },
+    { .time = 0, .pin =  5, .pressed = 0 },
+    { .time = 0, .pin =  6, .pressed = 0 },
+    { .time = 0, .pin = 21, .pressed = 0 },
+    { .time = 0, .pin = 15, .pressed = 0 },
 };
-#endif
 
 #ifdef DEBUG_INFO
 char text[512];
@@ -117,7 +91,7 @@ char text[512];
 
 void setLayout(uint16_t layout[]) {
     for (int16_t i = 0; i < MAX_KEY; i++) {
-        keys[i].keyCode = layout[i];
+        keys[i].keyCode.word = layout[i];
         if (layout[i] == FUNC_KEYCODE) {
             indexFuncKey = i;
 #ifdef DEBUG_INFO
@@ -135,11 +109,11 @@ void setup() {
     Serial.println(F("Start"));
 #endif
 
-    Keyboard.begin();
     for (int i = 0; i < MAX_KEY; i++) {
         gio::init(keys[i].pin, INPUT_PULLUP);
     }
     setLayout(layoutDef);
+    Keyboard.begin();
 }
 
 bool proccessFunkKeyRelease(uint8_t code) {
@@ -221,9 +195,8 @@ void loop() {
         if (value != keys[i].pressed) {
             if (time - keys[i].time > 50) {
                 keys[i].pressed = value;
-                if (keys[i].keyCode) {
-
-                    if (keys[i].keyCode == FUNC_KEYCODE) {
+                if (keys[i].keyCode.word) {
+                    if (keys[i].keyCode.word == FUNC_KEYCODE) {
                         if (!value) {
                             Keyboard.releaseAll();
                             valueKeyCode = 0;
@@ -232,25 +205,32 @@ void loop() {
                     else {
                         if (value) {
                             if (keys[indexFuncKey].pressed) {
-                                proccessFunkKeyPress(keys[i].keyCode);
+                                proccessFunkKeyPress(keys[i].keyCode.ext.lo);
                             }
                             else {
-                                Keyboard.press(keys[i].keyCode);
+                                if (keys[i].keyCode.ext.hi) Keyboard.press(keys[i].keyCode.ext.hi);
+                                if (keys[i].keyCode.ext.lo) Keyboard.press(keys[i].keyCode.ext.lo);
 #ifdef DEBUG_INFO
-                                sprintf(text, "index=%d, pin=%d, value=%d, code=%02X =press", i, keys[i].pin, value, (uint8_t)keys[i].keyCode);
+                                sprintf(text, "index=%d, pin=%d, value=%d, code=%02X =press", i, keys[i].pin, value, (uint8_t)keys[i].keyCode.word);
                                 Serial.println(text);
+                                Serial.print("ERROR:");
+                                Serial.println(Keyboard.getWriteError());
 #endif
                             }
                         }
                         else {
                             if (keys[indexFuncKey].pressed) {
-                                proccessFunkKeyRelease(keys[i].keyCode);
+                                proccessFunkKeyRelease(keys[i].keyCode.ext.lo);
                             }
                             else {
-                                Keyboard.release(keys[i].keyCode);
+                                // Keyboard.releaseAll();
+                                if (keys[i].keyCode.ext.lo) Keyboard.release(keys[i].keyCode.ext.lo);
+                                if (keys[i].keyCode.ext.hi) Keyboard.release(keys[i].keyCode.ext.hi);
 #ifdef DEBUG_INFO
-                                sprintf(text, "index=%d, pin=%d, value=%d, code=%02X =release", i, keys[i].pin, value, (uint8_t)keys[i].keyCode);
+                                sprintf(text, "index=%d, pin=%d, value=%d, code=%02X =release", i, keys[i].pin, value, (uint8_t)keys[i].keyCode.word);
                                 Serial.println(text);
+                                Serial.print("ERROR:");
+                                Serial.println(Keyboard.getWriteError());
 #endif
                             }
                         }

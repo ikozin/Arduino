@@ -121,7 +121,7 @@ import java.awt.Desktop; // Required to allow sketch to open file windows
 // When the sketch is run it will generate a file called "systemFontList.txt" in the sketch folder, press Ctrl+K to see it.
 // Open the "systemFontList.txt" in a text editor to view the font files and reference numbers for your system.
 
-int fontNumber = 20; // << Use [Number] in brackets from the fonts listed.
+int fontNumber = 444; // << Use [Number] in brackets from the fonts listed.
 
 // OR use font name for ttf files placed in the "Data" folder or the font number seen in IDE Console for system fonts
 //                                                  the font numbers are listed when the sketch is run.
@@ -134,7 +134,7 @@ String fontType = ".ttf";
 
 
 // Define the font size in points for the TFT_eSPI font file
-int  fontSize = 36;
+int  fontSize = 32;
 
 // Font size to use in the Processing sketch display window that pops up (can be different to above)
 int displayFontSize = fontSize;//28;
@@ -327,8 +327,10 @@ static final int[] unicodeBlocks = {
   0x0401, 0x0401,  //Cyrillic
   0x0410, 0x044F,  //Cyrillic
   0x0451, 0x0451,  //Cyrillic
-  0x002D, 0x002D, // -
+  0x0021, 0x002F, // ! " # $ % & ' ( ) * + , . - /
   0x0030, 0x0039, //Example custom range (numbers 0-9)
+  0x003A, 0x0040, // : ; < = > ? @
+
   0x0041, 0x005A, //Example custom range (Upper case A-Z)
   0x0061, 0x007A, //Example custom range (Lower case a-z)
 
