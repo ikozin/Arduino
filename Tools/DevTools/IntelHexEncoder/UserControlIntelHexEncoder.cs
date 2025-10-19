@@ -4,13 +4,11 @@ using IntelHexEncoder.Setting;
 using System.Globalization;
 using System.Text;
 using System.Text.Json;
-using System.Windows.Forms;
 
 namespace IntelHexEncoder
 {
     public partial class UserControlIntelHexEncoder : UserControlText
     {
-        private readonly ToolStrip toolStripMenu = new();
         private readonly ToolStripLabel toolStripLabelAddress = new();
         private readonly ToolStripTextBox toolStripTextBoxAddress = new();
 
@@ -20,19 +18,10 @@ namespace IntelHexEncoder
         {
             InitializeComponent();
 
-            toolStripMenu.SuspendLayout();
-            toolStripMenu.Items.AddRange([toolStripLabelAddress, toolStripTextBoxAddress]);
-            toolStripMenu.Location = new Point(0, 0);
-
             toolStripLabelAddress.DisplayStyle = ToolStripItemDisplayStyle.Text;
             toolStripLabelAddress.Text = "Адрес:";
-
             toolStripTextBoxAddress.Text = "0000";
-
-            toolStripMenu.ResumeLayout(false);
-            toolStripMenu.PerformLayout();
-
-            toolStripContainer.TopToolStripPanel.Controls.Add(toolStripMenu);
+            CreateToolStrip([toolStripLabelAddress, toolStripTextBoxAddress]);
 
             using FileStream file = new("DevToolIntelHexEncoder_Setting.json", FileMode.Open);
             if (file == null) return;

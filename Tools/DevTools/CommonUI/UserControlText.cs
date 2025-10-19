@@ -1,15 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-
-namespace CommonUI
+﻿namespace CommonUI
 {
     public partial class UserControlText : UserControl
     {
@@ -25,6 +14,15 @@ namespace CommonUI
         public virtual void SaveFile(FileStream stream)
         {
 
+        }
+        public void CreateToolStrip(ToolStripItem[] toolStripItems) {
+            ToolStrip toolStripMenu = new();
+            toolStripMenu.SuspendLayout();
+            toolStripMenu.Items.AddRange(toolStripItems);
+            toolStripMenu.Location = new Point(0, 0);
+            toolStripMenu.ResumeLayout(false);
+            toolStripMenu.PerformLayout();
+            toolStripContainer.TopToolStripPanel.Controls.Add(toolStripMenu);
         }
 
         private void OpenToolStripButton_Click(object sender, EventArgs args)

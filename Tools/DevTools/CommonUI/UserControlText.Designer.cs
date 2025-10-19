@@ -38,6 +38,7 @@
             openFileDlg = new OpenFileDialog();
             saveFileDlg = new SaveFileDialog();
             toolStripContainer = new ToolStripContainer();
+            splitContainer = new SplitContainer();
             textBoxView = new TextBox();
             toolStripOpen = new ToolStrip();
             toolStripSave = new ToolStrip();
@@ -50,6 +51,9 @@
             toolStripContainer.ContentPanel.SuspendLayout();
             toolStripContainer.TopToolStripPanel.SuspendLayout();
             toolStripContainer.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)splitContainer).BeginInit();
+            splitContainer.Panel2.SuspendLayout();
+            splitContainer.SuspendLayout();
             toolStripOpen.SuspendLayout();
             toolStripSave.SuspendLayout();
             SuspendLayout();
@@ -110,14 +114,17 @@
             // 
             // toolStripContainer
             // 
+            toolStripContainer.BottomToolStripPanelVisible = false;
             // 
             // toolStripContainer.ContentPanel
             // 
-            toolStripContainer.ContentPanel.Controls.Add(textBoxView);
+            toolStripContainer.ContentPanel.Controls.Add(splitContainer);
             toolStripContainer.ContentPanel.Size = new Size(663, 471);
             toolStripContainer.Dock = DockStyle.Fill;
+            toolStripContainer.LeftToolStripPanelVisible = false;
             toolStripContainer.Location = new Point(0, 0);
             toolStripContainer.Name = "toolStripContainer";
+            toolStripContainer.RightToolStripPanelVisible = false;
             toolStripContainer.Size = new Size(663, 498);
             toolStripContainer.TabIndex = 0;
             toolStripContainer.Text = "toolStripContainer";
@@ -126,6 +133,21 @@
             // 
             toolStripContainer.TopToolStripPanel.Controls.Add(toolStripOpen);
             toolStripContainer.TopToolStripPanel.Controls.Add(toolStripSave);
+            // 
+            // splitContainer
+            // 
+            splitContainer.Dock = DockStyle.Fill;
+            splitContainer.Location = new Point(0, 0);
+            splitContainer.Name = "splitContainer";
+            splitContainer.Panel1Collapsed = true;
+            splitContainer.Panel1MinSize = 0;
+            // 
+            // splitContainer.Panel2
+            // 
+            splitContainer.Panel2.Controls.Add(textBoxView);
+            splitContainer.Size = new Size(663, 471);
+            splitContainer.SplitterDistance = 221;
+            splitContainer.TabIndex = 1;
             // 
             // textBoxView
             // 
@@ -144,7 +166,8 @@
             toolStripOpen.Dock = DockStyle.None;
             toolStripOpen.ImageScalingSize = new Size(20, 20);
             toolStripOpen.Items.AddRange(new ToolStripItem[] { openToolStripButton, toolStripSeparator1, pasteToolStripButtonPaste });
-            toolStripOpen.Location = new Point(9, 0);
+            toolStripOpen.LayoutStyle = ToolStripLayoutStyle.HorizontalStackWithOverflow;
+            toolStripOpen.Location = new Point(6, 0);
             toolStripOpen.Name = "toolStripOpen";
             toolStripOpen.Size = new Size(155, 27);
             toolStripOpen.TabIndex = 0;
@@ -154,9 +177,10 @@
             toolStripSave.Dock = DockStyle.None;
             toolStripSave.ImageScalingSize = new Size(20, 20);
             toolStripSave.Items.AddRange(new ToolStripItem[] { copyToolStripButton, toolStripSeparator2, saveToolStripButton });
-            toolStripSave.Location = new Point(164, 0);
+            toolStripSave.LayoutStyle = ToolStripLayoutStyle.HorizontalStackWithOverflow;
+            toolStripSave.Location = new Point(161, 0);
             toolStripSave.Name = "toolStripSave";
-            toolStripSave.Size = new Size(189, 27);
+            toolStripSave.Size = new Size(150, 27);
             toolStripSave.TabIndex = 1;
             // 
             // UserControlText
@@ -167,11 +191,14 @@
             Name = "UserControlText";
             Size = new Size(663, 498);
             toolStripContainer.ContentPanel.ResumeLayout(false);
-            toolStripContainer.ContentPanel.PerformLayout();
             toolStripContainer.TopToolStripPanel.ResumeLayout(false);
             toolStripContainer.TopToolStripPanel.PerformLayout();
             toolStripContainer.ResumeLayout(false);
             toolStripContainer.PerformLayout();
+            splitContainer.Panel2.ResumeLayout(false);
+            splitContainer.Panel2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)splitContainer).EndInit();
+            splitContainer.ResumeLayout(false);
             toolStripOpen.ResumeLayout(false);
             toolStripOpen.PerformLayout();
             toolStripSave.ResumeLayout(false);
@@ -186,5 +213,6 @@
         public TextBox textBoxView;
         public ToolStrip toolStripSave;
         public ToolStripContainer toolStripContainer;
+        private SplitContainer splitContainer;
     }
 }
