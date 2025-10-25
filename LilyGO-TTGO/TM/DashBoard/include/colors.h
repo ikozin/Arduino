@@ -1,0 +1,28 @@
+#pragma once
+#include <Arduino.h>
+
+#define COLOR_BLACK_DAY     0x00000000
+#define COLOR_RED_DAY       0x00FF0000
+#define COLOR_GREEN_DAY     0x0000FF00
+#define COLOR_BLUE_DAY      0x000000FF
+#define COLOR_WHITE_DAY     (COLOR_RED_DAY | COLOR_GREEN_DAY | COLOR_BLUE_DAY)
+#define COLOR_YELLOW_DAY    (COLOR_RED_DAY | COLOR_GREEN_DAY)
+
+#define COLOR_BLACK_NIGHT   0x00000000
+#define COLOR_RED_NIGHT     0x003F0000
+#define COLOR_GREEN_NIGHT   0x00003F00
+#define COLOR_BLUE_NIGHT    0x0000003F
+#define COLOR_WHITE_NIGHT   (COLOR_RED_NIGHT | COLOR_GREEN_NIGHT | COLOR_BLUE_NIGHT)
+#define COLOR_YELLOW_NIGHT  (COLOR_RED_NIGHT | COLOR_GREEN_NIGHT)
+
+uint32_t palette_day[]      { COLOR_BLACK_DAY,   COLOR_WHITE_DAY,   COLOR_RED_DAY,   COLOR_GREEN_DAY,   COLOR_BLUE_DAY,   COLOR_YELLOW_DAY }; 
+uint32_t palette_night[]    { COLOR_BLACK_NIGHT, COLOR_WHITE_NIGHT, COLOR_RED_NIGHT, COLOR_GREEN_NIGHT, COLOR_BLUE_NIGHT, COLOR_YELLOW_NIGHT };
+
+uint32_t *palette = palette_day;
+
+#define COLOR_BLACK     (palette[0])
+#define COLOR_WHITE     (palette[1])
+#define COLOR_RED       (palette[2])
+#define COLOR_GREEN     (palette[3])
+#define COLOR_BLUE      (palette[4])
+#define COLOR_YELLOW    (palette[5])

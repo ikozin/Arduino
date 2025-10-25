@@ -7,6 +7,9 @@
 #include "controllerAudio.h"
 #include "main.h"
 #include "display.h"
+#include "colors.h"
+#include "TrackView.h"
+
 
 #include "fonts/ShareTechMonoRegular32.h"
 #include "fonts/DSEG7Classic_Regular52pt7b.h"
@@ -14,32 +17,6 @@
 #if !defined(ESP32)
     #error Select ESP32 DEV Board
 #endif
-
-#define COLOR_BLACK_DAY     0x00000000
-#define COLOR_RED_DAY       0x00FF0000
-#define COLOR_GREEN_DAY     0x0000FF00
-#define COLOR_BLUE_DAY      0x000000FF
-#define COLOR_WHITE_DAY     (COLOR_RED_DAY | COLOR_GREEN_DAY | COLOR_BLUE_DAY)
-#define COLOR_YELLOW_DAY    (COLOR_RED_DAY | COLOR_GREEN_DAY)
-
-#define COLOR_BLACK_NIGHT   0x00000000
-#define COLOR_RED_NIGHT     0x003F0000
-#define COLOR_GREEN_NIGHT   0x00003F00
-#define COLOR_BLUE_NIGHT    0x0000003F
-#define COLOR_WHITE_NIGHT   (COLOR_RED_NIGHT | COLOR_GREEN_NIGHT | COLOR_BLUE_NIGHT)
-#define COLOR_YELLOW_NIGHT  (COLOR_RED_NIGHT | COLOR_GREEN_NIGHT)
-
-uint32_t palette_day[]      { COLOR_BLACK_DAY,   COLOR_WHITE_DAY,   COLOR_RED_DAY,   COLOR_GREEN_DAY,   COLOR_BLUE_DAY,   COLOR_YELLOW_DAY }; 
-uint32_t palette_night[]    { COLOR_BLACK_NIGHT, COLOR_WHITE_NIGHT, COLOR_RED_NIGHT, COLOR_GREEN_NIGHT, COLOR_BLUE_NIGHT, COLOR_YELLOW_NIGHT };
-
-uint32_t *palette = palette_night;
-
-#define COLOR_BLACK     (palette[0])
-#define COLOR_WHITE     (palette[1])
-#define COLOR_RED       (palette[2])
-#define COLOR_GREEN     (palette[3])
-#define COLOR_BLUE      (palette[4])
-#define COLOR_YELLOW    (palette[5])
 
 // https://docs.espressif.com/projects/esp-idf/en/v5.0/esp32/api-reference/system/freertos.html#task-api
 // https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/system/system_time.html
@@ -60,6 +37,7 @@ EventGroupHandle_t xEventGroup = xEventGroupCreateStatic(&xEventGroupBuffer);
 //EventGroupHandle_t xEventGroup = xEventGroupCreate();
 
 LGFX tft;
+TrackView track(&tft, Share_Tech_Mono_Regular32);
 Preferences prefs = Preferences();
 ControllerAudio ctrlAudo(xEventGroup); 
 
@@ -240,43 +218,43 @@ void drawStation(int32_t x, int32_t y) {
     tft.endWrite();
 }
 
-String _title;
-int32_t _x = TFT_HEIGHT;
-int32_t _y = 20;
-int32_t _width = 0;
-void drawTrack() {
-    tft.loadFont(Share_Tech_Mono_Regular32);
-    tft.setTextDatum(ML_DATUM);
-    _x = TFT_HEIGHT;
-    _title = ctrlAudo.getTitle();
-    _width = tft.textWidth(_title);
+// String _title;
+// int32_t _x = TFT_HEIGHT;
+// int32_t _y = 20;
+// int32_t _width = 0;
+// void drawTrack() {
+//     tft.loadFont(Share_Tech_Mono_Regular32);
+//     tft.setTextDatum(ML_DATUM);
+//     _x = TFT_HEIGHT;
+//     _title = ctrlAudo.getTitle();
+//     _width = tft.textWidth(_title);
 
-    if (_width < TFT_HEIGHT) {
-        _x = (TFT_HEIGHT - _width) >> 1;
-        _width = 0;
-    } else {
-        _title += "  ";
-        _width += 16;
-    }
-    LOG("Start: %d, %d, %d\r\n", _x, _y, _width);
-    tft.startWrite();
-    tft.drawString(_title, _x, _y);
-    tft.unloadFont();
-    tft.endWrite();
-}
+//     if (_width < TFT_HEIGHT) {
+//         _x = (TFT_HEIGHT - _width) >> 1;
+//         _width = 0;
+//     } else {
+//         _title += "  ";
+//         _width += 16;
+//     }
+//     LOG("Start: %d, %d, %d\r\n", _x, _y, _width);
+//     tft.startWrite();
+//     tft.drawString(_title, _x, _y);
+//     tft.unloadFont();
+//     tft.endWrite();
+// }
 
-void updateTrack() {
-    if (_width == 0) return;
-    _x-= 16;
-    if (_x < -_width) _x = TFT_HEIGHT;
-    LOG("update: %d\r\n", _x);
-    tft.startWrite();
-    tft.loadFont(Share_Tech_Mono_Regular32);
-    tft.setTextDatum(ML_DATUM);
-    tft.drawString(_title, _x, _y);
-    tft.unloadFont();
-    tft.endWrite();
-}
+// void updateTrack() {
+//     if (_width == 0) return;
+//     _x-= 16;
+//     if (_x < -_width) _x = TFT_HEIGHT;
+//     LOG("update: %d\r\n", _x);
+//     tft.startWrite();
+//     tft.loadFont(Share_Tech_Mono_Regular32);
+//     tft.setTextDatum(ML_DATUM);
+//     tft.drawString(_title, _x, _y);
+//     tft.unloadFont();
+//     tft.endWrite();
+// }
 
 void drawTime(int32_t x, int32_t y, struct tm* timeinfo) {
     // char text[16];
@@ -290,6 +268,7 @@ void drawTime(int32_t x, int32_t y, struct tm* timeinfo) {
     tft.endWrite();
 }
 
+// String _title;
 void loop() {
     time_t now = time(nullptr);
     struct tm* timeinfo = localtime(&now);
@@ -306,7 +285,7 @@ void loop() {
             drawStation(0, 200);
         }
         if (uxBits & BIT_TRACK) {
-            drawTrack();
+            track.begin(TFT_HEIGHT, 20, ctrlAudo.getTitle());
         }
         if (uxBits & BIT_VOLUME) {
             drawVolume(290, 100, 24, ctrlAudo.getVolume());
@@ -315,7 +294,7 @@ void loop() {
 
         }
     }
-    updateTrack();
+    track.update();
     // vTaskDelay(pdMS_TO_TICKS(1000));
 }
 
