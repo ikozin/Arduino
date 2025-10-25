@@ -25,6 +25,15 @@
             toolStripContainer.TopToolStripPanel.Controls.Add(toolStripMenu);
         }
 
+        public void AddFilterControl(UserControl filter)
+        {
+            splitContainer.Panel1.SuspendLayout();
+            splitContainer.Panel1Collapsed = false;
+            splitContainer.Panel1.Controls.Add(filter);
+            filter.Dock = DockStyle.Fill;
+            splitContainer.Panel1.ResumeLayout(false);
+            splitContainer.Panel1.PerformLayout();
+        }
         private void OpenToolStripButton_Click(object sender, EventArgs args)
         {
             if (openFileDlg.ShowDialog() != DialogResult.OK) return;

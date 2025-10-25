@@ -131,8 +131,8 @@
             // 
             // toolStripContainer.TopToolStripPanel
             // 
-            toolStripContainer.TopToolStripPanel.Controls.Add(toolStripOpen);
             toolStripContainer.TopToolStripPanel.Controls.Add(toolStripSave);
+            toolStripContainer.TopToolStripPanel.Controls.Add(toolStripOpen);
             // 
             // splitContainer
             // 
@@ -140,13 +140,13 @@
             splitContainer.Location = new Point(0, 0);
             splitContainer.Name = "splitContainer";
             splitContainer.Panel1Collapsed = true;
-            splitContainer.Panel1MinSize = 0;
+            splitContainer.Panel1MinSize = 200;
             // 
             // splitContainer.Panel2
             // 
             splitContainer.Panel2.Controls.Add(textBoxView);
             splitContainer.Size = new Size(663, 471);
-            splitContainer.SplitterDistance = 221;
+            splitContainer.SplitterDistance = 200;
             splitContainer.TabIndex = 1;
             // 
             // textBoxView
@@ -163,11 +163,12 @@
             // 
             // toolStripOpen
             // 
+            toolStripOpen.AllowMerge = false;
             toolStripOpen.Dock = DockStyle.None;
             toolStripOpen.ImageScalingSize = new Size(20, 20);
             toolStripOpen.Items.AddRange(new ToolStripItem[] { openToolStripButton, toolStripSeparator1, pasteToolStripButtonPaste });
             toolStripOpen.LayoutStyle = ToolStripLayoutStyle.HorizontalStackWithOverflow;
-            toolStripOpen.Location = new Point(6, 0);
+            toolStripOpen.Location = new Point(4, 0);
             toolStripOpen.Name = "toolStripOpen";
             toolStripOpen.Size = new Size(155, 27);
             toolStripOpen.TabIndex = 0;
@@ -178,9 +179,9 @@
             toolStripSave.ImageScalingSize = new Size(20, 20);
             toolStripSave.Items.AddRange(new ToolStripItem[] { copyToolStripButton, toolStripSeparator2, saveToolStripButton });
             toolStripSave.LayoutStyle = ToolStripLayoutStyle.HorizontalStackWithOverflow;
-            toolStripSave.Location = new Point(161, 0);
+            toolStripSave.Location = new Point(159, 0);
             toolStripSave.Name = "toolStripSave";
-            toolStripSave.Size = new Size(150, 27);
+            toolStripSave.Size = new Size(189, 27);
             toolStripSave.TabIndex = 1;
             // 
             // UserControlText

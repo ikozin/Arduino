@@ -1,42 +1,67 @@
-﻿using GenBinDefs.Setting;
+﻿using CommonUI;
+using GenBinDefs.Setting;
 using System.Data;
 using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
+using System.Windows.Forms;
 
 namespace GenBinDefs
 {
-    public partial class UserControlGenBinDefs : UserControl
+    public partial class UserControlGenBinDefs : UserControlText
     {
+        private FilterGenBinDefs _fliter = new();
+        private ToolStripComboBox toolStripComboBoxLang = new();
+        private ToolStripButton toolStripButton = new();
+
         private readonly MainSetting setting;
         public UserControlGenBinDefs()
         {
             InitializeComponent();
+            toolStripOpen.Visible = false;
+
             using FileStream file = new("DevToolGenBinDefs_Setting.json", FileMode.Open);
             if (file == null) return;
             setting = JsonSerializer.Deserialize<MainSetting>(file)!;
+
+            toolStripComboBoxLang.SelectedIndexChanged += ToolStripComboBoxLang_SelectedIndexChanged;
             toolStripComboBoxLang.Items.AddRange([.. setting.Langs.Select(s => s.Lang!)]);
             toolStripComboBoxLang.SelectedIndex = toolStripComboBoxLang.Items.Count > 0 ? 0 : -1;
+
+            toolStripButton.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            toolStripButton.Text = "&Generate";
+            toolStripButton.Click += RunToolStripButton_Click;
+
+
+            CreateToolStrip([toolStripComboBoxLang, toolStripButton]);
+            AddFilterControl(_fliter);
             try
             {
                 string[] fonts = setting.Font!.Split(';', StringSplitOptions.RemoveEmptyEntries);
                 if (!float.TryParse(fonts[1], out float fontSize)) fontSize = 10;
-                textBoxDefs.Font = new Font(fonts[0], fontSize, FontStyle.Regular);
+                textBoxView.Font = new Font(fonts[0], fontSize, FontStyle.Regular);
             }
             catch (Exception)
             {
             }
         }
 
-        private void FillPatternList(LangSetting lang)
+        private void ToolStripComboBoxLang_SelectedIndexChanged(object? sender, EventArgs e)
         {
-            string[] items = lang.Defines;
-            checkedListBox.Items.Clear();
-            foreach (string item in items)
+            int index = toolStripComboBoxLang.SelectedIndex;
+            _fliter.Lang = setting.Langs[index];
+        }
+
+        private void RunToolStripButton_Click(object? sender, EventArgs e)
+        {
+            StringBuilder text = new StringBuilder(4096);
+            int index = toolStripComboBoxLang.SelectedIndex;
+            LangSetting lang = setting.Langs[index];
+            foreach (var pattern in lang.Defines.Order())
             {
-                int index = checkedListBox.Items.Add(item);
-                checkedListBox.SetItemChecked(index, true);
+                GenerateDefies(text, pattern, lang);
             }
+            textBoxView.Text = text.ToString();
         }
 
         [GeneratedRegex("(?:{\\d})", RegexOptions.Singleline)]
@@ -93,65 +118,10 @@ namespace GenBinDefs
             }
         }
 
-        private void ToolStripComboBoxLang_SelectedIndexChanged(object sender, EventArgs e)
+        public override void SaveFile(FileStream stream)
         {
-            int lang = toolStripComboBoxLang.SelectedIndex;
-            FillPatternList(setting.Langs[lang]);
-        }
-
-        private void ToolStripMenuItemList_Click(object sender, EventArgs e)
-        {
-            ToolStripMenuItem menuItem = (ToolStripMenuItem)sender;
-            if (bool.TryParse(menuItem.Tag!.ToString(), out bool check))
-            {
-                for (int i = 0; i < checkedListBox.Items.Count; i++)
-                {
-                    checkedListBox.SetItemChecked(i, check);
-                }
-            }
-        }
-
-        private void BtnPatternDel_Click(object sender, EventArgs e)
-        {
-            int index = toolStripComboBoxLang.SelectedIndex;
-            LangSetting lang = setting.Langs[index];
-            var list = lang.Defines.ToList();
-            var except = checkedListBox.CheckedItems.Cast<string>();
-            if (!except.Any()) return;
-            lang.Defines = [.. list.Except(except)];
-            FillPatternList(lang);
-        }
-
-        private void ToolStripButtonTask_Click(object sender, EventArgs e)
-        {
-            int index = toolStripComboBoxLang.SelectedIndex;
-            LangSetting lang = setting.Langs[index];
-            StringBuilder text = new(1024);
-            text.AppendLine(lang.Header);
-            var defs = checkedListBox.CheckedItems.Cast<string>().GroupBy(i => i);
-            foreach (IGrouping<string, string> def in defs)
-            {
-                string pattern = def.Key;
-                if (string.IsNullOrWhiteSpace(pattern)) continue;
-                GenerateDefies(text, pattern, lang);
-                text.AppendLine();
-            }
-
-            text.AppendLine(lang.Footer);
-            textBoxDefs.Text = text.ToString();
-        }
-
-        private void ToolStripButtonCopy_Click(object sender, EventArgs e)
-        {
-            Clipboard.SetText(textBoxDefs.Text);
-        }
-
-        private void ToolStripButtonSave_Click(object sender, EventArgs e)
-        {
-            if (saveFileDlg.ShowDialog(this) == DialogResult.Cancel) return;
-            using FileStream file = new(saveFileDlg.FileName, FileMode.Create);
-            using StreamWriter writer = new(file, Encoding.UTF8);
-            writer.Write(textBoxDefs.Text);
+            using StreamWriter writer = new(stream, Encoding.UTF8);
+            writer.Write(textBoxView.Text);
         }
     }
 }
