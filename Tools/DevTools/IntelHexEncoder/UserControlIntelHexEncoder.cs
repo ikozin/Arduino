@@ -7,7 +7,7 @@ using System.Text.Json;
 
 namespace IntelHexEncoder
 {
-    public partial class UserControlIntelHexEncoder : UserControlText
+    public partial class UserControlIntelHexEncoder : DevToolViewText
     {
         private readonly ToolStripLabel toolStripLabelAddress = new();
         private readonly ToolStripTextBox toolStripTextBoxAddress = new();
@@ -30,7 +30,7 @@ namespace IntelHexEncoder
             {
                 string[] fonts = setting.Font!.Split(';', StringSplitOptions.RemoveEmptyEntries);
                 if (!float.TryParse(fonts[1], out float fontSize)) fontSize = 10;
-                textBoxView.Font = new Font(fonts[0], fontSize, FontStyle.Regular);
+                View.Font = new Font(fonts[0], fontSize, FontStyle.Regular);
             }
             catch (Exception)
             {
@@ -53,21 +53,13 @@ namespace IntelHexEncoder
                 addr += chunk.Length;
             }
             writer.Close();
-            textBoxView.Text = Encoding.UTF8.GetString(stream.ToArray());
+            View.Text = Encoding.UTF8.GetString(stream.ToArray());
         }
         public override void OpenFile(FileStream stream)
         {
             memory = new byte[stream.Length];
             stream.Read(memory, 0, memory.Length);
             Convert();
-        }
-
-
-
-        public override void SaveFile(FileStream stream)
-        {
-            using StreamWriter writer = new(stream, Encoding.UTF8);
-            writer.Write(textBoxView.Text);
         }
     }
 }

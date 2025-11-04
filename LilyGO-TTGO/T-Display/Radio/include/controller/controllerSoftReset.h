@@ -5,6 +5,6 @@
 class ControllerSoftReset : public ControllerGPIOInput {
     public:
         ControllerSoftReset(const char* name, gpio_num_t pin):
-                ControllerGPIOInput(name, pin, GPIO_INTR_NEGEDGE, GPIO_PULLUP_ONLY) {
+                ControllerGPIOInput(name, pin, FALLING, INPUT_PULLUP) {
         }
 };

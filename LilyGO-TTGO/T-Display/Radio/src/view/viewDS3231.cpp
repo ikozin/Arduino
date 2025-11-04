@@ -35,7 +35,6 @@ uint16_t ViewDS3231::getDateColor(TimeData& date) {
 }
 
 void ViewDS3231::OnDrawHandle() {
-    // LOGN("%s::OnDrawHandle", _name);
     ControllerTime* time = static_cast<ControllerTime*>(_ctrl);
     
     int value;
@@ -58,8 +57,9 @@ void ViewDS3231::OnDrawHandle() {
     }
     strcat(text, buffer);
 
-    sprintf(text, "%02d:%02d", now.hour, now.minute);
-    Serial.println(text);
+    // sprintf(text, "%02d:%02d", now.hour, now.minute);
+    // Serial.println(text);
+    getSetting()->getSprite()->startWrite();
 
     getSetting()->getSprite()->fillSprite(TFT_BLACK);
     getSetting()->getSprite()->setTextColor(TFT_WHITE);
@@ -78,11 +78,13 @@ void ViewDS3231::OnDrawHandle() {
     itoa(now.year, buffer, 10);
     strcat(text, buffer);
 
-    sprintf(text, "%s %d %s %d", dayOfWeeks[now.dayOfTheWeek], now.day, months[now.month], now.year);
-    Serial.println(text);
+    // sprintf(text, "%s %d %s %d", dayOfWeeks[now.dayOfTheWeek], now.day, months[now.month], now.year);
+    // Serial.println(text);
 
     getSetting()->getSprite()->setTextColor(getDateColor(now));
     getSetting()->getSprite()->loadFont(NotoSansSemiBold23);
     getSetting()->getSprite()->drawString(text, TFT_HEIGHT >> 1, 28);
     getSetting()->getSprite()->unloadFont();
+
+    getSetting()->getSprite()->endWrite();
 }

@@ -5,7 +5,7 @@ using System.Text.Json;
 
 namespace Base64Encoder
 {
-    public partial class UserControlBase64Encoder : UserControlText
+    public partial class UserControlBase64Encoder : DevToolViewText
     {
         private readonly MainSetting setting;
         public UserControlBase64Encoder()
@@ -19,7 +19,7 @@ namespace Base64Encoder
             {
                 string[] fonts = setting.Font!.Split(';', StringSplitOptions.RemoveEmptyEntries);
                 if (!float.TryParse(fonts[1], out float fontSize)) fontSize = 10;
-                textBoxView.Font = new Font(fonts[0], fontSize, FontStyle.Regular);
+                View.Font = new Font(fonts[0], fontSize, FontStyle.Regular);
             }
             catch (Exception)
             {
@@ -29,13 +29,7 @@ namespace Base64Encoder
         {
             byte[] data = new byte[stream.Length];
             stream.Read(data, 0, data.Length);
-            textBoxView.Text = System.Convert.ToBase64String(data);
-        }
-
-        public override void SaveFile(FileStream stream)
-        {
-            using StreamWriter writer = new(stream, Encoding.UTF8);
-            writer.Write(textBoxView.Text);
+            View.Text = System.Convert.ToBase64String(data);
         }
     }
 }

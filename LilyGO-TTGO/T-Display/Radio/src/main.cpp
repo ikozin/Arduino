@@ -32,7 +32,8 @@
 #include "view/viewWeather.h"
 
 
-#include <..\..\tools\sdk\esp32\include\lwip\include\apps\esp_sntp.h>
+// #include <..\..\tools\sdk\esp32\include\lwip\include\apps\esp_sntp.h>
+#include <esp_sntp.h>
 
 //#include "IrRemote_CarMP3.h"
 //#include "alarm.h"
@@ -72,11 +73,11 @@
 #define ENCODER_ENABLE
 #define RADIO_ENABLE
 // #define WEATHER_ENABLE
-#define BME280_ENABLE
-#define RADSENS_ENABLE
-#define RESET_ENABLE
-#define BUZZER_ENABLE
-#define TIME_ENABLE
+// #define BME280_ENABLE
+//#define RADSENS_ENABLE
+//#define RESET_ENABLE
+// #define BUZZER_ENABLE
+// #define TIME_ENABLE
 #define IR_ENABLE
 #define WIFI_ENABLE
 // #define MQTT_ENABLE
@@ -158,10 +159,10 @@ ViewRadSens viewRadSens = ViewRadSens("viewRadSens", &viewSettig, &ctrlRadSens);
 #endif
 
 #ifdef TIME_ENABLE
+// ControllerSoftTime ctrlTime = ControllerSoftTime("CtrlSoftTime", &prefs);
 ControllerDS3231 ctrlTime = ControllerDS3231("ctrlTime", &prefs);
 ViewDS3231 viewTime = ViewDS3231("viewTime", &viewSettig, &ctrlTime);
 // ViewTileTime viewTime = ViewTileTime("ViewTileTime", &viewSettig, &ctrlTime);
-// ControllerSoftTime ctrlTime = ControllerSoftTime("CtrlSoftTime", &prefs);
 // ViewSoftTime viewTime = ViewSoftTime("ViewSoftTime", &viewSettig, &ctrlTime);
 #endif
 
@@ -239,7 +240,7 @@ void onMqttDisconnect(AsyncMqttClientDisconnectReason reason) {
 void WiFiEvent(WiFiEvent_t event) {
     // Serial.printf("[WiFi-event] event: %d\n", event);
     switch(event) {
-        case SYSTEM_EVENT_STA_GOT_IP:
+        case ARDUINO_EVENT_WIFI_STA_GOT_IP:
             // Serial.println("\r\nWiFi connected");
             // Serial.print("IP address:");
             // Serial.println(WiFi.localIP());
@@ -248,7 +249,7 @@ void WiFiEvent(WiFiEvent_t event) {
             connectToMqtt();
 #endif
             break;
-        case SYSTEM_EVENT_STA_DISCONNECTED:
+        case ARDUINO_EVENT_WIFI_STA_DISCONNECTED:
             // Serial.println("\r\nWiFi lost connection");
 #ifdef MQTT_ENABLE
             xTimerStop(mqttReconnectTimer, 0); // ensure we don't reconnect to MQTT while reconnecting to Wi-Fi
@@ -269,15 +270,11 @@ void boardInfo(Print& stream) {
     stream.printf("Current Core = %d\r\n", xPortGetCoreID());
 }
 
+
 void setup() {
-    gpio_install_isr_service(0);
-
     Serial.begin(115200);
-    // boardInfo(Serial);
-
     // pinMode(TFT_BL, OUTPUT);                // Set backlight pin to output mode
     // digitalWrite(TFT_BL, TFT_BACKLIGHT_ON); // Turn backlight on. TFT_BACKLIGHT_ON has been set in the TFT_eSPI library in the User Setup file TTGO_T_Display.h
-
     prefs.begin("Main");
 
     tft.init();
@@ -286,6 +283,7 @@ void setup() {
     tft.setTextColor(TFT_GREEN, TFT_BLACK);
 
     boardInfo(tft);
+    // boardInfo(Serial);
 
     if (SPIFFS.begin(true)) {
         tft.printf("Total: %d, Free: %d\r\n", SPIFFS.totalBytes(), SPIFFS.totalBytes() - SPIFFS.usedBytes());
@@ -318,8 +316,8 @@ void setup() {
 #endif
 
 #ifdef RESET_ENABLE
-    ctrlReset.Start(1024);
-    cmpReset.Start(&ctrlReset, 1024);
+    ctrlReset.Start(8192);
+    cmpReset.Start(&ctrlReset, 8192);
 #endif
  
     // prefs.putString("ssid", "...");
@@ -406,14 +404,14 @@ void setup() {
     ctrlWeather.Start(8192);
 #endif
 #ifdef BME280_ENABLE
-    ctrlBme280.Start(xMutex);
+    ctrlBme280.Start(xMutex, 4096);
 #endif
 #ifdef BUZZER_ENABLE
     ctrlBuzzer.Start(1024);
 #endif
 
 #ifdef RADSENS_ENABLE
-    ctrlRadSens.Start(xMutex);
+    ctrlRadSens.Start(xMutex, 4096);
 #endif
 #ifdef IR_ENABLE
     ctrlIrRemote.attachController(&ctrlRadio);
@@ -422,26 +420,26 @@ void setup() {
 
     LOGN("Component - Start")
 #if defined(IR_ENABLE)
-    cmpIrRemote.Start(&ctrlIrRemote);
+    cmpIrRemote.Start(&ctrlIrRemote, 4096);
 #endif
 
     LOGN("View - Start")
     sprite.createSprite(TFT_HEIGHT, TFT_WIDTH);
 #ifdef TIME_ENABLE
-    viewTime.Start(2048);
+    viewTime.Start(4096);
 #endif
 #ifdef RADIO_ENABLE
-    viewRadio.Start();
+    viewRadio.Start(4096);
 #endif
 #ifdef WEATHER_ENABLE
     viewWeather.Start(8192);
 #endif
 #ifdef BME280_ENABLE
-    viewBme280.Start(2048);
-    viewTemperature.Start(2048);
+    viewBme280.Start(4096);
+    viewTemperature.Start(4096);
 #endif
 #ifdef RADSENS_ENABLE
-    viewRadSens.Start(2048);
+    viewRadSens.Start(4096);
 #endif
 #ifdef RADIO_ENABLE
     currentHandle = &ControllerRadio::changeVolume;

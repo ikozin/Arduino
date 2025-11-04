@@ -8,7 +8,7 @@
     using System.Text.RegularExpressions;
     using System.Windows.Forms;
     //
-    public partial class UserControlBinToHex : UserControlText
+    public partial class UserControlBinToHex : DevToolViewText
     {
         private readonly MainSetting setting;
 
@@ -37,7 +37,7 @@
             {
                 string[] fonts = setting.Font!.Split(';', StringSplitOptions.RemoveEmptyEntries);
                 if (!float.TryParse(fonts[1], out float fontSize)) fontSize = 10;
-                textBoxView.Font = new Font(fonts[0], fontSize, FontStyle.Regular);
+                View.Font = new Font(fonts[0], fontSize, FontStyle.Regular);
             }
             catch (Exception)
             {
@@ -45,7 +45,7 @@
         }
         private void Convert(FileStream stream, LangSetting setting, uint length)
         {
-            textBoxView.Text = String.Empty;
+            View.Text = String.Empty;
             using BinaryReader reader = new(stream);
             int fileSize = (int)stream.Length;
             StringBuilder text = new(fileSize << 2);
@@ -68,20 +68,13 @@
             }
             text.AppendLine();
             text.AppendLine(setting.Footer);
-            textBoxView.Text = text.ToString();
+            View.Text = text.ToString();
         }
         public override void OpenFile(FileStream stream)
         {
             int index = toolStripComboBoxLang.SelectedIndex;
             LangSetting lang = setting.Langs[index];
             Convert(stream, lang, uint.Parse(toolStripComboBoxLen.Text));
-        }
-
-        public override void SaveFile(FileStream stream)
-        {
-            using StreamWriter writer = new(stream, Encoding.UTF8);
-            writer.Write(textBoxView .Text);
-
         }
     }
 }

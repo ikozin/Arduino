@@ -48,7 +48,7 @@ IRAM_ATTR void handleReceivedTinyIRData(void* parameter) {
     controller->_value = {
         .Address = TinyIRReceiverData.Address,
         .Command = TinyIRReceiverData.Command,
-        .IsRepeat = (TinyIRReceiverData.Flags & IRDATA_FLAGS_IS_REPEAT)
+        .IsRepeat = (bool)(TinyIRReceiverData.Flags & IRDATA_FLAGS_IS_REPEAT)
     };
 
     for (int i = 0; i < EventListMax && controller->_eventList[i] != nullptr; i++) {

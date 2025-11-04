@@ -19,7 +19,7 @@ InitResponse_t ControllerAlarmClock::OnInit() {
 IterationCode_t ControllerAlarmClock::OnIteration() {
     File f = SPIFFS.open(FS_ALARMLIST_FILE);
     if (f) {
-        DynamicJsonDocument  doc(2048);
+        JsonDocument  doc;
         DeserializationError error = deserializeJson(doc, f);
         if (error) {
             // LOGN("Failed to read file, using default configuration");

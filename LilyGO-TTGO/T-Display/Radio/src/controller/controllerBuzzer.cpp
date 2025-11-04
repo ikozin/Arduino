@@ -141,11 +141,10 @@ ControllerBuzzer::ControllerBuzzer(const char* name, gpio_num_t pin, rmt_channel
 {
     _startEvent = xSemaphoreCreateBinary();
     _channel = channel;
-    _volume = 80;
+    _volume = 100;
     _song = nullptr;
     _wholeNote = 0;
-    ledcSetup(_channel, 1000, 10);
-    ledcAttachPin(pin, _channel);
+    ledcAttachChannel(pin, 1000, 10, _channel);
 }
 
 InitResponse_t ControllerBuzzer::OnInit() {

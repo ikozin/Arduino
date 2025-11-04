@@ -8,11 +8,11 @@ using System.Windows.Forms;
 
 namespace GenBinDefs
 {
-    public partial class UserControlGenBinDefs : UserControlText
+    public partial class UserControlGenBinDefs : DevToolViewText
     {
         private FilterGenBinDefs _fliter = new();
-        private ToolStripComboBox toolStripComboBoxLang = new();
-        private ToolStripButton toolStripButton = new();
+        private readonly ToolStripComboBox toolStripComboBoxLang = new();
+        private readonly ToolStripButton toolStripButton = new();
 
         private readonly MainSetting setting;
         public UserControlGenBinDefs()
@@ -39,7 +39,7 @@ namespace GenBinDefs
             {
                 string[] fonts = setting.Font!.Split(';', StringSplitOptions.RemoveEmptyEntries);
                 if (!float.TryParse(fonts[1], out float fontSize)) fontSize = 10;
-                textBoxView.Font = new Font(fonts[0], fontSize, FontStyle.Regular);
+                View.Font = new Font(fonts[0], fontSize, FontStyle.Regular);
             }
             catch (Exception)
             {
@@ -54,14 +54,14 @@ namespace GenBinDefs
 
         private void RunToolStripButton_Click(object? sender, EventArgs e)
         {
-            StringBuilder text = new StringBuilder(4096);
+            StringBuilder text = new(4096);
             int index = toolStripComboBoxLang.SelectedIndex;
             LangSetting lang = setting.Langs[index];
             foreach (var pattern in lang.Defines.Order())
             {
                 GenerateDefies(text, pattern, lang);
             }
-            textBoxView.Text = text.ToString();
+            View.Text = text.ToString();
         }
 
         [GeneratedRegex("(?:{\\d})", RegexOptions.Singleline)]
@@ -116,12 +116,6 @@ namespace GenBinDefs
             catch (Exception)
             {
             }
-        }
-
-        public override void SaveFile(FileStream stream)
-        {
-            using StreamWriter writer = new(stream, Encoding.UTF8);
-            writer.Write(textBoxView.Text);
         }
     }
 }

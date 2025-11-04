@@ -2,6 +2,7 @@ using Base64Encoder;
 using BinToText;
 using CommonUI;
 using GenBinDefs;
+using ImageConverter;
 using IntelHexEncoder;
 using ViewHex;
 
@@ -17,6 +18,8 @@ namespace DevTools
             RegisterDevTool(new DevToolBase64Encoder());
             RegisterDevTool(new DevToolViewHex());
             RegisterDevTool(new DevToolIntelHexEncoder());
+            RegisterDevTool(new DevToolImageConverter());
+
         }
 
         void RegisterDevTool(IDevTool tool)

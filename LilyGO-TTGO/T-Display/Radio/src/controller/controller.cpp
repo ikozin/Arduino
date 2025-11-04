@@ -14,13 +14,14 @@ void Controller::Start(uint16_t stackDepth) {
 
 void Controller::Start(SemaphoreHandle_t xMutex, uint16_t stackDepth) {
     _xMutex = xMutex;
-    xTaskCreate(ControllerHandler, _name, stackDepth, this, 1, &_task);
+    xTaskCreate(ControllerHandler, _name, stackDepth, this, 10, &_task);
  }
 
 void Controller::ControllerHandler(void* parameter) {
     assert(parameter);
     Controller* controller = static_cast<Controller*>(parameter);
     controller->Lock();
+    LOGN("%s::OnInit", controller->_name);
     InitResponse_t result = controller->OnInit();
     controller->Unlock();
     if (result.IsError) {
@@ -31,8 +32,10 @@ void Controller::ControllerHandler(void* parameter) {
         if (result.DelaySeconds) {
             DelayInSec(result.DelaySeconds);
         }
+        LOGN("%s::OnHandle", controller->_name);
         controller->OnHandle();
     }
+    LOGN("%s::OnDone", controller->_name);
     controller->OnDone();
     vTaskDelete(controller->_task);
 }

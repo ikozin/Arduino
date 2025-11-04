@@ -1,20 +1,38 @@
-﻿namespace CommonUI
+﻿using System.Windows.Forms;
+
+namespace CommonUI
 {
-    public partial class UserControlText : UserControl
+    public partial class DevToolViewCustom<T> : UserControl where T : Control, new()
     {
-        public UserControlText()
+        public T View = new();
+        public DevToolViewCustom()
         {
             InitializeComponent();
+
+            splitContainer.Panel2.SuspendLayout();
+            splitContainer.Panel2.Controls.Add(View);
+            View.Dock = DockStyle.Fill;
+            View.Location = new Point(0, 0);
+
+            splitContainer.Panel2.ResumeLayout(false);
+            splitContainer.Panel2.PerformLayout();
         }
 
         public virtual void OpenFile(FileStream stream)
         {
 
         }
+
         public virtual void SaveFile(FileStream stream)
         {
 
         }
+
+        public virtual void SetClipboardData()
+        {
+
+        }
+
         public void CreateToolStrip(ToolStripItem[] toolStripItems) {
             ToolStrip toolStripMenu = new();
             toolStripMenu.SuspendLayout();
@@ -53,7 +71,7 @@
 
         private void CopyToolStripButton_Click(object sender, EventArgs args)
         {
-            Clipboard.SetText(textBoxView.Text);
+            SetClipboardData();
         }
 
         private void SaveToolStripButton_Click(object sender, EventArgs e)

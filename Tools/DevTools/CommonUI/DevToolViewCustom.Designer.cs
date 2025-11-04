@@ -1,6 +1,6 @@
 ﻿namespace CommonUI
 {
-    partial class UserControlText
+    partial class DevToolViewCustom<T>
     {
         /// <summary> 
         /// Required designer variable.
@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             ToolStripButton openToolStripButton;
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(UserControlText));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DevToolViewCustom<T>));
             ToolStripSeparator toolStripSeparator1;
             ToolStripButton pasteToolStripButtonPaste;
             ToolStripSeparator toolStripSeparator2;
@@ -39,9 +39,8 @@
             saveFileDlg = new SaveFileDialog();
             toolStripContainer = new ToolStripContainer();
             splitContainer = new SplitContainer();
-            textBoxView = new TextBox();
-            toolStripOpen = new ToolStrip();
             toolStripSave = new ToolStrip();
+            toolStripOpen = new ToolStrip();
             openToolStripButton = new ToolStripButton();
             toolStripSeparator1 = new ToolStripSeparator();
             pasteToolStripButtonPaste = new ToolStripButton();
@@ -54,14 +53,12 @@
             ((System.ComponentModel.ISupportInitialize)splitContainer).BeginInit();
             splitContainer.Panel2.SuspendLayout();
             splitContainer.SuspendLayout();
-            toolStripOpen.SuspendLayout();
             toolStripSave.SuspendLayout();
+            toolStripOpen.SuspendLayout();
             SuspendLayout();
             // 
             // openToolStripButton
             // 
-            openToolStripButton.Image = (Image)resources.GetObject("openToolStripButton.Image");
-            openToolStripButton.ImageTransparentColor = Color.Magenta;
             openToolStripButton.Name = "openToolStripButton";
             openToolStripButton.Size = new Size(69, 24);
             openToolStripButton.Text = "&Open";
@@ -74,8 +71,6 @@
             // 
             // pasteToolStripButtonPaste
             // 
-            pasteToolStripButtonPaste.Image = (Image)resources.GetObject("pasteToolStripButtonPaste.Image");
-            pasteToolStripButtonPaste.ImageTransparentColor = Color.Magenta;
             pasteToolStripButtonPaste.Name = "pasteToolStripButtonPaste";
             pasteToolStripButtonPaste.Size = new Size(67, 24);
             pasteToolStripButtonPaste.Text = "&Paste";
@@ -88,8 +83,6 @@
             // 
             // copyToolStripButton
             // 
-            copyToolStripButton.Image = (Image)resources.GetObject("copyToolStripButton.Image");
-            copyToolStripButton.ImageTransparentColor = Color.Magenta;
             copyToolStripButton.Name = "copyToolStripButton";
             copyToolStripButton.Size = new Size(67, 24);
             copyToolStripButton.Text = "&Copy";
@@ -97,8 +90,6 @@
             // 
             // saveToolStripButton
             // 
-            saveToolStripButton.Image = (Image)resources.GetObject("saveToolStripButton.Image");
-            saveToolStripButton.ImageTransparentColor = Color.Magenta;
             saveToolStripButton.Name = "saveToolStripButton";
             saveToolStripButton.Size = new Size(64, 24);
             saveToolStripButton.Text = "&Save";
@@ -131,8 +122,8 @@
             // 
             // toolStripContainer.TopToolStripPanel
             // 
-            toolStripContainer.TopToolStripPanel.Controls.Add(toolStripSave);
             toolStripContainer.TopToolStripPanel.Controls.Add(toolStripOpen);
+            toolStripContainer.TopToolStripPanel.Controls.Add(toolStripSave);
             // 
             // splitContainer
             // 
@@ -144,22 +135,9 @@
             // 
             // splitContainer.Panel2
             // 
-            splitContainer.Panel2.Controls.Add(textBoxView);
             splitContainer.Size = new Size(663, 471);
             splitContainer.SplitterDistance = 200;
             splitContainer.TabIndex = 1;
-            // 
-            // textBoxView
-            // 
-            textBoxView.Dock = DockStyle.Fill;
-            textBoxView.Location = new Point(0, 0);
-            textBoxView.Multiline = true;
-            textBoxView.Name = "textBoxView";
-            textBoxView.ReadOnly = true;
-            textBoxView.ScrollBars = ScrollBars.Both;
-            textBoxView.Size = new Size(663, 471);
-            textBoxView.TabIndex = 0;
-            textBoxView.WordWrap = false;
             // 
             // toolStripOpen
             // 
@@ -168,7 +146,7 @@
             toolStripOpen.ImageScalingSize = new Size(20, 20);
             toolStripOpen.Items.AddRange(new ToolStripItem[] { openToolStripButton, toolStripSeparator1, pasteToolStripButtonPaste });
             toolStripOpen.LayoutStyle = ToolStripLayoutStyle.HorizontalStackWithOverflow;
-            toolStripOpen.Location = new Point(4, 0);
+            toolStripOpen.Location = new Point(0, 0);
             toolStripOpen.Name = "toolStripOpen";
             toolStripOpen.Size = new Size(155, 27);
             toolStripOpen.TabIndex = 0;
@@ -179,7 +157,7 @@
             toolStripSave.ImageScalingSize = new Size(20, 20);
             toolStripSave.Items.AddRange(new ToolStripItem[] { copyToolStripButton, toolStripSeparator2, saveToolStripButton });
             toolStripSave.LayoutStyle = ToolStripLayoutStyle.HorizontalStackWithOverflow;
-            toolStripSave.Location = new Point(159, 0);
+            toolStripSave.Location = new Point(120, 0);
             toolStripSave.Name = "toolStripSave";
             toolStripSave.Size = new Size(189, 27);
             toolStripSave.TabIndex = 1;
@@ -200,10 +178,10 @@
             splitContainer.Panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)splitContainer).EndInit();
             splitContainer.ResumeLayout(false);
-            toolStripOpen.ResumeLayout(false);
-            toolStripOpen.PerformLayout();
             toolStripSave.ResumeLayout(false);
             toolStripSave.PerformLayout();
+            toolStripOpen.ResumeLayout(false);
+            toolStripOpen.PerformLayout();
             ResumeLayout(false);
         }
 
@@ -211,9 +189,8 @@
         private OpenFileDialog openFileDlg;
         private SaveFileDialog saveFileDlg;
         public ToolStrip toolStripOpen;
-        public TextBox textBoxView;
         public ToolStrip toolStripSave;
         public ToolStripContainer toolStripContainer;
-        private SplitContainer splitContainer;
+        protected SplitContainer splitContainer;
     }
 }

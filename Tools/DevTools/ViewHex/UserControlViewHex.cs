@@ -5,7 +5,7 @@ using ViewHex.Setting;
 
 namespace ViewHex
 {
-    public partial class UserControlViewHex : UserControlText
+    public partial class UserControlViewHex : DevToolViewText
     {
         private readonly MainSetting setting;
         private byte[] memory = new byte[0];
@@ -23,7 +23,7 @@ namespace ViewHex
             {
                 string[] fonts = setting.Font!.Split(';', StringSplitOptions.RemoveEmptyEntries);
                 if (!float.TryParse(fonts[1], out float fontSize)) fontSize = 10;
-                textBoxView.Font = new Font(fonts[0], fontSize, FontStyle.Regular);
+                View.Font = new Font(fonts[0], fontSize, FontStyle.Regular);
             }
             catch (Exception)
             {
@@ -60,7 +60,7 @@ namespace ViewHex
                 text.AppendFormat(" {0:X2}", memory[i]);
 
             }
-            textBoxView.Text = text.ToString();
+            View.Text = text.ToString();
         }
     }
 }

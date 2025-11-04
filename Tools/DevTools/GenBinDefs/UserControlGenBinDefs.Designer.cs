@@ -31,10 +31,6 @@
             toolStripContainer.SuspendLayout();
             SuspendLayout();
             // 
-            // textBoxView
-            // 
-            textBoxView.Size = new Size(779, 342);
-            // 
             // toolStripContainer
             // 
             toolStripContainer.BottomToolStripPanelVisible = true;

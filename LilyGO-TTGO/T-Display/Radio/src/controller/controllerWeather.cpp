@@ -2,6 +2,7 @@
 #include "main.h"
 #include <FS.h>
 #include <SPIFFS.h>
+#include <WiFi.h>
 
 String payload;
 HTTPClient httpClient;

@@ -22,7 +22,7 @@ class ControllerWeather : public Controller {
         virtual InitResponse_t OnInit() override;
         virtual IterationCode_t OnIteration() override;
     private:
-        StaticJsonDocument<2048> _doc;
+        JsonDocument _doc;
         uint16_t ColorToRGB565(const uint8_t r, const uint8_t g, const uint8_t b);
         bool parseWeatherInfo(HTTPClient& client, String& payload);
 };

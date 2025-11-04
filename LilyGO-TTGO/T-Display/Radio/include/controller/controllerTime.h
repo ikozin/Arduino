@@ -38,8 +38,8 @@ class ControllerTime : public Controller, public ISensor<TimeData> {
                     .hour = (uint8_t)timeinfo.tm_hour, .minute = (uint8_t)timeinfo.tm_min, .second = (uint8_t)timeinfo.tm_sec,
                     .dayOfTheWeek = (uint8_t)timeinfo.tm_wday
                 };
-                Serial.printf("%s::OnHandle: %02d:%02d:%04d %02d:%02d:%02d\r\n", _name, 
-                    _value.day, _value.month, _value.year, _value.hour, _value.minute, _value.second);
+                // Serial.printf("%s::OnHandle: %02d:%02d:%04d %02d:%02d:%02d\r\n", _name, 
+                //     _value.day, _value.month, _value.year, _value.hour, _value.minute, _value.second);
                 FireUpdateEvent();
             }
         }        

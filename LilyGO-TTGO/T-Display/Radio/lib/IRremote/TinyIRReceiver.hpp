@@ -375,15 +375,16 @@ bool initPCIInterruptForTinyReceiver(void* parameter) {
 
 // https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/peripherals/gpio.html
 void attachInterruptArgExt(gpio_num_t pin, void (*handler)(void*), void * arg, gpio_int_type_t mode) {
-    // gpio_install_isr_service(0);
-    gpio_reset_pin(pin);
-    gpio_isr_handler_remove(pin);
-    gpio_pad_select_gpio(pin);
-    gpio_set_direction(pin, GPIO_MODE_INPUT);
-    gpio_set_pull_mode(pin, GPIO_FLOATING); 
+    pinMode(pin, INPUT);
+    // // gpio_install_isr_service(0);
+    // gpio_reset_pin(pin);
+    // gpio_isr_handler_remove(pin);
+    // // gpio_pad_select_gpio(pin);
+    // gpio_set_direction(pin, GPIO_MODE_INPUT);
+    // gpio_set_pull_mode(pin, GPIO_FLOATING); 
+    
     gpio_set_intr_type(pin, mode);
     gpio_intr_enable(pin);
-
     gpio_isr_handler_add(pin, handler, arg);
 }
 

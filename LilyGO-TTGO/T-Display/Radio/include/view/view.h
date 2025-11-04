@@ -64,7 +64,7 @@ class ViewT: public View {
                 esp_timer_create(&periodic_timer_args, &_timer);
                 esp_timer_start_periodic(_timer, _period);
             }
-            xTaskCreate(ViewHandler, this->_name, stackDepth, this, 100, &this->_task);
+            xTaskCreate(ViewHandler, this->_name, stackDepth, this, 20, &this->_task);
         }
     protected:
         Controller* _ctrl;

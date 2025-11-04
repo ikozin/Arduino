@@ -1,34 +1,34 @@
 #include "view/viewRadio.h"
-#include "fonts/NotoSansSemiBold24.h"
+//#include "fonts/NotoSansSemiBold24.h"
+#include "fonts/Roboto_Bold24.h"
+
 
 uint8_t unmuteBitmap[] = {
-    B00000000, B00000110, B00000000,
-    B00000000, B00000110, B00000000,
-    B00000000, B00011110, B00000000,
-    B00000000, B00011110, B01000000,
-    B00011111, B01111110, B00100000,
-    B00011111, B01111110, B00100000,
-    B00011111, B01111110, B00010000,
-    B00011111, B01111110, B00010000,
-    B00011111, B01111110, B00010000,
-    B00011111, B01111110, B00100000,
-    B00011111, B01111110, B00100000,
-    B00000000, B00011110, B01000000,
-    B00000000, B00011110, B00000000,
-    B00000000, B00000110, B00000000,
-    B00000000, B00000110, B00000000,
+    0b00000000, 0b00000110, 0b00000000,
+    0b00000000, 0b00000110, 0b00000000,
+    0b00000000, 0b00011110, 0b00000000,
+    0b00000000, 0b00011110, 0b01000000,
+    0b00011111, 0b01111110, 0b00100000,
+    0b00011111, 0b01111110, 0b00100000,
+    0b00011111, 0b01111110, 0b00010000,
+    0b00011111, 0b01111110, 0b00010000,
+    0b00011111, 0b01111110, 0b00010000,
+    0b00011111, 0b01111110, 0b00100000,
+    0b00011111, 0b01111110, 0b00100000,
+    0b00000000, 0b00011110, 0b01000000,
+    0b00000000, 0b00011110, 0b00000000,
+    0b00000000, 0b00000110, 0b00000000,
+    0b00000000, 0b00000110, 0b00000000,
 };
 
 void ViewRadio::OnDrawHandle() {
-    // LOGN("%s::OnDrawHandle", _name);
     ControllerRadio* radio = static_cast<ControllerRadio*>(_ctrl);
-
-    getSetting()->getSprite()->fillSprite(TFT_BLACK);
-
     RadioStorage* storage = radio->getStorage();
     uint16_t index = radio->getRadioIndex();
     uint16_t band = storage->getItem(index)->band;
     float freq = band / 10.0;
+    
+    getSetting()->getSprite()->startWrite();
 
     getSetting()->getSprite()->fillSprite(TFT_BLACK);
     getSetting()->getSprite()->setTextDatum(TC_DATUM);
@@ -39,7 +39,7 @@ void ViewRadio::OnDrawHandle() {
     // getSetting()->getSprite()->setFreeFont(&Orbitron_Light_24);
     // getSetting()->getSprite()->drawString("FM Radio", 140, 1);
 
-    getSetting()->getSprite()->loadFont(NotoSansSemiBold24);
+    getSetting()->getSprite()->loadFont(Roboto_Bold24);
     getSetting()->getSprite()->drawString(storage->getItem(index)->name.c_str(), 120, 1);
     getSetting()->getSprite()->unloadFont();
 
@@ -87,4 +87,5 @@ void ViewRadio::OnDrawHandle() {
     }
     getSetting()->getSprite()->fillTriangle(116, 98, 120, 108, 124, 98, TFT_RED);
     getSetting()->getSprite()->drawLine(120, 108, 120, 135, TFT_RED);
+    getSetting()->getSprite()->endWrite();
 }
