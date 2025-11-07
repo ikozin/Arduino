@@ -18,7 +18,7 @@
 #include "controller/controllerWeather.h"
 
 #include "component/component.h"
-#include "component/componentIrRemote.h"
+#include "component/componentIrRemoteCarMp3.h"
 #include "component/componentSoftReset.h"
 
 #include "view/view.h"
@@ -71,14 +71,15 @@
 */
 
 #define ENCODER_ENABLE
-#define RADIO_ENABLE
 // #define WEATHER_ENABLE
-// #define BME280_ENABLE
-//#define RADSENS_ENABLE
-//#define RESET_ENABLE
 // #define BUZZER_ENABLE
+
+#define BME280_ENABLE
+#define RADIO_ENABLE
+// #define RESET_ENABLE
 // #define TIME_ENABLE
-#define IR_ENABLE
+// #define RADSENS_ENABLE
+// #define IR_ENABLE
 #define WIFI_ENABLE
 // #define MQTT_ENABLE
 
@@ -173,7 +174,7 @@ ComponentSoftReset cmpReset = ComponentSoftReset("cmpReset", &ctrlReset);
 #endif
 
 #if defined(IR_ENABLE) & defined(RADIO_ENABLE)
-ComponentIrRemote cmpIrRemote = ComponentIrRemote("cmpIrRemote", &ctrlIrRemote, &ctrlRadio); 
+ComponentIrRemoteCarMp3 cmpIrRemote = ComponentIrRemoteCarMp3("cmpIrRemote", &ctrlIrRemote, &ctrlRadio); 
 #endif
 
 View* viewList[] = {
@@ -276,6 +277,7 @@ void setup() {
     // pinMode(TFT_BL, OUTPUT);                // Set backlight pin to output mode
     // digitalWrite(TFT_BL, TFT_BACKLIGHT_ON); // Turn backlight on. TFT_BACKLIGHT_ON has been set in the TFT_eSPI library in the User Setup file TTGO_T_Display.h
     prefs.begin("Main");
+    gpio_install_isr_service((int)ARDUINO_ISR_FLAG);
 
     tft.init();
     tft.setRotation(1);
