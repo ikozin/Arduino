@@ -5,7 +5,7 @@
 #include <CG_RadSens.h>
 
 
-class ControllerRadSens : public Controller, public ISensorWindowFunc<float, 30, CurrentValueWinFunc, 1> {
+class ControllerRadSens : public Controller, public ISensor<float> {
     public:
         ControllerRadSens(const char* name);
     protected:

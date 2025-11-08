@@ -13,15 +13,12 @@ typedef struct _Bme280Data_ {
     float Pressure;
 } Bme280Data;
 
-class ControllerBme280 : public Controller, public ISensorWindowFunc<float, 30, ArithmeticMeanWinFunc, 60> {
+class ControllerBme280 : public Controller, public ISensor<Bme280Data> {
     public:
         ControllerBme280(const char* name);
-    public:
-        Bme280Data GetValue() const { return _data; };
     protected:
         virtual InitResponse_t OnInit() override;
         virtual IterationCode_t OnIteration() override;
     private:
         Adafruit_BME280 _bme;   // I2C
-        Bme280Data  _data;
 };

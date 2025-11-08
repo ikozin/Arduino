@@ -78,7 +78,7 @@
 #define RADIO_ENABLE
 // #define RESET_ENABLE
 // #define TIME_ENABLE
-// #define RADSENS_ENABLE
+#define RADSENS_ENABLE
 // #define IR_ENABLE
 #define WIFI_ENABLE
 // #define MQTT_ENABLE
@@ -472,7 +472,7 @@ void loop() {
     }
 #endif
 #else
-    int dir =0;
+    int dir = 0;
 #endif
 #ifdef RADIO_ENABLE
     (&ctrlRadio->*currentHandle)(dir);

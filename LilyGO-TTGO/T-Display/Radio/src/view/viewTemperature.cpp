@@ -11,9 +11,7 @@ void ViewTemperature::OnDrawHandle() {
     ControllerBme280* _bme280 = static_cast<ControllerBme280*>(_ctrl);
     char text[8];
 
-    float* data = _bme280->GetWindow();
-    size_t size =_bme280->Size();
-    Bme280Data value = _bme280->GetValue(); 
+    Bme280Data value = _bme280->GetData(); 
     
     getSetting()->getSprite()->loadFont(RobotoBold_33);
     getSetting()->getSprite()->fillSprite(TFT_BLACK);
@@ -23,7 +21,6 @@ void ViewTemperature::OnDrawHandle() {
     uint32_t foreColor = TFT_BLUE;
     getSetting()->getSprite()->fillSmoothRoundRect(5, 5, 230, 125, 15, backColor, TFT_BLACK);
     // getSetting()->getSprite()->pushImage(18, 12, 32, 32, reinterpret_cast<uint16_t*>(image));
-    DrawGraph(getSetting()->getSprite(), data, size);
     getSetting()->getSprite()->setTextColor(foreColor);
     dtostrf(value.Temperature, 3, 1, text);
     // sprintf(text, "%.1f", temp);

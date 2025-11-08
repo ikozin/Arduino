@@ -6,7 +6,7 @@ void ViewBME280::OnDrawHandle() {
     ControllerBme280* bme280 = static_cast<ControllerBme280*>(_ctrl);
 
     char text[8];
-    Bme280Data value = bme280->GetValue();
+    Bme280Data value = bme280->GetData();
     float temperature   = value.Temperature;
     float humidity      = value.Humidity;
     float pressure      = value.Pressure;
