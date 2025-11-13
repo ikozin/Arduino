@@ -2,7 +2,7 @@
 
 namespace CommonUI
 {
-    public class DevToolViewText: DevToolViewCustom<TextBox>
+    public class DevToolViewText : DevToolViewCustom<TextBox>
     {
         public DevToolViewText()
         {

@@ -44,7 +44,7 @@ namespace IntelHexEncoder
                 MessageBox.Show(this, "Ошибка в адресе", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
-            using MemoryStream stream = new (memory.Length << 3);
+            using MemoryStream stream = new(memory.Length << 3);
             using IntelHexStreamWriter writer = new(stream);
             var chunks = memory.Chunk(16);
             foreach (var chunk in chunks)

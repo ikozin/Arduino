@@ -1,6 +1,4 @@
-﻿using System.Windows.Forms;
-
-namespace CommonUI
+﻿namespace CommonUI
 {
     public partial class DevToolViewCustom<T> : UserControl where T : Control, new()
     {
@@ -33,7 +31,8 @@ namespace CommonUI
 
         }
 
-        public void CreateToolStrip(ToolStripItem[] toolStripItems) {
+        public void CreateToolStrip(ToolStripItem[] toolStripItems)
+        {
             ToolStrip toolStripMenu = new();
             toolStripMenu.SuspendLayout();
             toolStripMenu.Items.AddRange(toolStripItems);

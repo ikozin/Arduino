@@ -1,10 +1,11 @@
 ﻿namespace CommonUI
 {
-    public class DevTool<UI>: IDevTool where UI : UserControl, new()
+    public class DevTool<UI> : IDevTool where UI : UserControl, new()
     {
         protected string _menu;
         protected string _title;
-        public DevTool() {
+        public DevTool()
+        {
             _menu = "Menu";
             _title = "Title";
         }

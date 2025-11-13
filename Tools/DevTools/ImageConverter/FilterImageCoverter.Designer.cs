@@ -48,7 +48,7 @@
             // labelWidth
             // 
             labelWidth.AutoSize = true;
-            labelWidth.Location = new Point(1, 6);
+            labelWidth.Location = new Point(2, 6);
             labelWidth.Name = "labelWidth";
             labelWidth.Size = new Size(67, 20);
             labelWidth.TabIndex = 4;

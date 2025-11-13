@@ -1,24 +1,12 @@
 ﻿using CommonUI;
 using ImageConverter.Setting;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Drawing.Drawing2D;
-using System.Drawing.Imaging;
-using System.Linq;
-using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace ImageConverter
 {
     public partial class UserControlImageConverter : DevToolViewCustom<PictureBox>
     {
-        private FilterImageCoverter _filter = new() ;
+        private readonly FilterImageCoverter _filter = new();
         private Bitmap _bitmap = null;
         private readonly MainSetting _setting;
         public UserControlImageConverter()
@@ -42,7 +30,7 @@ namespace ImageConverter
             {
             }
         }
-        
+
         public override void OpenFile(FileStream stream)
         {
             View.Image?.Dispose();

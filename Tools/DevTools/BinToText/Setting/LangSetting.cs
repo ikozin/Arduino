@@ -6,7 +6,7 @@ namespace BinToText.Setting
     {
         [JsonRequired]
         [JsonPropertyName("lang")]
-        public required string Lang{ get; set; }
+        public required string Lang { get; set; }
 
         [JsonRequired]
         [JsonPropertyName("header")]

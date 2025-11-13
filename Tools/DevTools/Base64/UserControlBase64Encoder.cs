@@ -1,6 +1,5 @@
 ﻿using Base64Encoder.Setting;
 using CommonUI;
-using System.Text;
 using System.Text.Json;
 
 namespace Base64Encoder

@@ -11,6 +11,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Base64\Base64Encoder.csproj" />
     <ProjectReference Include="..\BinToText\BinToText.csproj" />
+    <ProjectReference Include="..\ColorRGB565\ColorRGB565.csproj" />
     <ProjectReference Include="..\CommonUI\CommonUI.csproj" />
     <ProjectReference Include="..\GenBinDefs\GenBinDefs.csproj" />
     <ProjectReference Include="..\ImageConverter\ImageConverter.csproj" />

@@ -3,7 +3,7 @@ using CommonUI;
 
 namespace BinToText
 {
-    public class DevToolBinToHex: DevTool<UserControlBinToHex>
+    public class DevToolBinToHex : DevTool<UserControlBinToHex>
     {
         public DevToolBinToHex()
         {

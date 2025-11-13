@@ -15,7 +15,6 @@
 #include "controller/controllerRadSens.h"
 #include "controller/controllerSoftReset.h"
 #include "controller/controllerSoftTime.h"
-#include "controller/controllerWeather.h"
 
 #include "component/component.h"
 #include "component/componentIrRemoteCarMp3.h"
@@ -27,9 +26,7 @@
 #include "view/viewRadio.h"
 #include "view/viewRadSens.h"
 #include "view/viewSoftTime.h"
-#include "view/viewTemperature.h"
 #include "view/viewTileTime.h"
-#include "view/viewWeather.h"
 
 
 // #include <..\..\tools\sdk\esp32\include\lwip\include\apps\esp_sntp.h>
@@ -71,21 +68,17 @@
 */
 
 #define ENCODER_ENABLE
-// #define WEATHER_ENABLE
 // #define BUZZER_ENABLE
 
 #define BME280_ENABLE
 #define RADIO_ENABLE
-// #define RESET_ENABLE
-// #define TIME_ENABLE
+#define RESET_ENABLE
+#define TIME_ENABLE
 #define RADSENS_ENABLE
-// #define IR_ENABLE
+#define IR_ENABLE
 #define WIFI_ENABLE
 // #define MQTT_ENABLE
 
-#if defined(WEATHER_ENABLE)
-    #define WIFI_ENABLE
-#endif
 #ifdef IR_ENABLE
     #define RADIO_ENABLE
 #endif
@@ -143,15 +136,9 @@ ControllerRadio ctrlRadio = ControllerRadio("ctrlRadio", &prefs, &ctrlRadioStora
 ViewRadio viewRadio = ViewRadio("viewRadio", &viewSettig, &ctrlRadio);
 #endif
 
-#ifdef WEATHER_ENABLE
-ControllerWeather ctrlWeather = ControllerWeather("ctrlWeather");
-ViewWeather viewWeather = ViewWeather("viewWeather", &viewSettig, &ctrlWeather);
-#endif
-
 #ifdef BME280_ENABLE
 ControllerBme280 ctrlBme280 = ControllerBme280("ctrlBme280");
 ViewBME280 viewBme280 = ViewBME280("viewBme280", &viewSettig, &ctrlBme280);
-ViewTemperature viewTemperature = ViewTemperature("ViewTemperature", &viewSettig, &ctrlBme280);
 #endif
 
 #ifdef RADSENS_ENABLE
@@ -184,12 +171,8 @@ View* viewList[] = {
 #ifdef RADIO_ENABLE
     &viewRadio,
 #endif
-#ifdef WEATHER_ENABLE
-    &viewWeather,
-#endif
 #ifdef BME280_ENABLE
     &viewBme280,
-    &viewTemperature,
 #endif
 #if defined(RADSENS_ENABLE)
     &viewRadSens,
@@ -206,8 +189,6 @@ void btnEncoderDoubleClick(Button2& b);
 void btnEncoderLongClick(Button2& b);
 #endif
 // void listDir(const char* dirname);
-
-uint16_t fileData[4096];
 
 #ifdef WIFI_ENABLE
 
@@ -318,8 +299,8 @@ void setup() {
 #endif
 
 #ifdef RESET_ENABLE
-    ctrlReset.Start(8192);
-    cmpReset.Start(&ctrlReset, 8192);
+    ctrlReset.Start(STACK_2_KB);
+    cmpReset.Start(&ctrlReset, STACK_2_KB);
 #endif
  
     // prefs.putString("ssid", "...");
@@ -395,53 +376,46 @@ void setup() {
 
     LOGN("Controller - Start")
 #ifdef TIME_ENABLE
-    ctrlTime.Start(xMutex);
+    ctrlTime.Start(xMutex, STACK_1_KB + STACK_512_B);
 #endif
 #ifdef RADIO_ENABLE
-    ctrlRadio.Start();
+    ctrlRadio.Start(STACK_1_KB + STACK_512_B);
     ctrlAlarmClock.attachController(&ctrlRadio);
-    ctrlAlarmClock.Start(2048);
-#endif
-#ifdef WEATHER_ENABLE
-    ctrlWeather.Start(8192);
+    ctrlAlarmClock.Start(STACK_3_KB);
 #endif
 #ifdef BME280_ENABLE
-    ctrlBme280.Start(xMutex, 4096);
+    ctrlBme280.Start(xMutex, STACK_1_KB + STACK_512_B);
 #endif
 #ifdef BUZZER_ENABLE
-    ctrlBuzzer.Start(1024);
+    ctrlBuzzer.Start(STACK_1_KB);
 #endif
 
 #ifdef RADSENS_ENABLE
-    ctrlRadSens.Start(xMutex, 4096);
+    ctrlRadSens.Start(xMutex, STACK_1_KB + STACK_512_B);
 #endif
 #ifdef IR_ENABLE
     ctrlIrRemote.attachController(&ctrlRadio);
-    ctrlIrRemote.Start(1024);
+    ctrlIrRemote.Start(STACK_1_KB + STACK_512_B);
 #endif
 
     LOGN("Component - Start")
 #if defined(IR_ENABLE)
-    cmpIrRemote.Start(&ctrlIrRemote, 4096);
+    cmpIrRemote.Start(&ctrlIrRemote, STACK_1_KB + STACK_512_B);
 #endif
 
     LOGN("View - Start")
     sprite.createSprite(TFT_HEIGHT, TFT_WIDTH);
 #ifdef TIME_ENABLE
-    viewTime.Start(4096);
+    viewTime.Start(STACK_1_KB);
 #endif
 #ifdef RADIO_ENABLE
-    viewRadio.Start(4096);
-#endif
-#ifdef WEATHER_ENABLE
-    viewWeather.Start(8192);
+    viewRadio.Start(STACK_2_KB);
 #endif
 #ifdef BME280_ENABLE
-    viewBme280.Start(4096);
-    viewTemperature.Start(4096);
+    viewBme280.Start(STACK_2_KB);
 #endif
 #ifdef RADSENS_ENABLE
-    viewRadSens.Start(4096);
+    viewRadSens.Start(STACK_2_KB);
 #endif
 #ifdef RADIO_ENABLE
     currentHandle = &ControllerRadio::changeVolume;

@@ -1,6 +1,5 @@
 ﻿using CommonUI;
 using ViewHex.Properties;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace ViewHex
 {

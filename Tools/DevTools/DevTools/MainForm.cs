@@ -1,5 +1,6 @@
 using Base64Encoder;
 using BinToText;
+using ColorRGB565;
 using CommonUI;
 using GenBinDefs;
 using ImageConverter;
@@ -19,6 +20,7 @@ namespace DevTools
             RegisterDevTool(new DevToolViewHex());
             RegisterDevTool(new DevToolIntelHexEncoder());
             RegisterDevTool(new DevToolImageConverter());
+            RegisterDevTool(new DevToolColorRGB565());
 
         }
 
