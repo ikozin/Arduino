@@ -2,6 +2,7 @@ using Base64Encoder;
 using BinToText;
 using ColorRGB565;
 using CommonUI;
+using FontCostructor;
 using GenBinDefs;
 using ImageConverter;
 using IntelHexEncoder;
@@ -21,7 +22,7 @@ namespace DevTools
             RegisterDevTool(new DevToolIntelHexEncoder());
             RegisterDevTool(new DevToolImageConverter());
             RegisterDevTool(new DevToolColorRGB565());
-
+            RegisterDevTool(new DevToolFontCostructor());
         }
 
         void RegisterDevTool(IDevTool tool)
