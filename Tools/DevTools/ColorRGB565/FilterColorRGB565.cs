@@ -46,15 +46,24 @@ namespace ColorRGB565
             textBoxColorHtml.Text = color.HasValue ? ColorTranslator.ToHtml(color.Value) : String.Empty;
             if (color.HasValue)
             {
-                UInt16 r = (UInt16)((color.Value.R & 0x1F) << 11);
-                UInt16 g = (UInt16)((color.Value.G & 0x3F) << 5);
+                UInt16 r = (UInt16)(color.Value.R & 0x1F);
+                UInt16 g = (UInt16)(color.Value.G & 0x3F);
                 UInt16 b = (UInt16)(color.Value.B & 0x1F);
+                labelR.Text = r.ToString();
+                labelG.Text = g.ToString();
+                labelB.Text = b.ToString();
+                r = (UInt16)(r << 11);
+                g = (UInt16)(g << 5);
+                b = (UInt16)(b << 0);
                 UInt16 color565 = (UInt16)(r | g | b);
                 textBoxColorHex.Text = String.Format("0x{0:X4}", color565);
             }
             else
             {
                 textBoxColorHex.Text = String.Empty;
+                labelR.Text = "0";
+                labelG.Text = "0";
+                labelB.Text = "0";
             }
         }
 

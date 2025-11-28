@@ -24,6 +24,7 @@ namespace GenBinDefs
             setting = JsonSerializer.Deserialize<MainSetting>(file)!;
 
             toolStripComboBoxLang.SelectedIndexChanged += ToolStripComboBoxLang_SelectedIndexChanged;
+            toolStripComboBoxLang.DropDownStyle = ComboBoxStyle.DropDownList;
             toolStripComboBoxLang.Items.AddRange([.. setting.Langs.Select(s => s.Lang!)]);
             toolStripComboBoxLang.SelectedIndex = toolStripComboBoxLang.Items.Count > 0 ? 0 : -1;
 

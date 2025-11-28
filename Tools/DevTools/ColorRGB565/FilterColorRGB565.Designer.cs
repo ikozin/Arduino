@@ -38,6 +38,7 @@
             GroupBox groupBoxColor;
             Button btnColor;
             Label labelColorHex;
+
             labelY = new Label();
             labelX = new Label();
             listViewColors = new ListView();
@@ -54,6 +55,9 @@
             textBoxHeight = new TextBox();
             textBoxWidth = new TextBox();
             colorDialog = new ColorDialog();
+            labelR = new Label();
+            this.labelG = new Label();
+            this.labelB = new Label();
             labelHeigth = new Label();
             labelWidth = new Label();
             panelLocation = new Panel();
@@ -147,6 +151,9 @@
             // groupBoxColor
             // 
             groupBoxColor.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            groupBoxColor.Controls.Add(this.labelB);
+            groupBoxColor.Controls.Add(this.labelG);
+            groupBoxColor.Controls.Add(labelR);
             groupBoxColor.Controls.Add(listViewColors);
             groupBoxColor.Controls.Add(btnAnalysis);
             groupBoxColor.Controls.Add(btnColor);
@@ -169,10 +176,10 @@
             listViewColors.Enabled = false;
             listViewColors.FullRowSelect = true;
             listViewColors.LabelWrap = false;
-            listViewColors.Location = new Point(12, 170);
+            listViewColors.Location = new Point(12, 182);
             listViewColors.Name = "listViewColors";
             listViewColors.ShowGroups = false;
-            listViewColors.Size = new Size(265, 157);
+            listViewColors.Size = new Size(265, 145);
             listViewColors.Sorting = SortOrder.Ascending;
             listViewColors.TabIndex = 19;
             listViewColors.UseCompatibleStateImageBehavior = false;
@@ -223,7 +230,7 @@
             // 
             btnAnalysis.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             btnAnalysis.Enabled = false;
-            btnAnalysis.Location = new Point(12, 135);
+            btnAnalysis.Location = new Point(12, 147);
             btnAnalysis.Name = "btnAnalysis";
             btnAnalysis.Size = new Size(265, 29);
             btnAnalysis.TabIndex = 18;
@@ -234,7 +241,7 @@
             // btnColor
             // 
             btnColor.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            btnColor.Location = new Point(12, 100);
+            btnColor.Location = new Point(12, 112);
             btnColor.Name = "btnColor";
             btnColor.Size = new Size(265, 29);
             btnColor.TabIndex = 17;
@@ -244,7 +251,7 @@
             // 
             // textBoxColorHex
             // 
-            textBoxColorHex.Location = new Point(99, 67);
+            textBoxColorHex.Location = new Point(99, 59);
             textBoxColorHex.Name = "textBoxColorHex";
             textBoxColorHex.ReadOnly = true;
             textBoxColorHex.Size = new Size(122, 27);
@@ -254,7 +261,7 @@
             // labelColorHex
             // 
             labelColorHex.AutoSize = true;
-            labelColorHex.Location = new Point(6, 67);
+            labelColorHex.Location = new Point(6, 62);
             labelColorHex.Name = "labelColorHex";
             labelColorHex.Size = new Size(75, 20);
             labelColorHex.TabIndex = 15;
@@ -293,6 +300,39 @@
             // 
             colorDialog.AnyColor = true;
             colorDialog.FullOpen = true;
+            // 
+            // labelR
+            // 
+            labelR.AutoSize = true;
+            labelR.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            labelR.ForeColor = Color.Red;
+            labelR.Location = new Point(99, 89);
+            labelR.Name = "labelR";
+            labelR.Size = new Size(18, 20);
+            labelR.TabIndex = 20;
+            labelR.Text = "0";
+            // 
+            // labelG
+            // 
+            this.labelG.AutoSize = true;
+            this.labelG.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            this.labelG.ForeColor = Color.Green;
+            this.labelG.Location = new Point(145, 89);
+            this.labelG.Name = "labelG";
+            this.labelG.Size = new Size(18, 20);
+            this.labelG.TabIndex = 21;
+            this.labelG.Text = "0";
+            // 
+            // labelB
+            // 
+            this.labelB.AutoSize = true;
+            this.labelB.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            this.labelB.ForeColor = Color.Blue;
+            this.labelB.Location = new Point(189, 89);
+            this.labelB.Name = "labelB";
+            this.labelB.Size = new Size(18, 20);
+            this.labelB.TabIndex = 22;
+            this.labelB.Text = "0";
             // 
             // FilterColorRGB565
             // 
@@ -333,5 +373,12 @@
         private ColumnHeader columnHeaderCount;
         private ContextMenuStrip contextMenuStrip;
         private ToolStripMenuItem replaceToolStripMenuItem;
+        private Label labelR4;
+        private Label labelR3;
+        private Label labelR2;
+        private Label labelR1;
+        private Label labelR;
+        private Label labelG;
+        private Label labelB;
     }
 }

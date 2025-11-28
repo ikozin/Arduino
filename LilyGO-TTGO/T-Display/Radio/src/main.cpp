@@ -28,6 +28,7 @@
 #include "view/viewSoftTime.h"
 #include "view/viewTileTime.h"
 
+#include "navigator.h"
 
 // #include <..\..\tools\sdk\esp32\include\lwip\include\apps\esp_sntp.h>
 #include <esp_sntp.h>
@@ -36,7 +37,7 @@
 //#include "alarm.h"
 
 #if !defined(ESP32)
-  #error Select ESP32 DEV Board (ttgo-lora32-v1)
+  #error Select ESP32 DEV Board (lilygo-t-display)
 #endif
 
 #if !defined(USER_SETUP_ID) || USER_SETUP_ID != 25
@@ -72,7 +73,7 @@
 
 #define BME280_ENABLE
 #define RADIO_ENABLE
-#define RESET_ENABLE
+//#define RESET_ENABLE
 #define TIME_ENABLE
 #define RADSENS_ENABLE
 #define IR_ENABLE
@@ -179,6 +180,8 @@ View* viewList[] = {
 #endif
 };
 
+Navigator navigator(&prefs, (View**)&viewList, sizeof(viewList)/sizeof(viewList[0]));
+
 #ifdef RADIO_ENABLE
 void (ControllerRadio::*currentHandle)(int);
 #endif
@@ -242,14 +245,28 @@ void WiFiEvent(WiFiEvent_t event) {
 }
 #endif
 
-void boardInfo(Print& stream) {
-    stream.printf("\r\n");
-    stream.printf("\r\n");
-    stream.printf("Model: %s, Rev: %d, Core: %d\r\n", ESP.getChipModel(), ESP.getChipRevision(), ESP.getChipCores());
-    stream.printf("SDK: %s\r\n", ESP.getSdkVersion());
-    stream.printf("Flash: %d\r\n", ESP.getFlashChipSize());
-    stream.printf("NVS Free Entries: %d\r\n", prefs.freeEntries());
-    stream.printf("Current Core = %d\r\n", xPortGetCoreID());
+void boardInfo() {
+    tft.println();
+    tft.println();
+    tft.print("Model: ");
+    tft.print(ESP.getChipModel());
+    tft.print(", Rev: ");
+    tft.print(ESP.getChipRevision());
+    tft.print(", Core: ");
+    tft.print(ESP.getChipCores());
+    tft.println();
+    tft.print("SDK: ");
+    tft.print(ESP.getSdkVersion());
+    tft.println();
+    tft.print("Flash: ");
+    tft.print(ESP.getFlashChipSize());
+    tft.println();
+    tft.print("NVS Free Entries: ");
+    tft.print(prefs.freeEntries());
+    tft.println();
+    tft.print("Current Core = ");
+    tft.print(xPortGetCoreID());
+    tft.println();
 }
 
 
@@ -265,23 +282,27 @@ void setup() {
     tft.fillScreen(TFT_BLACK);
     tft.setTextColor(TFT_GREEN, TFT_BLACK);
 
-    boardInfo(tft);
+    boardInfo();
     // boardInfo(Serial);
 
     if (SPIFFS.begin(true)) {
-        tft.printf("Total: %d, Free: %d\r\n", SPIFFS.totalBytes(), SPIFFS.totalBytes() - SPIFFS.usedBytes());
+        tft.print("Total: ");
+        tft.print(SPIFFS.totalBytes());
+        tft.print(", Free: ");
+        tft.print(SPIFFS.totalBytes() - SPIFFS.usedBytes());
+        tft.println();
         LOG("Total: %d, Free: %d\r\n", SPIFFS.totalBytes(), SPIFFS.totalBytes() - SPIFFS.usedBytes());
         //listDir("/");
     }
     else {
         //SPIFFS.format();
-        tft.printf("SPIFFS Error\r\n");
+        tft.println("SPIFFS Error");
         LOG("SPIFFS Error\r\n");
     }
 
 #ifdef RADIO_ENABLE
     if (!ctrlRadioStorage.load()) {
-        tft.printf("Error loading RadioStorage");
+        tft.print("Error loading RadioStorage");
         LOG("Error loading RadioStorage");
     }
 #endif
@@ -323,7 +344,9 @@ void setup() {
     ssid = prefs.getString("ssid", ssid);
     pswd = prefs.getString("pswd", pswd);
 
-    tft.printf("Wi-Fi SSID: %s ", ssid.c_str());
+    tft.print("Wi-Fi SSID: ");
+    tft.print(ssid.c_str());
+    tft.print(" ");
     LOGN("Wi-Fi SSID: %s ", ssid.c_str())
 
     host.fromString(prefs.getString("inet_host"));
@@ -349,10 +372,11 @@ void setup() {
     WiFi.onEvent(WiFiEvent);
     connectToWifi();
     while (WiFi.status() != WL_CONNECTED) {
-        tft.printf(".");
+        tft.print(".");
         vTaskDelay(1000 / portTICK_RATE_MS);
     }
-    tft.printf("\r\nconnected!\r\nip: %s\r\n", WiFi.localIP().toString().c_str());
+    tft.print("\r\nconnected!\r\nip: ");
+    tft.println(WiFi.localIP().toString().c_str());
     LOG("\r\nconnected!\r\nip: %s\r\n", WiFi.localIP().toString().c_str())
     configTime(prefs.getInt("tz", 10800), 0, "ntp1.vniiftri.ru", "ntp2.vniiftri.ru");
 
@@ -360,7 +384,7 @@ void setup() {
     do vTaskDelay(1000 / portTICK_RATE_MS);
     while (sntp_get_sync_status() != SNTP_SYNC_STATUS_COMPLETED && counter--);
     if (counter == 0) {
-        tft.printf("SNTP ERROR\r\n");
+        tft.println("SNTP ERROR");
         LOG("SNTP ERROR\r\n")
     }
 #endif
@@ -371,7 +395,7 @@ void setup() {
     getLocalTime(&timeinfo);
     strftime(text, sizeof(text), "%c", &timeinfo);
     //strftime(text, sizeof(text), "%d.%m.%Y %H:%M:%S ", &timeinfo);
-    Serial.printf("%s\r\n", text);
+    Serial.println(text);
 #endif
 
     LOGN("Controller - Start")
@@ -400,6 +424,7 @@ void setup() {
 
     LOGN("Component - Start")
 #if defined(IR_ENABLE)
+    cmpIrRemote.SetNavigator(&navigator);    
     cmpIrRemote.Start(&ctrlIrRemote, STACK_1_KB + STACK_512_B);
 #endif
 
@@ -430,7 +455,7 @@ void setup() {
     pinMode(GPIO_NUM_35,  INPUT);
 #endif
 #endif
-    setDisplayPage(prefs.getInt("page", 0));
+    navigator.setDisplayPage(prefs.getInt("page", 0));
 }
 
 void loop() {
@@ -441,7 +466,7 @@ void loop() {
     encoder.setCount(0);
 #else
     if (digitalRead(GPIO_NUM_35) == LOW) {
-        setDisplayPageNext();
+        navigator.setDisplayPageNext();
         delay(200);
     }
 #endif
@@ -486,7 +511,7 @@ void btnEncoderClick(Button2& b) {
     ctrlBuzzer.Play(songs[index_song++]);
     if (index_song >= sizeof(songs)/sizeof(songs[0])) index_song = 0;
 #endif
-    setDisplayPageNext();
+    navigator.setDisplayPageNext();
 }
 
 void btnEncoderDoubleClick(Button2& b) {
@@ -501,14 +526,6 @@ void btnEncoderLongClick(Button2& b) {
 #ifdef RADIO_ENABLE
     ctrlRadio.toggleMute();
 #endif
-}
-
-void setDisplayPagePrev(void) {
-    setDisplayPage(viewIndex - 1);
-}
-
-void setDisplayPageNext(void) {
-    setDisplayPage(viewIndex + 1);
 }
 
 void setDisplayPage(int16_t page) {
@@ -531,7 +548,7 @@ void logTime() {
     struct tm timeinfo;
     getLocalTime(&timeinfo);
     strftime(strftime_buf, sizeof(strftime_buf), "%c", &timeinfo);
-    Serial.printf("%s\r\n", strftime_buf);
+    Serial.println(strftime_buf);
 }
 
 // void listDir(const char* dirname) {

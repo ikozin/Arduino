@@ -2,7 +2,7 @@
 #include <FS.h>
 #include <SPIFFS.h>
 
-#define DEFAULT_CAPACITY    32
+#define DEFAULT_CAPACITY    64
 
 RadioItem::RadioItem(uint16_t band, const char* text): band(band), name(text) {
 }

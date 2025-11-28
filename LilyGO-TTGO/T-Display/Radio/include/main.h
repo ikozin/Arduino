@@ -22,10 +22,6 @@
 extern Preferences prefs;
 extern RadioStorage ctrlRadioStorage;
 
-void setDisplayPage(int16_t page);
-void setDisplayPageNext(void);
-void setDisplayPagePrev(void);
-
 void logTime();
 
 // #define ENCODER_FAKE
