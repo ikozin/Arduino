@@ -129,6 +129,7 @@ namespace ColorRGB565
             ReloadImage();
 
         }
+        public void ReplaceColor(int x, int y, Color color) => _bitmap.SetPixel(x, y, color);
 
         public override void OpenFile(FileStream stream)
         {

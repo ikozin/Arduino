@@ -5,8 +5,8 @@
 
 class ViewRadSens : public ViewT<ControllerRadSens> {
     public:
-        ViewRadSens(const char* name, TFT_eSprite* tft, ControllerRadSens* controller) : 
-            ViewT(name, tft, controller) {
+        ViewRadSens(const char* name, ControllerEnviroment* env, TFT_eSprite* tft, ControllerRadSens* controller) : 
+            ViewT(name, env, tft, controller) {
 
         }
     public:

@@ -19,8 +19,8 @@ void ViewBme280::OnUpdate() {
 
     _tft->fillSprite(backColor);
     _tft->drawSmoothRoundRect(0, 0, 15, 15, TFT_HEIGHT-1, TFT_WIDTH-1, foreColor, backColor);
-    ToolPng::Draw(_tft, "/temp_52x106.png", 10);
-    ToolPng::Draw(_tft, "/hum_42x59.png", 190, 60);
+    ToolPng::Draw(_tft, _env->getImage()->temp, 10);
+    ToolPng::Draw(_tft, _env->getImage()->hum, 190, 60);
     
     _tft->loadFont("Roboto Bold52", LittleFS);
     dtostrf(temperature, 3, 1, text);

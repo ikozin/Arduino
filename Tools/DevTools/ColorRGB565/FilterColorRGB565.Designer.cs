@@ -38,9 +38,14 @@
             GroupBox groupBoxColor;
             Button btnColor;
             Label labelColorHex;
-
             labelY = new Label();
             labelX = new Label();
+            groupBoxLessColor = new GroupBox();
+            btnLessColor = new Button();
+            comboBoxLessColor = new ComboBox();
+            labelB = new Label();
+            labelG = new Label();
+            labelR = new Label();
             listViewColors = new ListView();
             columnHeaderColor = new ColumnHeader();
             columnHeaderCount = new ColumnHeader();
@@ -55,9 +60,6 @@
             textBoxHeight = new TextBox();
             textBoxWidth = new TextBox();
             colorDialog = new ColorDialog();
-            labelR = new Label();
-            this.labelG = new Label();
-            this.labelB = new Label();
             labelHeigth = new Label();
             labelWidth = new Label();
             panelLocation = new Panel();
@@ -69,6 +71,7 @@
             labelColorHex = new Label();
             panelLocation.SuspendLayout();
             groupBoxColor.SuspendLayout();
+            groupBoxLessColor.SuspendLayout();
             contextMenuStrip.SuspendLayout();
             SuspendLayout();
             // 
@@ -98,9 +101,9 @@
             panelLocation.Controls.Add(labelX);
             panelLocation.Controls.Add(labelNameX);
             panelLocation.Dock = DockStyle.Bottom;
-            panelLocation.Location = new Point(0, 370);
+            panelLocation.Location = new Point(0, 374);
             panelLocation.Name = "panelLocation";
-            panelLocation.Size = new Size(291, 23);
+            panelLocation.Size = new Size(387, 23);
             panelLocation.TabIndex = 12;
             // 
             // labelY
@@ -151,8 +154,9 @@
             // groupBoxColor
             // 
             groupBoxColor.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            groupBoxColor.Controls.Add(this.labelB);
-            groupBoxColor.Controls.Add(this.labelG);
+            groupBoxColor.Controls.Add(groupBoxLessColor);
+            groupBoxColor.Controls.Add(labelB);
+            groupBoxColor.Controls.Add(labelG);
             groupBoxColor.Controls.Add(labelR);
             groupBoxColor.Controls.Add(listViewColors);
             groupBoxColor.Controls.Add(btnAnalysis);
@@ -163,10 +167,81 @@
             groupBoxColor.Controls.Add(labelColorHtml);
             groupBoxColor.Location = new Point(3, 36);
             groupBoxColor.Name = "groupBoxColor";
-            groupBoxColor.Size = new Size(283, 333);
+            groupBoxColor.Size = new Size(379, 337);
             groupBoxColor.TabIndex = 15;
             groupBoxColor.TabStop = false;
             groupBoxColor.Text = "Цвет";
+            // 
+            // groupBoxLessColor
+            // 
+            groupBoxLessColor.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            groupBoxLessColor.Controls.Add(btnLessColor);
+            groupBoxLessColor.Controls.Add(comboBoxLessColor);
+            groupBoxLessColor.Location = new Point(189, 16);
+            groupBoxLessColor.Name = "groupBoxLessColor";
+            groupBoxLessColor.Size = new Size(184, 93);
+            groupBoxLessColor.TabIndex = 23;
+            groupBoxLessColor.TabStop = false;
+            groupBoxLessColor.Text = "Уменьшение цвета";
+            // 
+            // btnLessColor
+            // 
+            btnLessColor.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            btnLessColor.Enabled = false;
+            btnLessColor.Location = new Point(6, 58);
+            btnLessColor.Name = "btnLessColor";
+            btnLessColor.Size = new Size(172, 29);
+            btnLessColor.TabIndex = 1;
+            btnLessColor.Text = "Уменьшить";
+            btnLessColor.UseVisualStyleBackColor = true;
+            btnLessColor.Click += btnLessColor_Click;
+            // 
+            // comboBoxLessColor
+            // 
+            comboBoxLessColor.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            comboBoxLessColor.DropDownStyle = ComboBoxStyle.DropDownList;
+            comboBoxLessColor.FormattingEnabled = true;
+            comboBoxLessColor.Items.AddRange(new object[] { "10%", "20%", "30%", "40%", "50%", "60%", "70%", "80%", "90%" });
+            comboBoxLessColor.Location = new Point(6, 26);
+            comboBoxLessColor.Name = "comboBoxLessColor";
+            comboBoxLessColor.Size = new Size(172, 28);
+            comboBoxLessColor.TabIndex = 0;
+            // 
+            // labelB
+            // 
+            labelB.AutoSize = true;
+            labelB.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            labelB.ForeColor = Color.Blue;
+            labelB.Location = new Point(165, 89);
+            labelB.Name = "labelB";
+            labelB.Size = new Size(18, 20);
+            labelB.TabIndex = 22;
+            labelB.Text = "0";
+            labelB.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // labelG
+            // 
+            labelG.AutoSize = true;
+            labelG.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            labelG.ForeColor = Color.Green;
+            labelG.Location = new Point(124, 89);
+            labelG.Name = "labelG";
+            labelG.Size = new Size(18, 20);
+            labelG.TabIndex = 21;
+            labelG.Text = "0";
+            labelG.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // labelR
+            // 
+            labelR.AutoSize = true;
+            labelR.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            labelR.ForeColor = Color.Red;
+            labelR.Location = new Point(87, 89);
+            labelR.Name = "labelR";
+            labelR.Size = new Size(18, 20);
+            labelR.TabIndex = 20;
+            labelR.Text = "0";
+            labelR.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // listViewColors
             // 
@@ -179,7 +254,7 @@
             listViewColors.Location = new Point(12, 182);
             listViewColors.Name = "listViewColors";
             listViewColors.ShowGroups = false;
-            listViewColors.Size = new Size(265, 145);
+            listViewColors.Size = new Size(361, 149);
             listViewColors.Sorting = SortOrder.Ascending;
             listViewColors.TabIndex = 19;
             listViewColors.UseCompatibleStateImageBehavior = false;
@@ -232,7 +307,7 @@
             btnAnalysis.Enabled = false;
             btnAnalysis.Location = new Point(12, 147);
             btnAnalysis.Name = "btnAnalysis";
-            btnAnalysis.Size = new Size(265, 29);
+            btnAnalysis.Size = new Size(361, 29);
             btnAnalysis.TabIndex = 18;
             btnAnalysis.Text = "Анализ";
             btnAnalysis.UseVisualStyleBackColor = true;
@@ -243,7 +318,7 @@
             btnColor.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             btnColor.Location = new Point(12, 112);
             btnColor.Name = "btnColor";
-            btnColor.Size = new Size(265, 29);
+            btnColor.Size = new Size(361, 29);
             btnColor.TabIndex = 17;
             btnColor.Text = "Выбор цвета";
             btnColor.UseVisualStyleBackColor = true;
@@ -251,10 +326,10 @@
             // 
             // textBoxColorHex
             // 
-            textBoxColorHex.Location = new Point(99, 59);
+            textBoxColorHex.Location = new Point(87, 59);
             textBoxColorHex.Name = "textBoxColorHex";
             textBoxColorHex.ReadOnly = true;
-            textBoxColorHex.Size = new Size(122, 27);
+            textBoxColorHex.Size = new Size(96, 27);
             textBoxColorHex.TabIndex = 16;
             textBoxColorHex.WordWrap = false;
             // 
@@ -269,10 +344,10 @@
             // 
             // textBoxColorHtml
             // 
-            textBoxColorHtml.Location = new Point(99, 26);
+            textBoxColorHtml.Location = new Point(87, 26);
             textBoxColorHtml.Name = "textBoxColorHtml";
             textBoxColorHtml.ReadOnly = true;
-            textBoxColorHtml.Size = new Size(122, 27);
+            textBoxColorHtml.Size = new Size(96, 27);
             textBoxColorHtml.TabIndex = 14;
             textBoxColorHtml.WordWrap = false;
             // 
@@ -301,39 +376,6 @@
             colorDialog.AnyColor = true;
             colorDialog.FullOpen = true;
             // 
-            // labelR
-            // 
-            labelR.AutoSize = true;
-            labelR.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
-            labelR.ForeColor = Color.Red;
-            labelR.Location = new Point(99, 89);
-            labelR.Name = "labelR";
-            labelR.Size = new Size(18, 20);
-            labelR.TabIndex = 20;
-            labelR.Text = "0";
-            // 
-            // labelG
-            // 
-            this.labelG.AutoSize = true;
-            this.labelG.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
-            this.labelG.ForeColor = Color.Green;
-            this.labelG.Location = new Point(145, 89);
-            this.labelG.Name = "labelG";
-            this.labelG.Size = new Size(18, 20);
-            this.labelG.TabIndex = 21;
-            this.labelG.Text = "0";
-            // 
-            // labelB
-            // 
-            this.labelB.AutoSize = true;
-            this.labelB.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
-            this.labelB.ForeColor = Color.Blue;
-            this.labelB.Location = new Point(189, 89);
-            this.labelB.Name = "labelB";
-            this.labelB.Size = new Size(18, 20);
-            this.labelB.TabIndex = 22;
-            this.labelB.Text = "0";
-            // 
             // FilterColorRGB565
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
@@ -345,11 +387,12 @@
             Controls.Add(textBoxWidth);
             Controls.Add(labelWidth);
             Name = "FilterColorRGB565";
-            Size = new Size(291, 393);
+            Size = new Size(387, 397);
             panelLocation.ResumeLayout(false);
             panelLocation.PerformLayout();
             groupBoxColor.ResumeLayout(false);
             groupBoxColor.PerformLayout();
+            groupBoxLessColor.ResumeLayout(false);
             contextMenuStrip.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
@@ -380,5 +423,8 @@
         private Label labelR;
         private Label labelG;
         private Label labelB;
+        private GroupBox groupBoxLessColor;
+        private Button btnLessColor;
+        private ComboBox comboBoxLessColor;
     }
 }

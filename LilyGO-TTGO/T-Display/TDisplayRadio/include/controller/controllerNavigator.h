@@ -4,12 +4,12 @@
 #include "controller/controllerBuzzer.h"
 #include <Preferences.h>
 #include "display.h"
-#include "view/view.h"
+#include "view/iview.h"
 
 class ControllerNavigator : public Controller {
     public:
         ControllerNavigator(const char* name, TFT_eSPI* tft, TFT_eSprite* sprite,
-            Preferences* prefs, View** views, int16_t size, uint64_t swipeTime);
+            Preferences* prefs, IView** views, int16_t size, uint64_t swipeTime);
     protected:
         virtual bool OnInit() override;
         virtual bool OnUpdate() override;
@@ -24,13 +24,15 @@ class ControllerNavigator : public Controller {
         TFT_eSprite* _sprite;
         int16_t _index;
         Preferences* _prefs;
-        View** _views;
+        IView** _views;
         int16_t _size;
         bool _force;
         uint64_t _swipeTime;
         uint64_t _lastSwipe;
+    private:
+        IView* getView() const { return _views[_index]; }
     public:
-        View* getView() const { return _views[_index]; }
+        void forceUpdate() { _force = true; };
         bool setDisplayPagePrev(void) { return setDisplayPage(_index - 1); }
         bool setDisplayPageNext(void) { return setDisplayPage(_index + 1); }
         bool setDisplayPage(int16_t page);

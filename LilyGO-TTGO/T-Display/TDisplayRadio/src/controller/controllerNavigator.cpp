@@ -1,7 +1,7 @@
 #include "controller/controllerNavigator.h"
 
 ControllerNavigator::ControllerNavigator(const char* name, TFT_eSPI* tft, TFT_eSprite* sprite,
-    Preferences* prefs, View** views, int16_t size, uint64_t swipeTime) :
+    Preferences* prefs, IView** views, int16_t size, uint64_t swipeTime) :
     Controller(name, 0) {
     _tft = tft;
     _sprite = sprite;

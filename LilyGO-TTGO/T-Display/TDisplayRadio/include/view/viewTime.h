@@ -5,8 +5,8 @@
 
 class ViewTime : public ViewT<ControllerTime> {
     public:
-        ViewTime(const char* name, TFT_eSprite* tft, ControllerTime* controller) : 
-            ViewT(name, tft, controller) {
+        ViewTime(const char* name, ControllerEnviroment* env, TFT_eSprite* tft, ControllerTime* controller) : 
+            ViewT(name, env, tft, controller) {
         }
     private:
         uint16_t getDateColor(TimeData& date);

@@ -46,6 +46,7 @@
         {
             splitContainer.Panel1.SuspendLayout();
             splitContainer.Panel1Collapsed = false;
+            splitContainer.SplitterDistance = filter.ClientSize.Width;
             splitContainer.Panel1.Controls.Add(filter);
             filter.Dock = DockStyle.Fill;
             splitContainer.Panel1.ResumeLayout(false);

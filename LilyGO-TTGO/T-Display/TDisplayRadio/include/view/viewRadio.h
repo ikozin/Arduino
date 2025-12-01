@@ -5,8 +5,8 @@
 
 class ViewRadio : public ViewT<ControllerRadio> {
     public:
-        ViewRadio(const char* name, TFT_eSprite* tft, ControllerRadio* controller) : 
-            ViewT(name, tft,  controller) {
+        ViewRadio(const char* name, ControllerEnviroment* env, TFT_eSprite* tft, ControllerRadio* controller) : 
+            ViewT(name, env, tft, controller) {
         }
     public:
         virtual void OnUpdate() override;

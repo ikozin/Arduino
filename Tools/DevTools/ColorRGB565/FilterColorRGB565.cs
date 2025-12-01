@@ -1,7 +1,4 @@
-﻿using System.Drawing;
-using System.Linq;
-
-namespace ColorRGB565
+﻿namespace ColorRGB565
 {
     public partial class FilterColorRGB565 : UserControl
     {
@@ -16,6 +13,7 @@ namespace ColorRGB565
 
             lvwColumnSorter = new ListViewColumnSorter();
             listViewColors.ListViewItemSorter = lvwColumnSorter;
+            comboBoxLessColor.SelectedIndex = 0;
         }
 
         public FilterColorRGB565(UserControlColorRGB565 owner) : this()
@@ -38,6 +36,7 @@ namespace ColorRGB565
             _image = image;
             btnAnalysis.Enabled = image != null;
             listViewColors.Enabled = image != null;
+            btnLessColor.Enabled = image != null;
             if (isNew) listViewColors.Items.Clear();
         }
         public void SetColor(Color? color)
@@ -145,6 +144,22 @@ namespace ColorRGB565
                 _owner.ReplaceColor(fromColor, toColor);
             }
             btnAnalysis.PerformClick();
+        }
+
+        private void btnLessColor_Click(object sender, EventArgs e)
+        {
+            for (int x = 0; x < _image!.Width; x++)
+            {
+                for (int y = 0; y < _image!.Height; y++)
+                {
+                    Color color = _image.GetPixel(x, y);
+                    byte r = (byte)(color.R * (comboBoxLessColor.SelectedIndex + 1) * 10 / 100);
+                    byte g = (byte)(color.G * (comboBoxLessColor.SelectedIndex + 1) * 10 / 100);
+                    byte b = (byte)(color.B * (comboBoxLessColor.SelectedIndex + 1) * 10 / 100);
+                    _owner.ReplaceColor(x, y, Color.FromArgb(r, g, b));
+                }
+            }
+            _owner.ReloadImage();
         }
     }
 }
