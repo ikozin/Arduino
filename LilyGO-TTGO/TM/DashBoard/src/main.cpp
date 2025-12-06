@@ -288,7 +288,7 @@ void loop() {
             track.begin(TFT_HEIGHT, 20, ctrlAudo.getTitle());
         }
         if (uxBits & BIT_VOLUME) {
-            drawVolume(290, 100, 24, ctrlAudo.getVolume());
+            drawVolume(290, 40, 24, ctrlAudo.getVolume());
         }
         if (uxBits & BIT_MUTE) {
 
