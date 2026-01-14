@@ -24,10 +24,26 @@ Images_t ControllerEnviroment::images_day { .temp = "/temp_52x106_day.png", .hum
 Images_t ControllerEnviroment::images_night { .temp = "/temp_52x106_night.png", .hum = "/hum_42x59_day.night", .rads = "/rads_85_night.png" };
 
 bool ControllerEnviroment::OnInit() {
-    setEnviromentDay();
+    struct tm tinfo;
+    getLocalTime(&tinfo);
+    uint64_t time = tinfo.tm_hour * 3600 + tinfo.tm_min * 60 + tinfo.tm_sec;
+    if (time >= _dayStart && time < _dayFinish) {
+        setEnviromentDay();
+    }
+    else {
+        setEnviromentHight();
+    }
     return true;
 }
 
 bool ControllerEnviroment::OnUpdate() {
+    struct tm tinfo;
+    getLocalTime(&tinfo);
+    uint64_t time = tinfo.tm_hour * 3600 + tinfo.tm_min * 60 + tinfo.tm_sec;
+    if (time == _dayStart) {
+        setEnviromentDay();
+    } else if (time == _dayFinish) {
+        setEnviromentHight();
+    }
     return true;
 }

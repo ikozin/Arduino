@@ -26,6 +26,8 @@ class ControllerEnviroment : public Controller {
             _navigator = nullptr;
             _palette = nullptr;
             _images = nullptr;
+            _dayStart = 8 * 3600;
+            _dayFinish = 23 * 3600;
         }
     protected:
         virtual bool OnInit() override;
@@ -34,6 +36,8 @@ class ControllerEnviroment : public Controller {
         ControllerNavigator* _navigator;
         uint32_t* _palette;
         Images_t* _images;
+        uint64_t _dayStart;
+        uint64_t _dayFinish;
     private:
         static uint32_t palette_day[]; 
         static uint32_t palette_night[];
