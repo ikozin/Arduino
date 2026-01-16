@@ -13,6 +13,7 @@
 #define COLOR_YELLOW    (_env->getPalette()[5])
 #define COLOR_MAGENTA   (_env->getPalette()[6])
 
+#define MAKETIME(h, m, s)  (h * 3600U + m * 60U + s)
 
 typedef struct _images_t_ {
     const char* temp;
@@ -44,7 +45,9 @@ class ControllerEnviroment : public Controller {
         static Images_t images_day; 
         static Images_t images_night;
     public:
-        void Attach(ControllerNavigator* navigator) {
+        void Attach(ControllerNavigator* navigator, uint64_t secStart, uint64_t secFinish) {
+            _dayStart = secStart;
+            _dayFinish = secFinish;
             _navigator = navigator;
         }
         void setEnviromentDay() {

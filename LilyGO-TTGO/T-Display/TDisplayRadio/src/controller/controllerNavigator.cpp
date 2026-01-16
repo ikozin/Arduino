@@ -12,7 +12,6 @@ ControllerNavigator::ControllerNavigator(const char* name, TFT_eSPI* tft, TFT_eS
     _force = true;
     _swipeTime = swipeTime;
     _lastSwipe = 0;
-    _buzzer = nullptr;
 }
 
 bool ControllerNavigator::OnInit() {
@@ -41,7 +40,6 @@ bool ControllerNavigator::setDisplayPage(int16_t page) {
     _index = page;
     _force = true;
     _prefs->putInt("page", _index);
-    if (_buzzer != nullptr) _buzzer->Play();
     return true;
 }
 
