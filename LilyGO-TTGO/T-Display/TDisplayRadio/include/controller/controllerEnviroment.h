@@ -13,6 +13,7 @@
 #define COLOR_YELLOW    (_env->getPalette()[5])
 #define COLOR_MAGENTA   (_env->getPalette()[6])
 
+#define MAKETIME(h, m, s)  (h * 3600U + m * 60U + s)
 
 typedef struct _images_t_ {
     const char* temp;
@@ -26,6 +27,8 @@ class ControllerEnviroment : public Controller {
             _navigator = nullptr;
             _palette = nullptr;
             _images = nullptr;
+            _dayStart = 8 * 3600;
+            _dayFinish = 23 * 3600;
         }
     protected:
         virtual bool OnInit() override;
@@ -34,13 +37,17 @@ class ControllerEnviroment : public Controller {
         ControllerNavigator* _navigator;
         uint32_t* _palette;
         Images_t* _images;
+        uint64_t _dayStart;
+        uint64_t _dayFinish;
     private:
         static uint32_t palette_day[]; 
         static uint32_t palette_night[];
         static Images_t images_day; 
         static Images_t images_night;
     public:
-        void Attach(ControllerNavigator* navigator) {
+        void Attach(ControllerNavigator* navigator, uint64_t secStart, uint64_t secFinish) {
+            _dayStart = secStart;
+            _dayFinish = secFinish;
             _navigator = navigator;
         }
         void setEnviromentDay() {

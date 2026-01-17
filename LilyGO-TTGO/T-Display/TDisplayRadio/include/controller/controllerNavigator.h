@@ -1,7 +1,6 @@
 #pragma once
 
 #include "controller/controller.h"
-#include "controller/controllerBuzzer.h"
 #include <Preferences.h>
 #include "display.h"
 #include "view/iview.h"
@@ -13,12 +12,6 @@ class ControllerNavigator : public Controller {
     protected:
         virtual bool OnInit() override;
         virtual bool OnUpdate() override;
-    protected:
-        ControllerBuzzer* _buzzer;
-    public:
-        void Attach(ControllerBuzzer* buzzer) {
-            _buzzer = buzzer;
-        }
     private:
         TFT_eSPI* _tft;
         TFT_eSprite* _sprite;

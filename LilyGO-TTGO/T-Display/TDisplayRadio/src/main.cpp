@@ -296,6 +296,8 @@ void setup() {
 //     prefs.putInt("volume", 2);
 //     prefs.putBool("mute", true);
 //     prefs.putInt("page", 0);
+//     prefs.putULong64("dayTime", MAKETIME(8, 0, 0));
+//     prefs.putULong64("nightTime", MAKETIME(23, 0, 0));
 
 #ifdef WIFI_ENABLE
     ssid = prefs.getString("ssid", ssid);
@@ -336,16 +338,19 @@ void setup() {
 //     //strftime(text, sizeof(text), "%d.%m.%Y %H:%M:%S ", &timeinfo);
 //     Serial.println(text);
 // #endif
+
+ctrlAlarm.Attach(&ctrlRadio, &ctrlBuzzer);
+    ctrlEnviroment.Attach(&ctrlNavigator,
+        prefs.getULong64("dayTime", MAKETIME(8, 0, 0)),
+        prefs.getULong64("nightTime", MAKETIME(23, 0, 0)));
+#ifdef IR_ENABLE
+    ctrlIrRemote.Attach(&ctrlNavigator, &ctrlRadio);
+#endif
     for (int i = 0; i < sizeof(ctrlList)/sizeof(ctrlList[0]); i++) {
         Controller* ctrl = ctrlList[i];
         if (!ctrl->Initialize()) fatalError(ctrl->GetName());
     }
-    ctrlAlarm.Attach(&ctrlRadio, &ctrlBuzzer);
-    ctrlEnviroment.Attach(&ctrlNavigator);
-#ifdef IR_ENABLE
-    ctrlIrRemote.Attach(&ctrlNavigator, &ctrlRadio);
-#endif
-    //ctrlNavigator.Attach(&ctrlBuzzer);
+
     btnEncoder.setClickHandler(btnEncoderClick);
     btnEncoder.setDoubleClickHandler(btnEncoderDoubleClick);
     btnEncoder.setLongClickTime(1000);
@@ -355,7 +360,6 @@ void setup() {
     for (int i = 0; i < sizeof(ctrlList)/sizeof(ctrlList[0]); i++) {
         ctrlList[i]->Update(time);
     }
-    ctrlBuzzer.Play();
 }
 
 void loop() {

@@ -17,7 +17,7 @@ typedef struct _TimeData_ {
 // https://docs.espressif.com/projects/esp-idf/en/v5.0/esp32/api-reference/system/system_time.html
 class ControllerTime : public ControllerValue<TimeData> {
     public:
-        ControllerTime(const char* name, Preferences* prefs) : ControllerValue(name, 60000) {
+        ControllerTime(const char* name, Preferences* prefs) : ControllerValue(name, 1000) {
             _prefs = prefs;
         }
     protected:
