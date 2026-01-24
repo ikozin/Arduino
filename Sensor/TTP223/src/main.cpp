@@ -34,46 +34,76 @@ https://kit.alexgyver.ru/tutorials/button/
 
 */
 
-// #define USE_GPIO
+#define BTN_PIN1    1
+#define BTN_PIN2    3
+#define BTN_PIN3    5
+#define LED_PIN     48
+// #define LED_PIN     LED_BUILTIN
 
-#ifdef USE_GPIO
-gpio_num_t led_pin  = (gpio_num_t)LED_BUILTIN;
-gpio_num_t btn_pin  = (gpio_num_t)32;
+
+#define LIB_USE_GPIO
+// #define LIB_EncButton
+// #define LIB_Button2
+
+#ifdef LIB_USE_GPIO
+
+gpio_num_t led_pin  = (gpio_num_t)LED_PIN;
+
+int state = HIGH;
 
 void IRAM_ATTR gpio_isr_handler(void* parameter) {
-    int state = gpio_get_level(btn_pin);
     gpio_set_level(led_pin, state);
+    state = !state;
+}
+
+void setupPinHandler(gpio_num_t pin) {
+    gpio_reset_pin(pin);
+    gpio_set_direction(pin, GPIO_MODE_INPUT);
+    gpio_set_pull_mode(pin, GPIO_FLOATING); 
+    gpio_set_intr_type(pin, GPIO_INTR_ANYEDGE);
+    gpio_intr_enable(pin);
+    gpio_isr_handler_add(pin, gpio_isr_handler, nullptr);
 }
 
 void setup() {
     gpio_install_isr_service(0);
-    gpio_reset_pin(btn_pin);
-    gpio_pad_select_gpio(btn_pin);
-    gpio_set_direction(btn_pin, GPIO_MODE_INPUT);
-    gpio_set_pull_mode(btn_pin, GPIO_FLOATING); 
-    gpio_set_intr_type(btn_pin, GPIO_INTR_ANYEDGE);
-    gpio_intr_enable(btn_pin);
-    gpio_isr_handler_add(btn_pin, gpio_isr_handler, nullptr);
+#ifdef BTN_PIN1
+    setupPinHandler((gpio_num_t)BTN_PIN1);
+#endif
+#ifdef BTN_PIN2
+    setupPinHandler((gpio_num_t)BTN_PIN2);
+#endif
+#ifdef BTN_PIN3
+    setupPinHandler((gpio_num_t)BTN_PIN3);
+#endif
 
     gpio_reset_pin(led_pin);
-    gpio_pad_select_gpio(led_pin);
     gpio_set_direction(led_pin, GPIO_MODE_OUTPUT);
 }
 
 void loop(void) {
 }
 
-#else
+#endif
+
+#ifdef LIB_EncButton
 
 #include "EncButton.h"
 
-#define BTN_PIN 32
-Button btn(BTN_PIN, INPUT_PULLDOWN, HIGH);
+#ifdef BTN_PIN1
+Button btn1(BTN_PIN1, INPUT_PULLDOWN, HIGH);
+#endif
+#ifdef BTN_PIN2
+Button btn2(BTN_PIN2, INPUT_PULLDOWN, HIGH);
+#endif
+#ifdef BTN_PIN3
+Button btn3(BTN_PIN3, INPUT_PULLDOWN, HIGH);
+#endif
 
-void cb() {
-    // здесь EB_self - указатель на сам объект
-
-    Serial.print("callback: ");
+void showInfo(Button& btn) {
+    Serial.print("pin = ");
+    Serial.print(btn.getPin());
+    Serial.print(", callback: ");
     switch (btn.action()) {
         case EB_PRESS:
             Serial.println("press");
@@ -119,16 +149,123 @@ void cb() {
             Serial.println();
     }
 }
+void cb() {
+    // здесь EB_self - указатель на сам объект
+#ifdef BTN_PIN1
+    showInfo(btn1);
+#endif
+#ifdef BTN_PIN2
+    showInfo(btn2);
+#endif
+#ifdef BTN_PIN3
+    showInfo(btn3);
+#endif
+}
 
 void setup() {
     Serial.begin(115200);
 
-    btn.attach(cb);
+#ifdef BTN_PIN1
+    btn1.attach(cb);
+#endif
+#ifdef BTN_PIN2
+    btn2.attach(cb);
+#endif
+#ifdef BTN_PIN3
+    btn3.attach(cb);
+#endif
 
     Serial.println("Start");
 }
 
 void loop() {
-    btn.tick();  // обязательная функция отработки. Должна постоянно опрашиваться
+#ifdef BTN_PIN1
+    btn1.tick();  // обязательная функция отработки. Должна постоянно опрашиваться
+#endif
+#ifdef BTN_PIN2
+    btn2.tick();  // обязательная функция отработки. Должна постоянно опрашиваться
+#endif
+#ifdef BTN_PIN3
+    btn3.tick();  // обязательная функция отработки. Должна постоянно опрашиваться
+#endif
 }
+
+#endif
+
+#ifdef LIB_Button2
+
+#include "Button2.h"
+
+#ifdef BTN_PIN1
+Button2 btn1 = Button2(BTN_PIN1, INPUT_PULLDOWN, false);
+#endif
+#ifdef BTN_PIN2
+Button2 btn2 = Button2(BTN_PIN2, INPUT_PULLDOWN, false);
+#endif
+#ifdef BTN_PIN3
+Button2 btn3 = Button2(BTN_PIN3, INPUT_PULLDOWN, false);
+#endif
+void btnEncoderClick(Button2& b);
+void btnEncoderDoubleClick(Button2& b);
+void btnEncoderLongClick(Button2& b);
+
+
+void setup() {
+    Serial.begin(115200);
+    
+#ifdef BTN_PIN1
+    btn1.setClickHandler(btnEncoderClick);
+    btn1.setDoubleClickHandler(btnEncoderDoubleClick);
+    btn1.setLongClickTime(1000);
+    btn1.setLongClickHandler(btnEncoderLongClick);  
+#endif
+
+#ifdef BTN_PIN2
+    btn2.setClickHandler(btnEncoderClick);
+    btn2.setDoubleClickHandler(btnEncoderDoubleClick);
+    btn2.setLongClickTime(1000);
+    btn2.setLongClickHandler(btnEncoderLongClick);  
+#endif
+
+#ifdef BTN_PIN3
+    btn3.setClickHandler(btnEncoderClick);
+    btn3.setDoubleClickHandler(btnEncoderDoubleClick);
+    btn3.setLongClickTime(1000);
+    btn3.setLongClickHandler(btnEncoderLongClick);  
+#endif
+
+    Serial.println("Start");
+}
+
+
+void loop() {
+#ifdef BTN_PIN1
+    btn1.loop();
+#endif
+#ifdef BTN_PIN2
+    btn2.loop();
+#endif
+#ifdef BTN_PIN3
+    btn3.loop();
+#endif
+}
+
+void btnEncoderClick(Button2& b) {
+    Serial.print("pin = ");
+    Serial.print(b.getPin());
+    Serial.println(",Click");
+}
+
+void btnEncoderDoubleClick(Button2& b) {
+    Serial.print("pin = ");
+    Serial.print(b.getPin());
+    Serial.println(",DoubleClick");
+}
+
+void btnEncoderLongClick(Button2& b) {
+    Serial.print("pin = ");
+    Serial.print(b.getPin());
+    Serial.println(",LongClick");
+}
+
 #endif
