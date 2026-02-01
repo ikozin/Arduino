@@ -37,9 +37,6 @@ https://kit.alexgyver.ru/tutorials/button/
 #define BTN_PIN1    1
 #define BTN_PIN2    3
 #define BTN_PIN3    5
-#define LED_PIN     48
-// #define LED_PIN     LED_BUILTIN
-
 
 #define LIB_USE_GPIO
 // #define LIB_EncButton
@@ -47,13 +44,21 @@ https://kit.alexgyver.ru/tutorials/button/
 
 #ifdef LIB_USE_GPIO
 
-gpio_num_t led_pin  = (gpio_num_t)LED_PIN;
 
+typedef struct PinCommand{
+    int pin;
+    int value;
+} PinCommand_t;
+
+QueueHandle_t _queue = xQueueCreate(8, sizeof(PinCommand_t));
 int state = HIGH;
 
 void IRAM_ATTR gpio_isr_handler(void* parameter) {
-    gpio_set_level(led_pin, state);
-    state = !state;
+    BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+    gpio_num_t pin = (gpio_num_t)((int)parameter);
+    int value = gpio_get_level(pin);
+    PinCommand_t msg = { .pin = pin, .value = value };
+    xQueueSendFromISR(_queue, &msg, &xHigherPriorityTaskWoken);
 }
 
 void setupPinHandler(gpio_num_t pin) {
@@ -62,7 +67,7 @@ void setupPinHandler(gpio_num_t pin) {
     gpio_set_pull_mode(pin, GPIO_FLOATING); 
     gpio_set_intr_type(pin, GPIO_INTR_ANYEDGE);
     gpio_intr_enable(pin);
-    gpio_isr_handler_add(pin, gpio_isr_handler, nullptr);
+    gpio_isr_handler_add(pin, gpio_isr_handler, (void*)((int)pin));
 }
 
 void setup() {
@@ -76,12 +81,12 @@ void setup() {
 #ifdef BTN_PIN3
     setupPinHandler((gpio_num_t)BTN_PIN3);
 #endif
-
-    gpio_reset_pin(led_pin);
-    gpio_set_direction(led_pin, GPIO_MODE_OUTPUT);
 }
 
 void loop(void) {
+    PinCommand_t msg;
+    xQueueReceive(_queue, &msg, portMAX_DELAY);
+    Serial.printf("pin=%d, value=%d\r\n", msg.pin, msg.value);
 }
 
 #endif
