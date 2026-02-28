@@ -1,21 +1,9 @@
 #include <Arduino.h>
+#include <TinyWireM.h>
+#define COLOR_DEBTH 3
+#include <microLED.h>   // подключаем библу
+#include <color_utility.h>
 
-
-// void setup() {
-//   pinMode(PB0, OUTPUT);
-//   pinMode(PB1, OUTPUT);
-//   digitalWrite(PB0, LOW);
-//   digitalWrite(PB1, LOW);
-// }
-
-// void loop() {
-//   digitalWrite(PB1, LOW);
-//   digitalWrite(PB0, HIGH);
-//   delay(500);
-//   digitalWrite(PB0, LOW);
-//   digitalWrite(PB1, HIGH);
-//   delay(500);
-// }
 
 /*
  ┌───────┬───────┬───────┬───────┬────┬────────┬─────┐    ┌──────────┐    ┌─────┬─────────────────────────────────────────────┐
@@ -28,110 +16,78 @@
  │                                             │ GND │   ─┤          ├─   │ PB0 │ PCINT0 │    │ MOSI │ SDA │    OC0A   │ AREF │
  └─────────────────────────────────────────────┴─────┘    └──────────┘    └─────┴────────┴────┴──────┴─────┴───────────┴──────┘
 */
-#define COLOR_DEBTH 3
-#include <microLED.h>   // подключаем библу
 
 // константы для удобства
-#define STRIP_PIN PB1  // пин ленты
 #define NUMLEDS 8      // кол-во светодиодов
-microLED<NUMLEDS, STRIP_PIN, MLED_NO_CLOCK, LED_WS2812, ORDER_GRB> strip;
+#define DEVICE_EEPROM 0x50
+
+typedef struct __attribute__((packed)) {
+  uint8_t r;
+  uint8_t g;
+  uint8_t b;
+} COLOR_LED;
+
+typedef struct __attribute__((packed)) {
+  uint16_t  time;
+  COLOR_LED LED[NUMLEDS];
+} STRIP_DATA;
+
+STRIP_DATA  _data;
+uint16_t _address = 0x0000;
+
+#define BUFFER_SIZE   sizeof(_data)
+//static_assert(false, "ERROR");
+
+#define STRIP_PIN PB1  // пин ленты
+microLED<NUMLEDS, STRIP_PIN, MLED_NO_CLOCK, LED_WS2812, ORDER_GRB> _strip;
+
+void EEPROM_Read(uint16_t address) {
+  uint8_t* buffer = reinterpret_cast<uint8_t*>(&_data);
+  TinyWireM.beginTransmission(DEVICE_EEPROM);
+  TinyWireM.write(highByte(address));
+  TinyWireM.write(lowByte(address));
+  TinyWireM.endTransmission();
+  TinyWireM.requestFrom(DEVICE_EEPROM,(uint8_t)BUFFER_SIZE);
+  for (uint16_t i = 0; i < BUFFER_SIZE; i++ ) {
+    if (TinyWireM.available()) buffer[i] = TinyWireM.read();
+  }
+}
 
 void setup() {
-  // ===================== БАЗОВЫЕ ШТУКИ =====================
-  // яркость (0-255)
-  strip.setBrightness(60);
-  // яркость применяется по CRT гамме
-  // применяется при выводе .show() !
+  // TinyWireM.begin();
 
-  // очистка буфера (выключить диоды, чёрный цвет)
-  strip.clear();
-  // применяется при выводе .show() !
-
-  strip.show(); // вывод изменений на ленту
-  delay(1);     // между вызовами show должна быть пауза минимум 40 мкс !!!!
-
-  // ===================== УСТАНОВКА ЦВЕТА =====================
-  // Библиотека поддерживает два варианта работы с лентой:
-  // изменение цвета конкретного диода при помощи функции set(диод, цвет)
-  // или работа с массивом .leds[] "вручную"
-
-  // запись strip.set(диод, цвет); равносильна strip.leds[диод] = цвет;
-
-  // ------------- ОСНОВНЫЕ ФУНКЦИИ РАБОТЫ С ЦВЕТОМ ------------
-  // указанные ниже функции врзвращают тип данных mData - сжатое представление цвета
-
-  // mRGB(uint8_t r, uint8_t g, uint8_t b);   // цвет RGB, 0-255 каждый канал
-  strip.set(0, mRGB(255, 0, 0));              // диод 0, цвет RGB (255 0 0) (красный)
-
-  // mHSV(uint8_t h, uint8_t s, uint8_t v);   // цвет HSV, 0-255 каждый канал
-  strip.leds[1] = mHSV(30, 255, 255);         // диод 1, (цвет 30, яркость и насыщенность максимум)
-
-  // mHSVfast(uint8_t h, uint8_t s, uint8_t v); // цвет HSV, 0-255 каждый канал
-  // расчёт выполняется чуть быстрее, но цвета не такие плавные
-  strip.set(2, mHSVfast(90, 255, 255));         // диод 2, цвет 90, яркость и насыщенность максимум
-
-  // mHEX(uint32_t color);        // WEB цвета (0xRRGGBB)
-  strip.set(3, mHEX(0x30B210));   // диод 3, цвет HEX 0x30B210
-
-  // в библиотеке есть 17 предустановленных цветов (макс. яркость)
-  strip.leds[4] = mAqua;          // диод 4, цвет aqua
-
-  // mWheel(int color);                   // цвета радуги 0-1530
-  // mWheel(int color, uint8_t bright);   // цвета радуги 0-1530 + яркость 0-255
-  strip.set(5, mWheel(1200));             // диод 5, цвет 1200
-
-  // mWheel8(int color);                  // цвета радуги 0-255
-  // mWheel8(int color, uint8_t bright);  // цвета радуги 0-255 + яркость 0-255
-  //strip.set(6, mWheel8(100));     // диод 6, цвет 100 (диапазон 0-255 вдоль радуги)
-  strip.set(6, mWheel8(100, 50));   // вторым параметром можно передать яркость
-
-  // mKelvin(int kelvin);           // цветовая температура 1'000-40'000 Кельвин
-  strip.set(7, mKelvin(3500));      // диод 7, цветовая температура 3500К
-
-  strip.show();                     // выводим все изменения на ленту
-  delay(2000);                      // задержка показа
-
-  // ===================== ЗАЛИВКА =====================
-  // Есть готовая функция для заливки всей ленты цветом - .fill()
-  // принимает конвертированный цвет, например от функций цвета или констант выше
-  strip.fill(mYellow);  // заливаем жёлтым
-  strip.show();         // выводим изменения
-  delay(2000);
-
-  // также можно указать начало и конец заливки
-  strip.fill(3, 7, mWheel8(100));   // заливаем ~зелёным с 3 по 6: счёт идёт с 0, заливается до указанного -1
-  strip.show();                     // выводим изменения
-  delay(2000);
-
-  // ------------- РУЧНАЯ ЗАЛИВКА В ЦИКЛЕ ------------
-  // Например покрасим половину ленты в один, половину в другой
-  for (int i = 0; i < NUMLEDS / 2; i++) strip.leds[i] = mHSV(0, 255, 255);  	  // красный
-  for (int i = NUMLEDS / 2; i < NUMLEDS; i++) strip.leds[i] = mHSV(80, 255, 255); // примерно зелёный
-  strip.show(); // выводим изменения
-  delay(2000);
-
-  // ------------------------------------------
-  // Для ускорения ручных заливок (ускорения расчёта цвета) можно создать переменную типа mData
-  mData value1, value2;
-  value1 = mHSV(60, 100, 255);
-  value2 = mHSV(190, 255, 190);
-  for (int i = 0; i < NUMLEDS; i++) {
-    if (i < NUMLEDS / 2) strip.leds[i] = value1;  // первая половина ленты
-    else strip.leds[i] = value2;                  // вторая половина ленты
+  for (byte counter = 0; counter <= 255; counter++) {
+    for (int i = 0; i < NUMLEDS; i++) {
+      _strip.set(i, mWheel8(counter));
+    }
+    _strip.show();
+    delay(30);
   }
-  strip.show(); // выводим изменения
-  delay(2000);
-
-  // ------------------------------------------
-  // в цикле можно менять параметры генерации цвета. Например, сделаем радугу
-  for (int i = 0; i < NUMLEDS; i++) strip.set(i, mWheel8(i * 255 / NUMLEDS)); // полный круг от 0 до 255
-  strip.show(); // выводим изменения
-  delay(2000);
-
-  // или градиент от красного к чёрному (последовательно меняя яркость)
-  for (int i = 0; i < NUMLEDS; i++) strip.set(i, mWheel8(0, i * 255 / NUMLEDS)); // полный круг от 0 до 255
-  strip.show(); // выводим изменения
+  for (byte counter = 255; counter > 0; counter--) {
+    for (int i = 0; i < NUMLEDS; i++) {
+      _strip.set(i, mWheel8(counter));
+    }
+    _strip.show();
+    delay(30);
+  }
+  _strip.fill(COLORS::mBlack);
+  delay(1000);
 }
 
 void loop() {
+/*   EEPROM_Read(_address);
+  if (_data.time == 0) {
+    _address = 0;
+    return;
+  }
+  for (int i = 0; i < NUMLEDS; i++) _strip.set(i, mRGB(_data.LED[i].r, _data.LED[i].g, _data.LED[i].b));
+  _strip.show();
+  delay(_data.time);
+
+  uint16_t next = _address += sizeof(_data);
+  if (next < _address) {
+    _address = 0;
+    return;
+  }
+  _address = next; */
 }
