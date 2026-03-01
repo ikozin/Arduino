@@ -35,7 +35,7 @@ typedef struct __attribute__((packed)) {
 STRIP_DATA  _data;
 uint16_t _address = 0x0000;
 
-#define BUFFER_SIZE   sizeof(_data)
+//#define BUFFER_SIZE   sizeof(_data)
 //static_assert(false, "ERROR");
 
 #define STRIP_PIN PB1  // пин ленты
@@ -47,8 +47,8 @@ void EEPROM_Read(uint16_t address) {
   TinyWireM.write(highByte(address));
   TinyWireM.write(lowByte(address));
   TinyWireM.endTransmission();
-  TinyWireM.requestFrom(DEVICE_EEPROM,(uint8_t)BUFFER_SIZE);
-  for (uint16_t i = 0; i < BUFFER_SIZE; i++ ) {
+  TinyWireM.requestFrom(DEVICE_EEPROM,(uint8_t)sizeof(_data));
+  for (uint16_t i = 0; i < sizeof(_data); i++ ) {
     if (TinyWireM.available()) buffer[i] = TinyWireM.read();
   }
 }
@@ -76,7 +76,7 @@ void setup() {
 
 void loop() {
 /*   EEPROM_Read(_address);
-  if (_data.time == 0) {
+  if (_data.time == 0xFFFF) {
     _address = 0;
     return;
   }
