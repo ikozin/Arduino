@@ -9,6 +9,7 @@ namespace Base64Encoder
         {
             _menu = Resources.Menu;
             _title = Resources.Title;
+            _tooltip = Resources.TooTip;
         }
     }
 }

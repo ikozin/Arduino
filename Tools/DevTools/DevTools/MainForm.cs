@@ -31,6 +31,7 @@ namespace DevTools
             ToolStripMenuItem item = new()
             {
                 Text = tool.Menu,
+                ToolTipText = tool.ToolTip,
                 Tag = tool,
             };
             item.Click += ToolStripMenuItem_Click;

@@ -49,6 +49,7 @@
             menuStripMain.Items.AddRange(new ToolStripItem[] { fileToolStripMenuFile, toolsToolStripMenuTools });
             menuStripMain.Location = new Point(0, 0);
             menuStripMain.Name = "menuStripMain";
+            menuStripMain.ShowItemToolTips = true;
             menuStripMain.Size = new Size(855, 28);
             menuStripMain.TabIndex = 0;
             menuStripMain.Text = "menuStrip1";

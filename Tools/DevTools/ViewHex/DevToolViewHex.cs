@@ -9,6 +9,7 @@ namespace ViewHex
         {
             _menu = Resources.Menu;
             _title = Resources.Title;
+            _tooltip = Resources.ToolTip;
         }
     }
 }

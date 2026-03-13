@@ -4,13 +4,17 @@
     {
         protected string _menu;
         protected string _title;
+        protected string _tooltip;
+
         public DevTool()
         {
             _menu = "Menu";
             _title = "Title";
+            _tooltip = "";
         }
         public string Menu { get { return _menu; } }
         public string Title { get { return _title; } }
+        public string ToolTip { get { return _tooltip; } }
 
         public UserControl GetUserControl()
         {
