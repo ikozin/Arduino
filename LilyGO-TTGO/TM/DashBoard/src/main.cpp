@@ -70,7 +70,6 @@ void fatalError(const char * msg) {
 void IRAM_ATTR isr_handler_volume_up(void* parameter) {
     ControllerAudio* controller = static_cast<ControllerAudio*>(parameter);
     controller->changeVolume(1);
-
 }
 
 void IRAM_ATTR isr_handler_volume_down(void* parameter) {
@@ -89,12 +88,34 @@ void setPinHandler(gpio_num_t pin, gpio_int_type_t int_type, gpio_pull_mode_t pu
     gpio_isr_handler_add(pin, handler, &ctrlAudo);
 }
 
+void audio_station(const char *info){
+    if (strlen(info) == 0) return;
+    ctrlAudo.setStation(info);
+    LOG("station %s\r\n", info);
+}
+
+void audio_streamtitle(const char *info){
+    if (strlen(info) == 0) return;
+    ctrlAudo.setTitle(info);
+    LOG("title %s\r\n", info);
+}
+
+void audio_info(Audio::msg_t m) {
+    if (m.e == Audio::evt_streamtitle) {
+        audio_streamtitle(m.msg);
+    } else if (m.e == Audio::evt_name) {
+        audio_station(m.msg);
+    }
+    //Serial.printf("%s: %s\n", m.s, m.msg);
+}
 
 void setup() {
     Serial.begin(115200);
     LOG("Start\r\n");
 
     prefs.begin("Main");
+
+    Audio::audio_info_callback = audio_info;
 
     tft.init();
     tft.setRotation(1);
@@ -312,18 +333,18 @@ void loop() {
 //     tft.printf("eof_mp3 %s\r\n", info);
 // }
 
-void audio_showstation(const char *info){
-    if (strlen(info) == 0) return;
-    ctrlAudo.setStation(info);
-    LOG("station %s\r\n", info);
+// void audio_showstation(const char *info){
+//     if (strlen(info) == 0) return;
+//     ctrlAudo.setStation(info);
+//     LOG("station %s\r\n", info);
 
-}
+// }
 
-void audio_showstreamtitle(const char *info){
-    if (strlen(info) == 0) return;
-    ctrlAudo.setTitle(info);
-    LOG("title %s\r\n", info);
-}
+// void audio_showstreamtitle(const char *info){
+//     if (strlen(info) == 0) return;
+//     ctrlAudo.setTitle(info);
+//     LOG("title %s\r\n", info);
+// }
 
 // void audio_bitrate(const char *info){
 //     LOG("bitrate %s\r\n", info);
