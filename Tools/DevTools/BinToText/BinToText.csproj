@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net8.0-windows</TargetFramework>
+    <TargetFramework>net10.0-windows7.0</TargetFramework>
     <Nullable>enable</Nullable>
     <UseWindowsForms>true</UseWindowsForms>
     <ImplicitUsings>enable</ImplicitUsings>
@@ -11,12 +11,6 @@
     <Content Include="DevToolBinToHex_Setting.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Material.Icons" Version="3.0.0-preview3.1" />
-    <PackageReference Include="Rop.Winforms8.DuotoneIcons.MaterialDesign" Version="1.0.33" />
-    <PackageReference Include="System.Text.Json" Version="10.0.0-rc.1.25451.107" />
   </ItemGroup>
 
   <ItemGroup>

@@ -7,8 +7,8 @@ namespace ImageConverter
     public partial class UserControlImageConverter : DevToolViewCustom<PictureBox>
     {
         private readonly FilterImageCoverter _filter = new();
-        private Bitmap _bitmap = null;
-        private readonly MainSetting _setting;
+        private Bitmap? _bitmap = null;
+        private MainSetting _setting = new();
         public UserControlImageConverter()
         {
             InitializeComponent();

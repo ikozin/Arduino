@@ -10,7 +10,7 @@
     //
     public partial class UserControlBinToHex : DevToolViewText
     {
-        private readonly MainSetting setting;
+        private MainSetting setting = new();
 
         private readonly ToolStripComboBox toolStripComboBoxLang = new();
         private readonly ToolStripLabel toolStripLabelLen = new();

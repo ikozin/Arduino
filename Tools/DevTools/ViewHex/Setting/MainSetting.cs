@@ -11,7 +11,7 @@ namespace ViewHex.Setting
 
         [JsonRequired]
         [JsonPropertyName("font")]
-        public required string Font { get; set; }
+        public string Font { get; set; }
 
     }
 }

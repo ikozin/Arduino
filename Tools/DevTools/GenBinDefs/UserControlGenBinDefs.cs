@@ -13,7 +13,7 @@ namespace GenBinDefs
         private readonly ToolStripComboBox toolStripComboBoxLang = new();
         private readonly ToolStripButton toolStripButton = new();
 
-        private readonly MainSetting setting;
+        private MainSetting setting = new();
         public UserControlGenBinDefs()
         {
             InitializeComponent();

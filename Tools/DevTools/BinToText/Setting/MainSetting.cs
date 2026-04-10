@@ -6,17 +6,17 @@ namespace BinToText.Setting
     {
         public MainSetting()
         {
-            Langs = [];
+            Langs = new LangSetting[0];
             Font = "Roboto; 10,2";
         }
 
         [JsonRequired]
         [JsonPropertyName("font")]
-        public required string Font { get; set; }
+        public string Font { get; set; }
 
         [JsonRequired]
         [JsonPropertyName("langs")]
-        public required IList<LangSetting> Langs { get; set; }
+        public LangSetting[] Langs { get; set; }
 
     }
 }

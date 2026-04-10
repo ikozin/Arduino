@@ -154,7 +154,6 @@
         private CheckedListBox checkedListBox;
         private ContextMenuStrip contextMenuStripList;
         private TextBox textBoxPattern;
-        private Button btnPatternAdd;
         private Panel panelCommand;
     }
 }

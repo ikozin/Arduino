@@ -6,7 +6,7 @@ namespace Base64Encoder
 {
     public partial class UserControlBase64Encoder : DevToolViewText
     {
-        private readonly MainSetting setting;
+        private MainSetting setting = new();
         public UserControlBase64Encoder()
         {
             InitializeComponent();
@@ -27,7 +27,7 @@ namespace Base64Encoder
         public override void OpenFile(FileStream stream)
         {
             byte[] data = new byte[stream.Length];
-            stream.Read(data, 0, data.Length);
+            stream.ReadExactly(data);
             View.Text = System.Convert.ToBase64String(data);
         }
     }

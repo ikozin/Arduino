@@ -12,7 +12,7 @@ namespace IntelHexEncoder
         private readonly ToolStripLabel toolStripLabelAddress = new();
         private readonly ToolStripTextBox toolStripTextBoxAddress = new();
 
-        private readonly MainSetting setting;
+        private MainSetting setting = new();
         private byte[] memory = [];
         public UserControlIntelHexEncoder()
         {
@@ -58,7 +58,7 @@ namespace IntelHexEncoder
         public override void OpenFile(FileStream stream)
         {
             memory = new byte[stream.Length];
-            stream.Read(memory, 0, memory.Length);
+            stream.ReadExactly(memory);
             Convert();
         }
     }

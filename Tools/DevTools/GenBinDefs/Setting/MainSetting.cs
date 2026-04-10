@@ -12,11 +12,11 @@ namespace GenBinDefs.Setting
 
         [JsonRequired]
         [JsonPropertyName("font")]
-        public required string Font { get; set; }
+        public string Font { get; set; }
 
         [JsonRequired]
         [JsonPropertyName("langs")]
-        public required IList<LangSetting> Langs { get; set; }
+        public IList<LangSetting> Langs { get; set; }
 
     }
 }

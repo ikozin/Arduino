@@ -31,7 +31,7 @@ namespace FontCostructor
 
         private void btnAdd_Click(object sender, EventArgs e)
         {
-            PatternItem item = comboBoxPatterns.SelectedItem as PatternItem;
+            PatternItem item = (PatternItem)comboBoxPatterns.SelectedItem!;
             textBoxFilter.Text += Environment.NewLine;
             textBoxFilter.Text += item.Value;
         }

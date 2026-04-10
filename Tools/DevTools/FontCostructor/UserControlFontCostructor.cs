@@ -19,7 +19,7 @@ namespace FontCostructor
         private readonly ToolStripComboBox toolStripComboBoxLang = new();
         private readonly ToolStripButton toolStripButton = new();
 
-        private readonly MainSetting setting;
+        private MainSetting setting = new();
 
         public UserControlFontCostructor()
         {
@@ -54,7 +54,7 @@ namespace FontCostructor
         private void RunToolStripButton_Click(object? sender, EventArgs e)
         {
             StringBuilder text = new(4096);
-            LangSetting lang = toolStripComboBoxLang.SelectedItem as LangSetting;
+            LangSetting lang = (LangSetting)toolStripComboBoxLang.SelectedItem!;
 
             string charSet = string.Join(null, _filter.textBoxFilter.Lines);
             var list = charSet.GroupBy(c => c).Select(c => c.Key).Order().ToArray();

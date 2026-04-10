@@ -1,11 +1,14 @@
 ﻿using GenBinDefs.Setting;
 using System.Data;
+using System.ComponentModel;
 
 namespace GenBinDefs
 {
     public partial class FilterGenBinDefs : UserControl
     {
-        private LangSetting _lang;
+        private LangSetting _lang = new();
+
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public LangSetting Lang
         {
             get
@@ -22,10 +25,7 @@ namespace GenBinDefs
             }
         }
 
-        public FilterGenBinDefs()
-        {
-            InitializeComponent();
-        }
+        public FilterGenBinDefs() => InitializeComponent();
 
         private void FillPatternList(LangSetting lang)
         {

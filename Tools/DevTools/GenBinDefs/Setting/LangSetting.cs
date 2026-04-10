@@ -6,26 +6,26 @@ namespace GenBinDefs.Setting
     {
         [JsonRequired]
         [JsonPropertyName("lang")]
-        public required string Lang { get; set; }
+        public string Lang { get; set; } = String.Empty;
 
         [JsonRequired]
         [JsonPropertyName("header")]
-        public required string Header { get; set; }
+        public string Header { get; set; } = String.Empty;
 
         [JsonRequired]
         [JsonPropertyName("prefix")]
-        public required string Prefix { get; set; }
+        public string Prefix { get; set; } = String.Empty;
 
         [JsonRequired]
         [JsonPropertyName("value")]
-        public required string Value { get; set; }
+        public string Value { get; set; } = String.Empty;
 
         [JsonRequired]
         [JsonPropertyName("defines")]
-        public required string[] Defines { get; set; }
+        public string[] Defines { get; set; } = new string[0];
 
         [JsonRequired]
         [JsonPropertyName("footer")]
-        public required string Footer { get; set; }
+        public string Footer { get; set; } = String.Empty;
     }
 }

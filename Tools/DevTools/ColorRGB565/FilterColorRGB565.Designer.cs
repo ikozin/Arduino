@@ -416,10 +416,6 @@
         private ColumnHeader columnHeaderCount;
         private ContextMenuStrip contextMenuStrip;
         private ToolStripMenuItem replaceToolStripMenuItem;
-        private Label labelR4;
-        private Label labelR3;
-        private Label labelR2;
-        private Label labelR1;
         private Label labelR;
         private Label labelG;
         private Label labelB;

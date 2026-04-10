@@ -5,7 +5,7 @@
         private Bitmap? _image = null;
         private Color? _color = null;
         private ListViewColumnSorter lvwColumnSorter;
-        private UserControlColorRGB565 _owner;
+        private UserControlColorRGB565? _owner = null;
 
         public FilterColorRGB565()
         {
@@ -141,7 +141,7 @@
             {
                 var fromColor = ColorTranslator.FromHtml(item.Text);
                 var toColor = ColorTranslator.FromHtml(textBoxColorHtml.Text);
-                _owner.ReplaceColor(fromColor, toColor);
+                _owner!.ReplaceColor(fromColor, toColor);
             }
             btnAnalysis.PerformClick();
         }
@@ -156,10 +156,10 @@
                     byte r = (byte)(color.R * (comboBoxLessColor.SelectedIndex + 1) * 10 / 100);
                     byte g = (byte)(color.G * (comboBoxLessColor.SelectedIndex + 1) * 10 / 100);
                     byte b = (byte)(color.B * (comboBoxLessColor.SelectedIndex + 1) * 10 / 100);
-                    _owner.ReplaceColor(x, y, Color.FromArgb(r, g, b));
+                    _owner!.ReplaceColor(x, y, Color.FromArgb(r, g, b));
                 }
             }
-            _owner.ReloadImage();
+            _owner!.ReloadImage();
         }
     }
 }

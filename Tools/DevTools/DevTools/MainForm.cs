@@ -52,7 +52,7 @@ namespace DevTools
             panelMain.ResumeLayout(false);
             panelMain.PerformLayout();
         }
-        private void ToolStripMenuItem_Click(object sender, EventArgs e)
+        private void ToolStripMenuItem_Click(object? sender, EventArgs e)
         {
             if (sender is not ToolStripMenuItem item) return;
             if (item.Tag is not IDevTool tool) return;

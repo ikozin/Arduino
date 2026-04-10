@@ -9,9 +9,9 @@ namespace ColorRGB565
 {
     public partial class UserControlColorRGB565 : DevToolViewCustom<PictureBox>
     {
-        private FilterColorRGB565 _filter = null;
+        private FilterColorRGB565? _filter = null;
         private Bitmap? _bitmap = null;
-        private readonly MainSetting _setting;
+        private MainSetting _setting = new();
 
         private readonly ToolStripLabel toolStripLabelScale = new();
         private readonly ToolStripComboBox toolStripComboBoxScale = new();
@@ -38,9 +38,9 @@ namespace ColorRGB565
             View.MouseMove += View_MouseMove;
             View.MouseClick += View_MouseClick;
 
-            _filter.SetLocation(null, null);
-            _filter.SetImage(_bitmap, true);
-            AddFilterControl(_filter);
+            _filter!.SetLocation(null, null);
+            _filter!.SetImage(_bitmap, true);
+            AddFilterControl(_filter!);
 
             using FileStream file = new("ColorRGB565_Setting.json", FileMode.Open);
             if (file == null) return;
@@ -61,21 +61,21 @@ namespace ColorRGB565
             ToolStripComboBox combo = (ToolStripComboBox)sender!;
             _scale = (int)System.Math.Pow(2, combo.SelectedIndex);
             Bitmap? image = GetImage(_bitmap, _scale);
-            _filter.SetImage(null, false);
+            _filter!.SetImage(null, false);
             if (image == null) return;
             View.Image?.Dispose();
             View.Image = image;
-            _filter.SetImage(_bitmap, false);
+            _filter!.SetImage(_bitmap, false);
         }
 
         private void View_MouseMove(object? sender, MouseEventArgs e)
         {
             if (_bitmap == null) return;
             
-            int left = (View.Size.Width - View.Image.Size.Width) >> 1;
+            int left = (View.Size.Width - View.Image!.Size.Width) >> 1;
             int right = left + View.Image.Size.Width + 1;
 
-            int top = (View.Size.Height - View.Image.Size.Height) >> 1;
+            int top = (View.Size.Height - View.Image!.Size.Height) >> 1;
             int bottom = top + View.Image.Size.Height + 1;
 
             int? x = (e.Location.X >= left && e.Location.X <= right) ? (e.Location.X - left) / _scale : null;
@@ -83,11 +83,11 @@ namespace ColorRGB565
 
             if (x.HasValue && y.HasValue)
             {
-                _filter.SetLocation(x, y);
+                _filter!.SetLocation(x, y);
             }
             else
             {
-                _filter.SetLocation(null, null);
+                _filter!.SetLocation(null, null);
             }
         }
         private void View_MouseClick(object? sender, MouseEventArgs e)
@@ -95,10 +95,10 @@ namespace ColorRGB565
             if (_bitmap == null) return;
             if (e.Button != MouseButtons.Left) return;
 
-            int left = (View.Size.Width - View.Image.Size.Width) >> 1;
+            int left = (View.Size.Width - View.Image!.Size.Width) >> 1;
             int right = left + View.Image.Size.Width + 1;
 
-            int top = (View.Size.Height - View.Image.Size.Height) >> 1;
+            int top = (View.Size.Height - View.Image!.Size.Height) >> 1;
             int bottom = top + View.Image.Size.Height + 1;
 
             int? x = (e.Location.X >= left && e.Location.X <= right) ? (e.Location.X - left) / _scale : null;
@@ -106,7 +106,7 @@ namespace ColorRGB565
             if (x.HasValue && y.HasValue)
             {
                 Color color = _bitmap.GetPixel(x.Value, y.Value);
-                _filter.SetColor(color);
+                _filter!.SetColor(color);
             }
         }
         public void ReloadImage()
@@ -129,7 +129,7 @@ namespace ColorRGB565
             ReloadImage();
 
         }
-        public void ReplaceColor(int x, int y, Color color) => _bitmap.SetPixel(x, y, color);
+        public void ReplaceColor(int x, int y, Color color) => _bitmap!.SetPixel(x, y, color);
 
         public override void OpenFile(FileStream stream)
         {
@@ -137,13 +137,13 @@ namespace ColorRGB565
             _bitmap?.Dispose();
             try
             {
-                _filter.SetSize(0, 0);
+                _filter!.SetSize(0, 0);
                 _bitmap = new Bitmap(Image.FromStream(stream));
                 ReloadImage();
                 //View.Image?.Dispose();
                 //View.Image = GetImage(_bitmap, _scale);
-                _filter.SetImage(_bitmap, true);
-                _filter.SetSize(_bitmap.Width, _bitmap.Height);
+                _filter!.SetImage(_bitmap, true);
+                _filter!.SetSize(_bitmap.Width, _bitmap.Height);
             }
             catch (Exception)
             {
