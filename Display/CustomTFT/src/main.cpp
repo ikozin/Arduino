@@ -36,23 +36,23 @@ public:
     {
       auto cfg = _bus_instance.config();
 
-      cfg.spi_host = SPI2_HOST;              // Выбор номера шины SPI в микроконтроллере
-      cfg.freq_write = 80000000;             // Частота передачи данных
-      cfg.freq_read = 60000000;
+      cfg.spi_host    = SPI2_HOST;              // Выбор номера шины SPI в микроконтроллере
+      cfg.freq_write  = 80000000;             // Частота передачи данных
+      cfg.freq_read   = 60000000;
       cfg.dma_channel = SPI_DMA_CH_AUTO;     // Канал DirectMemoryAccess
-      cfg.pin_sclk = TFT_SCLK;
-      cfg.pin_mosi = TFT_MOSI;
-      cfg.pin_dc   = TFT_DC;
+      cfg.pin_sclk    = TFT_SCLK;
+      cfg.pin_mosi    = TFT_MOSI;
+      cfg.pin_dc      = TFT_DC;
       _bus_instance.config(cfg);
       _panel_instance.setBus(&_bus_instance);
     }
     {
       auto cfg = _panel_instance.config();
-      cfg.pin_cs           =   TFT_CS;
-      cfg.pin_rst          =   TFT_RST;
-      cfg.panel_width      =   240;
-      cfg.panel_height     =   320;
-      cfg.invert           =  false;        // Инвертирование цвета (необходимо при неправильном отображении цвета)
+      cfg.pin_cs       = TFT_CS;
+      cfg.pin_rst      = TFT_RST;
+      cfg.panel_width  = 240;
+      cfg.panel_height = 320;
+      cfg.invert       = false;        // Инвертирование цвета (необходимо при неправильном отображении цвета)
       _panel_instance.config(cfg);
     }
     setPanel(&_panel_instance);

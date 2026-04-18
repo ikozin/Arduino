@@ -18,7 +18,7 @@
 */
 
 // константы для удобства
-#define NUMLEDS 8      // кол-во светодиодов
+#define NUMLEDS 21      // кол-во светодиодов
 #define DEVICE_EEPROM 0x50
 
 typedef struct __attribute__((packed)) {
