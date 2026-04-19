@@ -54,32 +54,29 @@ void EEPROM_Read(uint16_t address) {
 }
 
 void setup() {
-  // TinyWireM.begin();
+  TinyWireM.begin();
 
-  for (byte counter = 0; counter <= 255; counter++) {
-    for (int i = 0; i < NUMLEDS; i++) {
-      _strip.set(i, mWheel8(counter));
-    }
-    _strip.show();
-    delay(30);
-  }
-  for (byte counter = 255; counter > 0; counter--) {
-    for (int i = 0; i < NUMLEDS; i++) {
-      _strip.set(i, mWheel8(counter));
-    }
-    _strip.show();
-    delay(30);
-  }
+  _strip.fill(COLORS::mRed);
+  _strip.show();
+  delay(250);
+  _strip.fill(COLORS::mGreen);
+  _strip.show();
+  delay(250);
+  _strip.fill(COLORS::mBlue);
+  _strip.show();
+  delay(250);
   _strip.fill(COLORS::mBlack);
-  delay(1000);
+  _strip.show();
+  delay(250);
 }
 
 void loop() {
-/*   EEPROM_Read(_address);
+  EEPROM_Read(_address);
   if (_data.time == 0xFFFF) {
     _address = 0;
     return;
   }
+  
   for (int i = 0; i < NUMLEDS; i++) _strip.set(i, mRGB(_data.LED[i].r, _data.LED[i].g, _data.LED[i].b));
   _strip.show();
   delay(_data.time);
@@ -89,5 +86,5 @@ void loop() {
     _address = 0;
     return;
   }
-  _address = next; */
+  _address = next;
 }
