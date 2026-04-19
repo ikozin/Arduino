@@ -3,33 +3,20 @@ using System.Drawing;
 
 namespace ProgrTool;
 /*
-                 (18)
-                 
-               (11)(10)
-       
-(19)  (12)  ( 3)      ( 2)  ( 9)  (17)
-    (13)                      ( 8)
-                 ( 0)
-           ( 4)        ( 1)
-                 
-                 ( 5)
-         (14)            ( 7)
-            (15)    ( 6)
-      (20)                  (16) 
 
                  ( 7)
                  
-               ( 8)( 6)
+               ( 6)( 8)
        
-(11)  (10)  ( 9)      ( 5)  ( 4)  ( 3)
-    (12)                      ( 2)
+( 3)  ( 4)  ( 5)      ( 9)  (10)  (11)
+    ( 2)                      (12)
                  ( 0)
-           (13)        ( 1)
+           ( 1)        (13)
                  
                  (17)
-         (14)            (20)
-            (16)    (18)
-      (15)                  (19) 
+         (20)            (14)
+            (18)    (16)
+      (19)                  (15) 
 
 */
 
@@ -38,8 +25,8 @@ internal class Program
     public static byte[] star_all = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20];
     public static byte[] star_ring_0 = [0];
     public static byte[] star_ring_1 = [1, 5, 9, 13, 17];
-    public static byte[] star_ring_2 = [18, 20, 2, 4, 6, 8, 10, 12, 14, 16];
-    public static byte[] star_ring_3 = [19, 3, 7, 11, 15];
+    public static byte[] star_ring_2 = [2, 4, 6, 8, 10, 12, 14, 16, 18, 20];
+    public static byte[] star_ring_3 = [3, 7, 11, 15, 19];
 
 
     public static void Main(string[] args)
