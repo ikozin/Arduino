@@ -1,10 +1,18 @@
 #include <Arduino.h>
 #include <TinyWireM.h>
-#include <microLED.h>   // подключаем библу
+#include <microLED.h>
 #include <color_utility.h>
 
 
 /*
+Необходимо установить поддержку ATTiny85 для Arduino IDE https://github.com/damellis/attiny
+
+Параметры для прошивки
+Board: "ATtiny25/45/85" 
+Clock: "Internal 8 MHz"
+Processor: "ATtiny85"
+Programmer: "Arduino as ISP"
+
  ┌───────┬───────┬───────┬───────┬────┬────────┬─────┐    ┌──────────┐    ┌─────┬─────────────────────────────────────────────┐
  │       │ ADC0  │       │ RESET │ A0 │ PCINT5 │ PB5 │   ─┤          ├─   │ +5V │                                             │
  ├───────┼───────┼───────┼───────┼────┼────────┼─────┤    │          │    ├─────┼────────┬────┬──────┬─────┬───────────┬──────┤
@@ -62,22 +70,25 @@ uint32_t address = 0x0000;
 #define STRIP_PIN PB1  // пин ленты
 microLED<NUMLEDS, STRIP_PIN, MLED_NO_CLOCK, LED_WS2812, ORDER_GRB, CLI_HIGH, SAVE_MILLIS> _strip;
 
-uint8_t ReadByte(uint32_t& addr) {
+uint8_t readEepromByte(uint32_t& addr) {
   TinyWireM.beginTransmission(DEVICE_EEPROM);
   TinyWireM.write(highByte(addr));
   TinyWireM.write(lowByte(addr));
   TinyWireM.endTransmission();
+  delay(10);
   addr += sizeof(uint8_t);
   TinyWireM.requestFrom(DEVICE_EEPROM,1);
+  delay(5);
   return TinyWireM.receive();
 }
 
-uint16_t ReadWord(uint32_t& addr) {
+uint16_t readEepromWord(uint32_t& addr) {
   uint16_t result = 0;
   TinyWireM.beginTransmission(DEVICE_EEPROM);
   TinyWireM.write(highByte(addr));
   TinyWireM.write(lowByte(addr));
   TinyWireM.endTransmission();
+  delay(5);
   addr += sizeof(uint16_t);
   TinyWireM.requestFrom(DEVICE_EEPROM, 2);
   result = TinyWireM.receive();
@@ -85,41 +96,31 @@ uint16_t ReadWord(uint32_t& addr) {
   return result;
 }
 
-void ReadData(uint32_t& addr, uint8_t* buffer, uint8_t size) { 
+void readEepromData(uint32_t& addr, uint8_t* buffer, uint8_t size) { 
   TinyWireM.beginTransmission(DEVICE_EEPROM);
   TinyWireM.write(highByte(addr));
   TinyWireM.write(lowByte(addr));
   TinyWireM.endTransmission();
+  delay(5);
   addr += size;
   TinyWireM.requestFrom(DEVICE_EEPROM, size);
-  noInterrupts();
   for (uint16_t i = 0; i < size; i++ ) {
     if (TinyWireM.available()) buffer[i] = TinyWireM.read();
+    else buffer[i] = 0xFF;
   }
-  interrupts();
 }
 
 void setup() {
   TinyWireM.begin();
-
-  for (int counter = 0; counter <= 255; counter += 2) {
-    _strip.fill(mWheel8(counter));
-    _strip.show();
-    delay(30);
-  }
-  _strip.fill(COLORS::mBlack);
-  _strip.show();
-  delay(1000);
-
   _strip.fill(COLORS::mRed);
   _strip.show();
-  delay(500);
+  delay(200);
   _strip.fill(COLORS::mGreen);
   _strip.show();
-  delay(500);
+  delay(200);
   _strip.fill(COLORS::mBlue);
   _strip.show();
-  delay(500);
+  delay(200);
   _strip.fill(COLORS::mBlack);
   _strip.show();
   delay(1000);
@@ -127,18 +128,19 @@ void setup() {
 
 void loop() {
   uint16_t pause = 0;
-  uint8_t flag = ReadByte(address);
+  uint8_t flag = readEepromByte(address);
   if (flag == 0xFFU) {
     address = 0;
     return;
   }
   if (flag & MASK_TIME) {
-    pause = ReadWord(address);
+    pause = readEepromWord(address);
   }
+  for (int i = 0; i < sizeof(data); i++) data[i] = 0xFF;
   switch (flag & MASK_MODE)
   {
     case MODE_FILL: {
-      ReadData(address, data, sizeof(LedColor));
+      readEepromData(address, data, sizeof(LedColor));
       LedColor* ptr = reinterpret_cast<LedColor*>(data);
       mData color = mData(ptr->r, ptr->g, ptr->b);
 
@@ -146,19 +148,19 @@ void loop() {
       break;
     }
     case MODE_COUNT: {
-      ReadData(address, data, sizeof(LedColor));
+      readEepromData(address, data, sizeof(LedColorCount));
       LedColorCount* ptr = reinterpret_cast<LedColorCount*>(data);
       mData color = mData(ptr->Color.r, ptr->Color.g, ptr->Color.b);
 
       uint8_t count = ptr->Count;
-      ReadData(address, data, count);
+      readEepromData(address, data, count);
       for (int i = 0; i < count; i++) {
         _strip.set(data[i], color);
       }
       break;
     }
     case MODE_RAW: {
-      ReadData(address, data, sizeof(LedColorRaw));
+      readEepromData(address, data, sizeof(LedColorRaw));
       LedColorRaw* ptr = reinterpret_cast<LedColorRaw*>(data);
       for (int i = 0; i < NUMLEDS; i++) {
         mData color = mData(ptr->LED[i].r, ptr->LED[i].g, ptr->LED[i].b);

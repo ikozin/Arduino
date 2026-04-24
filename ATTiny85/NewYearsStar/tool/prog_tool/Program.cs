@@ -4,19 +4,19 @@ using System.Drawing;
 namespace ProgrTool;
 /*
 
-                 ( 7)
+                 (11)
                  
-               ( 6)( 8)
+               (10)(12)
        
-( 3)  ( 4)  ( 5)      ( 9)  (10)  (11)
-    ( 2)                      (12)
-                 ( 0)
-           ( 1)        (13)
+(07)  (08)  (09)      (13)  (14)  (15)
+    (06)                      (16)
+                 (00)
+           (05)        (17)
                  
-                 (17)
-         (20)            (14)
-            (18)    (16)
-      (19)                  (15) 
+                 (01)
+         (04)            (18)
+            (02)     (20)
+      (03)                  (19) 
 
 */
 
@@ -33,40 +33,107 @@ internal class Program
     {
         Console.WriteLine("Srart");
 
+        StripFill fill;
+        StripCount count;
+
         using FileStream file = File.Create("AT24LC512.bin");
         using BinaryWriter writer = new(file);
 
-        SetLight(writer, Color.Red, star_ring_0, new StripData(200));
-        SetLight(writer, Color.Red, star_ring_1, new StripData(200));
-        SetLight(writer, Color.Red, star_ring_2, new StripData(200));
-        SetLight(writer, Color.Red, star_ring_3, new StripData(200));
-        SetLight(writer, Color.Black, star_all, new StripData(200));
+        //SetLight(writer, Color.Red, star_ring_0, new(1000));
+        //SetLight(writer, Color.Red, star_ring_1, new(1000));
+        //SetLight(writer, Color.Red, star_ring_2, new(1000));
+        //SetLight(writer, Color.Red, star_ring_3, new(1000));
+        //SetLight(writer, Color.Black, star_ring_0, data);
+        //SetLight(writer, Color.Black, star_ring_1, data);
+        //SetLight(writer, Color.Black, star_ring_2, data);
+        //SetLight(writer, Color.Black, star_ring_3, data);
 
-        RunningLight(writer, Color.Magenta, star_ring_1, new StripData(200));
-        RunningLight(writer, Color.Magenta, star_ring_2, new StripData(200));
-        RunningLight(writer, Color.Magenta, star_ring_3, new StripData(200));
+        //RunningLight(writer, Color.Magenta, star_ring_1, new StripData(200));
+        //RunningLight(writer, Color.Magenta, star_ring_2, new StripData(200));
+        //RunningLight(writer, Color.Magenta, star_ring_3, new StripData(200));
 
-        SetLight(writer, Color.Black, star_all, new StripData(0));
+        (new StripFill(000, Color.Red)).Save(writer);
+
+        count = new StripCount(100, Color.Magenta);
+        count.Indexies.AddRange(star_ring_0);
+        count.Save(writer);
+
+        count = new StripCount(Color.Red);
+        count.Indexies.AddRange(star_ring_0);
+        count.Save(writer);
+        count = new StripCount(100, Color.Magenta);
+        count.Indexies.AddRange(star_ring_1);
+        count.Save(writer);
+
+        count = new StripCount(Color.Red);
+        count.Indexies.AddRange(star_ring_1);
+        count.Save(writer);
+        count = new StripCount(100, Color.Magenta);
+        count.Indexies.AddRange(star_ring_2);
+        count.Save(writer);
+
+        count = new StripCount(Color.Red);
+        count.Indexies.AddRange(star_ring_2);
+        count.Save(writer);
+        count = new StripCount(100, Color.Magenta);
+        count.Indexies.AddRange(star_ring_3);
+        count.Save(writer);
+
+        count = new StripCount(Color.Red);
+        count.Indexies.AddRange(star_ring_3);
+        count.Save(writer);
+        count = new StripCount(100, Color.Magenta);
+        count.Indexies.AddRange(star_ring_2);
+        count.Save(writer);
+
+        count = new StripCount(Color.Red);
+        count.Indexies.AddRange(star_ring_2);
+        count.Save(writer);
+        count = new StripCount(100, Color.Magenta);
+        count.Indexies.AddRange(star_ring_1);
+        count.Save(writer);
+
+        count = new StripCount(Color.Red);
+        count.Indexies.AddRange(star_ring_1);
+        count.Save(writer);
+        count = new StripCount(100, Color.Magenta);
+        count.Indexies.AddRange(star_ring_0);
+        count.Save(writer);
+
+
+        //count = new StripCount(100, Color.Green);
+        //count.Indexies.AddRange(star_ring_0);
+        //count.Save(writer);
+
+        //count = new StripCount(100, Color.Green);
+        //count.Indexies.AddRange(star_ring_1);
+        //count.Save(writer);
+
+        //count = new StripCount(100, Color.Green);
+        //count.Indexies.AddRange(star_ring_2);
+        //count.Save(writer);
+
+        //count = new StripCount(100, Color.Green);
+        //count.Indexies.AddRange(star_ring_3);
+        //count.Save(writer);
+
+        //count = new StripCount(100, Color.Red);
+        //count.Indexies.AddRange(star_ring_0);
+        //count.Save(writer);
+
+        //count = new StripCount(100, Color.Red);
+        //count.Indexies.AddRange(star_ring_1);
+        //count.Save(writer);
+
+        //count = new StripCount(100, Color.Red);
+        //count.Indexies.AddRange(star_ring_2);
+        //count.Save(writer);
+
+        //count = new StripCount(100, Color.Red);
+        //count.Indexies.AddRange(star_ring_3);
+        //count.Save(writer);
 
         file.Close();
-    }
-
-    private static void SetLight(BinaryWriter writer, Color color, byte[] raw, StripData data)
-    {
-        for (int i = 0; i < raw.Length; i++) {
-            data.Leds[raw[i]].Color = color;
-        }
-        data.Save(writer);
-    }
-
-    private static void RunningLight(BinaryWriter writer, Color color, byte[] raw, StripData data)
-    {
-        UInt16 delay = data.Delay;
-        for (int i = 0; i < raw.Length; i++) {
-            data.Clear();
-            data.Delay = delay;
-            data.Leds[raw[i]].Color = color;
-            data.Save(writer);
-        }
+        Console.WriteLine("Finish");
     }
 }

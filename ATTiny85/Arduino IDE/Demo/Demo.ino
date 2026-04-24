@@ -38,7 +38,6 @@ Programmer: "Arduino as ISP"
 // }
 
 #include <Arduino.h>
-#define COLOR_DEBTH 3
 #include <microLED.h>   // подключаем библу
 #include <color_utility.h>
 
