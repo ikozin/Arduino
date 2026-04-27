@@ -223,7 +223,7 @@ public class StripRaw : StripBase
         }
     }
     public LedData[] Leds { get; private set; }
-    public StripRaw Set(System.Drawing.Color color, int[] indexies)
+    public StripRaw Set(System.Drawing.Color color, byte[] indexies)
     {
         foreach (int i in indexies)
         {
@@ -251,10 +251,9 @@ public class StripRaw : StripBase
         }
     }
 }
-public class StripGradient
+public class StripGradient(int size)
 {
-    public StripGradient(int size) => Colors = new System.Drawing.Color[size];
-    public System.Drawing.Color[] Colors { get; private set; }
+    public System.Drawing.Color[] Colors { get; private set; } = new System.Drawing.Color[size];
     public System.Drawing.Color Get(int x, int amount)
     {
         int sectorSize = (amount + Colors.Length - 2) / (Colors.Length - 1); // (x+y-1)/y
