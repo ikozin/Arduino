@@ -1,4 +1,4 @@
-﻿using System;
+﻿using System.Linq;
 using System.Drawing;
 
 namespace ProgrTool;
@@ -23,10 +23,10 @@ namespace ProgrTool;
 internal class Program
 {
     public static byte[] star_all = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20];
-    public static byte[] star_ring_0 = [0];
-    public static byte[] star_ring_1 = [1, 5, 9, 13, 17];
-    public static byte[] star_ring_2 = [2, 4, 6, 8, 10, 12, 14, 16, 18, 20];
-    public static byte[] star_ring_3 = [3, 7, 11, 15, 19];
+    public static byte[] star_ring_0 = [0];                                 // 1    (1+3+1) = 5
+    public static byte[] star_ring_1 = [1, 5, 9, 13, 17];                   // 5    (1+3+5) = 8
+    public static byte[] star_ring_2 = [2, 4, 6, 8, 10, 12, 14, 16, 18, 20];// 10   (1+3+10) = 14
+    public static byte[] star_ring_3 = [3, 7, 11, 15, 19];                  // 5    (1+3+5) = 8
 
     public static byte[] ray_0 = [0, 1, 17, 18, 19, 20];
     public static byte[] ray_1 = [0, 1, 2, 3, 4, 5];
@@ -42,151 +42,196 @@ internal class Program
         using FileStream file = File.Create("AT24LC512.bin");
         using BinaryWriter writer = new(file);
 
-        StripTool.Get<StripFill>(Color.Red).Save(writer);
-        StripTool.Get<StripCount>(100, Color.Magenta).IndexiesAdd(star_ring_0).Save(writer);
+        WaveOut(writer, 150, Color.Red, Color.Magenta);
+        WaveOut(writer, 150, Color.Red, Color.Magenta);
+        Wave(writer, 150, Color.Red, Color.Magenta);
+        WaveIn(writer, 150, Color.Red, Color.Magenta);
+        WaveIn(writer, 150, Color.Red, Color.Magenta);
 
-        StripTool.Get<StripFill>(Color.Red).Save(writer);
-        StripTool.Get<StripCount>(100, Color.Magenta).IndexiesAdd(star_ring_1).Save(writer);
+        StripTool.Get<StripFill>(1000, Color.Black).Save(writer);
 
-        StripTool.Get<StripFill>(Color.Red).Save(writer);
-        StripTool.Get<StripCount>(100, Color.Magenta).IndexiesAdd(star_ring_2).Save(writer);
+        WaveGradient(writer, 100, Color.Red, [Color.White, Color.Yellow]);
+        StripTool.Get<StripFill>(100, Color.Red).Save(writer);
+        WaveGradient(writer, 100, Color.Red, [Color.Yellow, Color.White, Color.Yellow]);
+        StripTool.Get<StripFill>(100, Color.Red).Save(writer);
+        WaveGradient(writer, 100, Color.Red, [Color.Yellow, Color.White, Color.Yellow, Color.White]);
+        StripTool.Get<StripFill>(100, Color.Red).Save(writer);
+        WaveGradient(writer, 100, Color.Red, [Color.Yellow, Color.Green, Color.White, Color.Blue, Color.Yellow]);
+        StripTool.Get<StripFill>(100, Color.Red).Save(writer);
 
-        StripTool.Get<StripFill>(Color.Red).Save(writer);
-        StripTool.Get<StripCount>(100, Color.Magenta).IndexiesAdd(star_ring_3).Save(writer);
+        WaveGradient(writer, 100, Color.Red, [Color.White, Color.Yellow]);
+        StripTool.Get<StripFill>(100, Color.Red).Save(writer);
+        WaveGradient(writer, 100, Color.Red, [Color.Yellow, Color.White, Color.Yellow]);
+        StripTool.Get<StripFill>(100, Color.Red).Save(writer);
+        WaveGradient(writer, 100, Color.Red, [Color.Yellow, Color.White, Color.Yellow, Color.White]);
+        StripTool.Get<StripFill>(100, Color.Red).Save(writer);
+        WaveGradient(writer, 100, Color.Red, [
+            Color.FromArgb(255, 255, 141, 0),
+            Color.FromArgb(255, 255, 255, 0),
+            Color.FromArgb(255, 255, 255, 141),
+            Color.FromArgb(255, 255, 255, 255),
+            Color.FromArgb(255, 255, 255, 141),
+            Color.FromArgb(255, 255, 255, 0),
+            Color.FromArgb(255, 255, 141, 0),
+            ]);
+        StripTool.Get<StripFill>(100, Color.Red).Save(writer);
 
-        StripTool.Get<StripFill>(Color.Red).Save(writer);
-        StripTool.Get<StripCount>(100, Color.Magenta).IndexiesAdd(star_ring_2).Save(writer);
+        StripTool.Get<StripFill>(1000, Color.Black).Save(writer);
 
-        StripTool.Get<StripFill>(Color.Red).Save(writer);
-        StripTool.Get<StripCount>(100, Color.Magenta).IndexiesAdd(star_ring_1).Save(writer);
+        StripTool.Get<StripRaw>(100, Color.Black).Set(Color.Blue, star_ring_0).Set(Color.Blue, star_ring_2).Save(writer);
+        StripTool.Get<StripRaw>(100, Color.Black).Set(Color.Blue, star_ring_1).Set(Color.Blue, star_ring_3).Save(writer);
+        StripTool.Get<StripRaw>(100, Color.Black).Set(Color.Blue, star_ring_0).Set(Color.Blue, star_ring_2).Save(writer);
+        StripTool.Get<StripRaw>(100, Color.Black).Set(Color.Blue, star_ring_1).Set(Color.Blue, star_ring_3).Save(writer);
+        StripTool.Get<StripRaw>(100, Color.Black).Set(Color.Blue, star_ring_0).Set(Color.Blue, star_ring_2).Save(writer);
+        StripTool.Get<StripRaw>(100, Color.Black).Set(Color.Blue, star_ring_1).Set(Color.Blue, star_ring_3).Save(writer);
 
-        StripTool.Get<StripFill>(Color.Red).Save(writer);
-        StripTool.Get<StripCount>(100, Color.Magenta).IndexiesAdd(star_ring_0).Save(writer);
+        //StripTool.Get<StripFill>(1000, Color.Black).Save(writer);
 
-        StripTool.Get<StripRaw>(500, Color.Black).Save(writer);
-        StripTool.Get<StripRaw>(500, Color.WhiteSmoke).Save(writer);
-        StripTool.Get<StripRaw>(500, Color.DarkMagenta).Save(writer);
-        StripTool.Get<StripRaw>(500, Color.Black).Save(writer);
+        for (int i = 0; i < 256; i++)
+        {
+            StripTool.Get<StripFill>(2, Color.FromArgb(255, i, i, 0)).Save(writer);
+        }
+        StripTool.Get<StripFill>(1000, Color.FromArgb(255, 255, 255, 0)).Save(writer);
 
-        StripTool.Get<StripFill>(Color.Red).Save(writer);
-        StripTool.Get<StripCount>(100, Color.Magenta).IndexiesAdd(ray_0).Save(writer);
+        StripTool.Get<StripFill>(1000, Color.Black).Save(writer);
 
-        StripTool.Get<StripFill>(Color.Red).Save(writer);
-        StripTool.Get<StripCount>(100, Color.Magenta).IndexiesAdd(ray_1).Save(writer);
+        for (int i = 0; i < 128; i += 16)
+        {
+            StripTool.Get<StripFill>(1000, Color.FromArgb(0, 255, 255 - i, 0)).Save(writer);
+        }
 
-        StripTool.Get<StripFill>(Color.Red).Save(writer);
-        StripTool.Get<StripCount>(100, Color.Magenta).IndexiesAdd(ray_2).Save(writer);
-
-        StripTool.Get<StripFill>(Color.Red).Save(writer);
-        StripTool.Get<StripCount>(100, Color.Magenta).IndexiesAdd(ray_3).Save(writer);
-
-        StripTool.Get<StripFill>(Color.Red).Save(writer);
-        StripTool.Get<StripCount>(100, Color.Magenta).IndexiesAdd(ray_4).Save(writer);
-
-        StripTool.Get<StripFill>(Color.Red).Save(writer);
-        StripTool.Get<StripCount>(100, Color.Magenta).IndexiesAdd(ray_3).Save(writer);
-
-        StripTool.Get<StripFill>(Color.Red).Save(writer);
-        StripTool.Get<StripCount>(100, Color.Magenta).IndexiesAdd(ray_2).Save(writer);
-
-        StripTool.Get<StripFill>(Color.Red).Save(writer);
-        StripTool.Get<StripCount>(100, Color.Magenta).IndexiesAdd(ray_1).Save(writer);
-
-        StripTool.Get<StripFill>(Color.Red).Save(writer);
-        StripTool.Get<StripCount>(100, Color.Magenta).IndexiesAdd(ray_0).Save(writer);
-
-
-        StripTool.Get<StripFill>(500, Color.Red).Save(writer);
-
-        StripTool.Get<StripRaw>(100, Color.Red).Set(Color.Yellow, star_ring_0).Save(writer);
-        StripTool.Get<StripRaw>(100, Color.Red).Set(Color.White, star_ring_0).Set(Color.Yellow, star_ring_1).Save(writer);
-        StripTool.Get<StripRaw>(100, Color.Red).Set(Color.Yellow, star_ring_0).Set(Color.White, star_ring_1).Set(Color.Yellow, star_ring_2).Save(writer);
-        StripTool.Get<StripRaw>(100, Color.Red).Set(Color.Yellow, star_ring_1).Set(Color.White, star_ring_2).Set(Color.Yellow, star_ring_3).Save(writer);
-        StripTool.Get<StripRaw>(100, Color.Red).Set(Color.Yellow, star_ring_2).Set(Color.White, star_ring_3).Save(writer);
-        StripTool.Get<StripRaw>(100, Color.Red).Set(Color.Yellow, star_ring_3).Save(writer);
-        StripTool.Get<StripRaw>(100, Color.Red).Set(Color.Yellow, star_ring_0).Save(writer);
-        StripTool.Get<StripRaw>(100, Color.Red).Set(Color.White, star_ring_0).Set(Color.Yellow, star_ring_1).Save(writer);
-        StripTool.Get<StripRaw>(100, Color.Red).Set(Color.Yellow, star_ring_0).Set(Color.White, star_ring_1).Set(Color.Yellow, star_ring_2).Save(writer);
-        StripTool.Get<StripRaw>(100, Color.Red).Set(Color.Yellow, star_ring_1).Set(Color.White, star_ring_2).Set(Color.Yellow, star_ring_3).Save(writer);
-        StripTool.Get<StripRaw>(100, Color.Red).Set(Color.Yellow, star_ring_2).Set(Color.White, star_ring_3).Save(writer);
-        StripTool.Get<StripRaw>(100, Color.Red).Set(Color.Yellow, star_ring_3).Save(writer);
-        StripTool.Get<StripRaw>(100, Color.Red).Set(Color.Yellow, star_ring_0).Save(writer);
-        StripTool.Get<StripRaw>(100, Color.Red).Set(Color.White, star_ring_0).Set(Color.Yellow, star_ring_1).Save(writer);
-        StripTool.Get<StripRaw>(100, Color.Red).Set(Color.Yellow, star_ring_0).Set(Color.White, star_ring_1).Set(Color.Yellow, star_ring_2).Save(writer);
-        StripTool.Get<StripRaw>(100, Color.Red).Set(Color.Yellow, star_ring_1).Set(Color.White, star_ring_2).Set(Color.Yellow, star_ring_3).Save(writer);
-        StripTool.Get<StripRaw>(100, Color.Red).Set(Color.Yellow, star_ring_2).Set(Color.White, star_ring_3).Save(writer);
-        StripTool.Get<StripRaw>(100, Color.Red).Set(Color.Yellow, star_ring_3).Save(writer);
-        StripTool.Get<StripRaw>(100, Color.Red).Set(Color.Yellow, star_ring_0).Save(writer);
-
-
-        //StripGradient gradient = new StripGradient(3);
-        //gradient.Colors[0] = Color.Red;
-        //gradient.Colors[1] = Color.Yellow;
-        //gradient.Colors[1] = Color.White;
-
-        //StripTool.Get<StripRaw>(500, Color.Black).Save(writer);
-
-        //StripTool.Get<StripFill>(Color.Red).Save(writer);
-        //StripTool.Get<StripCount>(100, gradient.Get(0, 5)).IndexiesAdd(star_ring_0).Save(writer);
-
-        //StripTool.Get<StripFill>(Color.Red).Save(writer);
-        //StripTool.Get<StripCount>(gradient.Get(1, 5)).IndexiesAdd(star_ring_0).Save(writer);
-        //StripTool.Get<StripCount>(100, gradient.Get(0, 5)).IndexiesAdd(star_ring_1).Save(writer);
-
-        //StripTool.Get<StripFill>(Color.Red).Save(writer);
-        //StripTool.Get<StripCount>(gradient.Get(2, 5)).IndexiesAdd(star_ring_0).Save(writer);
-        //StripTool.Get<StripCount>(gradient.Get(1, 5)).IndexiesAdd(star_ring_1).Save(writer);
-        //StripTool.Get<StripCount>(100, gradient.Get(0, 5)).IndexiesAdd(star_ring_2).Save(writer);
-
-        //StripTool.Get<StripFill>(Color.Red).Save(writer);
-        //StripTool.Get<StripCount>(gradient.Get(3, 5)).IndexiesAdd(star_ring_0).Save(writer);
-        //StripTool.Get<StripCount>(gradient.Get(2, 5)).IndexiesAdd(star_ring_1).Save(writer);
-        //StripTool.Get<StripCount>(gradient.Get(1, 5)).IndexiesAdd(star_ring_2).Save(writer);
-        //StripTool.Get<StripCount>(100, gradient.Get(0, 5)).IndexiesAdd(star_ring_3).Save(writer);
-
-        //StripTool.Get<StripFill>(Color.Red).Save(writer);
-        //StripTool.Get<StripCount>(gradient.Get(4, 5)).IndexiesAdd(star_ring_0).Save(writer);
-        //StripTool.Get<StripCount>(gradient.Get(3, 5)).IndexiesAdd(star_ring_1).Save(writer);
-        //StripTool.Get<StripCount>(gradient.Get(2, 5)).IndexiesAdd(star_ring_2).Save(writer);
-        //StripTool.Get<StripCount>(100, gradient.Get(1, 5)).IndexiesAdd(star_ring_3).Save(writer);
-
-        //StripTool.Get<StripFill>(Color.Red).Save(writer);
-        //StripTool.Get<StripCount>(gradient.Get(3, 5)).IndexiesAdd(star_ring_0).Save(writer);
-        //StripTool.Get<StripCount>(gradient.Get(4, 5)).IndexiesAdd(star_ring_1).Save(writer);
-        //StripTool.Get<StripCount>(gradient.Get(3, 5)).IndexiesAdd(star_ring_2).Save(writer);
-        //StripTool.Get<StripCount>(100, gradient.Get(2, 5)).IndexiesAdd(star_ring_3).Save(writer);
-
-        //StripTool.Get<StripFill>(Color.Red).Save(writer);
-        //StripTool.Get<StripCount>(gradient.Get(2, 5)).IndexiesAdd(star_ring_0).Save(writer);
-        //StripTool.Get<StripCount>(gradient.Get(3, 5)).IndexiesAdd(star_ring_1).Save(writer);
-        //StripTool.Get<StripCount>(gradient.Get(4, 5)).IndexiesAdd(star_ring_2).Save(writer);
-        //StripTool.Get<StripCount>(100, gradient.Get(3, 5)).IndexiesAdd(star_ring_3).Save(writer);
-
-        //StripTool.Get<StripFill>(Color.Red).Save(writer);
-        //StripTool.Get<StripCount>(gradient.Get(1, 5)).IndexiesAdd(star_ring_0).Save(writer);
-        //StripTool.Get<StripCount>(gradient.Get(2, 5)).IndexiesAdd(star_ring_1).Save(writer);
-        //StripTool.Get<StripCount>(gradient.Get(3, 5)).IndexiesAdd(star_ring_2).Save(writer);
-        //StripTool.Get<StripCount>(100, gradient.Get(4, 5)).IndexiesAdd(star_ring_3).Save(writer);
-
-        //StripTool.Get<StripFill>(Color.Red).Save(writer);
-        //StripTool.Get<StripCount>(gradient.Get(0, 5)).IndexiesAdd(star_ring_0).Save(writer);
-        //StripTool.Get<StripCount>(gradient.Get(1, 5)).IndexiesAdd(star_ring_1).Save(writer);
-        //StripTool.Get<StripCount>(gradient.Get(2, 5)).IndexiesAdd(star_ring_2).Save(writer);
-        //StripTool.Get<StripCount>(100, gradient.Get(3, 5)).IndexiesAdd(star_ring_3).Save(writer);
-
-        //StripTool.Get<StripFill>(Color.Red).Save(writer);
-        //StripTool.Get<StripCount>(gradient.Get(0, 5)).IndexiesAdd(star_ring_1).Save(writer);
-        //StripTool.Get<StripCount>(gradient.Get(1, 5)).IndexiesAdd(star_ring_2).Save(writer);
-        //StripTool.Get<StripCount>(100, gradient.Get(2, 5)).IndexiesAdd(star_ring_3).Save(writer);
-
-        //StripTool.Get<StripFill>(Color.Red).Save(writer);
-        //StripTool.Get<StripCount>(gradient.Get(0, 5)).IndexiesAdd(star_ring_2).Save(writer);
-        //StripTool.Get<StripCount>(100, gradient.Get(1, 5)).IndexiesAdd(star_ring_3).Save(writer);
-
-        //StripTool.Get<StripFill>(Color.Red).Save(writer);
-        //StripTool.Get<StripCount>(100, gradient.Get(0, 5)).IndexiesAdd(star_ring_3).Save(writer);
+        StripTool.Get<StripFill>(1000, Color.Black).Save(writer);
+        StripTool.Get<StripFill>(1000, Color.Orange).Save(writer);
 
         file.Close();
         Console.WriteLine("Finish");
+    }
+    public static void Wave(BinaryWriter writer, ushort delay, Color back, Color front)
+    {
+        StripTool.Get<StripFillCount>(delay, front).IndexiesAdd(star_ring_0).SetBack(back).Save(writer);
+        StripTool.Get<StripFillCount>(delay, front).IndexiesAdd(star_ring_1).SetBack(back).Save(writer);
+        StripTool.Get<StripFillCount>(delay, front).IndexiesAdd(star_ring_2).SetBack(back).Save(writer);
+        StripTool.Get<StripFillCount>(delay, front).IndexiesAdd(star_ring_3).SetBack(back).Save(writer);
+        StripTool.Get<StripFillCount>(delay, front).IndexiesAdd(star_ring_2).SetBack(back).Save(writer);
+        StripTool.Get<StripFillCount>(delay, front).IndexiesAdd(star_ring_1).SetBack(back).Save(writer);
+        StripTool.Get<StripFillCount>(delay, front).IndexiesAdd(star_ring_0).SetBack(back).Save(writer);
+    }
+    public static void WaveOut(BinaryWriter writer, ushort delay, Color back, Color front)
+    {
+        StripTool.Get<StripFillCount>(delay, front).IndexiesAdd(star_ring_0).SetBack(back).Save(writer);
+        StripTool.Get<StripFillCount>(delay, front).IndexiesAdd(star_ring_1).SetBack(back).Save(writer);
+        StripTool.Get<StripFillCount>(delay, front).IndexiesAdd(star_ring_2).SetBack(back).Save(writer);
+        StripTool.Get<StripFillCount>(delay, front).IndexiesAdd(star_ring_3).SetBack(back).Save(writer);
+    }
+    public static void WaveIn(BinaryWriter writer, ushort delay, Color back, Color front)
+    {
+        StripTool.Get<StripFillCount>(delay, front).IndexiesAdd(star_ring_3).SetBack(back).Save(writer);
+        StripTool.Get<StripFillCount>(delay, front).IndexiesAdd(star_ring_2).SetBack(back).Save(writer);
+        StripTool.Get<StripFillCount>(delay, front).IndexiesAdd(star_ring_1).SetBack(back).Save(writer);
+        StripTool.Get<StripFillCount>(delay, front).IndexiesAdd(star_ring_0).SetBack(back).Save(writer);
+    }
+    public static void WaveGradient(BinaryWriter writer, ushort delay, Color back, Color[] gradient)
+    {
+        List<StripBase> list = new List<StripBase>();
+        byte[][] rings = [star_ring_0, star_ring_1, star_ring_2, star_ring_3];
+        var gradIdx = gradient.Index().Select(v => v.Index).ToArray();
+        var ringIdx = rings.Index().Select(v => v.Index).ToArray();
+
+
+        if (gradient.Length <= rings.Length)
+        {
+            for (int i = 1; i <= gradient.Length; i++)
+            {
+                var l1 = gradIdx.Skip(0).Take(i);
+                var l2 = ringIdx.Skip(0).Take(i).Reverse();
+                var l3 = l1.Zip(l2).ToList();
+                list.Add(StripTool.Get<StripFill>(back));
+                l3.ForEach(v =>
+                {
+                    //Console.WriteLine("grad[{0}], rings[{1}]", v.First, v.Second);
+                    list.Add(StripTool.Get<StripCount>(gradient[v.First]).IndexiesAdd(rings[v.Second]));
+                });
+                list.Last().Delay = delay;
+                //Console.WriteLine();
+            }
+            //Console.WriteLine();
+            for (int i = 1; i <= rings.Length - gradient.Length; i++)
+            {
+                var l1 = gradIdx.Skip(0).Take(gradient.Length);
+                var l2 = ringIdx.Skip(i).Take(gradient.Length).Reverse();
+                var l3 = l1.Zip(l2).ToList();
+                list.Add(StripTool.Get<StripFill>(back));
+                l3.ForEach(v =>
+                {
+                    //Console.WriteLine("grad[{0}], rings[{1}]", v.First, v.Second);
+                    list.Add(StripTool.Get<StripCount>(gradient[v.First]).IndexiesAdd(rings[v.Second]));
+                });
+                list.Last().Delay = delay;
+                //Console.WriteLine();
+            }
+            //Console.WriteLine();
+            for (int i = 1; i < gradient.Length; i++)
+            {
+                var l1 = gradIdx.Skip(i);
+                var l2 = ringIdx.Skip(rings.Length - l1.Count()).Take(l1.Count()).Reverse();
+                var l3 = l1.Zip(l2).ToList();
+                list.Add(StripTool.Get<StripFill>(back));
+                l3.ForEach(v =>
+                {
+                    //Console.WriteLine("grad[{0}], rings[{1}]", v.First, v.Second);
+                    list.Add(StripTool.Get<StripCount>(gradient[v.First]).IndexiesAdd(rings[v.Second]));
+                });
+                list.Last().Delay = delay;
+                //Console.WriteLine();
+            }
+            //Console.WriteLine();
+        }
+        else {
+            for (int i = 1; i <= gradient.Length; i++)
+            {
+                var l1 = gradIdx.Skip(0).Take(i);
+                var l2 = ringIdx.Skip(0).Take(i).Reverse();
+                var l3 = l1.Zip(l2).ToList();
+                list.Add(StripTool.Get<StripFill>(back));
+                l3.ForEach(v =>
+                {
+                    //Console.WriteLine("grad[{0}], rings[{1}]", v.First, v.Second);
+                    list.Add(StripTool.Get<StripCount>(gradient[v.First]).IndexiesAdd(rings[v.Second]));
+                });
+                list.Last().Delay = delay;
+                //Console.WriteLine();
+            }
+            //Console.WriteLine();
+            for (int i = 1; i <= gradient.Length - ringIdx.Length; i++)
+            {
+                var l1 = gradIdx.Skip(i).Take(ringIdx.Length);
+                var l2 = ringIdx.Skip(0).Take(ringIdx.Length).Reverse();
+                var l3 = l1.Zip(l2).ToList();
+                list.Add(StripTool.Get<StripFill>(back));
+                l3.ForEach(v =>
+                {
+                    //Console.WriteLine("grad[{0}], rings[{1}]", v.First, v.Second);
+                    list.Add(StripTool.Get<StripCount>(gradient[v.First]).IndexiesAdd(rings[v.Second]));
+                });
+                list.Last().Delay = delay;
+                //Console.WriteLine();
+            }
+            //Console.WriteLine();
+            for (int i = 1; i <= ringIdx.Length; i++)
+            {
+                var l1 = gradIdx.Skip(i).Take(ringIdx.Length);
+                var l2 = ringIdx.Skip(0).Take(ringIdx.Length).Reverse();
+                var l3 = l1.Zip(l2).ToList();
+                list.Add(StripTool.Get<StripFill>(back));
+                l3.ForEach(v =>
+                {
+                    //Console.WriteLine("grad[{0}], rings[{1}]", v.First, v.Second);
+                    list.Add(StripTool.Get<StripCount>(gradient[v.First]).IndexiesAdd(rings[v.Second]));
+                });
+                list.Last().Delay = delay;
+                //Console.WriteLine();
+            }
+        }
+        list.ForEach(i => i.Save(writer));
     }
 }

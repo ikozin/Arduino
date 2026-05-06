@@ -1,3 +1,5 @@
+using System.Collections;
+
 namespace ProgrTool;
 
 public class LedData(System.Drawing.Color color)
@@ -130,9 +132,10 @@ public static class StripTool
         return (Activator.CreateInstance(typeof(T), [delay, color]) as T)!;
     }
 }
-public class StripBase
+public abstract class StripBase
 {
     public UInt16 Delay { get; set; }
+    public abstract void Save(BinaryWriter writer);
 }
 public class StripFill : StripBase
 {
@@ -148,7 +151,7 @@ public class StripFill : StripBase
         Delay = 0;
         Led = new LedData();
     }
-    public void Save(BinaryWriter writer)
+    public override void Save(BinaryWriter writer)
     {
         if (Delay == 0)
         {
@@ -190,7 +193,7 @@ public class StripCount : StripBase
         Led = new LedData();
         Indexies.Clear();
     }
-    public void Save(BinaryWriter writer)
+    public override void Save(BinaryWriter writer)
     {
         if (Delay == 0)
         {
@@ -231,7 +234,7 @@ public class StripRaw : StripBase
         }
         return this;
     }
-    public void Save(BinaryWriter writer)
+    public override void Save(BinaryWriter writer)
     {
         if (Delay == 0)
         {
@@ -248,6 +251,66 @@ public class StripRaw : StripBase
             writer.Write(led.Color.R);
             writer.Write(led.Color.G);
             writer.Write(led.Color.B);
+        }
+    }
+}
+
+public class StripFillCount : StripBase
+{
+    public StripFillCount(UInt16 delay, System.Drawing.Color color)
+    {
+        Delay = delay;
+        Led = new LedData(color);
+        Back = new LedData(System.Drawing.Color.Black);
+        Indexies = [];
+    }
+    public LedData Back { get; set; }
+
+    public LedData Led { get; set; }
+    public List<byte> Indexies { get; private set; }
+    public StripFillCount SetBack(System.Drawing.Color color)
+    {
+        Back = new LedData(color);
+        return this;
+    }
+    public StripFillCount IndexiesAdd(IEnumerable<byte> list)
+    {
+        Indexies.AddRange(list);
+        return this;
+    }
+    public StripFillCount IndexiesClear()
+    {
+        Indexies.Clear();
+        return this;
+    }
+    public void Clear()
+    {
+        Delay = 0;
+        Led = new LedData();
+        Indexies.Clear();
+    }
+    public override void Save(BinaryWriter writer)
+    {
+        if (Delay == 0)
+        {
+            writer.Write((byte)0x03);
+        }
+        else
+        {
+            writer.Write((byte)0x83);
+            writer.Write(Delay);
+        }
+        writer.Write(Back.Color.R);
+        writer.Write(Back.Color.G);
+        writer.Write(Back.Color.B);
+
+        writer.Write(Led.Color.R);
+        writer.Write(Led.Color.G);
+        writer.Write(Led.Color.B);
+        writer.Write((byte)Indexies.Count);
+        foreach (int i in Indexies)
+        {
+            writer.Write((byte)i);
         }
     }
 }

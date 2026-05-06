@@ -1,25 +1,18 @@
 #include <Arduino.h>
 #include <Wire.h>
-#include <GyverIO.h>
-#include <GyverMenu.h>
 #include <StringN.h>
 #include <LiquidCrystal_I2C.h>
 #include <MCP23008.h>
 
-
 #ifndef ARDUINO_AVR_PRO
 #error Select board: Arduino Pro Mini 
 #endif
-
 
 const int lcdLines = 4;
 const int lcdRows = 20;
 
 LiquidCrystal_I2C lcd(0);
 String64 text; 
-
-GyverMenu menu(lcdRows, lcdLines);
-
 
 byte _L1[8] = { B00000, B00000, B00000, B00000, B00000, B11111, B11111, B11111 };
 byte _L2[8] = { B11111, B11111, B11111, B00000, B00000, B00000, B00000, B00000 };
@@ -92,6 +85,15 @@ const char months[12][9] = {
   "\xE3""e\xBA""a\xB2p\xC4",
 };
 
+uint16_t year = 2026;
+uint8_t month = 1;
+uint8_t day = 1;
+
+uint8_t hour = 0;
+uint8_t minute = 0;
+uint8_t second = 0;
+
+
 void displayDate(uint8_t day, uint8_t month, uint16_t year) {
     text = "  ";
     text += day;
@@ -132,6 +134,18 @@ void displayTime(uint8_t hour, uint8_t minute) {
     lcd.print(digits_bottom[minute]);
 }
 
+void menuSettingData() {
+    Serial.println("menuSettingData");
+}
+void menuSettingTime() {
+    Serial.println("menuSettingTime");
+}
+void menuSettingAlarm() {
+    Serial.println("menuSettingAlarm");
+}
+void menuSettingCorrect() {
+    Serial.println("menuSettingCorrect");
+}
 void setup() {
     Serial.begin(115200);
 
@@ -149,13 +163,6 @@ void setup() {
     lcd.createChar(6, _B3);
     lcd.createChar(7, _B4);
 }
-
-uint16_t year = 2026;
-uint8_t month = 1;
-uint8_t day = 1;
-
-uint8_t hour = 0;
-uint8_t minute = 0;
 
 void loop() {
     unsigned long time = millis();
