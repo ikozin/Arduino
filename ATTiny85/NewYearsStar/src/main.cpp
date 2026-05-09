@@ -1,5 +1,6 @@
 #include <Arduino.h>
 #include <TinyWireM.h>
+#define FASTLED_ALLOW_INTERRUPTS 1
 #include <FastLED.h>
 
 /*

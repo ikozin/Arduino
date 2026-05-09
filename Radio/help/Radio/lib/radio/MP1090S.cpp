@@ -1,6 +1,7 @@
 
 #include <Wire.h>
 #include "MP1090S.h"
+#include "GyverIO.h"
 
 static word MP1090S_REGS[12] = {0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
                                 0x0000, 0x0100, 0x0000, 0x0000, 0x0000, 0x0000};
@@ -15,16 +16,17 @@ MP1090S::MP1090S() { }
 // входные параметры:
 //           byte RST_PIN - номер линии ввода/вывода модул¤ Arduino (0, 1, 2...),
 //                          к которой подключена лини¤ IN_RST модул¤ MP1090S
-void MP1090S::InitI2C(byte RST_PIN) {
-      pinMode(RST_PIN, OUTPUT);
-      digitalWrite(RST_PIN, LOW);
-      pinMode(SDA, OUTPUT);
-      pinMode(SCL, OUTPUT);
-      digitalWrite(SDA, LOW);
-      digitalWrite(SCL, HIGH);
+void MP1090S::InitI2C(byte RST_PIN, byte SEN_PIN) {
+      gio::mode(SEN_PIN, OUTPUT);
+      gio::high(SEN_PIN);
+      gio::mode(RST_PIN, OUTPUT);
+      gio::low(RST_PIN);
+      gio::mode(SDA, OUTPUT);
+      gio::mode(SCL, OUTPUT);
+      gio::low(SDA);
+      gio::high(SCL);
       delay(200);
-      
-      digitalWrite(RST_PIN, HIGH);
+      gio::high(RST_PIN);
       delay(200);
       
       MP1090S_REGS[MP1090S_TEST1] = 0x8100;

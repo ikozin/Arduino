@@ -38,7 +38,7 @@ LiquidCrystal_I2C::LiquidCrystal_I2C(uint8_t i2caddr)
 }
 
 
-void LiquidCrystal_I2C::begin(uint8_t lines)
+void LiquidCrystal_I2C::begin(uint8_t lines, uint8_t columns)
 {
   _i2c.begin(_i2cAddr);
 

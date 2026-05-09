@@ -38,7 +38,7 @@ class MP1090S {
    public:
          MP1090S();
    public:
-         static void InitI2C(byte RST_PIN);
+         static void InitI2C(byte RST_PIN, byte SEN_PIN);
          static void SetBand(byte Band);
          static void SetSpace(byte Space);
          static void SetVolume(byte Volume);

@@ -47,7 +47,7 @@ class LiquidCrystal_I2C : public Print
   public:
     LiquidCrystal_I2C(uint8_t i2cAddr);
       
-    void begin(uint8_t rows);
+    void begin(uint8_t rows, uint8_t cols);
 
     void clear();
     void home();
