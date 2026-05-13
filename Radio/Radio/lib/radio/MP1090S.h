@@ -1,8 +1,6 @@
-#ifndef MP1090S_h
-#define MP1090S_h
+#pragma once
 
 #include "Arduino.h"
-
 
 //==============================================================================
 #define   MP1090S_ADDRESS      0x10
@@ -36,29 +34,23 @@
 #define   STC_BIT         (1<<14)
 #define   TUNE_BIT        (1<<15)
 
-
-
-class MP1090S
-{
-  public:
-     MP1090S ();
-     static void InitI2C (byte RST_PIN);
-     static void SetBand (byte Band);
-     static void SetSpace (byte Space);
-     static void SetVolume (byte Volume);
-     static boolean SetStation (long StationFrequency);
-     static byte GetBand (void);
-     static byte GetSpace (void);
-     static byte GetVolume (void);
-     static long GetStation (void);
-     
-  private:
-     static void Write (byte Reg);
-     static void ReadStatus (void);
-     static word GetStationCode (long StationFrequency);
-     
+class MP1090S {
+   public:
+         MP1090S();
+   public:
+         static void InitI2C(byte RST_PIN, byte SEN_PIN);
+         static void SetBand(byte Band);
+         static void SetSpace(byte Space);
+         static void SetVolume(byte Volume);
+         static boolean SetStation(long StationFrequency);
+         static byte GetBand(void);
+         static byte GetSpace(void);
+         static byte GetVolume(void);
+         static long GetStation(void);
+      private:
+         static void Write(byte Reg);
+         static void ReadStatus(void);
+         static word GetStationCode(long StationFrequency);
 };
 
 extern MP1090S MP1090S_RADIO;
-
-#endif

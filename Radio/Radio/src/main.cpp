@@ -11,7 +11,7 @@ MCP23008_ADDRESS    0x20
 DS3231              0x68
 
 
-AUDUIO 
+AUDIO 
 1 - GND
 2 - LEFT
 3 - MIC
@@ -28,25 +28,47 @@ MP1090S
  --------------------
 | X | X | X | X | X |
  -------------------
+
+ http://robotosha.ru/wp-content/uploads/2015/03/hd44780_char_table.png
+    | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | A | B | C | D | E | F |
+| 0 |   |   |   | 0 | @ | P | ` | p |   |   | Б | Ю | ч |   | Д |   |
+| 1 |   |   | ! | 1 | A | Q | a | q |   |   | Г | Я | ш |   | Ц |   |
+| 2 |   |   | " | 2 | B | R | b | r |   |   | Ё | б | ъ |   | Щ |   |
+| 3 |   |   | # | 3 | C | S | c | s |   |   | Ж | в | ы |   | д |   |
+| 4 |   |   | $ | 4 | D | T | d | t |   |   | З | г | ь |   | ф |   |
+| 5 |   |   | % | 5 | E | U | e | u |   |   | И | ё | э |   | ц |   |
+| 6 |   |   | & | 6 | F | V | f | v |   |   | Й | ж | ю |   | щ |   |
+| 7 |   |   | ' | 7 | G | W | g | w |   |   | Л | з | я |   |   |   |
+| 8 |   |   | ( | 8 | H | X | h | x |   |   | П | и |   |   |   |   |
+| 9 |   |   | ) | 9 | I | Y | i | y |   |   | У | й |   |   |   |   |
+| A |   |   | * | : | J | Z | j | z |   |   | Ф | к |   |   |   |   |
+| B |   |   | + | ; | K | [ | k |   |   |   | Ч | л |   |   |   |   |
+| C |   |   | , | < | L |   | l |   |   |   | Ш | м |   |   |   |   |
+| D |   |   | - | = | M | ] | m |   |   |   | Ъ | н |   |   |   |   |
+| E |   |   | . | > | N | ^ | n |   |   |   | Ы | п |   |   |   |   |
+| F |   |   | / | ? | O | _ | o |   |   |   | Э | т |   |   |   |   |
+
 */
-// #define RELOCATE
 
 #include "Radio.h"
+#include "Storage.h"
+#include "StringN.h"
+#include "GyverIO.h"
+#include "GyverMenu.h"
+#include "GyverDS3231Min.h"
 
 #ifndef ARDUINO_AVR_PRO
 #error Select board: Arduino Pro Mini 
 #endif
 
-#define ALARM_VOLUME    (5)
-
-#define sizeofarray(a)  (sizeof(a)/sizeof(a[0]))
-
 unsigned long lasttime = 0; // время последнего срабатывания прерывания, для исключения дребезга и мнгновенного срабатывания несколько раз.
 
 LiquidCrystal_I2C lcd(0);
+GyverMenu menu(lcdRows, lcdLines);
+GyverDS3231Min  rtc;
+Storage storage; 
 
-RTC_DS3231  rtc;
-
+String24 text; 
 volatile uint8_t mode  = MODE_CLOCK;
 
 byte _L1[8] = { B00000, B00000, B00000, B00000, B00000, B11111, B11111, B11111 };
@@ -105,29 +127,6 @@ const char *const digits_bottom[] = {
     digit_9_bottom,
 };
 
-
-/*
-http://robotosha.ru/wp-content/uploads/2015/03/hd44780_char_table.png
-    | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | A | B | C | D | E | F |
-| 0 |   |   |   | 0 | @ | P | ` | p |   |   | Б | Ю | ч |   | Д |   |
-| 1 |   |   | ! | 1 | A | Q | a | q |   |   | Г | Я | ш |   | Ц |   |
-| 2 |   |   | " | 2 | B | R | b | r |   |   | Ё | б | ъ |   | Щ |   |
-| 3 |   |   | # | 3 | C | S | c | s |   |   | Ж | в | ы |   | д |   |
-| 4 |   |   | $ | 4 | D | T | d | t |   |   | З | г | ь |   | ф |   |
-| 5 |   |   | % | 5 | E | U | e | u |   |   | И | ё | э |   | ц |   |
-| 6 |   |   | & | 6 | F | V | f | v |   |   | Й | ж | ю |   | щ |   |
-| 7 |   |   | ' | 7 | G | W | g | w |   |   | Л | з | я |   |   |   |
-| 8 |   |   | ( | 8 | H | X | h | x |   |   | П | и |   |   |   |   |
-| 9 |   |   | ) | 9 | I | Y | i | y |   |   | У | й |   |   |   |   |
-| A |   |   | * | : | J | Z | j | z |   |   | Ф | к |   |   |   |   |
-| B |   |   | + | ; | K | [ | k |   |   |   | Ч | л |   |   |   |   |
-| C |   |   | , | < | L |   | l |   |   |   | Ш | м |   |   |   |   |
-| D |   |   | - | = | M | ] | m |   |   |   | Ъ | н |   |   |   |   |
-| E |   |   | . | > | N | ^ | n |   |   |   | Ы | п |   |   |   |   |
-| F |   |   | / | ? | O | _ | o |   |   |   | Э | т |   |   |   |   |
-
-*/
-
 const char months[12][9] = {
   "\xC7\xBD\xB3""ap\xC4",
   "\xE4""e\xB3pa\xBB\xC4",
@@ -142,6 +141,59 @@ const char months[12][9] = {
   "\xBDo\xC7\xB2p\xC4",
   "\xE3""e\xBA""a\xB2p\xC4",
 };
+
+typedef struct {
+    uint16_t year;
+    uint8_t month;
+    uint8_t day;
+    uint8_t hour;
+    uint8_t minute;
+    uint8_t second;
+} DEVICE_DATE_TIME;
+DEVICE_DATE_TIME setting = { .year = 2026, .month = 1, .day = 1, .hour = 0, .minute = 0, .second = 0 };
+
+typedef struct {
+    bool state;
+    bool Monday;
+    bool Tuesday;
+    bool Wednesday;
+    bool Thursday;
+    bool Friday;
+    bool Saturday;
+    bool Sunday;
+    uint8_t mode;
+    uint8_t hour;
+    uint8_t minute;
+    uint8_t volume;
+    uint8_t radio;
+} DEVICE_SETTING_ALARM;
+#define ALARM_SIZE  (6)
+DEVICE_SETTING_ALARM    alarm[ALARM_SIZE] = {{
+        .state = true,
+        .Monday = true, .Tuesday = true, .Wednesday = true, .Thursday = true, .Friday = true, .Saturday = true, .Sunday = true,
+        .mode = 0, .hour = 23, .minute = 0, .volume = 0, .radio = 0,
+    }, {
+        .state = true,
+        .Monday = true, .Tuesday = true, .Wednesday = true, .Thursday = true, .Friday = true, .Saturday = false, .Sunday = false,
+        .mode = 1, .hour = 8, .minute = 0, .volume = 4, .radio = 30    
+    }, {
+        .state = true,
+        .Monday = false, .Tuesday = false, .Wednesday = false, .Thursday = false, .Friday = false, .Saturday = true, .Sunday = true,
+        .mode = 1, .hour = 10, .minute = 0, .volume = 4, .radio = 30    
+    }
+};
+
+DEVICE_SETTING_ALARM* alarm1 = &alarm[0];
+DEVICE_SETTING_ALARM* alarm2 = &alarm[1];
+DEVICE_SETTING_ALARM* alarm3 = &alarm[2];
+DEVICE_SETTING_ALARM* alarm4 = &alarm[3];
+DEVICE_SETTING_ALARM* alarm5 = &alarm[4];
+DEVICE_SETTING_ALARM* alarm6 = &alarm[5];
+
+typedef struct {
+	long wave;
+	char name[21];
+} RadioItem;
 
 // Важно: русские буквы, видимо в unicode, так как массив с ними переполнен, да и вывод их не совпадает (кодировка)
 const RadioItem radioList[] PROGMEM = {
@@ -198,55 +250,7 @@ const RadioItem radioList[] PROGMEM = {
 };
 const int listSize = sizeof(radioList) / sizeof(RadioItem);
 
-int volume = 10;  // громкость
-int index = 35;   // индекс радиостанции
-
 AlarmItem *pCurrentAlarm = NULL;
-AlarmItem alarmOn[4] = { {
-        .week = FLAG_WORK_WEEK,
-        .hour = 7,
-        .minute = 10,
-        .second = 0
-    }, {
-        .week = FLAG_SATURDAY | FLAG_SUNDAY,
-        .hour = 9,
-        .minute = 0,
-        .second = 0
-    }, {
-        .week = 0,
-        .hour = 0,
-        .minute = 0,
-        .second = 0
-    }, {
-        .week = 0,
-        .hour = 0,
-        .minute = 0,
-        .second = 0
-    },
-};
-
-AlarmItem alarmOff[4] = { {
-        .week = FLAG_WORK_WEEK | FLAG_SATURDAY | FLAG_SUNDAY,
-        .hour = 23,
-        .minute = 0,
-        .second = 0
-    }, {
-        .week = FLAG_WORK_WEEK,
-        .hour = 7,
-        .minute = 20,
-        .second = 0
-    }, {
-        .week = FLAG_SATURDAY | FLAG_SUNDAY,
-        .hour = 10,
-        .minute = 0,
-        .second = 0
-    }, {
-        .week = 0,
-        .hour = 0,
-        .minute = 0,
-        .second = 0
-    },
-};
 
 const char *playList[] = {
     song01,
@@ -273,13 +277,7 @@ const char *playList[] = {
     song23,
     song24,
 };
-
-// Melodies.h
 const int playListSize = sizeof(playList) / sizeof(char*);
-int currentPlay = 0;
-
-int8_t corrSec = 0;
-bool corrApplied = 0;
 
 void error(const char *text) {
     Serial.println(text);
@@ -289,34 +287,73 @@ void error(const char *text) {
     for (;;);
 }
 
-void dumpInfoAlarm(const AlarmItem *pAlarmData) {
-    char text[21];
-    sprintf(text, "%02X, %02d:%02d:%02d", pAlarmData->week, pAlarmData->hour, pAlarmData->minute, pAlarmData->second);
-    Serial.println(text);
+void displayDate(uint8_t day, uint8_t month, uint16_t year) {
+    text = "  ";
+    text += day;
+    text += ' ';
+    text += months[month - 1];
+    text += ' ';
+    text += year;
+    text += "  ";
+    lcd.setCursor((lcdRows - text.length()) >> 1, 0);
+    lcd.print(text);
 }
 
-void dumpInfo() {
-    Serial.print(F("index = "));
-    Serial.println(index);
-    Serial.print(F("volume = "));
-    Serial.println(volume);
-    Serial.print(F("corrSec = "));
-    Serial.println(corrSec);
-    Serial.print(F("currentPlay = "));
-    Serial.println(currentPlay);
+void displayTime(uint8_t hour, uint8_t minute) {
+    uint8_t cnt;
 
-    dumpInfoAlarm(&alarmOn[0]);
-    dumpInfoAlarm(&alarmOn[1]);
-    dumpInfoAlarm(&alarmOn[2]);
-    dumpInfoAlarm(&alarmOn[3]);
+    cnt = 0;
+    while (hour >= 10) {
+        cnt += 1;
+        hour -= 10;
+    }
+    lcd.setCursor(2, 2);
+    lcd.print(digits_top[cnt]);
+    lcd.print(digits_top[hour]);
+    lcd.setCursor(2, 3);
+    lcd.print(digits_bottom[cnt]);
+    lcd.print(digits_bottom[hour]);
 
-    dumpInfoAlarm(&alarmOff[0]);
-    dumpInfoAlarm(&alarmOff[1]);
-    dumpInfoAlarm(&alarmOff[2]);
-    dumpInfoAlarm(&alarmOff[3]);
+    cnt = 0;
+    while (minute >= 10) {
+        cnt += 1;
+        minute -= 10;
+    }    
+    lcd.setCursor(10, 2);
+    lcd.print(digits_top[cnt]);
+    lcd.print(digits_top[minute]);
+    lcd.setCursor(10, 3);
+    lcd.print(digits_bottom[cnt]);
+    lcd.print(digits_bottom[minute]);
 }
 
-#define isdigit(n) (n >= '0' && n <= '9')
+// void dumpInfoAlarm(const AlarmItem *pAlarmData) {
+//     text.clear();
+//     text.add(pAlarmData->week, 16);
+//     text.add(" ,");
+//     if (pAlarmData->hour < 10) text.add('0');
+//     text.add(pAlarmData->hour);
+//     text.add(":");
+//     if (pAlarmData->minute < 10) text.add('0');
+//     text.add(pAlarmData->minute);
+//     text.add(":");
+//     if (pAlarmData->second < 10) text.add('0');
+//     text.add(pAlarmData->second);
+//     Serial.println(text);
+// }
+
+// void dumpInfo() {
+//     Serial.print(F("index = "));
+//     Serial.println(storage.GetIndex());
+//     Serial.print(F("volume = "));
+//     Serial.println(storage.GetVolume());
+//     Serial.print(F("corrSec = "));
+//     Serial.println(storage.GetCorrSec());
+//     Serial.print(F("currentPlay = "));
+//     Serial.println(storage.GetCurrentPlay());
+//     for (int i = 0; i < storage.GetAlarmOnSize(); i++) dumpInfoAlarm(storage.GetAlarmOn(i));
+//     for (int i = 0; i < storage.GetAlarmOffSize(); i++) dumpInfoAlarm(storage.GetAlarmOff(i));
+// }
 
 void play_rtttl(const char *song) {
     char *ptr = (char *)song;
@@ -474,51 +511,11 @@ void switchmode() {
     interrupts();
 }
 
-void intToStr(String &text, uint8_t value) {
-    uint8_t cnt = 0;
-    while (value >= 10) {
-        cnt += 1;
-        value -= 10;
-    }
-    text += (cnt == 0)? ' ' : cnt + '0';
-    text += value;
-}
-
-void displayTime(uint8_t hour, uint8_t minute) {
-    uint8_t cnt;
-
-    cnt = 0;
-    while (hour >= 10) {
-        cnt += 1;
-        hour -= 10;
-    }
-
-    lcd.setCursor(2, 2);
-    lcd.print(digits_top[cnt]);
-    lcd.print(digits_top[hour]);
-    lcd.setCursor(2, 3);
-    lcd.print(digits_bottom[cnt]);
-    lcd.print(digits_bottom[hour]);
-
-    cnt = 0;
-    while (minute >= 10) {
-        cnt += 1;
-        minute -= 10;
-    }
-    
-    lcd.setCursor(10, 2);
-    lcd.print(digits_top[cnt]);
-    lcd.print(digits_top[minute]);
-    lcd.setCursor(10, 3);
-    lcd.print(digits_bottom[cnt]);
-    lcd.print(digits_bottom[minute]);
-}
-
-bool checkAlarmTime(AlarmItem *pAlarmData, DateTime now, int dayOfWeek) {
+bool checkAlarmTime(AlarmItem *pAlarmData, Datime now, int dayOfWeek) {
     if (pAlarmData->week & (1 << dayOfWeek)) {
-        if (now.hour() == pAlarmData->hour 
-            && now.minute() == pAlarmData->minute
-            && now.second() == pAlarmData->second) {
+        if (now.hour == pAlarmData->hour 
+            && now.minute == pAlarmData->minute
+            && now.second == pAlarmData->second) {
             return true;
         }
     }
@@ -526,24 +523,22 @@ bool checkAlarmTime(AlarmItem *pAlarmData, DateTime now, int dayOfWeek) {
 }
 
 void showRadioVolume() {
-    volume = constrain(volume, 0, 15);
     if (mode == MODE_RADIO) {
         int i;
         lcd.setCursor(5, 3);
-        for (i = 0; i < volume; i++) {
+        for (i = 0; i < storage.GetVolume(); i++) {
             lcd.print("\xFF");
         }
         for (; i < 15; i++) {
             lcd.print(" ");
         }
     }
-    MP1090S::SetVolume(volume);
-    EEPROM.write(EEPROM_ADDR_RADIO_VOLUME, volume);
+    MP1090S::SetVolume(storage.GetVolume());
 }
 
 void showRadioStation() {
-    index = constrain(index, 0, listSize - 1);
-    uint8_t *p_item = (uint8_t *)(radioList + index);
+    storage.SetIndex(constrain(storage.GetIndex(), 0, listSize - 1));
+    uint8_t *p_item = (uint8_t *)(radioList + storage.GetIndex());
     if (mode == MODE_RADIO) {
         uint8_t *p_name = p_item + sizeof(long);
 
@@ -554,54 +549,64 @@ void showRadioStation() {
         }
 
         lcd.setCursor(0, 2);
-        char text[20];
-        sprintf(text, "C\xBF""a\xBD\xE5\xB8\xC7 %2d \xB8\xB7 %d ", index + 1, listSize);
+        text.clear();
+        text.add("C\xBF""a\xBD\xE5\xB8\xC7 ");  // "Станция "
+        text.add(storage.GetIndex() + 1);
+        text.add(" \xB8\xB7 ");                 // " из "
+        text.add(listSize);
+        // sprintf(text, "C\xBF""a\xBD\xE5\xB8\xC7 %2d \xB8\xB7 %d ", storage.GetIndex() + 1, listSize);
         lcd.print(text);
     }
     long wave = (long)pgm_read_dword_near(p_item);
     MP1090S::SetStation(wave);
-    EEPROM.write(EEPROM_ADDR_RADIO_INDEX, index);
+    storage.Save();
 }
 
 void radioButtons() {
     if (digitalRead(pinVolumeUp) == LOW) {
-        volume --;
+        storage.SetVolume(storage.GetVolume() - 1);
         showRadioVolume();
+        storage.Save();
     }
     if (digitalRead(pinVolumeDown) == LOW) {
-        volume ++;
+        storage.SetVolume(storage.GetVolume() + 1);
         showRadioVolume();
+        storage.Save();
     }
     if (digitalRead(pinStationUp) == LOW) {
-        index --;
+        storage.SetIndex(storage.GetIndex() - 1);
         showRadioStation();
+        storage.Save();
     }
     if (digitalRead(pinStationDown) == LOW) {
-        index ++;
+        storage.SetIndex(storage.GetIndex() + 1);
         showRadioStation();
+        storage.Save();
     }
+    
 }
 
 bool checkAlarm() {
-    DateTime now = rtc.now();
-    uint8_t dayOfWeek = now.dayOfTheWeek();
+    Datime now = rtc.getTime();
+    uint8_t dayOfWeek = now.weekDay();
     dayOfWeek = (dayOfWeek == 0) ? 6 : dayOfWeek - 1;
 
-    for (uint16_t i = 0; i < sizeof(alarmOn)/sizeof(alarmOn[0]); i++) {
-        AlarmItem *pAlarmData = alarmOn + i;
+    for (uint16_t i = 0; i < storage.GetAlarmSize(); i++) {
+        AlarmItem *pAlarmData = storage.GetAlarm(i);
+        if (pAlarmData->state != ALARM_STATE::Off) break;
         if (checkAlarmTime(pAlarmData, now, dayOfWeek)) {
-            pCurrentAlarm = pAlarmData;
-            mode = MODE_ALARM;
-            return true;
-        }
-    }
-    for (uint16_t i = 0; i < sizeof(alarmOff)/sizeof(alarmOff[0]); i++) {
-        AlarmItem *pAlarmData = alarmOff + i;
-        if (checkAlarmTime(pAlarmData, now, dayOfWeek)) {
-            if (volume > 0) {
-                volume = 0;
-                showRadioVolume();
+            if (pAlarmData->mode == ALARM_MODE::Voice) {
+                if (storage.GetVolume() > 0) {
+                    storage.SetVolume(0);
+                    showRadioVolume();
+                    storage.Save();
+                }
             }
+            if (pAlarmData->mode == ALARM_MODE::Mute) {
+                pCurrentAlarm = pAlarmData;
+                mode = MODE_ALARM;
+            }
+            return true;
         }
     }
 
@@ -643,29 +648,14 @@ void loopClock() {
         if (checkAlarm()) {
             break;
         }
-
         radioButtons();
-
-        DateTime now = rtc.now();
-
-        String text;
-        text.reserve(24);
-        text += now.day();
-        text += ' ';
-        text += months[now.month() - 1];
-        text += ' ';
-        text += now.year();
-
-        lcd.setCursor((lcdRows - text.length()) >> 1, 0);
-        lcd.print(text);
-
+        Datime now = rtc.getTime();
+        displayDate(now.year, now.month, now.day);
         if (checkAlarm()) {
             break;
         }
-
         radioButtons();
-
-        displayTime(now.hour(), now.minute());
+        displayTime(now.hour, now.minute);
     }
 }
 
@@ -674,11 +664,9 @@ void loopRadio() {
     lcd.setCursor(0, 1);
     lcd.print(F("--------------------"));
     lcd.setCursor(0, 3);
-    lcd.print(F("\xA1po\xBC:"));
-
+    lcd.print(F("\xA1po\xBC:"));    // "Гром:"
     showRadioStation();
     showRadioVolume();
-
     while (mode == MODE_RADIO) {
         if (checkAlarm()) break;
         radioButtons();
@@ -690,54 +678,146 @@ void loopAlarm() {
 
     AlarmItem *pAlarmData = pCurrentAlarm;
     lcd.setCursor(6, 0);
-    lcd.print(F("\xA0\xA9\xE0\xA5\xA7""bH\xA5K"));
+    lcd.print(F("\xA0\xA9\xE0\xA5\xA7""bH\xA5K"));  // "БУДИЛЬНИК"
     displayTime(pAlarmData->hour, pAlarmData->minute);
 
     for (int count = 0; count < 1 && mode == MODE_ALARM; count ++) {
-        const char *song = playList[currentPlay++];
+        int play = storage.GetCurrentPlay();
+        const char *song = playList[play++];
+
         play_rtttl(song);
         // Пауза в 1 секунду
         for (int i = 0; i < 10 && mode == MODE_ALARM; i++) delay(100);
         // Сохраняем номер след. музыки
-        if (currentPlay >= playListSize) currentPlay = 0;
-        EEPROM.write(EEPROM_ADDR_ALARM_INDEX, currentPlay);
+        if (play >= playListSize) play = 0;
+        storage.SetCurrentPlay(play);
     }
     if (mode == MODE_ALARM) {
-        if (volume == 0) {
-            volume = ALARM_VOLUME;
+        if (storage.GetVolume() == 0) {
+            storage.SetVolume(pAlarmData->volume);
         }
         showRadioVolume();
     }
+    storage.Save();
     mode = MODE_CLOCK;
+}
+
+void showMenu() {
+    Datime now = rtc.getTime();
+    setting.year = now.year;
+    setting.month = now.month;
+    setting.day = now.day;
+    setting.hour = now.hour;
+    setting.minute = now.minute;
+    setting.second = now.second;
+
+    memset(alarm, 0, sizeof(alarm));
+    for (int i = 0; i < ALARM_SIZE; i++) {
+        auto src = storage.GetAlarm(i);
+        auto dst = &alarm[i];
+        if (src->state == ALARM_STATE::Off) break;
+        dst->state = true;
+        dst->Monday = src->week & FLAG_MONDAY;
+        dst->Tuesday = src->week & FLAG_TUESDAY;
+        dst->Wednesday = src->week & FLAG_WEDNESDAY;
+        dst->Thursday = src->week & FLAG_THURSDAY;
+        dst->Friday = src->week & FLAG_FRIDAY;
+        dst->Saturday = src->week & FLAG_SATURDAY;
+        dst->Sunday = src->week & FLAG_SUNDAY;
+        dst->mode = src->mode == ALARM_MODE::Voice ? 1: 0;
+        dst->volume = src->volume;
+        dst->radio = src->radio;
+    }
+    menu.refresh();
+}
+
+
+
+
+void actionExit() {
+    mode = MODE_CLOCK;
+}
+
+void actionDateSave() {
+    Datime date = rtc.getTime();
+    date.year = setting.year;
+    date.month = setting.month;
+    date.day = setting.day;
+    rtc.setTime(date);
+    menu.back();
+}
+
+void actionTimeSave() {
+    Datime date = rtc.getTime();
+    date.hour = setting.hour;
+    date.minute = setting.minute;
+    date.second = setting.second;
+    rtc.setTime(date);
+    menu.back();
+}
+
+void actionAlarmSave() {
+    storage.AlarmClear();
+    for (int i = 0; i < ALARM_SIZE; i++) {
+        auto src = &alarm[i];
+        auto dst = storage.GetAlarm(i);
+        if (!src->state) continue;
+        dst->state = ALARM_STATE::On;
+        dst->week = 0;
+        dst->week |= src->Monday ? FLAG_MONDAY: 0;
+        dst->week |= src->Tuesday ? FLAG_TUESDAY: 0;
+        dst->week |= src->Wednesday ? FLAG_WEDNESDAY: 0;
+        dst->week |= src->Thursday ? FLAG_THURSDAY: 0;
+        dst->week |= src->Friday ? FLAG_FRIDAY: 0;
+        dst->week |= src->Saturday ? FLAG_SATURDAY: 0;
+        dst->week |= src->Sunday ? FLAG_SUNDAY: 0;
+        dst->mode = src->mode ? ALARM_MODE::Voice : ALARM_MODE::Mute;
+        dst->hour = src->hour;
+        dst->minute = src->minute;
+        dst->second = 0;
+        dst->volume = src->mode ? src->volume : 0;
+        dst->radio = src->mode ? src->radio : 0;
+    }
+    storage.Save();
+    menu.back();
+}
+
+char* getAlarmTitle(DEVICE_SETTING_ALARM* value) {
+    text.clear();
+    if (!value->state) {
+        text = F("[\xBEyc\xBFo]");
+        return text.c_str();
+    }
+    text = value->mode ? F("[B\xBA\xBB]  ") : F("[B\xC3\xBA\xBB] ");
+    if (value->hour < 10) text += ' ';
+    text += value->hour;
+    text += ':';
+    if (value->minute < 10) text += '0';
+    text += value->minute;
+    return text;
 }
 
 void setup() {
     Serial.begin(115200);
+
+    Wire.begin();
+    Wire.setClock(400000);
+
     Serial.println(F("Initialize variables from EEPROM"));
-    index       = EEPROM.read(EEPROM_ADDR_RADIO_INDEX);
-    volume      = EEPROM.read(EEPROM_ADDR_RADIO_VOLUME);
-    corrSec     = EEPROM.read(EEPROM_ADDR_CORRECTION_SEC);
-    currentPlay = EEPROM.read(EEPROM_ADDR_ALARM_INDEX);
-
-    loadAlarmData(EEPROM_ADDR_ALARM_ON1,  &alarmOn[0]);
-    loadAlarmData(EEPROM_ADDR_ALARM_ON2,  &alarmOn[1]);
-    loadAlarmData(EEPROM_ADDR_ALARM_ON3,  &alarmOn[2]);
-    loadAlarmData(EEPROM_ADDR_ALARM_ON4,  &alarmOn[3]);
-
-    loadAlarmData(EEPROM_ADDR_ALARM_OFF1, &alarmOff[0]);
-    loadAlarmData(EEPROM_ADDR_ALARM_OFF2, &alarmOff[1]);
-    loadAlarmData(EEPROM_ADDR_ALARM_OFF3, &alarmOff[2]);
-    loadAlarmData(EEPROM_ADDR_ALARM_OFF4, &alarmOff[3]);
+    storage.begin();
+    storage.Load();
 
     Serial.println(F("Initialize Buttons"));
     pinMode(controlPin, INPUT_PULLUP);
-    attachInterrupt(1, switchmode, FALLING);
+    attachInterrupt(digitalPinToInterrupt(controlPin), switchmode, FALLING);
     pinMode(pinVolumeUp, INPUT_PULLUP);
     pinMode(pinVolumeDown, INPUT_PULLUP);
     pinMode(pinStationUp, INPUT_PULLUP);
     pinMode(pinStationDown, INPUT_PULLUP);
+
     Serial.println(F("Initialize Video"));
-    lcd.begin(lcdLines);
+    lcd.begin(lcdRows, lcdLines);
+    lcd.setBacklight(1);
     lcd.clear();
     // для того чтобы использовать print, кодируем ситмволы с 1, а не с 0, так как 0 признак конца строки
     lcd.createChar(1, _L1);
@@ -748,57 +828,207 @@ void setup() {
     lcd.createChar(6, _B3);
     lcd.createChar(7, _B4);
 
+    Serial.println(F("Initialize Menu"));
+
+    menu.setBackSign("Ha\xB7""a\xE3");
+    menu.onPrint([](const char* str, size_t len) {
+        if (str) lcd.Print::write(str, len);
+    });
+    menu.onCursor([](uint8_t row, bool chosen, bool active) -> uint8_t {
+        lcd.setCursor(0, row);
+        lcd.print(chosen && !active ? '>' : ' ');
+        return 1;
+    });
+    menu.onBuild([](gm::Builder& b) {
+        b.Button(F("B\xC3""xo\xE3"), actionExit);  // "Выход"
+        b.Page(GM_NEXT, F("\xE0""a\xBF""a"), [](gm::Builder& b) {  // Дата
+            b.ValueInt<uint16_t>("\xA1""o\xE3", &setting.year, 2020, 2090, 1, DEC, "");
+            b.ValueInt<uint8_t>("Mec\xC7\xE5", &setting.month, 1, 12, 1, DEC, "");
+            b.ValueInt<uint8_t>("\xE0""e\xBD\xC4", &setting.day, 1, 31, 1, DEC, "");
+            b.Button(F("Coxpa\xBD\xB8\xBF\xC4"), actionDateSave);  // "Сохранить"
+        });
+        b.Page(GM_NEXT, F("Bpe\xBC\xC7"), [](gm::Builder& b) {     // Время
+            b.ValueInt<uint8_t>("\xAB""ac", &setting.hour, 1, 23, 1, DEC, "");
+            b.ValueInt<uint8_t>("M\xB8\xBDy\xBF""a", &setting.minute, 1, 59, 1, DEC, "");
+            b.ValueInt<uint8_t>("Ce\xBAy\xBD\xE3""a", &setting.second, 1, 59, 1, DEC, "");
+            b.Button(F("Coxpa\xBD\xB8\xBF\xC4"), actionTimeSave);  // "Сохранить"
+        });
+        b.Page(GM_NEXT, F("\xA0y\xE3\xB8\xBB\xC4\xBD\xB8\xBA"), [](gm::Builder& b) {   // Будильник
+            b.Page(GM_NEXT, getAlarmTitle(alarm1), [](gm::Builder& b) {
+                if (b.Switch(F("B\xBA\xBB\xC6\xC0\xB8\xBF\xC4"), &alarm1->state)) b.refresh();
+                b.Label(F("----------------"));
+                if (alarm1->state) {
+                    b.ValueInt<uint8_t>("\xAB""ac", &alarm1->hour, 1, 23, 1, DEC, "");
+                    b.ValueInt<uint8_t>("M\xB8\xBDy\xBF""a", &alarm1->minute, 1, 59, 1, DEC, "");
+                    b.Label(F("----------------"));
+                    b.Switch(F("\xA8o\xBD""e\xE3""e\xBB\xC4\xBD\xB8\xBA"), &alarm1->Monday);
+                    b.Switch(F("B\xBFop\xBD\xB8\xBA"), &alarm1->Tuesday);
+                    b.Switch(F("Cpe\xE3""a"), &alarm1->Wednesday);
+                    b.Switch(F("\xAB""e\xBF\xB3""ep\xB4"), &alarm1->Thursday);
+                    b.Switch(F("\xA8\xC7\xBF\xBD\xB8\xE5""a"), &alarm1->Friday);
+                    b.Switch(F("Cy\xB2\xB2o\xBF""a"), &alarm1->Saturday);
+                    b.Switch(F("Boc\xBApece\xBD\xC4""e"), &alarm1->Sunday);
+                    b.Label(F("----------------"));
+                    if (b.Select("Pa\xE3\xB8o", &alarm1->mode, "B\xC3\xBA\xBB;B\xBA\xBB")) b.refresh();
+                    if (alarm1->mode == 1) {
+                        b.ValueInt<uint8_t>("\xA1po\xBC\xBAoc\xBF\xC4", &alarm1->volume, 1, 15, 1, DEC, "");
+                        b.ValueInt<uint8_t>("C\xBF""a\xBD\xE5\xC7", &alarm1->radio, 0, 30, 1, DEC, "");
+                    }
+                    b.Label(F("----------------"));
+                }
+            });
+            b.Page(GM_NEXT, getAlarmTitle(alarm2), [](gm::Builder& b) {
+                if (b.Switch(F("B\xBA\xBB\xC6\xC0\xB8\xBF\xC4"), &alarm2->state)) b.refresh();
+                b.Label(F("----------------"));
+                if (alarm2->state) {
+                    b.ValueInt<uint8_t>("\xAB""ac", &alarm2->hour, 1, 23, 1, DEC, "");
+                    b.ValueInt<uint8_t>("M\xB8\xBDy\xBF""a", &alarm2->minute, 1, 59, 1, DEC, "");
+                    b.Label(F("----------------"));
+                    b.Switch(F("\xA8o\xBD""e\xE3""e\xBB\xC4\xBD\xB8\xBA"), &alarm2->Monday);
+                    b.Switch(F("B\xBFop\xBD\xB8\xBA"), &alarm2->Tuesday);
+                    b.Switch(F("Cpe\xE3""a"), &alarm2->Wednesday);
+                    b.Switch(F("\xAB""e\xBF\xB3""ep\xB4"), &alarm2->Thursday);
+                    b.Switch(F("\xA8\xC7\xBF\xBD\xB8\xE5""a"), &alarm2->Friday);
+                    b.Switch(F("Cy\xB2\xB2o\xBF""a"), &alarm2->Saturday);
+                    b.Switch(F("Boc\xBApece\xBD\xC4""e"), &alarm2->Sunday);
+                    b.Label(F("----------------"));
+                    if (b.Select("Pa\xE3\xB8o", &alarm2->mode, "B\xC3\xBA\xBB;B\xBA\xBB")) b.refresh();
+                    if (alarm2->mode == 1) {
+                        b.ValueInt<uint8_t>("\xA1po\xBC\xBAoc\xBF\xC4", &alarm2->volume, 1, 15, 1, DEC, "");
+                        b.ValueInt<uint8_t>("C\xBF""a\xBD\xE5\xC7", &alarm2->radio, 0, 30, 1, DEC, "");
+                    }
+                    b.Label(F("----------------"));
+                }
+            });
+            b.Page(GM_NEXT, getAlarmTitle(alarm3), [](gm::Builder& b) {
+                if (b.Switch(F("B\xBA\xBB\xC6\xC0\xB8\xBF\xC4"), &alarm3->state)) b.refresh();
+                b.Label(F("----------------"));
+                if (alarm3->state) {
+                    b.ValueInt<uint8_t>("\xAB""ac", &alarm3->hour, 1, 23, 1, DEC, "");
+                    b.ValueInt<uint8_t>("M\xB8\xBDy\xBF""a", &alarm3->minute, 1, 59, 1, DEC, "");
+                    b.Label(F("----------------"));
+                    b.Switch(F("\xA8o\xBD""e\xE3""e\xBB\xC4\xBD\xB8\xBA"), &alarm3->Monday);
+                    b.Switch(F("B\xBFop\xBD\xB8\xBA"), &alarm3->Tuesday);
+                    b.Switch(F("Cpe\xE3""a"), &alarm3->Wednesday);
+                    b.Switch(F("\xAB""e\xBF\xB3""ep\xB4"), &alarm3->Thursday);
+                    b.Switch(F("\xA8\xC7\xBF\xBD\xB8\xE5""a"), &alarm3->Friday);
+                    b.Switch(F("Cy\xB2\xB2o\xBF""a"), &alarm3->Saturday);
+                    b.Switch(F("Boc\xBApece\xBD\xC4""e"), &alarm3->Sunday);
+                    b.Label(F("----------------"));
+                    if (b.Select("Pa\xE3\xB8o", &alarm3->mode, "B\xC3\xBA\xBB;B\xBA\xBB")) b.refresh();
+                    if (alarm3->mode == 1) {
+                        b.ValueInt<uint8_t>("\xA1po\xBC\xBAoc\xBF\xC4", &alarm3->volume, 1, 15, 1, DEC, "");
+                        b.ValueInt<uint8_t>("C\xBF""a\xBD\xE5\xC7", &alarm3->radio, 0, 30, 1, DEC, "");
+                    }
+                    b.Label(F("----------------"));
+                }
+            });
+            b.Page(GM_NEXT, getAlarmTitle(alarm4), [](gm::Builder& b) {
+                if (b.Switch(F("B\xBA\xBB\xC6\xC0\xB8\xBF\xC4"), &alarm4->state)) b.refresh();
+                b.Label(F("----------------"));
+                if (alarm4->state) {
+                    b.ValueInt<uint8_t>("\xAB""ac", &alarm4->hour, 1, 23, 1, DEC, "");
+                    b.ValueInt<uint8_t>("M\xB8\xBDy\xBF""a", &alarm4->minute, 1, 59, 1, DEC, "");
+                    b.Label(F("----------------"));
+                    b.Switch(F("\xA8o\xBD""e\xE3""e\xBB\xC4\xBD\xB8\xBA"), &alarm4->Monday);
+                    b.Switch(F("B\xBFop\xBD\xB8\xBA"), &alarm4->Tuesday);
+                    b.Switch(F("Cpe\xE3""a"), &alarm4->Wednesday);
+                    b.Switch(F("\xAB""e\xBF\xB3""ep\xB4"), &alarm4->Thursday);
+                    b.Switch(F("\xA8\xC7\xBF\xBD\xB8\xE5""a"), &alarm4->Friday);
+                    b.Switch(F("Cy\xB2\xB2o\xBF""a"), &alarm4->Saturday);
+                    b.Switch(F("Boc\xBApece\xBD\xC4""e"), &alarm4->Sunday);
+                    b.Label(F("----------------"));
+                    if (b.Select("Pa\xE3\xB8o", &alarm4->mode, "B\xC3\xBA\xBB;B\xBA\xBB")) b.refresh();
+                    if (alarm4->mode == 1) {
+                        b.ValueInt<uint8_t>("\xA1po\xBC\xBAoc\xBF\xC4", &alarm4->volume, 1, 15, 1, DEC, "");
+                        b.ValueInt<uint8_t>("C\xBF""a\xBD\xE5\xC7", &alarm4->radio, 0, 30, 1, DEC, "");
+                    }
+                    b.Label(F("----------------"));
+                }
+            });
+            b.Page(GM_NEXT, getAlarmTitle(alarm5), [](gm::Builder& b) {
+                if (b.Switch(F("B\xBA\xBB\xC6\xC0\xB8\xBF\xC4"), &alarm5->state)) b.refresh();
+                b.Label(F("----------------"));
+                if (alarm5->state) {
+                    b.ValueInt<uint8_t>("\xAB""ac", &alarm5->hour, 1, 23, 1, DEC, "");
+                    b.ValueInt<uint8_t>("M\xB8\xBDy\xBF""a", &alarm5->minute, 1, 59, 1, DEC, "");
+                    b.Label(F("----------------"));
+                    b.Switch(F("\xA8o\xBD""e\xE3""e\xBB\xC4\xBD\xB8\xBA"), &alarm5->Monday);
+                    b.Switch(F("B\xBFop\xBD\xB8\xBA"), &alarm5->Tuesday);
+                    b.Switch(F("Cpe\xE3""a"), &alarm5->Wednesday);
+                    b.Switch(F("\xAB""e\xBF\xB3""ep\xB4"), &alarm5->Thursday);
+                    b.Switch(F("\xA8\xC7\xBF\xBD\xB8\xE5""a"), &alarm5->Friday);
+                    b.Switch(F("Cy\xB2\xB2o\xBF""a"), &alarm5->Saturday);
+                    b.Switch(F("Boc\xBApece\xBD\xC4""e"), &alarm5->Sunday);
+                    b.Label(F("----------------"));
+                    if (b.Select("Pa\xE3\xB8o", &alarm5->mode, "B\xC3\xBA\xBB;B\xBA\xBB")) b.refresh();
+                    if (alarm5->mode == 1) {
+                        b.ValueInt<uint8_t>("\xA1po\xBC\xBAoc\xBF\xC4", &alarm5->volume, 1, 15, 1, DEC, "");
+                        b.ValueInt<uint8_t>("C\xBF""a\xBD\xE5\xC7", &alarm5->radio, 0, 30, 1, DEC, "");
+                    }
+                    b.Label(F("----------------"));
+                }
+            });
+            b.Page(GM_NEXT, getAlarmTitle(alarm6), [](gm::Builder& b) {
+                if (b.Switch(F("B\xBA\xBB\xC6\xC0\xB8\xBF\xC4"), &alarm6->state)) b.refresh();
+                b.Label(F("----------------"));
+                if (alarm6->state) {
+                    b.ValueInt<uint8_t>("\xAB""ac", &alarm6->hour, 1, 23, 1, DEC, "");
+                    b.ValueInt<uint8_t>("M\xB8\xBDy\xBF""a", &alarm6->minute, 1, 59, 1, DEC, "");
+                    b.Label(F("----------------"));
+                    b.Switch(F("\xA8o\xBD""e\xE3""e\xBB\xC4\xBD\xB8\xBA"), &alarm6->Monday);
+                    b.Switch(F("B\xBFop\xBD\xB8\xBA"), &alarm6->Tuesday);
+                    b.Switch(F("Cpe\xE3""a"), &alarm6->Wednesday);
+                    b.Switch(F("\xAB""e\xBF\xB3""ep\xB4"), &alarm6->Thursday);
+                    b.Switch(F("\xA8\xC7\xBF\xBD\xB8\xE5""a"), &alarm6->Friday);
+                    b.Switch(F("Cy\xB2\xB2o\xBF""a"), &alarm6->Saturday);
+                    b.Switch(F("Boc\xBApece\xBD\xC4""e"), &alarm6->Sunday);
+                    b.Label(F("----------------"));
+                    if (b.Select("Pa\xE3\xB8o", &alarm6->mode, "B\xC3\xBA\xBB;B\xBA\xBB")) b.refresh();
+                    if (alarm6->mode == 1) {
+                        b.ValueInt<uint8_t>("\xA1po\xBC\xBAoc\xBF\xC4", &alarm6->volume, 1, 15, 1, DEC, "");
+                        b.ValueInt<uint8_t>("C\xBF""a\xBD\xE5\xC7", &alarm6->radio, 0, 30, 1, DEC, "");
+                    }
+                    b.Label(F("----------------"));
+                }
+            });
+            b.Button(F("Coxpa\xBD\xB8\xBF\xC4"), actionAlarmSave);  // "Сохранить"
+        });       
+    });
+    
     Serial.println(F("Initialize Radio"));
-    pinMode(radioRST, OUTPUT);
-    digitalWrite(radioRST, 1);
-    pinMode(radioSEN, OUTPUT);
-    MP1090S::InitI2C(radioSEN);
+    MP1090S::InitI2C(radio_RST, radio_SEN);
     MP1090S::SetBand(MHz87_5_108);
-    uint8_t *p_item = (uint8_t *)(radioList + index);
+    uint8_t *p_item = (uint8_t *)(radioList + 34);
     long wave = (long)pgm_read_dword_near(p_item);
     MP1090S::SetStation(wave);
-    MP1090S::SetVolume(volume);
+    MP1090S::SetVolume(storage.GetVolume());
 
     Serial.println(F("Initialize Date/Time"));
-    rtc.begin();
-    if (rtc.lostPower()) {
-        rtc.adjust(DateTime(2024, 1, 1, 0, 0, 0));
+    setStampZone(3);  // часовой пояс
+    rtc.begin(&Wire);
+    if (rtc.isOK()) {
+        rtc.setTime(2026, 1, 1, 0, 0, 0);
     }
+
     Serial.println(F("Initialize buzzer"));
     pinMode(TONE_PIN, OUTPUT);
-
-#ifdef RELOCATE
-    EEPROM_ADDR_RADIO_INDEX = 8;
-    EEPROM.write(EEPROM_ADDR_RADIO_INDEX, index);         // 1 byte
-    EEPROM.write(EEPROM_ADDR_RADIO_VOLUME, volume);       // 1 byte
-    EEPROM.write(EEPROM_ADDR_CORRECTION_SEC, corrSec);    // 1 byte
-    EEPROM.write(EEPROM_ADDR_ALARM_INDEX, currentPlay);   // 1 byte
-    saveAlarmData(EEPROM_ADDR_ALARM_ON1,  &alarmOn[0]);   // 4 byte
-    saveAlarmData(EEPROM_ADDR_ALARM_ON2,  &alarmOn[1]);   // 4 byte
-    saveAlarmData(EEPROM_ADDR_ALARM_ON3,  &alarmOn[2]);   // 4 byte
-    saveAlarmData(EEPROM_ADDR_ALARM_ON4,  &alarmOn[3]);   // 4 byte
-    saveAlarmData(EEPROM_ADDR_ALARM_OFF1, &alarmOff[0]);  // 4 byte
-    saveAlarmData(EEPROM_ADDR_ALARM_OFF2, &alarmOff[1]);  // 4 byte
-    saveAlarmData(EEPROM_ADDR_ALARM_OFF3, &alarmOff[2]);  // 4 byte
-    saveAlarmData(EEPROM_ADDR_ALARM_OFF4, &alarmOff[3]);  // 4 byte
-#endif
-    //dumpInfo();
 }
 
 void loop() {
     switch (mode) {
         case MODE_CLOCK:
             loopClock();
-            break;
+            return;
         case MODE_ALARM:
             loopAlarm();
-            break;
+            return;
         case MODE_RADIO:
             loopRadio();
-            break;
+            return;
         case MODE_SETTING:
-            loopSettings();
-            break;
+            //loopSettings();
+            return;
         default:
             error("MODE ERROR");
     }
