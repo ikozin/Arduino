@@ -4,6 +4,7 @@
 *.userosscache
 *.sln.docstates
 *.csproj.user
+*.lscache
 
 # Build results
 [Dd]ebug/
@@ -20,3 +21,4 @@ bld/
 # Visual Studio 2015 cache/options directory
 .vs/
 
+git
