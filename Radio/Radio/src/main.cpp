@@ -79,6 +79,7 @@ MP1090S
 
 */
 
+#include <avr_pci.h>
 #include "Radio.h"
 #include "Storage.h"
 #include "StringN.h"
@@ -307,6 +308,37 @@ const char *playList[] = {
     song24,
 };
 const int playListSize = sizeof(playList) / sizeof(char*);
+
+uint8_t oldPINB = 0xFF;
+typedef void (*isr_handler_t)(uint8_t);
+isr_handler_t isrHandlerPB[5] = { nullptr, nullptr, nullptr, nullptr, nullptr };
+
+// Обработчик запросов прерывания от пинов D8..D13
+ISR (PCINT0_vect) {
+    uint8_t value = PINB;
+    uint8_t changedbits = value ^ oldPINB;
+    oldPINB = value;
+
+    if (changedbits & (1 << PB0)) { // Изменился D8
+        isrHandlerPB[PB0](value & (1 << PB0));
+    }
+
+    if (changedbits & (1 << PB1)) { // Изменился D9
+        isrHandlerPB[PB1](value & (1 << PB1));
+    }
+
+    if (changedbits & (1 << PB2)) { // Изменился D10
+        isrHandlerPB[PB2](value & (1 << PB2));
+    }
+
+    if (changedbits & (1 << PB3)) { // Изменился D11
+        isrHandlerPB[PB3](value & (1 << PB3));
+    }
+
+    if (changedbits & (1 << PB4)) { // Изменился D12
+        isrHandlerPB[PB4](value & (1 << PB4));
+    }
+}
 
 void error(const char *text) {
     Serial.println(text);
@@ -837,6 +869,25 @@ void setup() {
     storage.Load();
 
     Serial.println(F("Initialize Buttons"));
+    // *digitalPinToPCMSK(8)  |= bit (digitalPinToPCMSKbit(8)); // Разрешаем PCINT для указанного пина
+    // *digitalPinToPCMSK(9)  |= bit (digitalPinToPCMSKbit(9)); // Разрешаем PCINT для указанного пина
+    // *digitalPinToPCMSK(10) |= bit (digitalPinToPCMSKbit(10)); // Разрешаем PCINT для указанного пина
+    // *digitalPinToPCMSK(11) |= bit (digitalPinToPCMSKbit(11)); // Разрешаем PCINT для указанного пина
+    // *digitalPinToPCMSK(12) |= bit (digitalPinToPCMSKbit(12)); // Разрешаем PCINT для указанного пина
+    PCMSK0 |= 1;
+    // PCIFR  |= bit (digitalPinToPCICRbit(8));  // Очищаем признак запроса прерывания для соответствующей группы пинов
+    // PCIFR  |= bit (digitalPinToPCICRbit(9));  // Очищаем признак запроса прерывания для соответствующей группы пинов
+    // PCIFR  |= bit (digitalPinToPCICRbit(10));  // Очищаем признак запроса прерывания для соответствующей группы пинов
+    // PCIFR  |= bit (digitalPinToPCICRbit(11));  // Очищаем признак запроса прерывания для соответствующей группы пинов
+    // PCIFR  |= bit (digitalPinToPCICRbit(12));  // Очищаем признак запроса прерывания для соответствующей группы пинов
+    PCIFR  |= 1;
+    // PCICR  |= bit (digitalPinToPCICRbit(8));  // Разрешаем PCINT для соответствующей группы пинов
+    // PCICR  |= bit (digitalPinToPCICRbit(9));  // Разрешаем PCINT для соответствующей группы пинов
+    // PCICR  |= bit (digitalPinToPCICRbit(10));  // Разрешаем PCINT для соответствующей группы пинов
+    // PCICR  |= bit (digitalPinToPCICRbit(11));  // Разрешаем PCINT для соответствующей группы пинов
+    // PCICR  |= bit (digitalPinToPCICRbit(12));  // Разрешаем PCINT для соответствующей группы пинов
+    PCICR  |= 1;
+
     pinMode(controlPin, INPUT_PULLUP);
     attachInterrupt(digitalPinToInterrupt(controlPin), switchmode, FALLING);
     pinMode(pinVolumeUp, INPUT_PULLUP);

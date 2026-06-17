@@ -20,12 +20,6 @@ const int radio_SEN = 9;
 
 const int TONE_PIN = 10;
 
-const int controlPin = 3; // 3 or 2 only!!! так как используется прерывание
-const int pinStationUp = 4;
-const int pinStationDown = 5;
-const int pinVolumeUp = 7;
-const int pinVolumeDown = 6;
-
 const byte MODE_CLOCK = 0;
 const byte MODE_ALARM = 1;
 const byte MODE_RADIO = 2;
