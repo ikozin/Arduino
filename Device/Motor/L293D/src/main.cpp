@@ -3,7 +3,7 @@
 #define L293D
 //#define AF_SHIELD_V1
 
-//#define MOTOR_DC
+#define MOTOR_DC
 //#define MOTOR_SERVO
 
 #ifdef L293D
@@ -34,48 +34,55 @@
 └────────────────────────────────────────────────────┘
 */
 
+
+#define O1L     (3)     //PWM
+#define O2L     (5)     //PWM
+
+#define O1R     (6)     //PWM
+#define O2R     (9)     //PWM
+
+GyverMotor2<GM2::PWM_PWM_POWER> motor1(O1L, O2L);
+GyverMotor2<GM2::PWM_PWM_POWER> motor2(O1R, O2R);
+
 void setup() {
     Serial.begin(115200);
     Serial.println("Motor TEST");
 
-    pinMode(3, OUTPUT); // EN1 (PWM)
-    pinMode(2, OUTPUT); // IN1
-    pinMode(4, OUTPUT); // IN2
-
-    pinMode(6, OUTPUT);  // EN2
-    pinMode(7, OUTPUT); // EN3
-    pinMode(8, OUTPUT); // IN4
+    pinMode(O1L, OUTPUT);   // IN1
+    pinMode(O2L, OUTPUT);   // IN2
+    pinMode(O1R, OUTPUT);   // EN3
+    pinMode(O2R, OUTPUT);   // IN4
 }
 
 void loop() {
 #ifdef MOTOR_DC
-    Serial.println("DC FORWARD");
     
-    motor.run(FORWARD);
-    for (uint8_t i = 0; i < 255; i++) {
-        motor.setSpeed(i);  
-        delay(10);
-    }
-    for (uint8_t i = 255; i != 0; i--) {
-        motor.setSpeed(i);  
-        delay(10);
-    }
-  
-    Serial.println("DC BACKWARD");
-    motor.run(BACKWARD);
-    for (uint8_t i = 0; i < 255; i++) {
-        motor.setSpeed(i);  
-        delay(10);
-    }
-    for (uint8_t i = 255; i != 0; i--) {
-        motor.setSpeed(i);
-        delay(10);
-    }
-
-    Serial.println("DC RELEASE");
-    motor.run(RELEASE);
+    Serial.println("DC FORWARD");
+    motor1.runSpeed(80);
+    motor2.runSpeed(80);
     delay(1000);
-#endif
+
+    Serial.println("DC STOP");
+    motor1.stop();
+    motor2.stop();
+    delay(1000);
+
+    Serial.println("DC LEFT");
+    motor1.runSpeed(80);
+    motor2.runSpeed(-80);
+    delay(1000);
+
+    Serial.println("DC STOP");
+    motor1.stop();
+    motor2.stop();
+    delay(1000);
+
+    Serial.println("DC RIGHT");
+    motor1.runSpeed(-80);
+    motor2.runSpeed(80);
+    delay(2000);
+
+    #endif
 }
 #endif
 
