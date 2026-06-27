@@ -14,7 +14,7 @@ void setup() {
     Serial.println(F("Initialize Date/Time"));
     setStampZone(3);  // часовой пояс
     rtc.begin(&Wire);
-    if (rtc.isOK()) {
+    if (!rtc.isOK()) {
         rtc.setTime(2026, 5, 9, 19, 43, 0);
     }
 }
