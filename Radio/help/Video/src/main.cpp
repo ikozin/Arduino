@@ -134,18 +134,6 @@ void displayTime(uint8_t hour, uint8_t minute) {
     lcd.print(digits_bottom[minute]);
 }
 
-void menuSettingData() {
-    Serial.println("menuSettingData");
-}
-void menuSettingTime() {
-    Serial.println("menuSettingTime");
-}
-void menuSettingAlarm() {
-    Serial.println("menuSettingAlarm");
-}
-void menuSettingCorrect() {
-    Serial.println("menuSettingCorrect");
-}
 void setup() {
     Serial.begin(115200);
 
