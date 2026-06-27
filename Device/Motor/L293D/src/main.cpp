@@ -1,5 +1,8 @@
 #include <Arduino.h>
 
+//https://alexgyver.ru/lessons/dc-motors/
+//https://github.com/GyverLibs/GyverMotor2
+
 #define L293D
 //#define AF_SHIELD_V1
 
