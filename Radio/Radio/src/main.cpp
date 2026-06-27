@@ -77,9 +77,11 @@ MP1090S
 | E |   |   | . | > | N | ^ | n |   |   |   | Ы | п |   |   |   |   |
 | F |   |   | / | ? | O | _ | o |   |   |   | Э | т |   |   |   |   |
 
+
+https://microsin.net/adminstuff/hardware/ds3231-extremely-accurate-rtc.html
 */
 
-#include <avr_pci.h>
+#include <Arduino.h>
 #include "Radio.h"
 #include "Storage.h"
 #include "StringN.h"
@@ -309,34 +311,32 @@ const char *playList[] = {
 };
 const int playListSize = sizeof(playList) / sizeof(char*);
 
+volatile uint8_t values[5] = { 0, 0, 0, 0, 0 };
 uint8_t oldPINB = 0xFF;
-typedef void (*isr_handler_t)(uint8_t);
-isr_handler_t isrHandlerPB[5] = { nullptr, nullptr, nullptr, nullptr, nullptr };
-
 // Обработчик запросов прерывания от пинов D8..D13
 ISR (PCINT0_vect) {
     uint8_t value = PINB;
     uint8_t changedbits = value ^ oldPINB;
     oldPINB = value;
 
-    if (changedbits & (1 << PB0)) { // Изменился D8
-        isrHandlerPB[PB0](value & (1 << PB0));
+    if (changedbits & bit(PB0)) { // Изменился D8
+        values[PB0] = value & bit(PB0);
     }
 
-    if (changedbits & (1 << PB1)) { // Изменился D9
-        isrHandlerPB[PB1](value & (1 << PB1));
+    if (changedbits & bit(PB1)) { // Изменился D9
+        values[PB1] = value & bit(PB1);
     }
 
-    if (changedbits & (1 << PB2)) { // Изменился D10
-        isrHandlerPB[PB2](value & (1 << PB2));
+    if (changedbits & bit(PB2)) { // Изменился D10
+        values[PB2] = value & bit(PB2);
     }
 
-    if (changedbits & (1 << PB3)) { // Изменился D11
-        isrHandlerPB[PB3](value & (1 << PB3));
+    if (changedbits & bit(PB3)) { // Изменился D11
+        values[PB3] = value & bit(PB3);
     }
 
-    if (changedbits & (1 << PB4)) { // Изменился D12
-        isrHandlerPB[PB4](value & (1 << PB4));
+    if (changedbits & bit(PB4)) { // Изменился D12
+        values[PB4] = value & bit(PB4);
     }
 }
 
@@ -869,31 +869,19 @@ void setup() {
     storage.Load();
 
     Serial.println(F("Initialize Buttons"));
-    // *digitalPinToPCMSK(8)  |= bit (digitalPinToPCMSKbit(8)); // Разрешаем PCINT для указанного пина
-    // *digitalPinToPCMSK(9)  |= bit (digitalPinToPCMSKbit(9)); // Разрешаем PCINT для указанного пина
-    // *digitalPinToPCMSK(10) |= bit (digitalPinToPCMSKbit(10)); // Разрешаем PCINT для указанного пина
-    // *digitalPinToPCMSK(11) |= bit (digitalPinToPCMSKbit(11)); // Разрешаем PCINT для указанного пина
-    // *digitalPinToPCMSK(12) |= bit (digitalPinToPCMSKbit(12)); // Разрешаем PCINT для указанного пина
-    PCMSK0 |= 1;
-    // PCIFR  |= bit (digitalPinToPCICRbit(8));  // Очищаем признак запроса прерывания для соответствующей группы пинов
-    // PCIFR  |= bit (digitalPinToPCICRbit(9));  // Очищаем признак запроса прерывания для соответствующей группы пинов
-    // PCIFR  |= bit (digitalPinToPCICRbit(10));  // Очищаем признак запроса прерывания для соответствующей группы пинов
-    // PCIFR  |= bit (digitalPinToPCICRbit(11));  // Очищаем признак запроса прерывания для соответствующей группы пинов
-    // PCIFR  |= bit (digitalPinToPCICRbit(12));  // Очищаем признак запроса прерывания для соответствующей группы пинов
+    // Разрешаем PCINT для указанных пинов
+    PCMSK0 |= bit(PB0) | bit(PB1) | bit(PB2) | bit(PB3) | bit(PB4);
+    // Очищаем признак запроса прерывания для соответствующей группы пинов
     PCIFR  |= 1;
-    // PCICR  |= bit (digitalPinToPCICRbit(8));  // Разрешаем PCINT для соответствующей группы пинов
-    // PCICR  |= bit (digitalPinToPCICRbit(9));  // Разрешаем PCINT для соответствующей группы пинов
-    // PCICR  |= bit (digitalPinToPCICRbit(10));  // Разрешаем PCINT для соответствующей группы пинов
-    // PCICR  |= bit (digitalPinToPCICRbit(11));  // Разрешаем PCINT для соответствующей группы пинов
-    // PCICR  |= bit (digitalPinToPCICRbit(12));  // Разрешаем PCINT для соответствующей группы пинов
+    // Разрешаем PCINT для соответствующей группы пинов
     PCICR  |= 1;
 
-    pinMode(controlPin, INPUT_PULLUP);
-    attachInterrupt(digitalPinToInterrupt(controlPin), switchmode, FALLING);
-    pinMode(pinVolumeUp, INPUT_PULLUP);
-    pinMode(pinVolumeDown, INPUT_PULLUP);
-    pinMode(pinStationUp, INPUT_PULLUP);
-    pinMode(pinStationDown, INPUT_PULLUP);
+    // pinMode(controlPin, INPUT_PULLUP);
+    // pinMode(pinVolumeUp, INPUT_PULLUP);
+    // pinMode(pinVolumeDown, INPUT_PULLUP);
+    // pinMode(pinStationUp, INPUT_PULLUP);
+    // pinMode(pinStationDown, INPUT_PULLUP);
+    // attachInterrupt(digitalPinToInterrupt(controlPin), switchmode, FALLING);
 
     Serial.println(F("Initialize Video"));
     lcd.begin(lcdRows, lcdLines);
