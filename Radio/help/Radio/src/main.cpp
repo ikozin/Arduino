@@ -41,8 +41,8 @@ MP1090S
 #include <Wire.h>
 #include <MP1090S.h>
 
-const int radio_RST = 8;
-const int radio_SEN = 9;
+const int radio_RST = A1;
+const int radio_SEN = A0;
 
 typedef struct _radioItem {
 	long wave;
