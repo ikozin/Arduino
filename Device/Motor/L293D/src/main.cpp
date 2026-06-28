@@ -97,7 +97,6 @@ void loop() {
 Adafruit Motor Shield L293D
 https://роботехника18.рф/подключение-мотор-шилд-к-ардуино/
 
-Arduino Uno не тянет сдиговый регистр
 ┌────────────────────────────────────────────────────────────────┐
 │ ┌───┬───┬───┐                                                  │
 │ │ - │ + │ S │ (D10)                                            │
@@ -127,7 +126,8 @@ Arduino Uno не тянет сдиговый регистр
 */
 
 #ifdef MOTOR_DC
-AF_DCMotor motor(4);
+AF_DCMotor motorL(1);
+AF_DCMotor motorR(4);
 #endif
 
 #ifdef MOTOR_SERVO
@@ -141,8 +141,10 @@ void setup() {
 
 #ifdef MOTOR_DC
     // turn on motor
-    motor.setSpeed(20);
-    motor.run(FORWARD);
+    motorL.setSpeed(20);
+    motorR.setSpeed(20);
+    motorL.run(FORWARD);
+    motorR.run(FORWARD);
 #endif
 
 #ifdef MOTOR_SERVO
@@ -154,29 +156,36 @@ void setup() {
 void loop() {
 #ifdef MOTOR_DC
     Serial.println("DC FORWARD");
-    motor.run(FORWARD);
-    for (uint8_t i = 0; i < 255; i++) {
-        motor.setSpeed(i);  
+    motorL.run(FORWARD);
+    motorR.run(FORWARD);
+    for (uint8_t i = 0; i < (255 >> 1); i++) {
+        motorL.setSpeed(i);  
+        motorR.setSpeed(i);  
         delay(10);
     }
-    for (uint8_t i = 255; i != 0; i--) {
-        motor.setSpeed(i);  
+    for (uint8_t i = (255 >> 1); i != 0; i--) {
+        motorL.setSpeed(i);  
+        motorR.setSpeed(i);  
         delay(10);
     }
   
     Serial.println("DC BACKWARD");
-    motor.run(BACKWARD);
-    for (uint8_t i = 0; i < 255; i++) {
-        motor.setSpeed(i);  
+    motorL.run(BACKWARD);
+    motorR.run(BACKWARD);
+    for (uint8_t i = 0; i < (255 >> 1); i++) {
+        motorL.setSpeed(i);  
+        motorR.setSpeed(i);  
         delay(10);
     }
-    for (uint8_t i = 255; i != 0; i--) {
-        motor.setSpeed(i);
+    for (uint8_t i = (255 >> 1); i != 0; i--) {
+        motorL.setSpeed(i);  
+        motorR.setSpeed(i);  
         delay(10);
     }
 
     Serial.println("DC RELEASE");
-    motor.run(RELEASE);
+    motorL.run(RELEASE);
+    motorR.run(RELEASE);
     delay(1000);
 #endif
 
