@@ -3,7 +3,7 @@
 CRGB leds[NUM_LEDS];
  
 void setup() { 
-  FastLED.addLeds<WS2812, 8>(leds, NUM_LEDS); 
+  FastLED.addLeds<WS2812, 8, GRB>(leds, NUM_LEDS); 
 }
  
 void loop() {
