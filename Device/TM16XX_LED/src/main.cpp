@@ -25,8 +25,8 @@
 */
 #define TM16XX_DEBUG    1
 
-#define DEF_TM1637
-//#define DEF_TM1638
+//#define DEF_TM1637
+#define DEF_TM1638
 
 #ifdef ARDUINO_TTGO_T7_V13_Mini32
 #define DIO 32
@@ -34,7 +34,7 @@
 #define STB 25
 #endif
 
-#ifdef ARDUINO_AVR_PRO
+#ifdef __AVR_ATmega328P__
 #define DIO 10
 #define CLK 9
 #define STB 8
