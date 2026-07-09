@@ -311,6 +311,12 @@ const char *playList[] = {
 };
 const int playListSize = sizeof(playList) / sizeof(char*);
 
+
+#define ButtonControl   (values[0])
+#define ButtonUp        (values[1])
+#define ButtonDown      (values[2])
+#define ButtonLeft      (values[3])
+#define ButtonRight     (values[4])
 volatile uint8_t values[5] = { 0, 0, 0, 0, 0 };
 uint8_t oldPINB = 0xFF;
 // Обработчик запросов прерывания от пинов D8..D13
@@ -624,27 +630,30 @@ void showRadioStation() {
 }
 
 void radioButtons() {
-    if (digitalRead(pinVolumeUp) == LOW) {
-        storage.SetVolume(storage.GetVolume() - 1);
-        showRadioVolume();
-        storage.Save();
-    }
-    if (digitalRead(pinVolumeDown) == LOW) {
+    if (ButtonUp > 0) {
+        ButtonUp = 0;
         storage.SetVolume(storage.GetVolume() + 1);
         showRadioVolume();
         storage.Save();
     }
-    if (digitalRead(pinStationUp) == LOW) {
+    if (ButtonDown > 0) {
+        ButtonDown = 0;
+        storage.SetVolume(storage.GetVolume() - 1);
+        showRadioVolume();
+        storage.Save();
+    }
+    if (ButtonLeft > 0) {
+        ButtonLeft = 0;
         storage.SetIndex(storage.GetIndex() - 1);
         showRadioStation();
         storage.Save();
     }
-    if (digitalRead(pinStationDown) == LOW) {
+    if (ButtonRight > 0) {
+        ButtonRight = 0;
         storage.SetIndex(storage.GetIndex() + 1);
         showRadioStation();
         storage.Save();
-    }
-    
+    }    
 }
 
 bool checkAlarm() {
@@ -790,10 +799,8 @@ void showMenu() {
         dst->radio = src->radio;
     }
     menu.refresh();
+    menu.home();
 }
-
-
-
 
 void actionExit() {
     mode = MODE_CLOCK;
@@ -856,6 +863,28 @@ char* getAlarmTitle(DEVICE_SETTING_ALARM* value) {
     if (value->minute < 10) text += '0';
     text += value->minute;
     return text;
+}
+
+void loopMenu() {
+    showMenu();
+    while (ButtonControl == 0 && mode == MODE_SETTING) {
+        if (ButtonUp > 0) {
+            ButtonUp = 0;
+            menu.up();
+        }
+        if (ButtonDown > 0) {
+            ButtonDown = 0;
+            menu.down();
+        }
+        if (ButtonLeft > 0) {
+            ButtonLeft = 0;
+            menu.left();
+        }
+        if (ButtonRight > 0) {
+            ButtonRight = 0;
+            menu.right();
+        }
+    }
 }
 
 void setup() {
@@ -1084,6 +1113,10 @@ void setup() {
 }
 
 void loop() {
+    if (ButtonControl > 0) {
+        ButtonControl = 0;
+        switchmode();
+    }
     switch (mode) {
         case MODE_CLOCK:
             loopClock();
@@ -1095,7 +1128,7 @@ void loop() {
             loopRadio();
             return;
         case MODE_SETTING:
-            //loopSettings();
+            loopMenu();
             return;
         default:
             error("MODE ERROR");
