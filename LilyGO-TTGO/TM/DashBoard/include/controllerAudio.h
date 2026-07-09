@@ -2,7 +2,7 @@
 
 #include <Arduino.h>
 #include <SPIFFS.h>
-
+#include <optional>
 #include <Audio.h>
 #include "main.h"
 

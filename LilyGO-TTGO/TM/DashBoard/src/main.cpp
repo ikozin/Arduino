@@ -41,6 +41,7 @@ TrackView track(&tft, Share_Tech_Mono_Regular32);
 Preferences prefs = Preferences();
 ControllerAudio ctrlAudo(xEventGroup); 
 
+//#define SAVE_PREFS
 String ssid = ""; // SSID WI-FI
 String pswd = "";
 uint16_t    station = 0;
@@ -61,8 +62,7 @@ const char * url;
 char text[64];
 
 void fatalError(const char * msg) {
-    tft.printf(msg);
-    LOG(msg);
+    LOG_EXT(msg);
     vTaskDelay(pdMS_TO_TICKS(5000));
     esp_restart();
 }
@@ -105,8 +105,7 @@ void audio_info(Audio::msg_t m) {
         audio_streamtitle(m.msg);
     } else if (m.e == Audio::evt_name) {
         audio_station(m.msg);
-    }
-    //Serial.printf("%s: %s\n", m.s, m.msg);
+    } else LOG("%d, %s, title %s\r\n", m.e, m.s, m.msg);
 }
 
 void setup() {
@@ -123,8 +122,7 @@ void setup() {
     tft.setTextColor(COLOR_WHITE, COLOR_BLACK);
     
     if (SPIFFS.begin(true)) {
-        tft.printf("Total: %d, Free: %d\r\n", SPIFFS.totalBytes(), SPIFFS.totalBytes() - SPIFFS.usedBytes());
-        LOG("Total: %d, Free: %d\r\n", SPIFFS.totalBytes(), SPIFFS.totalBytes() - SPIFFS.usedBytes());
+        LOG_EXT("Total: %d, Free: %d\r\n", SPIFFS.totalBytes(), SPIFFS.totalBytes() - SPIFFS.usedBytes());
     }
     else {
         //SPIFFS.format();
@@ -141,20 +139,20 @@ void setup() {
         }
     }
     stationList = doc.as<JsonArray>();
-    tft.printf("Radio list: %d\r\n", stationList.size());
-    LOG("Radio list: %d\r\n", stationList.size());
+    LOG_EXT("Radio list: %d\r\n", stationList.size());
 
-    // prefs.putString("ssid", ssid);
-    // prefs.putString("pswd", pswd);
-    // prefs.putUInt("tz", timezone);
-    // prefs.putUInt("volume", volume);
-    // prefs.putBool("mute", isMute);
-    // prefs.putString("host", host.toString());
-    // prefs.putString("gateway", gateway.toString());
-    // prefs.putString("subnet", subnet.toString());
-    // prefs.putString("dns1", dns1.toString());
-    // prefs.putString("dns2", dns2.toString());
-
+#ifdef SAVE_PREFS
+    prefs.putString("ssid", ssid);
+    prefs.putString("pswd", pswd);
+    prefs.putUInt("tz", timezone);
+    prefs.putUInt("volume", volume);
+    prefs.putBool("mute", isMute);
+    prefs.putString("host", host.toString());
+    prefs.putString("gateway", gateway.toString());
+    prefs.putString("subnet", subnet.toString());
+    prefs.putString("dns1", dns1.toString());
+    prefs.putString("dns2", dns2.toString());
+#endif
     ssid = prefs.getString("ssid", ssid);
     pswd = prefs.getString("pswd", pswd);
     timezone = prefs.getUInt("tz", timezone);
@@ -166,8 +164,7 @@ void setup() {
     dns1.fromString(prefs.getString("dns1", dns1.toString()));
     dns2.fromString(prefs.getString("dns2", dns2.toString()));
 
-    tft.printf("Wi-Fi SSID: %s\r\n", ssid.c_str());
-    LOG("Wi-Fi SSID: %s\r\n", ssid.c_str());
+    LOG_EXT("Wi-Fi SSID: %s\r\n", ssid.c_str());
     
     WiFi.disconnect();
     WiFi.mode(WIFI_STA);
@@ -176,12 +173,10 @@ void setup() {
     WiFi.channel();
     WiFi.begin(ssid.c_str(), pswd.c_str());
     while (WiFi.status() != WL_CONNECTED) {
-        tft.printf(".");
-        LOG(".");
+        LOG_EXT(".");
         vTaskDelay(pdMS_TO_TICKS(1000));
     }
-    tft.printf("\r\nip: %s\r\n", WiFi.localIP().toString().c_str());
-    LOG("\r\nip: %s\r\n", WiFi.localIP().toString().c_str());
+    LOG_EXT("\r\nip: %s\r\n", WiFi.localIP().toString().c_str());
     configTime(timezone, 0, "ntp1.vniiftri.ru", "ntp2.vniiftri.ru", "ntp3.vniiftri.ru");
 
     // do vTaskDelay(pdMS_TO_TICKS(1000));
@@ -191,8 +186,7 @@ void setup() {
     struct tm* timeinfo = localtime(&now);
 
     strftime(text, sizeof(text), "%d.%m.%Y %H:%M:%S ", timeinfo);
-    tft.printf("%s\r\n", text);
-    LOG("%s\r\n", text);
+    LOG_EXT("%s\r\n", text);
 
     JsonObject station = stationList[1].as<JsonObject>();;
     name = station["name"].as<const char*>();
