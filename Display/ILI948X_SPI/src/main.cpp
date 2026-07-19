@@ -108,7 +108,7 @@ void setup() {
     tft.setRotation(0);
     tft.fillScreen(random(0xFFFF));
 
-    touch_calibrate();
+    //touch_calibrate();
 
     tft.fillScreen(random(0xFFFF));
     tft.setCursor(0, 0, 2);
