@@ -911,13 +911,6 @@ void setup() {
     // Разрешаем PCINT для соответствующей группы пинов
     PCICR  |= 1;    //bit(PCIE0)
 
-    // pinMode(controlPin, INPUT_PULLUP);
-    // pinMode(pinVolumeUp, INPUT_PULLUP);
-    // pinMode(pinVolumeDown, INPUT_PULLUP);
-    // pinMode(pinStationUp, INPUT_PULLUP);
-    // pinMode(pinStationDown, INPUT_PULLUP);
-    // attachInterrupt(digitalPinToInterrupt(controlPin), switchmode, FALLING);
-
     Serial.println(F("Initialize Video"));
     lcd.begin(lcdRows, lcdLines);
     lcd.setBacklight(1);
