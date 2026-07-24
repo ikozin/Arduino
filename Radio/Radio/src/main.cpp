@@ -87,7 +87,7 @@ https://microsin.net/adminstuff/hardware/ds3231-extremely-accurate-rtc.html
 #include "StringN.h"
 #include "GyverIO.h"
 #include "GyverMenu.h"
-#include "GyverDS3231Min.h"
+#include "RTClib.h"
 
 #ifndef ARDUINO_AVR_PRO
 #error Select board: Arduino Pro Mini 
@@ -97,7 +97,8 @@ unsigned long lasttime = 0; // время последнего срабатыв�
 
 LiquidCrystal_I2C lcd(0);
 GyverMenu menu(lcdRows, lcdLines);
-GyverDS3231Min  rtc;
+//GyverDS3231Min  rtc;
+RTC_DS3231 rtc;
 Storage storage; 
 
 String24 text; 
@@ -311,7 +312,6 @@ const char *playList[] = {
 };
 const int playListSize = sizeof(playList) / sizeof(char*);
 
-
 #define ButtonControl   (values[0])
 #define ButtonUp        (values[1])
 #define ButtonDown      (values[2])
@@ -345,6 +345,11 @@ ISR (PCINT0_vect) {
         values[PB4] = value & bit(PB4);
     }
 }
+
+#define UPDATE_TIME_PERIOD  (60)
+volatile uint8_t    updatetime = UPDATE_TIME_PERIOD;
+// Обработчик прерывания на D2
+void isr_time() { updatetime ++; }
 
 void error(const char *text) {
     Serial.println(text);
@@ -578,11 +583,11 @@ void switchmode() {
     interrupts();
 }
 
-bool checkAlarmTime(AlarmItem *pAlarmData, Datime now, int dayOfWeek) {
+bool checkAlarmTime(AlarmItem *pAlarmData, DateTime now, int dayOfWeek) {
     if (pAlarmData->week & (1 << dayOfWeek)) {
-        if (now.hour == pAlarmData->hour 
-            && now.minute == pAlarmData->minute
-            && now.second == pAlarmData->second) {
+        if (now.hour() == pAlarmData->hour 
+            && now.minute() == pAlarmData->minute
+            && now.second() == pAlarmData->second) {
             return true;
         }
     }
@@ -657,8 +662,8 @@ void radioButtons() {
 }
 
 bool checkAlarm() {
-    Datime now = rtc.getTime();
-    uint8_t dayOfWeek = now.weekDay();
+    DateTime now = rtc.now();
+    uint8_t dayOfWeek = now.dayOfTheWeek();
     dayOfWeek = (dayOfWeek == 0) ? 6 : dayOfWeek - 1;
 
     for (uint16_t i = 0; i < storage.GetAlarmSize(); i++) {
@@ -715,17 +720,22 @@ bool checkAlarm() {
 void loopClock() {
     lcd.clear();
     while (mode == MODE_CLOCK) {
-        if (checkAlarm()) {
-            break;
+        if (updatetime >= UPDATE_TIME_PERIOD) {
+            if (checkAlarm()) {
+                break;
+            }
+            radioButtons();
+            DateTime now = rtc.now();
+            displayDate(now.year(), now.month(), now.day());
+            if (checkAlarm()) {
+                break;
+            }
+            radioButtons();
+            displayTime(now.hour(), now.minute());
+            updatetime = 0;
+        } else {
+            delay(500);
         }
-        radioButtons();
-        Datime now = rtc.getTime();
-        displayDate(now.year, now.month, now.day);
-        if (checkAlarm()) {
-            break;
-        }
-        radioButtons();
-        displayTime(now.hour, now.minute);
     }
 }
 
@@ -773,13 +783,13 @@ void loopAlarm() {
 }
 
 void showMenu() {
-    Datime now = rtc.getTime();
-    setting.year = now.year;
-    setting.month = now.month;
-    setting.day = now.day;
-    setting.hour = now.hour;
-    setting.minute = now.minute;
-    setting.second = now.second;
+    DateTime now = rtc.now();
+    setting.year = now.year();
+    setting.month = now.month();
+    setting.day = now.day();
+    setting.hour = now.hour();
+    setting.minute = now.minute();
+    setting.second = now.second();
 
     memset(alarm, 0, sizeof(alarm));
     for (int i = 0; i < ALARM_SIZE; i++) {
@@ -807,20 +817,16 @@ void actionExit() {
 }
 
 void actionDateSave() {
-    Datime date = rtc.getTime();
-    date.year = setting.year;
-    date.month = setting.month;
-    date.day = setting.day;
-    rtc.setTime(date);
+    DateTime now = rtc.now();
+    DateTime date = DateTime(setting.year, setting.month, setting.day, now.hour(), now.minute(), now.second());
+    rtc.adjust(date);
     menu.back();
 }
 
 void actionTimeSave() {
-    Datime date = rtc.getTime();
-    date.hour = setting.hour;
-    date.minute = setting.minute;
-    date.second = setting.second;
-    rtc.setTime(date);
+    DateTime now = rtc.now();
+    DateTime date = DateTime(now.year(), now.month(), now.day(), setting.hour, setting.minute, setting.second);
+    rtc.adjust(date);
     menu.back();
 }
 
@@ -901,9 +907,9 @@ void setup() {
     // Разрешаем PCINT для указанных пинов
     PCMSK0 |= bit(PB0) | bit(PB1) | bit(PB2) | bit(PB3) | bit(PB4);
     // Очищаем признак запроса прерывания для соответствующей группы пинов
-    PCIFR  |= 1;
+    PCIFR  |= 1;    //bit(PCIF0)
     // Разрешаем PCINT для соответствующей группы пинов
-    PCICR  |= 1;
+    PCICR  |= 1;    //bit(PCIE0)
 
     // pinMode(controlPin, INPUT_PULLUP);
     // pinMode(pinVolumeUp, INPUT_PULLUP);
@@ -1102,11 +1108,13 @@ void setup() {
     MP1090S::SetVolume(storage.GetVolume());
 
     Serial.println(F("Initialize Date/Time"));
-    setStampZone(3);  // часовой пояс
     rtc.begin(&Wire);
-    if (rtc.isOK()) {
-        rtc.setTime(2026, 1, 1, 0, 0, 0);
+    if (rtc.lostPower()) {
+        rtc.adjust(DateTime(2026, 1, 1, 0, 0, 0));
     }
+    rtc.writeSqwPinMode(Ds3231SqwPinMode::DS3231_SquareWave1Hz);
+    rtc.enable32K();
+    attachInterrupt(digitalPinToInterrupt(2), isr_time, FALLING);
 
     Serial.println(F("Initialize buzzer"));
     pinMode(TONE_PIN, OUTPUT);
