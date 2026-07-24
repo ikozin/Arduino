@@ -87,7 +87,7 @@ https://microsin.net/adminstuff/hardware/ds3231-extremely-accurate-rtc.html
 #include "StringN.h"
 #include "GyverIO.h"
 #include "GyverMenu.h"
-#include "RTClib.h"
+#include "RTClib.h"                 //https://microsin.net/adminstuff/hardware/ds3231-extremely-accurate-rtc.html
 
 #ifndef ARDUINO_AVR_PRO
 #error Select board: Arduino Pro Mini 
