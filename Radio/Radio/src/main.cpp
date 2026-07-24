@@ -719,6 +719,7 @@ bool checkAlarm() {
 
 void loopClock() {
     lcd.clear();
+    updatetime = UPDATE_TIME_PERIOD;
     while (mode == MODE_CLOCK) {
         if (updatetime >= UPDATE_TIME_PERIOD) {
             if (checkAlarm()) {
