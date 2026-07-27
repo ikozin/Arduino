@@ -24,6 +24,7 @@
  E   D  A/C  C  DP
 */
 #define TM16XX_DEBUG    1
+char text[64];
 
 //#define DEF_TM1637
 #define DEF_TM1638
@@ -43,18 +44,20 @@
 #ifdef DEF_TM1637
 #include <TM1637.h>
 TM1637 module(DIO, CLK, 4, true, 7);
+TM16xxButtons buttons(&module);
+TM16xxDisplay display(&module, 8);
 #define DEF_NAME    "TM1637"
 #endif
 
 #ifdef DEF_TM1638
+#include <TM1638.h>
 #include <TM1638Anode.h>
 TM1638Anode module(DIO, CLK, STB, true, 7);
+TM16xxButtons buttons(&module);
+TM16xxDisplay display(&module, 8);
 #define DEF_NAME    "TM1638"
 #endif
 
-TM16xxButtons buttons(&module);
-TM16xxDisplay display(&module, 8);
-char text[64];
 
 // This function will be called when a button was pressed 1 time (without a second press).
 void fnClick(byte nButton) {
@@ -68,8 +71,8 @@ void setup() {
     Serial.begin(115200);
     Serial.println(F("Start"));
     Serial.println(DEF_NAME);
-    module.clearDisplay();              // clear display
     module.setupDisplay(true, 7);       // set intensity 0-7, 7=highest
+    module.clearDisplay();              // clear display
     delay(50);
 
     buttons.attachClick(fnClick);
