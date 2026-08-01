@@ -13,8 +13,8 @@
 const int lcdLines = 4;
 const int lcdRows = 20;
 
-const int radio_RST = 8;
-const int radio_SEN = 9;
+const int radio_RST = (A1);
+const int radio_SEN = (A0);
 
 const int TONE_PIN = 10;
 

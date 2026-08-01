@@ -101,7 +101,9 @@ GyverMenu menu(lcdRows, lcdLines);
 RTC_DS3231 rtc;
 Storage storage; 
 
-String24 text; 
+//String24 text;
+String256 text;
+
 volatile uint8_t mode  = MODE_CLOCK;
 
 const byte _L1[8] = { B00000, B00000, B00000, B00000, B00000, B11111, B11111, B11111 };
@@ -312,13 +314,13 @@ const char *playList[] = {
 };
 const int playListSize = sizeof(playList) / sizeof(char*);
 
-#define ButtonControl   (values[0])
-#define ButtonUp        (values[1])
+#define ButtonControl   (values[1])
+#define ButtonUp        (values[0])
 #define ButtonDown      (values[2])
 #define ButtonLeft      (values[3])
 #define ButtonRight     (values[4])
 volatile uint8_t values[5] = { 0, 0, 0, 0, 0 };
-uint8_t oldPINB = 0xFF;
+static uint8_t oldPINB = 0xFF;
 // Обработчик запросов прерывания от пинов D8..D13
 ISR (PCINT0_vect) {
     uint8_t value = PINB;
@@ -631,37 +633,52 @@ void showRadioStation() {
     }
     long wave = (long)pgm_read_dword_near(p_item);
     MP1090S::SetStation(wave);
-    storage.Save();
+    storage.save();
 }
 
 void radioButtons() {
+    if (ButtonControl > 0) {
+        Serial.println("ButtonControl");
+        ButtonControl = 0;
+        switchmode();
+        return;
+    }
     if (ButtonUp > 0) {
+        Serial.println("ButtonUp");
         ButtonUp = 0;
         storage.SetVolume(storage.GetVolume() + 1);
         showRadioVolume();
-        storage.Save();
+        storage.save();
+        return;
     }
     if (ButtonDown > 0) {
+        Serial.println("ButtonDown");
         ButtonDown = 0;
         storage.SetVolume(storage.GetVolume() - 1);
         showRadioVolume();
-        storage.Save();
+        storage.save();
+        return;
     }
     if (ButtonLeft > 0) {
+        Serial.println("ButtonLeft");
         ButtonLeft = 0;
         storage.SetIndex(storage.GetIndex() - 1);
         showRadioStation();
-        storage.Save();
+        storage.save();
+        return;
     }
     if (ButtonRight > 0) {
+        Serial.println("ButtonRight");
         ButtonRight = 0;
         storage.SetIndex(storage.GetIndex() + 1);
         showRadioStation();
-        storage.Save();
+        storage.save();
+        return;
     }    
 }
 
 bool checkAlarm() {
+    Serial.println("ALARM");
     DateTime now = rtc.now();
     uint8_t dayOfWeek = now.dayOfTheWeek();
     dayOfWeek = (dayOfWeek == 0) ? 6 : dayOfWeek - 1;
@@ -674,7 +691,7 @@ bool checkAlarm() {
                 if (storage.GetVolume() > 0) {
                     storage.SetVolume(0);
                     showRadioVolume();
-                    storage.Save();
+                    storage.save();
                 }
             }
             if (pAlarmData->mode == ALARM_MODE::Mute) {
@@ -718,29 +735,32 @@ bool checkAlarm() {
 }
 
 void loopClock() {
+    Serial.println("CLOCK");
     lcd.clear();
     updatetime = UPDATE_TIME_PERIOD;
     while (mode == MODE_CLOCK) {
+        // if (checkAlarm()) {
+        //     break;
+        // }
         if (updatetime >= UPDATE_TIME_PERIOD) {
-            if (checkAlarm()) {
-                break;
-            }
-            radioButtons();
+            // radioButtons();
             DateTime now = rtc.now();
             displayDate(now.year(), now.month(), now.day());
-            if (checkAlarm()) {
-                break;
-            }
-            radioButtons();
+            // if (checkAlarm()) {
+            //     break;
+            // }
+            // radioButtons();
             displayTime(now.hour(), now.minute());
             updatetime = 0;
         } else {
             delay(500);
         }
+        radioButtons();
     }
 }
 
 void loopRadio() {
+    Serial.println("RADIO");
     lcd.clear();
     lcd.setCursor(0, 1);
     lcd.print(F("--------------------"));
@@ -779,7 +799,7 @@ void loopAlarm() {
         }
         showRadioVolume();
     }
-    storage.Save();
+    storage.save();
     mode = MODE_CLOCK;
 }
 
@@ -853,7 +873,7 @@ void actionAlarmSave() {
         dst->volume = src->mode ? src->volume : 0;
         dst->radio = src->mode ? src->radio : 0;
     }
-    storage.Save();
+    storage.save();
     menu.back();
 }
 
@@ -873,6 +893,7 @@ char* getAlarmTitle(DEVICE_SETTING_ALARM* value) {
 }
 
 void loopMenu() {
+    Serial.println("MENU");
     showMenu();
     while (ButtonControl == 0 && mode == MODE_SETTING) {
         if (ButtonUp > 0) {
@@ -901,8 +922,20 @@ void setup() {
     Wire.setClock(400000);
 
     Serial.println(F("Initialize variables from EEPROM"));
+    // storage.clear();
+    storage.save();
     storage.begin();
-    storage.Load();
+    storage.load();
+    
+    sprintf(text, "Ind=%d, Vol=%d, Cor=%d, Cur=%d", storage.GetIndex(), storage.GetVolume(), storage.GetCorrSec(), storage.GetCurrentPlay());
+    Serial.println(text);
+    for (uint16_t i = 0; i < storage.GetAlarmSize(); i++) {
+        AlarmItem* alarm = storage.GetAlarm(i);
+        sprintf(text, "%d:%d:%d", alarm->hour, alarm->minute, alarm->second);
+        Serial.println(text);
+    }
+        
+        
 
     Serial.println(F("Initialize Buttons"));
     // Разрешаем PCINT для указанных пинов
@@ -1096,9 +1129,11 @@ void setup() {
     Serial.println(F("Initialize Radio"));
     MP1090S::InitI2C(radio_RST, radio_SEN);
     MP1090S::SetBand(MHz87_5_108);
-    uint8_t *p_item = (uint8_t *)(radioList + 34);
+    uint8_t *p_item = (uint8_t *)(radioList + storage.GetIndex());
     long wave = (long)pgm_read_dword_near(p_item);
+    Serial.println(wave);
     MP1090S::SetStation(wave);
+    Serial.println(storage.GetVolume());
     MP1090S::SetVolume(storage.GetVolume());
 
     Serial.println(F("Initialize Date/Time"));
@@ -1110,15 +1145,13 @@ void setup() {
     rtc.enable32K();
     attachInterrupt(digitalPinToInterrupt(2), isr_time, FALLING);
 
-    Serial.println(F("Initialize buzzer"));
+    Serial.println(F("Initialize Buzzer"));
     pinMode(TONE_PIN, OUTPUT);
+
+    Serial.println(F("Start"));
 }
 
 void loop() {
-    if (ButtonControl > 0) {
-        ButtonControl = 0;
-        switchmode();
-    }
     switch (mode) {
         case MODE_CLOCK:
             loopClock();
