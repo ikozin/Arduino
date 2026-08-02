@@ -93,6 +93,14 @@ https://microsin.net/adminstuff/hardware/ds3231-extremely-accurate-rtc.html
 #error Select board: Arduino Pro Mini 
 #endif
 
+#define DEBUG_CONSOLE
+
+#ifdef DEBUG_CONSOLE
+    #define LOG(...)        { sprintf(text, __VA_ARGS__); Serial.println(text); }
+#else
+    #define LOG(...)
+ #endif
+
 unsigned long lasttime = 0; // время последнего срабатывания прерывания, для исключения дребезга и мнгновенного срабатывания несколько раз.
 
 LiquidCrystal_I2C lcd(0);
@@ -638,13 +646,13 @@ void showRadioStation() {
 
 void radioButtons() {
     if (ButtonControl > 0) {
-        Serial.println("ButtonControl");
+        LOG("ButtonControl");
         ButtonControl = 0;
         switchmode();
         return;
     }
     if (ButtonUp > 0) {
-        Serial.println("ButtonUp");
+        LOG("ButtonUp");
         ButtonUp = 0;
         storage.SetVolume(storage.GetVolume() + 1);
         showRadioVolume();
@@ -652,7 +660,7 @@ void radioButtons() {
         return;
     }
     if (ButtonDown > 0) {
-        Serial.println("ButtonDown");
+        LOG("ButtonDown");
         ButtonDown = 0;
         storage.SetVolume(storage.GetVolume() - 1);
         showRadioVolume();
@@ -660,7 +668,7 @@ void radioButtons() {
         return;
     }
     if (ButtonLeft > 0) {
-        Serial.println("ButtonLeft");
+        LOG("ButtonLeft");
         ButtonLeft = 0;
         storage.SetIndex(storage.GetIndex() - 1);
         showRadioStation();
@@ -668,7 +676,7 @@ void radioButtons() {
         return;
     }
     if (ButtonRight > 0) {
-        Serial.println("ButtonRight");
+        LOG("ButtonRight");
         ButtonRight = 0;
         storage.SetIndex(storage.GetIndex() + 1);
         showRadioStation();
@@ -678,7 +686,7 @@ void radioButtons() {
 }
 
 bool checkAlarm() {
-    Serial.println("ALARM");
+    LOG("ALARM");
     DateTime now = rtc.now();
     uint8_t dayOfWeek = now.dayOfTheWeek();
     dayOfWeek = (dayOfWeek == 0) ? 6 : dayOfWeek - 1;
@@ -735,7 +743,7 @@ bool checkAlarm() {
 }
 
 void loopClock() {
-    Serial.println("CLOCK");
+    LOG("CLOCK");
     lcd.clear();
     updatetime = UPDATE_TIME_PERIOD;
     while (mode == MODE_CLOCK) {
@@ -760,7 +768,7 @@ void loopClock() {
 }
 
 void loopRadio() {
-    Serial.println("RADIO");
+    LOG("RADIO");
     lcd.clear();
     lcd.setCursor(0, 1);
     lcd.print(F("--------------------"));
@@ -893,7 +901,7 @@ char* getAlarmTitle(DEVICE_SETTING_ALARM* value) {
 }
 
 void loopMenu() {
-    Serial.println("MENU");
+    LOG("MENU");
     showMenu();
     while (ButtonControl == 0 && mode == MODE_SETTING) {
         if (ButtonUp > 0) {
@@ -921,23 +929,23 @@ void setup() {
     Wire.begin();
     Wire.setClock(400000);
 
-    Serial.println(F("Initialize variables from EEPROM"));
+    LOG("Initialize variables from EEPROM");
     // storage.clear();
     storage.save();
     storage.begin();
     storage.load();
     
-    sprintf(text, "Ind=%d, Vol=%d, Cor=%d, Cur=%d", storage.GetIndex(), storage.GetVolume(), storage.GetCorrSec(), storage.GetCurrentPlay());
-    Serial.println(text);
+    #ifdef DEBUG_CONSOLE
+    LOG("Ind=%d, Vol=%d, Cor=%d, Cur=%d", storage.GetIndex(), storage.GetVolume(), storage.GetCorrSec(), storage.GetCurrentPlay());
     for (uint16_t i = 0; i < storage.GetAlarmSize(); i++) {
         AlarmItem* alarm = storage.GetAlarm(i);
-        sprintf(text, "%d:%d:%d", alarm->hour, alarm->minute, alarm->second);
-        Serial.println(text);
+        LOG("%d:%d:%d", alarm->hour, alarm->minute, alarm->second);
     }
+    #endif
         
         
 
-    Serial.println(F("Initialize Buttons"));
+    LOG("Initialize Buttons");
     // Разрешаем PCINT для указанных пинов
     PCMSK0 |= bit(PB0) | bit(PB1) | bit(PB2) | bit(PB3) | bit(PB4);
     // Очищаем признак запроса прерывания для соответствующей группы пинов
@@ -945,7 +953,7 @@ void setup() {
     // Разрешаем PCINT для соответствующей группы пинов
     PCICR  |= 1;    //bit(PCIE0)
 
-    Serial.println(F("Initialize Video"));
+    LOG("Initialize Video");
     lcd.begin(lcdRows, lcdLines);
     lcd.setBacklight(1);
     lcd.clear();
@@ -958,7 +966,7 @@ void setup() {
     lcd.createChar(6, _B3);
     lcd.createChar(7, _B4);
 
-    Serial.println(F("Initialize Menu"));
+    LOG("Initialize Menu");
 
     menu.setBackSign("Ha\xB7""a\xE3");
     menu.onPrint([](const char* str, size_t len) {
@@ -1126,17 +1134,15 @@ void setup() {
         });       
     });
     
-    Serial.println(F("Initialize Radio"));
+    LOG("Initialize Radio");
     MP1090S::InitI2C(radio_RST, radio_SEN);
     MP1090S::SetBand(MHz87_5_108);
     uint8_t *p_item = (uint8_t *)(radioList + storage.GetIndex());
     long wave = (long)pgm_read_dword_near(p_item);
-    Serial.println(wave);
     MP1090S::SetStation(wave);
-    Serial.println(storage.GetVolume());
     MP1090S::SetVolume(storage.GetVolume());
 
-    Serial.println(F("Initialize Date/Time"));
+    LOG("Initialize Date/Time");
     rtc.begin(&Wire);
     if (rtc.lostPower()) {
         rtc.adjust(DateTime(2026, 1, 1, 0, 0, 0));
@@ -1145,10 +1151,10 @@ void setup() {
     rtc.enable32K();
     attachInterrupt(digitalPinToInterrupt(2), isr_time, FALLING);
 
-    Serial.println(F("Initialize Buzzer"));
+    LOG("Initialize Buzzer");
     pinMode(TONE_PIN, OUTPUT);
 
-    Serial.println(F("Start"));
+    LOG("Start");
 }
 
 void loop() {
