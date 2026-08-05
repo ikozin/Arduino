@@ -356,6 +356,8 @@ ISR (PCINT0_vect) {
     }
 }
 
+volatile int delayLoopCnt = 0;
+
 #define UPDATE_TIME_PERIOD  (60)
 volatile uint8_t    updatetime = UPDATE_TIME_PERIOD;
 // Обработчик прерывания на D2
@@ -569,28 +571,22 @@ void play_rtttl(const char *song) {
 }
 
 void switchmode() {
-    noInterrupts();
-    unsigned long t = millis();
-    if (t - lasttime > 500) {
-        switch (mode) {
-            case MODE_CLOCK:
-                mode = MODE_RADIO;
-                break;
-            case MODE_ALARM:
-                mode = MODE_CLOCK;
-                break;
-            case MODE_RADIO:
-                mode = MODE_SETTING;
-                break;
-            case MODE_SETTING:
-                mode = MODE_CLOCK;
-                    break;
-            default:
-                error("MODE ERROR");
-        }
-        lasttime = t;
+    switch (mode) {
+        case MODE_CLOCK:
+            mode = MODE_RADIO;
+            break;
+        case MODE_ALARM:
+            mode = MODE_CLOCK;
+            break;
+        case MODE_RADIO:
+            mode = MODE_SETTING;
+            break;
+        case MODE_SETTING:
+            mode = MODE_CLOCK;
+            break;
+        default:
+            error("MODE ERROR");
     }
-    interrupts();
 }
 
 bool checkAlarmTime(AlarmItem *pAlarmData, DateTime now, int dayOfWeek) {
@@ -686,7 +682,7 @@ void radioButtons() {
 }
 
 bool checkAlarm() {
-    LOG("ALARM");
+    // LOG("checkAlarm");
     DateTime now = rtc.now();
     uint8_t dayOfWeek = now.dayOfTheWeek();
     dayOfWeek = (dayOfWeek == 0) ? 6 : dayOfWeek - 1;
@@ -747,23 +743,20 @@ void loopClock() {
     lcd.clear();
     updatetime = UPDATE_TIME_PERIOD;
     while (mode == MODE_CLOCK) {
-        // if (checkAlarm()) {
-        //     break;
-        // }
+        radioButtons();
+        if ((delayLoopCnt >= 10) && checkAlarm()) {
+            delayLoopCnt = 0;
+            break;
+        }
         if (updatetime >= UPDATE_TIME_PERIOD) {
-            // radioButtons();
             DateTime now = rtc.now();
             displayDate(now.year(), now.month(), now.day());
-            // if (checkAlarm()) {
-            //     break;
-            // }
-            // radioButtons();
             displayTime(now.hour(), now.minute());
             updatetime = 0;
         } else {
-            delay(500);
+            delay(100);
         }
-        radioButtons();
+        delayLoopCnt++;
     }
 }
 
@@ -777,8 +770,13 @@ void loopRadio() {
     showRadioStation();
     showRadioVolume();
     while (mode == MODE_RADIO) {
-        if (checkAlarm()) break;
+        if ((delayLoopCnt >= 10) && checkAlarm()) {
+            delayLoopCnt = 0;
+            break;
+        }
         radioButtons();
+        delay(100);
+        delayLoopCnt++;
     }
 }
 
@@ -903,7 +901,11 @@ char* getAlarmTitle(DEVICE_SETTING_ALARM* value) {
 void loopMenu() {
     LOG("MENU");
     showMenu();
-    while (ButtonControl == 0 && mode == MODE_SETTING) {
+    while (mode == MODE_SETTING) {
+        if (ButtonControl > 0) {
+            ButtonControl = 0;
+            switchmode();
+        }
         if (ButtonUp > 0) {
             ButtonUp = 0;
             menu.up();
@@ -920,6 +922,7 @@ void loopMenu() {
             ButtonRight = 0;
             menu.right();
         }
+        delay(100);
     }
 }
 

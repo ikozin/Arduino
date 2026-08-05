@@ -109,12 +109,12 @@ class Storage {
         };
     public:
         void begin() {
-            for (address = 0; address < StorageWindow && EEPROM.read(address) != 0xFFU; address += sizeof(data));
+            for (address = 0; address < StorageWindow && EEPROM.read(address) == 0xFFU; address++);
             if (address >= StorageWindow) address = 0;
             Serial.println(address);
         }    
         void clear() {
-            // for (uint16_t i = 0; i <= StorageWindow; i++) {
+            // for (uint16_t i = 0; i < StorageWindow; i++) {
             //     EEPROM.write((int)i, 0xFF);
             // }
         }    
