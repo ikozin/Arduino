@@ -2,7 +2,7 @@
 https://github.com/Xinyuan-LilyGO/TTGO-T-Display
 
                             T-Display
-                       ┌─────────┐
+                       ┌───────────────┐
                        ┤GND         3V3├ 
                        ┤GND         SVP├ 
                        ┤21           37├ Encoder Volume
@@ -15,7 +15,7 @@ Encoder Radio          ┤13           25├ I2S DIN
                        ┤GND          27├ I2S BCK
                        ┤GND         GND├ 
                        ┤3V3          5V├ 
-                       └─────────┘
+                       └───────────────┘
 
 При подключению к COM порту устройства помеченные ** необходимо отключить, иначе не сможет загрузиться 
 
@@ -24,19 +24,19 @@ Encoder Radio          ┤13           25├ I2S DIN
 (Standard I2S interface) BCLK->BCK, I2SO->DIN, and LRCLK(WS)->LCK
 
      ESP32         PCM5102A
-    ┌───┐     ┌───┬───┐             ┌────┬──────────────--─────────────────────────────┐
-    │ +5V ├───┤ VCC │     │           ─┤  VCC  │                                                                        │
-    │     │     │ 3.3V│ 3.3V│           ─┤  3.3V │ PCM5102A                                                               ├─┐
-    │ GND ├───┤ GND │ GND │           ─┤  GND  │                                                                        │  │
-    │     │     │ FLT │ GND │           ─┤  FLT  │ Filter select : Normal latency (Low) / Low latency (High)              ├─┘
+    ┌─────┐     ┌─────┬─────┐            ┌───────┬────────────────────────────────────────────────────────────────────────┐
+    │ +5V ├─────┤ VCC │     │           ─┤  VCC  │                                                                        │
+    │     │     │ 3.3V│ 3.3V│           ─┤  3.3V │ PCM5102A                                                               ├──┐
+    │ GND ├─────┤ GND │ GND │           ─┤  GND  │                                                                        │  │
+    │     │     │ FLT │ GND │           ─┤  FLT  │ Filter select : Normal latency (Low) / Low latency (High)              ├──┘
     │     │     │ DMP │ GND │           ─┤  DMP  │ De-emphasis control for 44.1kHz sampling rate(1): Off (Low) / On (High)│
     │     │     │ SCL │ GND │           ─┤  SCL  │ System clock input                                                     │
-    │ 27  ├───┤ BCK │     │           ─┤  BCK  │ Audio data bit clock input                                             │
-    │ 25  ├───┤ DIN │     │           ─┤  DIN  │ Audio data input                                                       │
-    │ 26  ├───┤ LCK │     │           ─┤  LCK  │ Audio data word clock input                                            │
+    │ 27  ├─────┤ BCK │     │           ─┤  BCK  │ Audio data bit clock input                                             │
+    │ 25  ├─────┤ DIN │     │           ─┤  DIN  │ Audio data input                                                       │
+    │ 26  ├─────┤ LCK │     │           ─┤  LCK  │ Audio data word clock input                                            │
     │     │     │ FMT │ GND │           ─┤  FMT  │ Audio format selection : I2S (Low) / Left justified (High)             │
     │     │     │ XMT │ 3.3V│           ─┤  XMT  │ Soft mute control : Soft mute (Low) / soft un-mute (High)              │
-    └───┘     └───┴───┘             └────┴───────────────---───────────────────────────┘
+    └─────┘     └─────┴─────┘            └───────┴────────────────────────────────────────────────────────────────────────┘
 
 +5V   from ESP32   -> VCC
 GND   from ESP32   -> GND, FLT, DMP, FMT, SCL
@@ -44,20 +44,20 @@ GND   from ESP32   -> GND, FLT, DMP, FMT, SCL
 
 
   ESP32          PCM5102A
-┌───┐     ┌───┬───┐                │     │     │     │     │
-│     │     │ FLT │ GND │      ┌─────┴───┴───┴───┴───┴──────-──┐
-│     │     │ DEMP│ GND │      │        FLT   DEMP   XSMT   FMT    3V3            │
-│     │     │ XSMT│ 3V3 │      ┤ BCK                                              │
-│     │     │ FMT │ GND │      ┤ DIN                                              │
-│     │     │ 3V3 │ 3V3 │      ┤ LCK                 PCM5102A                     │
-│     │     ├───┼───┤      ┤ GND                                              │
-│     │     │ SCK │ GND │      ┤ VIN                                              │
-│ 27  ├───┤ BCK │     │      │                                                  │
-│ 25  ├───┤ DIN │     │      └───────────────────────┬───┬─-─┘
-│ 26  ├───┤ LCK │     │                                             │     │
-│ GND ├───┤ GND │ GND │                                             └───┘
-│ +5V ├───┤ VIN │     │
-└───┘     └───┴───┘
+┌─────┐     ┌─────┬─────┐                │     │      │      │      │
+│     │     │ FLT │ GND │      ┌─────────┴─────┴──────┴──────┴──────┴─────────┐
+│     │     │ DEMP│ GND │      │        FLT   DEMP   XSMT   FMT    3V3        │
+│     │     │ XSMT│ 3V3 │      ┤ BCK                                          │
+│     │     │ FMT │ GND │      ┤ DIN                                          │
+│     │     │ 3V3 │ 3V3 │      ┤ LCK                 PCM5102A                 │
+│     │     ├─────┼─────┤      ┤ GND                                          │
+│     │     │ SCK │ GND │      ┤ VIN                                          │
+│ 27  ├─────┤ BCK │     │      │                                              │
+│ 25  ├─────┤ DIN │     │      └──────────────────────────────────────┬───┬───┘
+│ 26  ├─────┤ LCK │     │                                             │   │
+│ GND ├─────┤ GND │ GND │                                             └───┘
+│ +5V ├─────┤ VIN │     │
+└─────┘     └─────┴─────┘
 
 
 
