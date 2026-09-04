@@ -25,11 +25,11 @@ LiquidCrystal_I2C lcd(0);
 
 String64 text; 
 
-const int pinControl = 3;
-const int pinUp = 4;
-const int pinDown = 5;
-const int pinLeft = 6;
-const int pinRight = 7;
+const int pinControl = 12;
+const int pinUp = 11;
+const int pinDown = 10;
+const int pinLeft = 9;
+const int pinRight = 8;
 /*
 http://robotosha.ru/wp-content/uploads/2015/03/hd44780_char_table.png
     | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | A | B | C | D | E | F |
@@ -397,19 +397,19 @@ void setup() {
 }
 
 void loop() {
-  if (digitalRead(pinControl) == LOW) {
+  if (digitalRead(pinControl) == HIGH) {
       menu.set();
   }
-  if (digitalRead(pinUp) == LOW) {
+  if (digitalRead(pinUp) == HIGH) {
       menu.up();
   }
-  if (digitalRead(pinDown) == LOW) {
+  if (digitalRead(pinDown) == HIGH) {
       menu.down();
   }
-  if (digitalRead(pinLeft) == LOW) {
+  if (digitalRead(pinLeft) == HIGH) {
       menu.left();
   }
-  if (digitalRead(pinRight) == LOW) {
+  if (digitalRead(pinRight) == HIGH) {
       menu.right();
   }
   delay(100);

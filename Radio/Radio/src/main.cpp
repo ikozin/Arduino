@@ -93,7 +93,7 @@ https://microsin.net/adminstuff/hardware/ds3231-extremely-accurate-rtc.html
 #error Select board: Arduino Pro Mini 
 #endif
 
-#define DEBUG_CONSOLE
+//#define DEBUG_CONSOLE
 
 #ifdef DEBUG_CONSOLE
     #define LOG(...)        { sprintf(text, __VA_ARGS__); Serial.println(text); }
@@ -109,10 +109,10 @@ GyverMenu menu(lcdRows, lcdLines);
 RTC_DS3231 rtc;
 Storage storage; 
 
-//String24 text;
-String256 text;
+String24 text;
+//String256 text;
 
-volatile uint8_t mode  = MODE_CLOCK;
+volatile uint8_t mode  = MODE_SETTING;
 
 const byte _L1[8] = { B00000, B00000, B00000, B00000, B00000, B11111, B11111, B11111 };
 const byte _L2[8] = { B11111, B11111, B11111, B00000, B00000, B00000, B00000, B00000 };
@@ -322,11 +322,11 @@ const char *playList[] = {
 };
 const int playListSize = sizeof(playList) / sizeof(char*);
 
-#define ButtonControl   (values[1])
-#define ButtonUp        (values[0])
+#define ButtonControl   (values[4])
+#define ButtonUp        (values[3])
 #define ButtonDown      (values[2])
-#define ButtonLeft      (values[3])
-#define ButtonRight     (values[4])
+#define ButtonLeft      (values[1])
+#define ButtonRight     (values[0])
 volatile uint8_t values[5] = { 0, 0, 0, 0, 0 };
 static uint8_t oldPINB = 0xFF;
 // Обработчик запросов прерывания от пинов D8..D13
@@ -750,7 +750,7 @@ void loopClock() {
         }
         if (updatetime >= UPDATE_TIME_PERIOD) {
             DateTime now = rtc.now();
-            displayDate(now.year(), now.month(), now.day());
+            displayDate(now.day(), now.month(), now.year());
             displayTime(now.hour(), now.minute());
             updatetime = 0;
         } else {
@@ -840,7 +840,8 @@ void showMenu() {
 }
 
 void actionExit() {
-    mode = MODE_CLOCK;
+    switchmode();
+    //menu.home();
 }
 
 void actionDateSave() {
@@ -904,7 +905,7 @@ void loopMenu() {
     while (mode == MODE_SETTING) {
         if (ButtonControl > 0) {
             ButtonControl = 0;
-            switchmode();
+            menu.set();
         }
         if (ButtonUp > 0) {
             ButtonUp = 0;
@@ -945,8 +946,6 @@ void setup() {
         LOG("%d:%d:%d", alarm->hour, alarm->minute, alarm->second);
     }
     #endif
-        
-        
 
     LOG("Initialize Buttons");
     // Разрешаем PCINT для указанных пинов
@@ -968,9 +967,28 @@ void setup() {
     lcd.createChar(5, _B2);
     lcd.createChar(6, _B3);
     lcd.createChar(7, _B4);
+    
+    LOG("Initialize Radio");
+    MP1090S::InitI2C(radio_RST, radio_SEN);
+    MP1090S::SetBand(MHz87_5_108);
+    uint8_t *p_item = (uint8_t *)(radioList + storage.GetIndex());
+    long wave = (long)pgm_read_dword_near(p_item);
+    MP1090S::SetStation(wave);
+    MP1090S::SetVolume(storage.GetVolume());
 
-    LOG("Initialize Menu");
+    LOG("Initialize Date/Time");
+    rtc.begin(&Wire);
+    if (rtc.lostPower()) {
+        rtc.adjust(DateTime(2026, 1, 1, 0, 0, 0));
+    }
+    rtc.writeSqwPinMode(Ds3231SqwPinMode::DS3231_SquareWave1Hz);
+    rtc.enable32K();
+    attachInterrupt(digitalPinToInterrupt(2), isr_time, FALLING);
 
+    LOG("Initialize Buzzer");
+    pinMode(TONE_PIN, OUTPUT);
+
+    Serial.println(F("Initialize Menu"));
     menu.setBackSign("Ha\xB7""a\xE3");
     menu.onPrint([](const char* str, size_t len) {
         if (str) lcd.Print::write(str, len);
@@ -1136,26 +1154,7 @@ void setup() {
             b.Button(F("Coxpa\xBD\xB8\xBF\xC4"), actionAlarmSave);  // "Сохранить"
         });       
     });
-    
-    LOG("Initialize Radio");
-    MP1090S::InitI2C(radio_RST, radio_SEN);
-    MP1090S::SetBand(MHz87_5_108);
-    uint8_t *p_item = (uint8_t *)(radioList + storage.GetIndex());
-    long wave = (long)pgm_read_dword_near(p_item);
-    MP1090S::SetStation(wave);
-    MP1090S::SetVolume(storage.GetVolume());
-
-    LOG("Initialize Date/Time");
-    rtc.begin(&Wire);
-    if (rtc.lostPower()) {
-        rtc.adjust(DateTime(2026, 1, 1, 0, 0, 0));
-    }
-    rtc.writeSqwPinMode(Ds3231SqwPinMode::DS3231_SquareWave1Hz);
-    rtc.enable32K();
-    attachInterrupt(digitalPinToInterrupt(2), isr_time, FALLING);
-
-    LOG("Initialize Buzzer");
-    pinMode(TONE_PIN, OUTPUT);
+    menu.refresh();
 
     LOG("Start");
 }

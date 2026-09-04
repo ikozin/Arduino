@@ -16,7 +16,7 @@ const int lcdRows = 20;
 const int radio_RST = (A1);
 const int radio_SEN = (A0);
 
-const int TONE_PIN = 10;
+const int TONE_PIN = (A2);
 
 const byte MODE_CLOCK = 0;
 const byte MODE_ALARM = 1;
