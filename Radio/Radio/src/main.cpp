@@ -364,7 +364,7 @@ volatile uint8_t    updatetime = UPDATE_TIME_PERIOD;
 void isr_time() { updatetime ++; }
 
 void error(const char *text) {
-    Serial.println(text);
+    LOG(text);
     lcd.clear();
     lcd.home();
     lcd.print(text);
@@ -928,7 +928,9 @@ void loopMenu() {
 }
 
 void setup() {
+    #ifdef DEBUG_CONSOLE
     Serial.begin(115200);
+    #endif
 
     Wire.begin();
     Wire.setClock(400000);
@@ -988,7 +990,7 @@ void setup() {
     LOG("Initialize Buzzer");
     pinMode(TONE_PIN, OUTPUT);
 
-    Serial.println(F("Initialize Menu"));
+    LOG("Initialize Menu");
     menu.setBackSign("Ha\xB7""a\xE3");
     menu.onPrint([](const char* str, size_t len) {
         if (str) lcd.Print::write(str, len);
