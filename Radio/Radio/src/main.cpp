@@ -749,10 +749,11 @@ void loopClock() {
             break;
         }
         if (updatetime >= UPDATE_TIME_PERIOD) {
+            updatetime = 0;
             DateTime now = rtc.now();
             displayDate(now.day(), now.month(), now.year());
+            if (checkAlarm()) break;
             displayTime(now.hour(), now.minute());
-            updatetime = 0;
         } else {
             delay(100);
         }
@@ -768,7 +769,9 @@ void loopRadio() {
     lcd.setCursor(0, 3);
     lcd.print(F("\xA1po\xBC:"));    // "Гром:"
     showRadioStation();
+    if (checkAlarm()) return;
     showRadioVolume();
+    if (checkAlarm()) return;
     while (mode == MODE_RADIO) {
         if ((delayLoopCnt >= 10) && checkAlarm()) {
             delayLoopCnt = 0;
