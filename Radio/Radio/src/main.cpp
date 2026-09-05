@@ -937,7 +937,7 @@ void setup() {
 
     LOG("Initialize variables from EEPROM");
     // storage.clear();
-    storage.save();
+    // storage.save();
     storage.begin();
     storage.load();
     

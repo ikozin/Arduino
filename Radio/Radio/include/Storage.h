@@ -110,22 +110,22 @@ class Storage {
     public:
         void begin() {
             for (address = 0; address < StorageWindow && EEPROM.read(address) == 0xFFU; address++);
-            if (address >= StorageWindow) address = 0;
-            Serial.println(address);
+            if (address >= StorageWindow - sizeof(data)) address = 0;
         }    
         void clear() {
-            // for (uint16_t i = 0; i < StorageWindow; i++) {
-            //     EEPROM.write((int)i, 0xFF);
-            // }
+            for (uint16_t i = 0; i < StorageWindow; i++) {
+                EEPROM.write((int)i, 0xFF);
+            }
         }    
         void load() {
-            // byte* ptr = reinterpret_cast<byte*>(&data);
-            // for (uint16_t i = 0; i < sizeof(data); i++) ptr[i] = EEPROM.read(address + i);
+            byte* ptr = reinterpret_cast<byte*>(&data);
+            for (uint16_t i = 0; i < sizeof(data); i++) ptr[i] = EEPROM.read(address + i);
         }
         void save() {
-            // byte* ptr = reinterpret_cast<byte*>(&data);
-            // EEPROM.write(address++, 0xFFU);
-            // for (uint16_t i = 0; i < sizeof(data); i++) EEPROM.write(address + i, ptr[i]);
+            byte* ptr = reinterpret_cast<byte*>(&data);
+            EEPROM.write(address++, 0xFFU);
+            if (address >= StorageWindow - sizeof(data)) address = 0;
+            for (uint16_t i = 0; i < sizeof(data); i++) EEPROM.write(address + i, ptr[i]);
         }
 
         void AlarmClear() {
