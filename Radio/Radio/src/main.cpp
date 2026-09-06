@@ -93,10 +93,29 @@ https://microsin.net/adminstuff/hardware/ds3231-extremely-accurate-rtc.html
 #error Select board: Arduino Pro Mini 
 #endif
 
-//#define DEBUG_CONSOLE
+#define DEBUG_CONSOLE
 
-#ifdef DEBUG_CONSOLE
-    #define LOG(...)        { sprintf(text, __VA_ARGS__); Serial.println(text); }
+ #ifdef DEBUG_CONSOLE
+    void LOG(const char* str, ...) {
+        va_list args;
+        va_start(args, str);
+        while (*str) {
+            if (*str == '$' && str[1]) {
+                ++str;
+                switch (*str) {
+                    case 'i': Serial.print(va_arg(args, int)); break;
+                    case 'l': Serial.print(va_arg(args, long)); break;
+                }
+            } else {
+                Serial.print(*str);
+            }
+            ++str;
+        }
+
+        va_end(args);
+        Serial.println();
+        return;
+    }    
 #else
     #define LOG(...)
  #endif
@@ -110,7 +129,6 @@ RTC_DS3231 rtc;
 Storage storage; 
 
 String24 text;
-//String256 text;
 
 volatile uint8_t mode  = MODE_SETTING;
 
@@ -363,11 +381,11 @@ volatile uint8_t    updatetime = UPDATE_TIME_PERIOD;
 // Обработчик прерывания на D2
 void isr_time() { updatetime ++; }
 
-void error(const char *text) {
-    LOG(text);
+void error(const char *info) {
+    LOG(info);
     lcd.clear();
     lcd.home();
-    lcd.print(text);
+    lcd.print(info);
     for (;;);
 }
 
@@ -938,17 +956,17 @@ void setup() {
     Wire.begin();
     Wire.setClock(400000);
 
-    LOG("Initialize variables from EEPROM");
+    LOG("EEPROM");
     // storage.clear();
     // storage.save();
     storage.begin();
     storage.load();
     
     #ifdef DEBUG_CONSOLE
-    LOG("Ind=%d, Vol=%d, Cor=%d, Cur=%d", storage.GetIndex(), storage.GetVolume(), storage.GetCorrSec(), storage.GetCurrentPlay());
+    LOG("Ind=$i Vol=$i Cor=$i Cur=$i", storage.GetIndex(), storage.GetVolume(), storage.GetCorrSec(), storage.GetCurrentPlay());
     for (uint16_t i = 0; i < storage.GetAlarmSize(); i++) {
         AlarmItem* alarm = storage.GetAlarm(i);
-        LOG("%d:%d:%d", alarm->hour, alarm->minute, alarm->second);
+        LOG("$i:$i:$i", alarm->hour, alarm->minute, alarm->second);
     }
     #endif
 
