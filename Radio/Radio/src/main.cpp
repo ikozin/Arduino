@@ -105,6 +105,7 @@ https://microsin.net/adminstuff/hardware/ds3231-extremely-accurate-rtc.html
                 switch (*str) {
                     case 'i': Serial.print(va_arg(args, int)); break;
                     case 'l': Serial.print(va_arg(args, long)); break;
+                    case 'x': Serial.print(va_arg(args, int), HEX); break;
                 }
             } else {
                 Serial.print(*str);
@@ -121,15 +122,7 @@ https://microsin.net/adminstuff/hardware/ds3231-extremely-accurate-rtc.html
  #endif
 
 unsigned long lasttime = 0; // время последнего срабатывания прерывания, для исключения дребезга и мнгновенного срабатывания несколько раз.
-
-LiquidCrystal_I2C lcd(0);
-GyverMenu menu(lcdRows, lcdLines);
-//GyverDS3231Min  rtc;
-RTC_DS3231 rtc;
-Storage storage; 
-
 String24 text;
-
 volatile uint8_t mode  = MODE_SETTING;
 
 const byte _L1[8] = { B00000, B00000, B00000, B00000, B00000, B11111, B11111, B11111 };
@@ -339,6 +332,12 @@ const char *playList[] = {
     song24,
 };
 const int playListSize = sizeof(playList) / sizeof(char*);
+
+LiquidCrystal_I2C lcd(0);
+GyverMenu menu(lcdRows, lcdLines);
+//GyverDS3231Min  rtc;
+RTC_DS3231 rtc;
+Storage<listSize, playListSize> storage; 
 
 #define ButtonControl   (values[4])
 #define ButtonUp        (values[3])
@@ -618,7 +617,11 @@ bool checkAlarmTime(AlarmItem *pAlarmData, DateTime now, int dayOfWeek) {
     return false;
 }
 
-void showRadioVolume() {
+void setRadioVolume(uint8_t volume) {
+    if (storage.SetVolume(volume)) {
+        storage.save();
+        MP1090S::SetVolume(storage.GetVolume());
+    }
     if (mode == MODE_RADIO) {
         int i;
         lcd.setCursor(5, 3);
@@ -629,12 +632,18 @@ void showRadioVolume() {
             lcd.print(" ");
         }
     }
-    MP1090S::SetVolume(storage.GetVolume());
 }
 
-void showRadioStation() {
-    storage.SetIndex(constrain(storage.GetIndex(), 0, listSize - 1));
-    uint8_t *p_item = (uint8_t *)(radioList + storage.GetIndex());
+void setRadioStation(uint8_t index) {
+    uint8_t *p_item = nullptr;
+    if (storage.SetIndex(index)) {
+        p_item = (uint8_t *)(radioList + storage.GetIndex());
+        long wave = (long)pgm_read_dword_near(p_item);
+        MP1090S::SetStation(wave);
+        storage.save();
+    } else {
+        p_item = (uint8_t *)(radioList + storage.GetIndex());
+    }
     if (mode == MODE_RADIO) {
         uint8_t *p_name = p_item + sizeof(long);
 
@@ -653,10 +662,9 @@ void showRadioStation() {
         // sprintf(text, "C\xBF""a\xBD\xE5\xB8\xC7 %2d \xB8\xB7 %d ", storage.GetIndex() + 1, listSize);
         lcd.print(text);
     }
-    long wave = (long)pgm_read_dword_near(p_item);
-    MP1090S::SetStation(wave);
-    storage.save();
 }
+
+
 
 void radioButtons() {
     if (ButtonControl > 0) {
@@ -668,33 +676,25 @@ void radioButtons() {
     if (ButtonUp > 0) {
         LOG("ButtonUp");
         ButtonUp = 0;
-        storage.SetVolume(storage.GetVolume() + 1);
-        showRadioVolume();
-        storage.save();
+        setRadioVolume(storage.GetVolume() + 1);
         return;
     }
     if (ButtonDown > 0) {
         LOG("ButtonDown");
         ButtonDown = 0;
-        storage.SetVolume(storage.GetVolume() - 1);
-        showRadioVolume();
-        storage.save();
+        setRadioVolume(storage.GetVolume() - 1);
         return;
     }
     if (ButtonLeft > 0) {
         LOG("ButtonLeft");
         ButtonLeft = 0;
-        storage.SetIndex(storage.GetIndex() - 1);
-        showRadioStation();
-        storage.save();
+        setRadioStation(storage.GetIndex() - 1);
         return;
     }
     if (ButtonRight > 0) {
         LOG("ButtonRight");
         ButtonRight = 0;
-        storage.SetIndex(storage.GetIndex() + 1);
-        showRadioStation();
-        storage.save();
+        setRadioStation(storage.GetIndex() + 1);
         return;
     }    
 }
@@ -707,18 +707,18 @@ bool checkAlarm() {
 
     for (uint16_t i = 0; i < storage.GetAlarmSize(); i++) {
         AlarmItem *pAlarmData = storage.GetAlarm(i);
-        if (pAlarmData->state != ALARM_STATE::Off) break;
+        if (pAlarmData->state == ALARM_STATE::Off) break;
         if (checkAlarmTime(pAlarmData, now, dayOfWeek)) {
-            if (pAlarmData->mode == ALARM_MODE::Voice) {
+            if (pAlarmData->mode == ALARM_MODE::Mute) {
                 if (storage.GetVolume() > 0) {
-                    storage.SetVolume(0);
-                    showRadioVolume();
-                    storage.save();
+                    setRadioVolume(0);
                 }
             }
-            if (pAlarmData->mode == ALARM_MODE::Mute) {
+            if (pAlarmData->mode == ALARM_MODE::Voice) {
                 pCurrentAlarm = pAlarmData;
                 mode = MODE_ALARM;
+                setRadioStation(pCurrentAlarm->radio);
+                setRadioVolume(pCurrentAlarm->volume);
             }
             return true;
         }
@@ -786,9 +786,9 @@ void loopRadio() {
     lcd.print(F("--------------------"));
     lcd.setCursor(0, 3);
     lcd.print(F("\xA1po\xBC:"));    // "Гром:"
-    showRadioStation();
+    setRadioStation(storage.GetIndex());
     if (checkAlarm()) return;
-    showRadioVolume();
+    setRadioVolume(storage.GetVolume());
     if (checkAlarm()) return;
     while (mode == MODE_RADIO) {
         if ((delayLoopCnt >= 10) && checkAlarm()) {
@@ -808,24 +808,12 @@ void loopAlarm() {
     lcd.setCursor(6, 0);
     lcd.print(F("\xA0\xA9\xE0\xA5\xA7""bH\xA5K"));  // "БУДИЛЬНИК"
     displayTime(pAlarmData->hour, pAlarmData->minute);
+    
+    int play = storage.GetCurrentPlay();
+    const char *song = playList[play];
+    play_rtttl(song);
 
-    for (int count = 0; count < 1 && mode == MODE_ALARM; count ++) {
-        int play = storage.GetCurrentPlay();
-        const char *song = playList[play++];
-
-        play_rtttl(song);
-        // Пауза в 1 секунду
-        for (int i = 0; i < 10 && mode == MODE_ALARM; i++) delay(100);
-        // Сохраняем номер след. музыки
-        if (play >= playListSize) play = 0;
-        storage.SetCurrentPlay(play);
-    }
-    if (mode == MODE_ALARM) {
-        if (storage.GetVolume() == 0) {
-            storage.SetVolume(pAlarmData->volume);
-        }
-        showRadioVolume();
-    }
+    storage.SetNextPlay();
     storage.save();
     mode = MODE_CLOCK;
 }
@@ -966,7 +954,7 @@ void setup() {
     LOG("Ind=$i Vol=$i Cor=$i Cur=$i", storage.GetIndex(), storage.GetVolume(), storage.GetCorrSec(), storage.GetCurrentPlay());
     for (uint16_t i = 0; i < storage.GetAlarmSize(); i++) {
         AlarmItem* alarm = storage.GetAlarm(i);
-        LOG("$i:$i:$i", alarm->hour, alarm->minute, alarm->second);
+        LOG("$i, $i:$i:$i, $x, $i", (int)alarm->state, (int)alarm->hour, (int)alarm->minute, (int)alarm->second, (int)alarm->week, (int)alarm->mode);
     }
     #endif
 

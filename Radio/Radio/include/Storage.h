@@ -41,14 +41,16 @@ typedef struct {
 	AlarmItem alarm[6];
 } Configuration;
 
+template<int MaxIndex, int MaxSong>
 class Storage {
     private:
         const uint16_t StorageWindow = 1024;
     public:
-        Storage() { }
+        Storage() {};
 
     private:
         uint16_t    address = 0;
+        uint8_t     _maxIndex;
         Configuration data = {
             .index = 35,        // индекс радиостанции
             .volume = 10,       // громкость
@@ -111,16 +113,19 @@ class Storage {
         void begin() {
             for (address = 0; address < StorageWindow && EEPROM.read(address) == 0xFFU; address++);
             if (address >= StorageWindow - sizeof(data)) address = 0;
-        }    
+        } 
+
         void clear() {
             for (uint16_t i = 0; i < StorageWindow; i++) {
                 EEPROM.write((int)i, 0xFF);
             }
-        }    
+        } 
+
         void load() {
             byte* ptr = reinterpret_cast<byte*>(&data);
             for (uint16_t i = 0; i < sizeof(data); i++) ptr[i] = EEPROM.read(address + i);
         }
+
         void save() {
             byte* ptr = reinterpret_cast<byte*>(&data);
             EEPROM.write(address++, 0xFFU);
@@ -139,8 +144,21 @@ class Storage {
         inline AlarmItem* GetAlarm(uint8_t value) { return &data.alarm[value]; }
         inline uint16_t GetAlarmSize() { return sizeof(data.alarm)/sizeof(data.alarm[0]); }
 
-        void SetIndex(uint8_t value) { data.index = value; };
-        void SetVolume(uint8_t value) { data.volume = constrain(value, 0, 15); };
-        void SetCurrentPlay(uint8_t value) { data.currentPlay = value; };
-        void SetCorrSec(uint8_t value) { data.corrSec = value; };
+        bool SetIndex(uint8_t value) {
+            if (data.index == constrain(value, 0, MaxIndex)) return false;
+            data.index = constrain(value, 0, MaxIndex);
+            return true;
+        }
+        
+        bool SetVolume(uint8_t value) {
+            if (data.volume == constrain(value, 0, 15)) return false;
+            data.volume = constrain(value, 0, 15);
+            return data.volume;
+        }
+        
+        void SetNextPlay() {
+            if (++data.currentPlay >= MaxSong) data.currentPlay = 0;
+        }
+        
+        void SetCorrSec(uint8_t value) { data.corrSec = value; }
 };
