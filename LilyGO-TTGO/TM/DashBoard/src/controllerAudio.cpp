@@ -54,28 +54,37 @@ void ControllerAudio::setChannel(const char* url) {
 void ControllerAudio::Handler(void* parameter) {
     assert(parameter);
     ControllerAudio* controller = static_cast<ControllerAudio*>(parameter);
+#ifdef ENABLE_AUDIO
     controller->_audio.setPinout(I2S_BCK, I2S_LCK, I2S_DIN);
-
+#endif
     AudioCommand_t msg;
     while (true) {
-        controller->_audio.loop();
-        if (xQueueReceive(controller->_queue, &msg, 1) == pdPASS) {
+ #ifdef ENABLE_AUDIO
+       controller->_audio.loop();
+#endif
+       if (xQueueReceive(controller->_queue, &msg, 1) == pdPASS) {
             switch (msg.cmd)
             {
                 case CMD_SET_URL:
-                    controller->_audio.connecttohost(msg.url);
-                    xEventGroupSetBits(controller->_xEventGroup, BIT_STATION);
+ #ifdef ENABLE_AUDIO
+                   controller->_audio.connecttohost(msg.url);
+#endif
+                   xEventGroupSetBits(controller->_xEventGroup, BIT_STATION);
                     break;
                 case CMD_SET_VOLUME:
                     controller->_volume = msg.volume;
                     if (!controller->_mute) {
+#ifdef ENABLE_AUDIO
                         controller->_audio.setVolume(msg.volume);
+#endif
                     }
                     xEventGroupSetBits(controller->_xEventGroup, BIT_VOLUME);
                     break;
                 case CMD_SET_MUTE:
                     controller->_mute = msg.mute;
+#ifdef ENABLE_AUDIO
                     controller->_audio.setVolume(controller->_mute ? 0: controller->_volume);
+#endif
                     xEventGroupSetBits(controller->_xEventGroup, BIT_MUTE);
                     break;
               

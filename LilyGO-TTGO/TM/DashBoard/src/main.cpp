@@ -41,9 +41,9 @@ TrackView track(&tft, Share_Tech_Mono_Regular32);
 Preferences prefs = Preferences();
 ControllerAudio ctrlAudo(xEventGroup); 
 
-//#define SAVE_PREFS
-String ssid = ""; // SSID WI-FI
-String pswd = "";
+#define SAVE_PREFS
+String ssid = "i-net-iot"; // SSID WI-FI
+String pswd = "x@m4BAXTjfGVf8t";
 uint16_t    station = 0;
 uint16_t    volume  = 2;
 bool        isMute  = false;
@@ -89,24 +89,26 @@ void setPinHandler(gpio_num_t pin, gpio_int_type_t int_type, gpio_pull_mode_t pu
 }
 
 void audio_station(const char *info){
-    if (strlen(info) == 0) return;
+    if (info == NULL || strlen(info) == 0) return;
     ctrlAudo.setStation(info);
     LOG("station %s\r\n", info);
 }
 
 void audio_streamtitle(const char *info){
-    if (strlen(info) == 0) return;
+    if (info == NULL || strlen(info) == 0) return;
     ctrlAudo.setTitle(info);
     LOG("title %s\r\n", info);
 }
 
+#ifdef ENABLE_AUDIO
 void audio_info(Audio::msg_t m) {
-    if (m.e == Audio::evt_streamtitle) {
-        audio_streamtitle(m.msg);
-    } else if (m.e == Audio::evt_name) {
-        audio_station(m.msg);
-    } else LOG("%d, %s, title %s\r\n", m.e, m.s, m.msg);
+    // if (m.e == Audio::evt_streamtitle) {
+    //     audio_streamtitle(m.msg);
+    // } else if (m.e == Audio::evt_name) {
+    //     audio_station(m.msg);
+    // } else LOG("%d, %s, title %s\r\n", m.e, m.s, m.msg);
 }
+#endif
 
 void setup() {
     Serial.begin(115200);
@@ -114,13 +116,17 @@ void setup() {
 
     prefs.begin("Main");
 
+#ifdef ENABLE_AUDIO
     Audio::audio_info_callback = audio_info;
-
+#endif
     tft.init();
     tft.setRotation(1);
     tft.fillScreen(COLOR_BLACK);
     tft.setTextColor(COLOR_WHITE, COLOR_BLACK);
     
+    uint32_t psram_size  = ESP.getPsramSize();
+    LOG_EXT("PSRAM: %ld\r\n", psram_size);
+
     if (SPIFFS.begin(true)) {
         LOG_EXT("Total: %d, Free: %d\r\n", SPIFFS.totalBytes(), SPIFFS.totalBytes() - SPIFFS.usedBytes());
     }

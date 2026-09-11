@@ -1,10 +1,12 @@
 #pragma once
 
 #include <Arduino.h>
+#include "main.h"
 #include <SPIFFS.h>
 #include <optional>
+#ifdef ENABLE_AUDIO
 #include <Audio.h>
-#include "main.h"
+#endif
 
 
 // https://github.com/schreibfaul1/ESP32-audioI2S
@@ -58,7 +60,9 @@ class ControllerAudio {
         const char* getTitle() const { return _title.c_str(); }
     private:
         EventGroupHandle_t _xEventGroup;
+#ifdef ENABLE_AUDIO
         Audio _audio;
+#endif
         QueueHandle_t _queue;
         String _station;
         String _title;

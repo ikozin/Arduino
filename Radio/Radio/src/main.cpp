@@ -951,10 +951,18 @@ void setup() {
     storage.load();
     
     #ifdef DEBUG_CONSOLE
-    LOG("Ind=$i Vol=$i Cor=$i Cur=$i", storage.GetIndex(), storage.GetVolume(), storage.GetCorrSec(), storage.GetCurrentPlay());
+    LOG("Addr=$i, Ind=$i Vol=$i Cor=$i Cur=$i", storage.GetAddress(), storage.GetIndex(), storage.GetVolume(), storage.GetCorrSec(), storage.GetCurrentPlay());
     for (uint16_t i = 0; i < storage.GetAlarmSize(); i++) {
         AlarmItem* alarm = storage.GetAlarm(i);
-        LOG("$i, $i:$i:$i, $x, $i", (int)alarm->state, (int)alarm->hour, (int)alarm->minute, (int)alarm->second, (int)alarm->week, (int)alarm->mode);
+        LOG("$i, $i:$i:$i, $x, $i, $i[$i]", 
+            (int)alarm->state, 
+            (int)alarm->hour, 
+            (int)alarm->minute, 
+            (int)alarm->second, 
+            (int)alarm->week, 
+            (int)alarm->mode,
+            (int)alarm->radio,
+            (int)alarm->volume);
     }
     #endif
 

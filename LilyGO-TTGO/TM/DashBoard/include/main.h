@@ -12,3 +12,5 @@
 #define BIT_MUTE    ( 1 << 4 )
 
 #define BIT_ALL     ( BIT_TIME | BIT_STATION | BIT_TRACK | BIT_VOLUME | BIT_MUTE )
+
+//#define ENABLE_AUDIO

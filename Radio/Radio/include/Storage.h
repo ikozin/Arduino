@@ -137,6 +137,7 @@ class Storage {
             memset(data.alarm, 0xFF, sizeof(data.alarm));
         }
         
+        inline uint16_t GetAddress() const { return address; }
         inline uint8_t GetIndex() const { return data.index; };
         inline uint8_t GetVolume() const { return data.volume; };
         inline uint8_t GetCorrSec() const { return data.corrSec; };
