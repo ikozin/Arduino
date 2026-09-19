@@ -53,7 +53,7 @@ void setup() {
 
     pinMode(O1L, OUTPUT);   // IN1
     pinMode(O2L, OUTPUT);   // IN2
-    pinMode(O1R, OUTPUT);   // EN3
+    pinMode(O1R, OUTPUT);   // IN3
     pinMode(O2R, OUTPUT);   // IN4
 }
 
