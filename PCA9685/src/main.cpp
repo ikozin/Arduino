@@ -3,7 +3,7 @@
 #include <Adafruit_MotorShield.h>
 
 /*
-
+Adafruit Motor Shield v2 for arduino (TB6612FNG)
 
   ┌───────────────────────────────────┐
   │                                   │
@@ -53,21 +53,45 @@
      │     │     │     │     │     │
     GND   GND    A5    A4   +5V   VBAT
 
+
+┌────────────────────────────────────────────────────┐
+│                                                    │     
+│                                          ┌───┐     │
+│                                          │ * ├ VCC │
+│ ┌─────┐                                  ├───┤     │              L293N
+│ ┤  A- │                                  │ * ├ GND │
+│ ├─────┤                                  ├───┤     │           ┌*───────┐
+│ ┤  A+ │                                  │ * ├ IN1 │       EN1 ┤ 1   16 ├ VCC
+│ ├─────┤                                  ├───┤     │       IN1 ┤ 2   15 ├ IN4
+│ ┤  B- │                                  │ * ├ IN2 │       A-  ┤ 3   14 ├ B+
+│ ├─────┤                                  ├───┤     │       GNG ┤ 4   13 ├ GND
+│ ┤  B+ │                                  │ * ├ IN3 │       GND ┤ 5   12 ├ GND
+│ ├─────┤                                  ├───┤     │       A+  ┤ 6   11 ├ B-
+│ ┤ GND │                                  │ * ├ IN4 │       IN2 ┤ 7   10 ├ IN3
+│ ├─────┤                                  ├───┤     │       VIN ┤ 8    9 ├ EN2
+│ ┤ VIN │                                  │ * ├ EN1 │           └────────┘
+│ └─────┘                                  ├───┤     │
+│                                          │ * ├ EN2 │
+│                                          └───┘     │
+│                ┌───┬───┬───┬───┬───┐               │
+│                │VCC│ A-│ A+│ B-│ B+│               │     
+│                └─┬─┴─┬─┴─┬─┴─┬─┴─┬─┘               │
+└────────────────────────────────────────────────────┘
+
 */
 
 
-// Create the motor shield object with the default I2C address
 Adafruit_MotorShield AFMS = Adafruit_MotorShield(0x40);
-// Or, create it with a different I2C address (say for stacking)
-// Adafruit_MotorShield AFMS = Adafruit_MotorShield(0x61);
-
-// And connect a DC motor to port M1
-Adafruit_DCMotor *motor1 = AFMS.getMotor(2);
-
+Adafruit_DCMotor *motor = AFMS.getMotor(2);
 
 void setup() {
     Serial.begin(115200);
     Serial.println("Start");
+
+    // if you want to really speed stuff up, you can go into 'fast 400khz I2C' mode
+    // some i2c devices dont like this so much so if you're sharing the bus, watch
+    // out for this!
+    Wire.setClock(400000);
 
     if (!AFMS.begin()) {         // create with the default frequency 1.6KHz
         // if (!AFMS.begin(1000)) {  // OR with a different frequency, say 1KHz
@@ -76,23 +100,22 @@ void setup() {
     }
     Serial.println("Motor Shield found.");
 
-    // turn on motor M1
-    motor1->setSpeed(200);
-    motor1->run(RELEASE);
+    motor->setSpeed(200);
+    motor->run(RELEASE);
 }
 
-int i;
 void loop() {
-    motor1->run(RELEASE);
-    motor1->setSpeed(250);
-    motor1->run(FORWARD);
+    motor->run(RELEASE);
+    motor->setSpeed(250);
+    motor->run(FORWARD);
     delay(1000);
-    motor1->setSpeed(100);
+    motor->setSpeed(100);
     delay(1000);
-    motor1->run(RELEASE);
-    motor1->setSpeed(250);
-    motor1->run(BACKWARD);
+
+    motor->run(RELEASE);
+    motor->setSpeed(250);
+    motor->run(BACKWARD);
     delay(1000); 
-    motor1->setSpeed(100);
+    motor->setSpeed(100);
     delay(1000);
 }
