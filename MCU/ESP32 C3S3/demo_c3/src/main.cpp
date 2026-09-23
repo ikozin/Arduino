@@ -46,6 +46,8 @@ const uint8_t bitmap_32x32[] PROGMEM = {
 // https://github.com/pschatzmann/arduino-audio-tools/wiki/Working-with-PlatformIO
 // https://dronebotworkshop.com/esp32-i2s/
 // https://circuitlabs.net/i2s-audio-interface-of-esp32/
+// https://conntest.ru/program/peredacha-zvuka-s-inmp441-na-dekoder-pcm5102a-s-pomoshhyu-esp32
+// https://forum.arduino.ru/t/esp32-proigryvanie-mp3-fajlov-s-sd-cherez-dekoder-pcm5102a/17443
 AudioGeneratorWAV *wav;
 AudioFileSourcePROGMEM *file;
 AudioOutputI2S *out;
