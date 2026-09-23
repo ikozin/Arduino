@@ -44,6 +44,8 @@ const uint8_t bitmap_32x32[] PROGMEM = {
 // https://github.com/makepkg/ESP32-C3-Internet-Radio/blob/main/platformio.ini
 // esp32-c3 ESP8266Audio  path:**/platformio.ini
 // https://github.com/pschatzmann/arduino-audio-tools/wiki/Working-with-PlatformIO
+// https://dronebotworkshop.com/esp32-i2s/
+// https://circuitlabs.net/i2s-audio-interface-of-esp32/
 AudioGeneratorWAV *wav;
 AudioFileSourcePROGMEM *file;
 AudioOutputI2S *out;
