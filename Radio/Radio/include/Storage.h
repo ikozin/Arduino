@@ -49,6 +49,7 @@ class Storage {
         Storage() {};
 
     private:
+    public:
         uint16_t    address = 0;
         uint8_t     _maxIndex;
         Configuration data = {

@@ -119,7 +119,7 @@ https://microsin.net/adminstuff/hardware/ds3231-extremely-accurate-rtc.html
     }    
 #else
     #define LOG(...)
- #endif
+#endif
 
 unsigned long lasttime = 0; // время последнего срабатывания прерывания, для исключения дребезга и мнгновенного срабатывания несколько раз.
 String24 text;
@@ -948,6 +948,7 @@ void setup() {
     // storage.clear();
     // storage.save();
     storage.begin();
+    LOG("addr=$x", storage.address);
     storage.load();
     
     #ifdef DEBUG_CONSOLE
