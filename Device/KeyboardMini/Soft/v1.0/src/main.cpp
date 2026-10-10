@@ -3,7 +3,7 @@
 #include <GyverIO.h>
 
 
-// #define DEBUG_INFO
+#define DEBUG_INFO
 
 #define MAX_KEY         16
 #define FUNC_KEYCODE    0xFFFF
