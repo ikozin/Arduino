@@ -88,6 +88,7 @@ https://microsin.net/adminstuff/hardware/ds3231-extremely-accurate-rtc.html
 #include "GyverIO.h"
 #include "GyverMenu.h"
 #include "RTClib.h"                 //https://microsin.net/adminstuff/hardware/ds3231-extremely-accurate-rtc.html
+#include "strings.h"
 
 #ifndef ARDUINO_AVR_PRO
 #error Select board: Arduino Pro Mini 
@@ -181,19 +182,19 @@ const char *const digits_bottom[] = {
     digit_9_bottom,
 };
 
-const char months[12][9] = {
-  "\xC7\xBD\xB3""ap\xC4",
-  "\xE4""e\xB3pa\xBB\xC4",
-  "\xBC""ap\xBF",
-  "a\xBEpe\xBB\xC4",
-  "\xBC""a\xB9",
-  "\xB8\xC6\xBD\xC4",
-  "\xB8\xC6\xBB\xC4",
-  "a\xB3\xB4yc\xBF",
-  "ce\xBD\xBF\xC7\xB2p\xC4",
-  "o\xBA\xBF\xC7\xB2p\xC4",
-  "\xBDo\xC7\xB2p\xC4",
-  "\xE3""e\xBA""a\xB2p\xC4",
+const char* months[12] = {
+  month01,  //"\xC7\xBD\xB3""ap\xC4",
+  month02,  //"\xE4""e\xB3pa\xBB\xC4",
+  month03,  //"\xBC""ap\xBF",
+  month04,  //"a\xBEpe\xBB\xC4",
+  month05,  //"\xBC""a\xB9",
+  month06,  //"\xB8\xC6\xBD\xC4",
+  month07,  //"\xB8\xC6\xBB\xC4",
+  month08,  //"a\xB3\xB4yc\xBF",
+  month09,  //"ce\xBD\xBF\xC7\xB2p\xC4",
+  month10,  //"o\xBA\xBF\xC7\xB2p\xC4",
+  month11,  //"\xBDo\xC7\xB2p\xC4",
+  month12,  //"\xE3""e\xBA""a\xB2p\xC4",
 };
 
 typedef struct {
@@ -655,9 +656,9 @@ void setRadioStation(uint8_t index) {
 
         lcd.setCursor(0, 2);
         text.clear();
-        text.add("C\xBF""a\xBD\xE5\xB8\xC7 ");  // "Станция "
+        text.add(ui_station1);                  // "Станция "
         text.add(storage.GetIndex() + 1);
-        text.add(" \xB8\xB7 ");                 // " из "
+        text.add(ui_station2);                  // " из "
         text.add(listSize);
         // sprintf(text, "C\xBF""a\xBD\xE5\xB8\xC7 %2d \xB8\xB7 %d ", storage.GetIndex() + 1, listSize);
         lcd.print(text);
@@ -785,7 +786,7 @@ void loopRadio() {
     lcd.setCursor(0, 1);
     lcd.print(F("--------------------"));
     lcd.setCursor(0, 3);
-    lcd.print(F("\xA1po\xBC:"));    // "Гром:"
+    lcd.print(ui_volume);    // "Гром:"
     setRadioStation(storage.GetIndex());
     if (checkAlarm()) return;
     setRadioVolume(storage.GetVolume());
@@ -806,7 +807,7 @@ void loopAlarm() {
 
     AlarmItem *pAlarmData = pCurrentAlarm;
     lcd.setCursor(6, 0);
-    lcd.print(F("\xA0\xA9\xE0\xA5\xA7""bH\xA5K"));  // "БУДИЛЬНИК"
+    lcd.print(F(ui_alarm));  // "БУДИЛЬНИК"
     displayTime(pAlarmData->hour, pAlarmData->minute);
     
     int play = storage.GetCurrentPlay();
@@ -1021,15 +1022,15 @@ void setup() {
     menu.onBuild([](gm::Builder& b) {
         b.Button(F("B\xC3""xo\xE3"), actionExit);  // "Выход"
         b.Page(GM_NEXT, F("\xE0""a\xBF""a"), [](gm::Builder& b) {  // Дата
-            b.ValueInt<uint16_t>("\xA1""o\xE3", &setting.year, 2020, 2090, 1, DEC, "");
-            b.ValueInt<uint8_t>("Mec\xC7\xE5", &setting.month, 1, 12, 1, DEC, "");
-            b.ValueInt<uint8_t>("\xE0""e\xBD\xC4", &setting.day, 1, 31, 1, DEC, "");
+            b.ValueInt<uint16_t>(F("\xA1""o\xE3"), &setting.year, 2020, 2090, 1, DEC, F(""));
+            b.ValueInt<uint8_t>(F("Mec\xC7\xE5"), &setting.month, 1, 12, 1, DEC, F(""));
+            b.ValueInt<uint8_t>(F("\xE0""e\xBD\xC4"), &setting.day, 1, 31, 1, DEC, F(""));
             b.Button(F("Coxpa\xBD\xB8\xBF\xC4"), actionDateSave);  // "Сохранить"
         });
         b.Page(GM_NEXT, F("Bpe\xBC\xC7"), [](gm::Builder& b) {     // Время
-            b.ValueInt<uint8_t>("\xAB""ac", &setting.hour, 1, 23, 1, DEC, "");
-            b.ValueInt<uint8_t>("M\xB8\xBDy\xBF""a", &setting.minute, 1, 59, 1, DEC, "");
-            b.ValueInt<uint8_t>("Ce\xBAy\xBD\xE3""a", &setting.second, 1, 59, 1, DEC, "");
+            b.ValueInt<uint8_t>(F("\xAB""ac"), &setting.hour, 1, 23, 1, DEC, F(""));
+            b.ValueInt<uint8_t>(F("M\xB8\xBDy\xBF""a"), &setting.minute, 1, 59, 1, DEC, F(""));
+            b.ValueInt<uint8_t>(F("Ce\xBAy\xBD\xE3""a"), &setting.second, 1, 59, 1, DEC, F(""));
             b.Button(F("Coxpa\xBD\xB8\xBF\xC4"), actionTimeSave);  // "Сохранить"
         });
         b.Page(GM_NEXT, F("\xA0y\xE3\xB8\xBB\xC4\xBD\xB8\xBA"), [](gm::Builder& b) {   // Будильник
@@ -1037,8 +1038,8 @@ void setup() {
                 if (b.Switch(F("B\xBA\xBB\xC6\xC0\xB8\xBF\xC4"), &alarm1->state)) b.refresh();
                 b.Label(F("----------------"));
                 if (alarm1->state) {
-                    b.ValueInt<uint8_t>("\xAB""ac", &alarm1->hour, 1, 23, 1, DEC, "");
-                    b.ValueInt<uint8_t>("M\xB8\xBDy\xBF""a", &alarm1->minute, 1, 59, 1, DEC, "");
+                    b.ValueInt<uint8_t>(F("\xAB""ac"), &alarm1->hour, 1, 23, 1, DEC, F(""));
+                    b.ValueInt<uint8_t>(F("M\xB8\xBDy\xBF""a"), &alarm1->minute, 1, 59, 1, DEC, F(""));
                     b.Label(F("----------------"));
                     b.Switch(F("\xA8o\xBD""e\xE3""e\xBB\xC4\xBD\xB8\xBA"), &alarm1->Monday);
                     b.Switch(F("B\xBFop\xBD\xB8\xBA"), &alarm1->Tuesday);
@@ -1048,10 +1049,10 @@ void setup() {
                     b.Switch(F("Cy\xB2\xB2o\xBF""a"), &alarm1->Saturday);
                     b.Switch(F("Boc\xBApece\xBD\xC4""e"), &alarm1->Sunday);
                     b.Label(F("----------------"));
-                    if (b.Select("Pa\xE3\xB8o", &alarm1->mode, "B\xC3\xBA\xBB;B\xBA\xBB")) b.refresh();
+                    if (b.Select(F("Pa\xE3\xB8o"), &alarm1->mode, F("B\xC3\xBA\xBB;B\xBA\xBB"))) b.refresh();
                     if (alarm1->mode == 1) {
-                        b.ValueInt<uint8_t>("\xA1po\xBC\xBAoc\xBF\xC4", &alarm1->volume, 1, 15, 1, DEC, "");
-                        b.ValueInt<uint8_t>("C\xBF""a\xBD\xE5\xC7", &alarm1->radio, 0, 30, 1, DEC, "");
+                        b.ValueInt<uint8_t>(F("\xA1po\xBC\xBAoc\xBF\xC4"), &alarm1->volume, 1, 15, 1, DEC, F(""));
+                        b.ValueInt<uint8_t>(F("C\xBF""a\xBD\xE5\xC7"), &alarm1->radio, 0, 30, 1, DEC, F(""));
                     }
                     b.Label(F("----------------"));
                 }
@@ -1060,8 +1061,8 @@ void setup() {
                 if (b.Switch(F("B\xBA\xBB\xC6\xC0\xB8\xBF\xC4"), &alarm2->state)) b.refresh();
                 b.Label(F("----------------"));
                 if (alarm2->state) {
-                    b.ValueInt<uint8_t>("\xAB""ac", &alarm2->hour, 1, 23, 1, DEC, "");
-                    b.ValueInt<uint8_t>("M\xB8\xBDy\xBF""a", &alarm2->minute, 1, 59, 1, DEC, "");
+                    b.ValueInt<uint8_t>(F("\xAB""ac"), &alarm2->hour, 1, 23, 1, DEC, F(""));
+                    b.ValueInt<uint8_t>(F("M\xB8\xBDy\xBF""a"), &alarm2->minute, 1, 59, 1, DEC, F(""));
                     b.Label(F("----------------"));
                     b.Switch(F("\xA8o\xBD""e\xE3""e\xBB\xC4\xBD\xB8\xBA"), &alarm2->Monday);
                     b.Switch(F("B\xBFop\xBD\xB8\xBA"), &alarm2->Tuesday);
@@ -1071,10 +1072,10 @@ void setup() {
                     b.Switch(F("Cy\xB2\xB2o\xBF""a"), &alarm2->Saturday);
                     b.Switch(F("Boc\xBApece\xBD\xC4""e"), &alarm2->Sunday);
                     b.Label(F("----------------"));
-                    if (b.Select("Pa\xE3\xB8o", &alarm2->mode, "B\xC3\xBA\xBB;B\xBA\xBB")) b.refresh();
+                    if (b.Select(F("Pa\xE3\xB8o"), &alarm2->mode, F("B\xC3\xBA\xBB;B\xBA\xBB"))) b.refresh();
                     if (alarm2->mode == 1) {
-                        b.ValueInt<uint8_t>("\xA1po\xBC\xBAoc\xBF\xC4", &alarm2->volume, 1, 15, 1, DEC, "");
-                        b.ValueInt<uint8_t>("C\xBF""a\xBD\xE5\xC7", &alarm2->radio, 0, 30, 1, DEC, "");
+                        b.ValueInt<uint8_t>(F("\xA1po\xBC\xBAoc\xBF\xC4"), &alarm2->volume, 1, 15, 1, DEC, F(""));
+                        b.ValueInt<uint8_t>(F("C\xBF""a\xBD\xE5\xC7"), &alarm2->radio, 0, 30, 1, DEC, F(""));
                     }
                     b.Label(F("----------------"));
                 }
@@ -1083,8 +1084,8 @@ void setup() {
                 if (b.Switch(F("B\xBA\xBB\xC6\xC0\xB8\xBF\xC4"), &alarm3->state)) b.refresh();
                 b.Label(F("----------------"));
                 if (alarm3->state) {
-                    b.ValueInt<uint8_t>("\xAB""ac", &alarm3->hour, 1, 23, 1, DEC, "");
-                    b.ValueInt<uint8_t>("M\xB8\xBDy\xBF""a", &alarm3->minute, 1, 59, 1, DEC, "");
+                    b.ValueInt<uint8_t>(F("\xAB""ac"), &alarm3->hour, 1, 23, 1, DEC, F(""));
+                    b.ValueInt<uint8_t>(F("M\xB8\xBDy\xBF""a"), &alarm3->minute, 1, 59, 1, DEC, F(""));
                     b.Label(F("----------------"));
                     b.Switch(F("\xA8o\xBD""e\xE3""e\xBB\xC4\xBD\xB8\xBA"), &alarm3->Monday);
                     b.Switch(F("B\xBFop\xBD\xB8\xBA"), &alarm3->Tuesday);
@@ -1094,10 +1095,10 @@ void setup() {
                     b.Switch(F("Cy\xB2\xB2o\xBF""a"), &alarm3->Saturday);
                     b.Switch(F("Boc\xBApece\xBD\xC4""e"), &alarm3->Sunday);
                     b.Label(F("----------------"));
-                    if (b.Select("Pa\xE3\xB8o", &alarm3->mode, "B\xC3\xBA\xBB;B\xBA\xBB")) b.refresh();
+                    if (b.Select(F("Pa\xE3\xB8o"), &alarm3->mode, F("B\xC3\xBA\xBB;B\xBA\xBB"))) b.refresh();
                     if (alarm3->mode == 1) {
-                        b.ValueInt<uint8_t>("\xA1po\xBC\xBAoc\xBF\xC4", &alarm3->volume, 1, 15, 1, DEC, "");
-                        b.ValueInt<uint8_t>("C\xBF""a\xBD\xE5\xC7", &alarm3->radio, 0, 30, 1, DEC, "");
+                        b.ValueInt<uint8_t>(F("\xA1po\xBC\xBAoc\xBF\xC4"), &alarm3->volume, 1, 15, 1, DEC, F(""));
+                        b.ValueInt<uint8_t>(F("C\xBF""a\xBD\xE5\xC7"), &alarm3->radio, 0, 30, 1, DEC, F(""));
                     }
                     b.Label(F("----------------"));
                 }
@@ -1106,8 +1107,8 @@ void setup() {
                 if (b.Switch(F("B\xBA\xBB\xC6\xC0\xB8\xBF\xC4"), &alarm4->state)) b.refresh();
                 b.Label(F("----------------"));
                 if (alarm4->state) {
-                    b.ValueInt<uint8_t>("\xAB""ac", &alarm4->hour, 1, 23, 1, DEC, "");
-                    b.ValueInt<uint8_t>("M\xB8\xBDy\xBF""a", &alarm4->minute, 1, 59, 1, DEC, "");
+                    b.ValueInt<uint8_t>(F("\xAB""ac"), &alarm4->hour, 1, 23, 1, DEC, F(""));
+                    b.ValueInt<uint8_t>(F("M\xB8\xBDy\xBF""a"), &alarm4->minute, 1, 59, 1, DEC, F(""));
                     b.Label(F("----------------"));
                     b.Switch(F("\xA8o\xBD""e\xE3""e\xBB\xC4\xBD\xB8\xBA"), &alarm4->Monday);
                     b.Switch(F("B\xBFop\xBD\xB8\xBA"), &alarm4->Tuesday);
@@ -1117,10 +1118,10 @@ void setup() {
                     b.Switch(F("Cy\xB2\xB2o\xBF""a"), &alarm4->Saturday);
                     b.Switch(F("Boc\xBApece\xBD\xC4""e"), &alarm4->Sunday);
                     b.Label(F("----------------"));
-                    if (b.Select("Pa\xE3\xB8o", &alarm4->mode, "B\xC3\xBA\xBB;B\xBA\xBB")) b.refresh();
+                    if (b.Select(F("Pa\xE3\xB8o"), &alarm4->mode, F("B\xC3\xBA\xBB;B\xBA\xBB"))) b.refresh();
                     if (alarm4->mode == 1) {
-                        b.ValueInt<uint8_t>("\xA1po\xBC\xBAoc\xBF\xC4", &alarm4->volume, 1, 15, 1, DEC, "");
-                        b.ValueInt<uint8_t>("C\xBF""a\xBD\xE5\xC7", &alarm4->radio, 0, 30, 1, DEC, "");
+                        b.ValueInt<uint8_t>(F("\xA1po\xBC\xBAoc\xBF\xC4"), &alarm4->volume, 1, 15, 1, DEC, F(""));
+                        b.ValueInt<uint8_t>(F("C\xBF""a\xBD\xE5\xC7"), &alarm4->radio, 0, 30, 1, DEC, F(""));
                     }
                     b.Label(F("----------------"));
                 }
@@ -1129,8 +1130,8 @@ void setup() {
                 if (b.Switch(F("B\xBA\xBB\xC6\xC0\xB8\xBF\xC4"), &alarm5->state)) b.refresh();
                 b.Label(F("----------------"));
                 if (alarm5->state) {
-                    b.ValueInt<uint8_t>("\xAB""ac", &alarm5->hour, 1, 23, 1, DEC, "");
-                    b.ValueInt<uint8_t>("M\xB8\xBDy\xBF""a", &alarm5->minute, 1, 59, 1, DEC, "");
+                    b.ValueInt<uint8_t>(F("\xAB""ac"), &alarm5->hour, 1, 23, 1, DEC, F(""));
+                    b.ValueInt<uint8_t>(F("M\xB8\xBDy\xBF""a"), &alarm5->minute, 1, 59, 1, DEC, F(""));
                     b.Label(F("----------------"));
                     b.Switch(F("\xA8o\xBD""e\xE3""e\xBB\xC4\xBD\xB8\xBA"), &alarm5->Monday);
                     b.Switch(F("B\xBFop\xBD\xB8\xBA"), &alarm5->Tuesday);
@@ -1140,10 +1141,10 @@ void setup() {
                     b.Switch(F("Cy\xB2\xB2o\xBF""a"), &alarm5->Saturday);
                     b.Switch(F("Boc\xBApece\xBD\xC4""e"), &alarm5->Sunday);
                     b.Label(F("----------------"));
-                    if (b.Select("Pa\xE3\xB8o", &alarm5->mode, "B\xC3\xBA\xBB;B\xBA\xBB")) b.refresh();
+                    if (b.Select(F("Pa\xE3\xB8o"), &alarm5->mode, F("B\xC3\xBA\xBB;B\xBA\xBB"))) b.refresh();
                     if (alarm5->mode == 1) {
-                        b.ValueInt<uint8_t>("\xA1po\xBC\xBAoc\xBF\xC4", &alarm5->volume, 1, 15, 1, DEC, "");
-                        b.ValueInt<uint8_t>("C\xBF""a\xBD\xE5\xC7", &alarm5->radio, 0, 30, 1, DEC, "");
+                        b.ValueInt<uint8_t>(F("\xA1po\xBC\xBAoc\xBF\xC4"), &alarm5->volume, 1, 15, 1, DEC, F(""));
+                        b.ValueInt<uint8_t>(F("C\xBF""a\xBD\xE5\xC7"), &alarm5->radio, 0, 30, 1, DEC, F(""));
                     }
                     b.Label(F("----------------"));
                 }
@@ -1152,8 +1153,8 @@ void setup() {
                 if (b.Switch(F("B\xBA\xBB\xC6\xC0\xB8\xBF\xC4"), &alarm6->state)) b.refresh();
                 b.Label(F("----------------"));
                 if (alarm6->state) {
-                    b.ValueInt<uint8_t>("\xAB""ac", &alarm6->hour, 1, 23, 1, DEC, "");
-                    b.ValueInt<uint8_t>("M\xB8\xBDy\xBF""a", &alarm6->minute, 1, 59, 1, DEC, "");
+                    b.ValueInt<uint8_t>(F("\xAB""ac"), &alarm6->hour, 1, 23, 1, DEC, F(""));
+                    b.ValueInt<uint8_t>(F("M\xB8\xBDy\xBF""a"), &alarm6->minute, 1, 59, 1, DEC, F(""));
                     b.Label(F("----------------"));
                     b.Switch(F("\xA8o\xBD""e\xE3""e\xBB\xC4\xBD\xB8\xBA"), &alarm6->Monday);
                     b.Switch(F("B\xBFop\xBD\xB8\xBA"), &alarm6->Tuesday);
@@ -1163,10 +1164,10 @@ void setup() {
                     b.Switch(F("Cy\xB2\xB2o\xBF""a"), &alarm6->Saturday);
                     b.Switch(F("Boc\xBApece\xBD\xC4""e"), &alarm6->Sunday);
                     b.Label(F("----------------"));
-                    if (b.Select("Pa\xE3\xB8o", &alarm6->mode, "B\xC3\xBA\xBB;B\xBA\xBB")) b.refresh();
+                    if (b.Select(F("Pa\xE3\xB8o"), &alarm6->mode, F("B\xC3\xBA\xBB;B\xBA\xBB"))) b.refresh();
                     if (alarm6->mode == 1) {
-                        b.ValueInt<uint8_t>("\xA1po\xBC\xBAoc\xBF\xC4", &alarm6->volume, 1, 15, 1, DEC, "");
-                        b.ValueInt<uint8_t>("C\xBF""a\xBD\xE5\xC7", &alarm6->radio, 0, 30, 1, DEC, "");
+                        b.ValueInt<uint8_t>(F("\xA1po\xBC\xBAoc\xBF\xC4"), &alarm6->volume, 1, 15, 1, DEC, F(""));
+                        b.ValueInt<uint8_t>(F("C\xBF""a\xBD\xE5\xC7"), &alarm6->radio, 0, 30, 1, DEC, F(""));
                     }
                     b.Label(F("----------------"));
                 }

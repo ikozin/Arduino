@@ -2,7 +2,7 @@
 #include <Wire.h>
 #include <Keyboard.h>
 #include <GyverIO.h>
-#include <FastLED.h>
+//#include <FastLED.h>
 #include <PinChangeInterrupt.h>
 
 // #define DEBUG_INFO
@@ -15,8 +15,6 @@
 #ifdef KEYBOARD_V2
 
 #define STRIP_PIN   (4)   // пин ленты
-
-CRGB leds[MAX_KEY];
 
 volatile byte keyCnt0 = 0;
 volatile byte keyCnt1 = 0;
@@ -53,22 +51,19 @@ void setup() {
 
     attachPCINT(digitalPinToPCINT(14), keyboard0, CHANGE);
     attachPCINT(digitalPinToPCINT(16), keyboard1, CHANGE);
-
-    FastLED.addLeds<WS2812, STRIP_PIN, GRB>(leds, MAX_KEY);  // GRB ordering is typical
+    delay(100);
+    keyCnt0 = 0;
+    keyCnt1 = 0;
 }
 
 void loop() {
-    fill_solid(leds, MAX_KEY, CRGB::Red);
-    FastLED.show();
-    delay(1000);
-
-    fill_solid(leds, MAX_KEY, CRGB::Green);
-    FastLED.show();
-    delay(1000);
-
-    fill_solid(leds, MAX_KEY, CRGB::Blue);
-    FastLED.show();
-    delay(1000);
+    Serial.print(keyCnt0);
+    Serial.print(',');
+    Serial.print(keyCnt1);
+    Serial.println();
+    keyCnt0 = 0;
+    keyCnt1 = 0;
+    delay(100);
 }
 
 #else
