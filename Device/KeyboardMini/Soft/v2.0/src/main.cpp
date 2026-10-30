@@ -70,7 +70,7 @@ void loop() {
     if (timeCnt == 0) {
         fill_solid(leds, MAX_KEY, colors[index++]);
         FastLED.show();
-        if (index >= colCnt) index = 0;
+        if (index == colCnt) index = 0;
     }
     Serial.print(keyCnt0);
     Serial.print(',');
@@ -80,5 +80,5 @@ void loop() {
     keyCnt1 = 0;
     delay(100);
     timeCnt++;
-    if (timeCnt >= 10) timeCnt = 0;
+    if (timeCnt == 10) timeCnt = 0;
 }
