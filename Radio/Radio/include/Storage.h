@@ -155,7 +155,7 @@ class Storage {
         bool SetVolume(uint8_t value) {
             if (data.volume == constrain(value, 0, 15)) return false;
             data.volume = constrain(value, 0, 15);
-            return data.volume;
+            return true;
         }
         
         void SetNextPlay() {

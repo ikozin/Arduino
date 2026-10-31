@@ -340,37 +340,35 @@ GyverMenu menu(lcdRows, lcdLines);
 RTC_DS3231 rtc;
 Storage<listSize, playListSize> storage; 
 
-#define ButtonControl   (values[4])
-#define ButtonUp        (values[3])
-#define ButtonDown      (values[2])
-#define ButtonLeft      (values[1])
-#define ButtonRight     (values[0])
-volatile uint8_t values[5] = { 0, 0, 0, 0, 0 };
+// Маппинг: PB0=D8=Right, PB1=D9=Left, PB2=D10=Down, PB3=D11=Up, PB4=D12=Control
+enum ButtonPin : uint8_t {
+    BTN_RIGHT = 0,  // PB0 (D8)
+    BTN_LEFT,       // PB1 (D9)
+    BTN_DOWN,       // PB2 (D10)
+    BTN_UP,         // PB3 (D11)
+    BTN_CONTROL,    // PB4 (D12)
+    BTN_COUNT
+};
+
+#define ButtonControl   (values[BTN_CONTROL])
+#define ButtonUp        (values[BTN_UP])
+#define ButtonDown      (values[BTN_DOWN])
+#define ButtonLeft      (values[BTN_LEFT])
+#define ButtonRight     (values[BTN_RIGHT])
+
+volatile uint8_t values[BTN_COUNT] = { 0, 0, 0, 0, 0 };
 static uint8_t oldPINB = 0xFF;
-// Обработчик запросов прерывания от пинов D8..D13
-ISR (PCINT0_vect) {
+
+// Обработчик запросов прерывания от пинов D8..D12 (PB0..PB4)
+ISR(PCINT0_vect) {
     uint8_t value = PINB;
     uint8_t changedbits = value ^ oldPINB;
     oldPINB = value;
 
-    if (changedbits & bit(PB0)) { // Изменился D8
-        values[PB0] = value & bit(PB0);
-    }
-
-    if (changedbits & bit(PB1)) { // Изменился D9
-        values[PB1] = value & bit(PB1);
-    }
-
-    if (changedbits & bit(PB2)) { // Изменился D10
-        values[PB2] = value & bit(PB2);
-    }
-
-    if (changedbits & bit(PB3)) { // Изменился D11
-        values[PB3] = value & bit(PB3);
-    }
-
-    if (changedbits & bit(PB4)) { // Изменился D12
-        values[PB4] = value & bit(PB4);
+    for (uint8_t i = 0; i < BTN_COUNT; i++) {
+        if (changedbits & bit(i)) {
+            values[i] = value & bit(i);
+        }
     }
 }
 

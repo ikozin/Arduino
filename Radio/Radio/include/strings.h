@@ -1,9 +1,9 @@
-// Автосгенерировано gen_strings.py
+// Автосгенерировано gen_strings.py (2026-10-31 11:14 UTC)
 #pragma once
 
 #include <Arduino.h>
 
-// Строковые константы в эмуляции КОИ‑7 (SI/SO)
+// Строковые константы в эмуляции КОИ-7 (SI/SO)
 
 #define	month01 "\0xC7\0xBD\0xB3\0x61\0x70\0xC4"
 #define	month02 "\0xE4\0x65\0xB3\0x70\0x61\0xBB\0xC4"
