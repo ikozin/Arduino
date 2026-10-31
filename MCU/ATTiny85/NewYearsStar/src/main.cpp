@@ -25,7 +25,8 @@ Programmer: "Arduino as ISP"
 
 // константы для удобства
 #define NUMLEDS 21      // кол-во светодиодов
-#define DEVICE_EEPROM 0x50
+#define DEVICE_EEPROM       0x50
+#define EEPROM_WRITE_DELAY  3
 /*
 [flag] [color]
 [flag] [color][count][1..count]
@@ -83,7 +84,7 @@ uint8_t readEepromByte(uint32_t& addr) {
     TinyWireM.write(highByte(addr));
     TinyWireM.write(lowByte(addr));
     TinyWireM.endTransmission();
-    delay(5);
+    delay(EEPROM_WRITE_DELAY);
     addr += sizeof(uint8_t);
     TinyWireM.requestFrom(DEVICE_EEPROM,1);
     return TinyWireM.receive();
@@ -95,7 +96,7 @@ uint16_t readEepromWord(uint32_t& addr) {
     TinyWireM.write(highByte(addr));
     TinyWireM.write(lowByte(addr));
     TinyWireM.endTransmission();
-    delay(5);
+    delay(EEPROM_WRITE_DELAY);
     addr += sizeof(uint16_t);
     TinyWireM.requestFrom(DEVICE_EEPROM, 2);
     result = TinyWireM.receive();
@@ -108,7 +109,7 @@ void readEepromData(uint32_t& addr, uint8_t* buffer, uint8_t size) {
     TinyWireM.write(highByte(addr));
     TinyWireM.write(lowByte(addr));
     TinyWireM.endTransmission();
-    delay(5);
+    delay(EEPROM_WRITE_DELAY);
     addr += size;
     TinyWireM.requestFrom(DEVICE_EEPROM, size);
     delay(5);
@@ -190,8 +191,8 @@ void loop() {
             return;
     }
  
+    FastLED.show();
     if (pause) {
-        FastLED.show();
         delay(pause);
     }
     if (address >= 0xFFFFU) {
