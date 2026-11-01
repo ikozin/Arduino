@@ -183,18 +183,18 @@ const char *const digits_bottom[] = {
 };
 
 const char* months[12] = {
-  month01,  //"\xC7\xBD\xB3""ap\xC4",
-  month02,  //"\xE4""e\xB3pa\xBB\xC4",
-  month03,  //"\xBC""ap\xBF",
-  month04,  //"a\xBEpe\xBB\xC4",
-  month05,  //"\xBC""a\xB9",
+  month01,  //"\xC7\xBD\xB3\x61\x70\xC4",
+  month02,  //"\xE4\x65\xB3\x70\x61\xBB\xC4",
+  month03,  //"\xBC\x61\x70\xBF",
+  month04,  //"\x61\xBE\x70\x65\xBB\xC4",
+  month05,  //"\xBC\x61\xB9",
   month06,  //"\xB8\xC6\xBD\xC4",
-  month07,  //"\xB8\xC6\xBB\xC4",
-  month08,  //"a\xB3\xB4yc\xBF",
-  month09,  //"ce\xBD\xBF\xC7\xB2p\xC4",
-  month10,  //"o\xBA\xBF\xC7\xB2p\xC4",
-  month11,  //"\xBDo\xC7\xB2p\xC4",
-  month12,  //"\xE3""e\xBA""a\xB2p\xC4",
+  month07,  //\xB8\xC6\xBB\xC4",
+  month08,  //"\x61\xB3\xB4\x79\x63\xBF",
+  month09,  //"\x63\x65\xBD\xBF\xC7\xB2\x70\xC4",
+  month10,  //"\x6F\xBA\xBF\xC7\xB2\x70\xC4",
+  month11,  //"\xBD\x6F\xC7\xB2\x70\xC4",
+  month12,  //\xE3\x65\xBA\x61\xB2\x70\xC4",
 };
 
 typedef struct {
@@ -340,13 +340,14 @@ GyverMenu menu(lcdRows, lcdLines);
 RTC_DS3231 rtc;
 Storage<listSize, playListSize> storage; 
 
-// Маппинг: PB0=D8=Right, PB1=D9=Left, PB2=D10=Down, PB3=D11=Up, PB4=D12=Control
+// Маппинг: PB0=D8=Up, PB1=D9=Control, PB2=D10=Down, PB3=D11=Right, PB4=D12=Left
+
 enum ButtonPin : uint8_t {
-    BTN_RIGHT = 0,  // PB0 (D8)
-    BTN_LEFT,       // PB1 (D9)
+    BTN_UP = 0,		// PB0 (D8)
+    BTN_CONTROL,    // PB1 (D9)
     BTN_DOWN,       // PB2 (D10)
-    BTN_UP,         // PB3 (D11)
-    BTN_CONTROL,    // PB4 (D12)
+    BTN_RIGHT,      // PB3 (D11)
+    BTN_LEFT,    	// PB4 (D12)
     BTN_COUNT
 };
 

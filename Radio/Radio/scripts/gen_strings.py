@@ -60,7 +60,7 @@ def main():
         for key, text in strings.items():
             koi7_data = utf8_to_koi7_bytes(text)
 
-            hex_parts = [f"\\0x{b:02X}" for b in koi7_data]
+            hex_parts = [f"\\x{b:02X}" for b in koi7_data]
             f.write(f"#define\t{key} \"")
             for h in hex_parts:
                 f.write(h)
