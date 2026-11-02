@@ -389,13 +389,14 @@ void error(const char *info) {
 }
 
 void displayDate(uint8_t day, uint8_t month, uint16_t year) {
-    text = "  ";
-    text += day;
-    text += ' ';
-    text += months[month - 1];
-    text += ' ';
-    text += year;
-    text += "  ";
+    text.clear();
+    text.add("  ");
+    text.add(day);
+    text.add(' ');
+    text.add(months[month - 1]);
+    text.add(' ');
+    text.add(year);
+    text.add("  ");
     lcd.setCursor((lcdRows - text.length()) >> 1, 0);
     lcd.print(text);
 }
@@ -896,16 +897,16 @@ void actionAlarmSave() {
 char* getAlarmTitle(DEVICE_SETTING_ALARM* value) {
     text.clear();
     if (!value->state) {
-        text = F("[\xBEyc\xBFo]");
+        text.add(F("[\xBEyc\xBFo]"));
         return text.c_str();
     }
-    text = value->mode ? F("[B\xBA\xBB]  ") : F("[B\xC3\xBA\xBB] ");
-    if (value->hour < 10) text += ' ';
-    text += value->hour;
-    text += ':';
-    if (value->minute < 10) text += '0';
-    text += value->minute;
-    return text;
+    text.add(value->mode ? F("[B\xBA\xBB]  ") : F("[B\xC3\xBA\xBB] "));
+    if (value->hour < 10) text.add(' ');
+    text.add(value->hour);
+    text.add(':');
+    if (value->minute < 10) text.add('0');
+    text.add(value->minute);
+    return text.c_str();
 }
 
 void loopMenu() {
