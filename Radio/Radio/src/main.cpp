@@ -89,6 +89,7 @@ https://microsin.net/adminstuff/hardware/ds3231-extremely-accurate-rtc.html
 #include "GyverMenu.h"
 #include "RTClib.h"                 //https://microsin.net/adminstuff/hardware/ds3231-extremely-accurate-rtc.html
 #include "strings.h"
+#include "menu_strings.h"
 
 #ifndef ARDUINO_AVR_PRO
 #error Select board: Arduino Pro Mini 
@@ -250,58 +251,57 @@ typedef struct {
 	char name[21];
 } RadioItem;
 
-// Важно: русские буквы, видимо в unicode, так как массив с ними переполнен, да и вывод их не совпадает (кодировка)
 const RadioItem radioList[] PROGMEM = {
-  { 87500, "Business FM     87,5"},                                       // 0 - Business FM
-  { 87900, "Like FM         87,9"},                                       // 1 - Like FM
-  { 88300, "Pe\xBFpo FM        88,3"},                                    // 2 - Ретро FM
-  { 88700, "\xB0\xBCop FM         88,7"},                                 // 3 - Юмор FM
-  { 89100, "Pa\xE3\xB8o Jazz      89,1"},                                 // 4 - Радио Jazz
-  { 89500, "Ka\xBB\xB8\xBD""a Kpac\xBD""a\xC7  89,5"},                    // 5 - Радио Калина Красная
-  { 89900, "Pa\xE3\xB8o Pe\xBAop\xE3    89,9"},                           // 6 - Радио Рекорд
-  { 90300, "A\xB3\xBFopa\xE3\xB8o       90,3"},                           // 7 - Авторадио
-  { 90800, "Relax FM        90,8"},                                       // 8 - Relax FM
-  { 91200, "Pa\xE3\xB8o Sputnik   91,2"},                                 // 9 - Радио Sputnik
-  { 91600, "Pa\xE3\xB8o Ky\xBB\xC4\xBFypa  91,6"},                        //10 - Радио Культура
-  { 92000, "Moc\xBA\xB3""a FM       92,0"},                               //11 - Москва FM
-  { 92400, "Pa\xE3\xB8o \xE0""a\xC0""a      92,4"},                       //12 - Радио Дача
-  { 92800, "Pa\xE3\xB8o Kap\xBD""a\xB3""a\xBB  92,8"},                    //13 - Радио Карнавал
-  { 93200, "STUDIO 21       93,2"},                                       //14 - STUDIO 21
-  { 93600, "Ko\xBC\xBC""epca\xBD\xBF\xC2 FM  93,6"},                      //15 - Коммерсант FM
-  { 94000, "Boc\xBFo\xBA FM       94,0"},                                 //16 - Восток FM
-  { 94400, "C\xBEop\xBF\xB8\xB3\xBDoe Pa\xE3\xB8o94,4"},                  //17 - Первое Спортивное Радио
-  { 94800, "\xA1o\xB3op\xB8\xBF Moc\xBA\xB3""a  94,8"},                   //18 - Говорит Москва
-  { 95200, "Rock FM         95,2"},                                       //19 - Rock FM
-  { 95600, "Pa\xE3\xB8o \xA4\xB3""e\xB7\xE3""a    95,6"},                 //20 - Радио Звезда
-  { 96000, "\xE0opo\xB6\xBDoe pa\xE3\xB8o  96,0"},                        //21 - Дорожное радио
-  { 96400, "Ta\xBA""c\xB8 FM        96,4"},                               //22 - Такси FM
-  { 96800, "\xE0""e\xBF""c\xBAoe pa\xE3\xB8o   96,8"},                    //23 - Детское радио
-  { 97200, "Pa\xE3\xB8o K\xA8        97,2"},                              //24 - Радио КП
-  { 97600, "Bec\xBF\xB8 FM        97,6"},                                 //25 - Вести FM
-  { 98000, "Pa\xE3\xB8o \xACo\xBAo\xBB""a\xE3   98,0"},                   //26 - Радио Шоколад
-  { 98400, "Ho\xB3oe Pa\xE3\xB8o     98,4"},                              //27 - Новое Радио
-  { 98800, "Pa\xE3\xB8o Romantika 98,8"},                                 //28 - Радио Romantika
-  { 99200, "Pa\xE3\xB8o Op\xAA""e\xB9     99,2"},                         //29 - Радио Орфей
-  { 99600, "Pycc\xB8\xA6 X\xB8\xBF      99,6"},                           //30 - Радио Русский Хит
-  {100100, "Cepe\xB2p\xC7\xBD\xC3\xB9 \xE3o\xB6\xE3\xC4    "},            //31 - Серебряннй дождь
-  {100500, "\xA3""apa FM        100,5"},                                  //32 - Жара FM
-  {101200, "DFM            101,2"},                                       //33 - DFM
-  {101800, "Ha\xC1""e pa\xE3\xB8o     101,7"},                            //34 - Наше Радио
-  {102100, "Mo\xBD\xBF""e-Kap\xBBo    102,1"},                            //35 - Монте-Карло
-  {102500, "Comedy Radio   102,5"},                                       //36 - Comedy Radio
-  {103000, "\xAC""a\xBD""co\xBD         103,0"},                          //37 - Шансон
-  {103400, "Ma\xC7\xBA           103,4"},                                 //38 - Маяк
-  {103700, "Maximum        103,7"},                                       //39 - Maximum
-  {104200, "Pa\xE3\xB8o ENERGY   104,2"},                                 //40 - Радио ENERGY
-  {104700, "Pa\xE3\xB8o 7        104,7"},                                 //41 - Радио 7
-  {105000, "Pa\xE3\xB8o \xA1op\xE3oc\xBF\xC4 105,2"},                     //42 - Радио Гордость
-  {105300, "Capital FM     105,2"},                                       //43 - Capital FM
-  {105700, "Pycc\xBAoe pa\xE3\xB8o  105,7"},                              //44 - Русское радио
-  {106200, "E\xB3po\xBE""a \xA8\xBB\xC6""c    106,2"},                    //45 - Европа Плюс
-  {106600, "Love Radio     106,6"},                                       //46 - Love Radio
-  {107000, "KIS FM         107,0"},                                       //47 - KISS FM
-  {107400, "X\xB8\xBF FM         107,4"},                                 //48 - Хит FM
-  {107800, "M\xB8\xBB\xB8\xE5""e\xB9""c\xBA""a\xC7 \xB3o\xBB\xBD""a   "}, //49 - Милицейская волна
+  { 87500, radio01 },
+  { 87900, radio02 },
+  { 88300, radio03 },
+  { 88700, radio04 },
+  { 89100, radio05 },
+  { 89500, radio06 },
+  { 89900, radio07 },
+  { 90300, radio08 },
+  { 90800, radio09 },
+  { 91200, radio10 },
+  { 91600, radio11 },
+  { 92000, radio12 },
+  { 92400, radio13 },
+  { 92800, radio14 },
+  { 93200, radio15 },
+  { 93600, radio16 },
+  { 94000, radio17 },
+  { 94400, radio18 },
+  { 94800, radio19 },
+  { 95200, radio20 },
+  { 95600, radio21 },
+  { 96000, radio22 },
+  { 96400, radio23 },
+  { 96800, radio24 },
+  { 97200, radio25 },
+  { 97600, radio26 },
+  { 98000, radio27 },
+  { 98400, radio28 },
+  { 98800, radio29 },
+  { 99200, radio30 },
+  { 99600, radio31 },
+  {100100, radio32 },
+  {100500, radio33 },
+  {101200, radio34 },
+  {101800, radio35 },
+  {102100, radio36 },
+  {102500, radio37 },
+  {103000, radio38 },
+  {103400, radio39 },
+  {103700, radio40 },
+  {104200, radio41 },
+  {104700, radio42 },
+  {105000, radio43 },
+  {105300, radio44 },
+  {105700, radio45 },
+  {106200, radio46 },
+  {106600, radio47 },
+  {107000, radio48 },
+  {107400, radio49 },
+  {107800, radio50 },
 };
 const int listSize = sizeof(radioList) / sizeof(RadioItem);
 
@@ -897,7 +897,7 @@ void actionAlarmSave() {
 char* getAlarmTitle(DEVICE_SETTING_ALARM* value) {
     text.clear();
     if (!value->state) {
-        text.add(F("[\xBEyc\xBFo]"));
+        text.add(F(menu_empty));
         return text.c_str();
     }
     text.add(value->mode ? F("[B\xBA\xBB]  ") : F("[B\xC3\xBA\xBB] "));
@@ -935,6 +935,20 @@ void loopMenu() {
         }
         delay(100);
     }
+}
+
+void MenuWeek (gm::Builder& b, DEVICE_SETTING_ALARM* alarm, const __FlashStringHelper* empty, const __FlashStringHelper* line){
+    b.ValueInt<uint8_t>(S_HOUR, &alarm->hour, 1, 23, 1, DEC, empty);
+    b.ValueInt<uint8_t>(S_MINUTE, &alarm->minute, 1, 59, 1, DEC, empty);
+    b.Label(line);
+    b.Switch(S_MONDAY, &alarm->Monday);
+    b.Switch(S_TUESDAY, &alarm->Tuesday);
+    b.Switch(S_WEDNESDAY, &alarm->Wednesday);
+    b.Switch(S_THURSDAY, &alarm->Thursday);
+    b.Switch(S_FRIDAY, &alarm->Friday);
+    b.Switch(S_SATURDAY, &alarm->Saturday);
+    b.Switch(S_SUNDAY, &alarm->Sunday);
+    b.Label(line);
 }
 
 void setup() {
@@ -1010,7 +1024,7 @@ void setup() {
     pinMode(TONE_PIN, OUTPUT);
 
     LOG("Initialize Menu");
-    menu.setBackSign("Ha\xB7""a\xE3");
+    menu.setBackSign(mune_back);
     menu.onPrint([](const char* str, size_t len) {
         if (str) lcd.Print::write(str, len);
     });
@@ -1020,159 +1034,179 @@ void setup() {
         return 1;
     });
     menu.onBuild([](gm::Builder& b) {
-        b.Button(F("B\xC3""xo\xE3"), actionExit);  // "Выход"
-        b.Page(GM_NEXT, F("\xE0""a\xBF""a"), [](gm::Builder& b) {  // Дата
-            b.ValueInt<uint16_t>(F("\xA1""o\xE3"), &setting.year, 2020, 2090, 1, DEC, F(""));
-            b.ValueInt<uint8_t>(F("Mec\xC7\xE5"), &setting.month, 1, 12, 1, DEC, F(""));
-            b.ValueInt<uint8_t>(F("\xE0""e\xBD\xC4"), &setting.day, 1, 31, 1, DEC, F(""));
-            b.Button(F("Coxpa\xBD\xB8\xBF\xC4"), actionDateSave);  // "Сохранить"
+        b.Button(S_EXIT, actionExit);  // "Выход"
+        b.Page(GM_NEXT, S_DATE, [](gm::Builder& b) {  // Дата
+            const __FlashStringHelper* S_EMPTY = F("");
+            b.ValueInt<uint16_t>(S_YEAR, &setting.year, 2020, 2090, 1, DEC, S_EMPTY);
+            b.ValueInt<uint8_t>(S_MONTH, &setting.month, 1, 12, 1, DEC, S_EMPTY);
+            b.ValueInt<uint8_t>(S_DAY, &setting.day, 1, 31, 1, DEC, S_EMPTY);
+            b.Button(S_SAVE, actionDateSave);  // "Сохранить"
         });
-        b.Page(GM_NEXT, F("Bpe\xBC\xC7"), [](gm::Builder& b) {     // Время
-            b.ValueInt<uint8_t>(F("\xAB""ac"), &setting.hour, 1, 23, 1, DEC, F(""));
-            b.ValueInt<uint8_t>(F("M\xB8\xBDy\xBF""a"), &setting.minute, 1, 59, 1, DEC, F(""));
-            b.ValueInt<uint8_t>(F("Ce\xBAy\xBD\xE3""a"), &setting.second, 1, 59, 1, DEC, F(""));
-            b.Button(F("Coxpa\xBD\xB8\xBF\xC4"), actionTimeSave);  // "Сохранить"
+        b.Page(GM_NEXT, S_TIME, [](gm::Builder& b) {     // Время
+            const __FlashStringHelper* S_EMPTY = F("");
+            b.ValueInt<uint8_t>(S_HOUR, &setting.hour, 1, 23, 1, DEC, S_EMPTY);
+            b.ValueInt<uint8_t>(S_MINUTE, &setting.minute, 1, 59, 1, DEC, S_EMPTY);
+            b.ValueInt<uint8_t>(S_SECOND, &setting.second, 1, 59, 1, DEC, S_EMPTY);
+            b.Button(S_SAVE, actionTimeSave);  // "Сохранить"
         });
-        b.Page(GM_NEXT, F("\xA0y\xE3\xB8\xBB\xC4\xBD\xB8\xBA"), [](gm::Builder& b) {   // Будильник
+        b.Page(GM_NEXT, S_ALARM, [](gm::Builder& b) {   // Будильник
             b.Page(GM_NEXT, getAlarmTitle(alarm1), [](gm::Builder& b) {
-                if (b.Switch(F("B\xBA\xBB\xC6\xC0\xB8\xBF\xC4"), &alarm1->state)) b.refresh();
-                b.Label(F("----------------"));
+                const __FlashStringHelper* S_EMPTY = F("");
+                const __FlashStringHelper* S_LINE = S_SEPARATOR;
+                if (b.Switch(S_ON, &alarm1->state)) b.refresh();
+                b.Label(S_LINE);
                 if (alarm1->state) {
-                    b.ValueInt<uint8_t>(F("\xAB""ac"), &alarm1->hour, 1, 23, 1, DEC, F(""));
-                    b.ValueInt<uint8_t>(F("M\xB8\xBDy\xBF""a"), &alarm1->minute, 1, 59, 1, DEC, F(""));
-                    b.Label(F("----------------"));
-                    b.Switch(F("\xA8o\xBD""e\xE3""e\xBB\xC4\xBD\xB8\xBA"), &alarm1->Monday);
-                    b.Switch(F("B\xBFop\xBD\xB8\xBA"), &alarm1->Tuesday);
-                    b.Switch(F("Cpe\xE3""a"), &alarm1->Wednesday);
-                    b.Switch(F("\xAB""e\xBF\xB3""ep\xB4"), &alarm1->Thursday);
-                    b.Switch(F("\xA8\xC7\xBF\xBD\xB8\xE5""a"), &alarm1->Friday);
-                    b.Switch(F("Cy\xB2\xB2o\xBF""a"), &alarm1->Saturday);
-                    b.Switch(F("Boc\xBApece\xBD\xC4""e"), &alarm1->Sunday);
-                    b.Label(F("----------------"));
-                    if (b.Select(F("Pa\xE3\xB8o"), &alarm1->mode, F("B\xC3\xBA\xBB;B\xBA\xBB"))) b.refresh();
+                    MenuWeek(b, alarm1, S_EMPTY, S_LINE);
+                    // b.ValueInt<uint8_t>(S_HOUR, &alarm1->hour, 1, 23, 1, DEC, S_EMPTY);
+                    // b.ValueInt<uint8_t>(S_MINUTE, &alarm1->minute, 1, 59, 1, DEC, S_EMPTY);
+                    // b.Label(S_LINE);
+                    // b.Switch(S_MONDAY, &alarm1->Monday);
+                    // b.Switch(S_TUESDAY, &alarm1->Tuesday);
+                    // b.Switch(S_WEDNESDAY, &alarm1->Wednesday);
+                    // b.Switch(S_THURSDAY, &alarm1->Thursday);
+                    // b.Switch(S_FRIDAY, &alarm1->Friday);
+                    // b.Switch(S_SATURDAY, &alarm1->Saturday);
+                    // b.Switch(S_SUNDAY, &alarm1->Sunday);
+                    // b.Label(S_LINE);
+                    if (b.Select(S_RADIO, &alarm1->mode, S_MODE)) b.refresh();
                     if (alarm1->mode == 1) {
-                        b.ValueInt<uint8_t>(F("\xA1po\xBC\xBAoc\xBF\xC4"), &alarm1->volume, 1, 15, 1, DEC, F(""));
-                        b.ValueInt<uint8_t>(F("C\xBF""a\xBD\xE5\xC7"), &alarm1->radio, 0, 30, 1, DEC, F(""));
+                        b.ValueInt<uint8_t>(S_VOLUME, &alarm1->volume, 1, 15, 1, DEC, S_EMPTY);
+                        b.ValueInt<uint8_t>(S_STATION, &alarm1->radio, 0, 30, 1, DEC, S_EMPTY);
                     }
-                    b.Label(F("----------------"));
+                    b.Label(S_LINE);
                 }
             });
             b.Page(GM_NEXT, getAlarmTitle(alarm2), [](gm::Builder& b) {
-                if (b.Switch(F("B\xBA\xBB\xC6\xC0\xB8\xBF\xC4"), &alarm2->state)) b.refresh();
-                b.Label(F("----------------"));
+                const __FlashStringHelper* S_EMPTY = F("");
+                const __FlashStringHelper* S_LINE = S_SEPARATOR;
+                if (b.Switch(S_ON, &alarm2->state)) b.refresh();
+                b.Label(S_LINE);
                 if (alarm2->state) {
-                    b.ValueInt<uint8_t>(F("\xAB""ac"), &alarm2->hour, 1, 23, 1, DEC, F(""));
-                    b.ValueInt<uint8_t>(F("M\xB8\xBDy\xBF""a"), &alarm2->minute, 1, 59, 1, DEC, F(""));
-                    b.Label(F("----------------"));
-                    b.Switch(F("\xA8o\xBD""e\xE3""e\xBB\xC4\xBD\xB8\xBA"), &alarm2->Monday);
-                    b.Switch(F("B\xBFop\xBD\xB8\xBA"), &alarm2->Tuesday);
-                    b.Switch(F("Cpe\xE3""a"), &alarm2->Wednesday);
-                    b.Switch(F("\xAB""e\xBF\xB3""ep\xB4"), &alarm2->Thursday);
-                    b.Switch(F("\xA8\xC7\xBF\xBD\xB8\xE5""a"), &alarm2->Friday);
-                    b.Switch(F("Cy\xB2\xB2o\xBF""a"), &alarm2->Saturday);
-                    b.Switch(F("Boc\xBApece\xBD\xC4""e"), &alarm2->Sunday);
-                    b.Label(F("----------------"));
-                    if (b.Select(F("Pa\xE3\xB8o"), &alarm2->mode, F("B\xC3\xBA\xBB;B\xBA\xBB"))) b.refresh();
+                    MenuWeek(b, alarm2, S_EMPTY, S_LINE);
+                    // b.ValueInt<uint8_t>(S_HOUR, &alarm2->hour, 1, 23, 1, DEC, S_EMPTY);
+                    // b.ValueInt<uint8_t>(S_MINUTE, &alarm2->minute, 1, 59, 1, DEC, S_EMPTY);
+                    // b.Label(S_LINE);
+                    // b.Switch(S_MONDAY, &alarm2->Monday);
+                    // b.Switch(S_TUESDAY, &alarm2->Tuesday);
+                    // b.Switch(S_WEDNESDAY, &alarm2->Wednesday);
+                    // b.Switch(S_THURSDAY, &alarm2->Thursday);
+                    // b.Switch(S_FRIDAY, &alarm2->Friday);
+                    // b.Switch(S_SATURDAY, &alarm2->Saturday);
+                    // b.Switch(S_SUNDAY, &alarm2->Sunday);
+                    // b.Label(S_LINE);
+                    if (b.Select(S_RADIO, &alarm2->mode, S_MODE)) b.refresh();
                     if (alarm2->mode == 1) {
-                        b.ValueInt<uint8_t>(F("\xA1po\xBC\xBAoc\xBF\xC4"), &alarm2->volume, 1, 15, 1, DEC, F(""));
-                        b.ValueInt<uint8_t>(F("C\xBF""a\xBD\xE5\xC7"), &alarm2->radio, 0, 30, 1, DEC, F(""));
+                        b.ValueInt<uint8_t>(S_VOLUME, &alarm2->volume, 1, 15, 1, DEC, S_EMPTY);
+                        b.ValueInt<uint8_t>(S_STATION, &alarm2->radio, 0, 30, 1, DEC, S_EMPTY);
                     }
-                    b.Label(F("----------------"));
+                    b.Label(S_LINE);
                 }
             });
             b.Page(GM_NEXT, getAlarmTitle(alarm3), [](gm::Builder& b) {
-                if (b.Switch(F("B\xBA\xBB\xC6\xC0\xB8\xBF\xC4"), &alarm3->state)) b.refresh();
-                b.Label(F("----------------"));
+                const __FlashStringHelper* S_EMPTY = F("");
+                const __FlashStringHelper* S_LINE = S_SEPARATOR;
+                if (b.Switch(S_ON, &alarm3->state)) b.refresh();
+                b.Label(S_LINE);
                 if (alarm3->state) {
-                    b.ValueInt<uint8_t>(F("\xAB""ac"), &alarm3->hour, 1, 23, 1, DEC, F(""));
-                    b.ValueInt<uint8_t>(F("M\xB8\xBDy\xBF""a"), &alarm3->minute, 1, 59, 1, DEC, F(""));
-                    b.Label(F("----------------"));
-                    b.Switch(F("\xA8o\xBD""e\xE3""e\xBB\xC4\xBD\xB8\xBA"), &alarm3->Monday);
-                    b.Switch(F("B\xBFop\xBD\xB8\xBA"), &alarm3->Tuesday);
-                    b.Switch(F("Cpe\xE3""a"), &alarm3->Wednesday);
-                    b.Switch(F("\xAB""e\xBF\xB3""ep\xB4"), &alarm3->Thursday);
-                    b.Switch(F("\xA8\xC7\xBF\xBD\xB8\xE5""a"), &alarm3->Friday);
-                    b.Switch(F("Cy\xB2\xB2o\xBF""a"), &alarm3->Saturday);
-                    b.Switch(F("Boc\xBApece\xBD\xC4""e"), &alarm3->Sunday);
-                    b.Label(F("----------------"));
-                    if (b.Select(F("Pa\xE3\xB8o"), &alarm3->mode, F("B\xC3\xBA\xBB;B\xBA\xBB"))) b.refresh();
+                    MenuWeek(b, alarm3, S_EMPTY, S_LINE);
+                    // b.ValueInt<uint8_t>(S_HOUR, &alarm3->hour, 1, 23, 1, DEC, S_EMPTY);
+                    // b.ValueInt<uint8_t>(S_MINUTE, &alarm3->minute, 1, 59, 1, DEC, S_EMPTY);
+                    // b.Label(S_LINE);
+                    // b.Switch(S_MONDAY, &alarm3->Monday);
+                    // b.Switch(S_TUESDAY, &alarm3->Tuesday);
+                    // b.Switch(S_WEDNESDAY, &alarm3->Wednesday);
+                    // b.Switch(S_THURSDAY, &alarm3->Thursday);
+                    // b.Switch(S_FRIDAY, &alarm3->Friday);
+                    // b.Switch(S_SATURDAY, &alarm3->Saturday);
+                    // b.Switch(S_SUNDAY, &alarm3->Sunday);
+                    // b.Label(S_LINE);
+                    if (b.Select(S_RADIO, &alarm3->mode, S_MODE)) b.refresh();
                     if (alarm3->mode == 1) {
-                        b.ValueInt<uint8_t>(F("\xA1po\xBC\xBAoc\xBF\xC4"), &alarm3->volume, 1, 15, 1, DEC, F(""));
-                        b.ValueInt<uint8_t>(F("C\xBF""a\xBD\xE5\xC7"), &alarm3->radio, 0, 30, 1, DEC, F(""));
+                        b.ValueInt<uint8_t>(S_VOLUME, &alarm3->volume, 1, 15, 1, DEC, S_EMPTY);
+                        b.ValueInt<uint8_t>(S_STATION, &alarm3->radio, 0, 30, 1, DEC, S_EMPTY);
                     }
-                    b.Label(F("----------------"));
+                    b.Label(S_LINE);
                 }
             });
             b.Page(GM_NEXT, getAlarmTitle(alarm4), [](gm::Builder& b) {
-                if (b.Switch(F("B\xBA\xBB\xC6\xC0\xB8\xBF\xC4"), &alarm4->state)) b.refresh();
-                b.Label(F("----------------"));
+                const __FlashStringHelper* S_EMPTY = F("");
+                const __FlashStringHelper* S_LINE = S_SEPARATOR;
+                if (b.Switch(S_ON, &alarm4->state)) b.refresh();
+                b.Label(S_LINE);
                 if (alarm4->state) {
-                    b.ValueInt<uint8_t>(F("\xAB""ac"), &alarm4->hour, 1, 23, 1, DEC, F(""));
-                    b.ValueInt<uint8_t>(F("M\xB8\xBDy\xBF""a"), &alarm4->minute, 1, 59, 1, DEC, F(""));
-                    b.Label(F("----------------"));
-                    b.Switch(F("\xA8o\xBD""e\xE3""e\xBB\xC4\xBD\xB8\xBA"), &alarm4->Monday);
-                    b.Switch(F("B\xBFop\xBD\xB8\xBA"), &alarm4->Tuesday);
-                    b.Switch(F("Cpe\xE3""a"), &alarm4->Wednesday);
-                    b.Switch(F("\xAB""e\xBF\xB3""ep\xB4"), &alarm4->Thursday);
-                    b.Switch(F("\xA8\xC7\xBF\xBD\xB8\xE5""a"), &alarm4->Friday);
-                    b.Switch(F("Cy\xB2\xB2o\xBF""a"), &alarm4->Saturday);
-                    b.Switch(F("Boc\xBApece\xBD\xC4""e"), &alarm4->Sunday);
-                    b.Label(F("----------------"));
-                    if (b.Select(F("Pa\xE3\xB8o"), &alarm4->mode, F("B\xC3\xBA\xBB;B\xBA\xBB"))) b.refresh();
+                    MenuWeek(b, alarm4, S_EMPTY, S_LINE);
+                    // b.ValueInt<uint8_t>(S_HOUR, &alarm4->hour, 1, 23, 1, DEC, S_EMPTY);
+                    // b.ValueInt<uint8_t>(S_MINUTE, &alarm4->minute, 1, 59, 1, DEC, S_EMPTY);
+                    // b.Label(S_LINE);
+                    // b.Switch(S_MONDAY, &alarm4->Monday);
+                    // b.Switch(S_TUESDAY, &alarm4->Tuesday);
+                    // b.Switch(S_WEDNESDAY, &alarm4->Wednesday);
+                    // b.Switch(S_THURSDAY, &alarm4->Thursday);
+                    // b.Switch(S_FRIDAY, &alarm4->Friday);
+                    // b.Switch(S_SATURDAY, &alarm4->Saturday);
+                    // b.Switch(S_SUNDAY, &alarm4->Sunday);
+                    // b.Label(S_LINE);
+                    if (b.Select(S_RADIO, &alarm4->mode, S_MODE)) b.refresh();
                     if (alarm4->mode == 1) {
-                        b.ValueInt<uint8_t>(F("\xA1po\xBC\xBAoc\xBF\xC4"), &alarm4->volume, 1, 15, 1, DEC, F(""));
-                        b.ValueInt<uint8_t>(F("C\xBF""a\xBD\xE5\xC7"), &alarm4->radio, 0, 30, 1, DEC, F(""));
+                        b.ValueInt<uint8_t>(S_VOLUME, &alarm4->volume, 1, 15, 1, DEC, S_EMPTY);
+                        b.ValueInt<uint8_t>(S_STATION, &alarm4->radio, 0, 30, 1, DEC, S_EMPTY);
                     }
-                    b.Label(F("----------------"));
+                    b.Label(S_LINE);
                 }
             });
             b.Page(GM_NEXT, getAlarmTitle(alarm5), [](gm::Builder& b) {
-                if (b.Switch(F("B\xBA\xBB\xC6\xC0\xB8\xBF\xC4"), &alarm5->state)) b.refresh();
-                b.Label(F("----------------"));
+                const __FlashStringHelper* S_EMPTY = F("");
+                const __FlashStringHelper* S_LINE = S_SEPARATOR;
+                if (b.Switch(S_ON, &alarm5->state)) b.refresh();
+                b.Label(S_LINE);
                 if (alarm5->state) {
-                    b.ValueInt<uint8_t>(F("\xAB""ac"), &alarm5->hour, 1, 23, 1, DEC, F(""));
-                    b.ValueInt<uint8_t>(F("M\xB8\xBDy\xBF""a"), &alarm5->minute, 1, 59, 1, DEC, F(""));
-                    b.Label(F("----------------"));
-                    b.Switch(F("\xA8o\xBD""e\xE3""e\xBB\xC4\xBD\xB8\xBA"), &alarm5->Monday);
-                    b.Switch(F("B\xBFop\xBD\xB8\xBA"), &alarm5->Tuesday);
-                    b.Switch(F("Cpe\xE3""a"), &alarm5->Wednesday);
-                    b.Switch(F("\xAB""e\xBF\xB3""ep\xB4"), &alarm5->Thursday);
-                    b.Switch(F("\xA8\xC7\xBF\xBD\xB8\xE5""a"), &alarm5->Friday);
-                    b.Switch(F("Cy\xB2\xB2o\xBF""a"), &alarm5->Saturday);
-                    b.Switch(F("Boc\xBApece\xBD\xC4""e"), &alarm5->Sunday);
-                    b.Label(F("----------------"));
-                    if (b.Select(F("Pa\xE3\xB8o"), &alarm5->mode, F("B\xC3\xBA\xBB;B\xBA\xBB"))) b.refresh();
+                    MenuWeek(b, alarm5, S_EMPTY, S_LINE);
+                    // b.ValueInt<uint8_t>(S_HOUR, &alarm5->hour, 1, 23, 1, DEC, S_EMPTY);
+                    // b.ValueInt<uint8_t>(S_MINUTE, &alarm5->minute, 1, 59, 1, DEC, S_EMPTY);
+                    // b.Label(S_LINE);
+                    // b.Switch(S_MONDAY, &alarm5->Monday);
+                    // b.Switch(S_TUESDAY, &alarm5->Tuesday);
+                    // b.Switch(S_WEDNESDAY, &alarm5->Wednesday);
+                    // b.Switch(S_THURSDAY, &alarm5->Thursday);
+                    // b.Switch(S_FRIDAY, &alarm5->Friday);
+                    // b.Switch(S_SATURDAY, &alarm5->Saturday);
+                    // b.Switch(S_SUNDAY, &alarm5->Sunday);
+                    // b.Label(S_LINE);
+                    if (b.Select(S_RADIO, &alarm5->mode, S_MODE)) b.refresh();
                     if (alarm5->mode == 1) {
-                        b.ValueInt<uint8_t>(F("\xA1po\xBC\xBAoc\xBF\xC4"), &alarm5->volume, 1, 15, 1, DEC, F(""));
-                        b.ValueInt<uint8_t>(F("C\xBF""a\xBD\xE5\xC7"), &alarm5->radio, 0, 30, 1, DEC, F(""));
+                        b.ValueInt<uint8_t>(S_VOLUME, &alarm5->volume, 1, 15, 1, DEC, S_EMPTY);
+                        b.ValueInt<uint8_t>(S_STATION, &alarm5->radio, 0, 30, 1, DEC, S_EMPTY);
                     }
-                    b.Label(F("----------------"));
+                    b.Label(S_LINE);
                 }
             });
             b.Page(GM_NEXT, getAlarmTitle(alarm6), [](gm::Builder& b) {
-                if (b.Switch(F("B\xBA\xBB\xC6\xC0\xB8\xBF\xC4"), &alarm6->state)) b.refresh();
-                b.Label(F("----------------"));
+                const __FlashStringHelper* S_EMPTY = F("");
+                const __FlashStringHelper* S_LINE = S_SEPARATOR;
+                if (b.Switch(S_ON, &alarm6->state)) b.refresh();
+                b.Label(S_LINE);
                 if (alarm6->state) {
-                    b.ValueInt<uint8_t>(F("\xAB""ac"), &alarm6->hour, 1, 23, 1, DEC, F(""));
-                    b.ValueInt<uint8_t>(F("M\xB8\xBDy\xBF""a"), &alarm6->minute, 1, 59, 1, DEC, F(""));
-                    b.Label(F("----------------"));
-                    b.Switch(F("\xA8o\xBD""e\xE3""e\xBB\xC4\xBD\xB8\xBA"), &alarm6->Monday);
-                    b.Switch(F("B\xBFop\xBD\xB8\xBA"), &alarm6->Tuesday);
-                    b.Switch(F("Cpe\xE3""a"), &alarm6->Wednesday);
-                    b.Switch(F("\xAB""e\xBF\xB3""ep\xB4"), &alarm6->Thursday);
-                    b.Switch(F("\xA8\xC7\xBF\xBD\xB8\xE5""a"), &alarm6->Friday);
-                    b.Switch(F("Cy\xB2\xB2o\xBF""a"), &alarm6->Saturday);
-                    b.Switch(F("Boc\xBApece\xBD\xC4""e"), &alarm6->Sunday);
-                    b.Label(F("----------------"));
-                    if (b.Select(F("Pa\xE3\xB8o"), &alarm6->mode, F("B\xC3\xBA\xBB;B\xBA\xBB"))) b.refresh();
+                    MenuWeek(b, alarm6, S_EMPTY, S_LINE);
+                    // b.ValueInt<uint8_t>(S_HOUR, &alarm6->hour, 1, 23, 1, DEC, S_EMPTY);
+                    // b.ValueInt<uint8_t>(S_MINUTE, &alarm6->minute, 1, 59, 1, DEC, S_EMPTY);
+                    // b.Label(S_LINE);
+                    // b.Switch(S_MONDAY, &alarm6->Monday);
+                    // b.Switch(S_TUESDAY, &alarm6->Tuesday);
+                    // b.Switch(S_WEDNESDAY, &alarm6->Wednesday);
+                    // b.Switch(S_THURSDAY, &alarm6->Thursday);
+                    // b.Switch(S_FRIDAY, &alarm6->Friday);
+                    // b.Switch(S_SATURDAY, &alarm6->Saturday);
+                    // b.Switch(S_SUNDAY, &alarm6->Sunday);
+                    // b.Label(S_LINE);
+                    if (b.Select(S_RADIO, &alarm6->mode, S_MODE)) b.refresh();
                     if (alarm6->mode == 1) {
-                        b.ValueInt<uint8_t>(F("\xA1po\xBC\xBAoc\xBF\xC4"), &alarm6->volume, 1, 15, 1, DEC, F(""));
-                        b.ValueInt<uint8_t>(F("C\xBF""a\xBD\xE5\xC7"), &alarm6->radio, 0, 30, 1, DEC, F(""));
+                        b.ValueInt<uint8_t>(S_VOLUME, &alarm6->volume, 1, 15, 1, DEC, S_EMPTY);
+                        b.ValueInt<uint8_t>(S_STATION, &alarm6->radio, 0, 30, 1, DEC, S_EMPTY);
                     }
-                    b.Label(F("----------------"));
+                    b.Label(S_LINE);
                 }
             });
-            b.Button(F("Coxpa\xBD\xB8\xBF\xC4"), actionAlarmSave);  // "Сохранить"
+            b.Button(S_SAVE, actionAlarmSave);  // "Сохранить"
         });       
     });
     menu.refresh();
