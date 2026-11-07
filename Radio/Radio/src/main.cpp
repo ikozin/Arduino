@@ -338,7 +338,7 @@ LiquidCrystal_I2C lcd(0);
 GyverMenu menu(lcdRows, lcdLines);
 //GyverDS3231Min  rtc;
 RTC_DS3231 rtc;
-Storage<listSize, playListSize> storage; 
+Storage<listSize, playListSize, 15> storage; 
 
 // Маппинг: PB0=D8=Up, PB1=D9=Control, PB2=D10=Down, PB3=D11=Right, PB4=D12=Left
 
@@ -660,7 +660,6 @@ void setRadioStation(uint8_t index) {
         text.add(storage.GetIndex() + 1);
         text.add(ui_station2);                  // " из "
         text.add(listSize);
-        // sprintf(text, "C\xBF""a\xBD\xE5\xB8\xC7 %2d \xB8\xB7 %d ", storage.GetIndex() + 1, listSize);
         lcd.print(text);
     }
 }
@@ -937,18 +936,30 @@ void loopMenu() {
     }
 }
 
-void MenuWeek (gm::Builder& b, DEVICE_SETTING_ALARM* alarm, const __FlashStringHelper* empty, const __FlashStringHelper* line){
-    b.ValueInt<uint8_t>(S_HOUR, &alarm->hour, 1, 23, 1, DEC, empty);
-    b.ValueInt<uint8_t>(S_MINUTE, &alarm->minute, 1, 59, 1, DEC, empty);
+void MenuAlarm (gm::Builder& b, DEVICE_SETTING_ALARM* alarm){
+    const __FlashStringHelper* empty = F("");
+    const __FlashStringHelper* line = S_SEPARATOR;
+    if (b.Switch(S_ON, &alarm->state)) b.refresh();
     b.Label(line);
-    b.Switch(S_MONDAY, &alarm->Monday);
-    b.Switch(S_TUESDAY, &alarm->Tuesday);
-    b.Switch(S_WEDNESDAY, &alarm->Wednesday);
-    b.Switch(S_THURSDAY, &alarm->Thursday);
-    b.Switch(S_FRIDAY, &alarm->Friday);
-    b.Switch(S_SATURDAY, &alarm->Saturday);
-    b.Switch(S_SUNDAY, &alarm->Sunday);
-    b.Label(line);
+    if (alarm->state) {
+        b.ValueInt<uint8_t>(S_HOUR, &alarm->hour, 1, 23, 1, DEC, empty);
+        b.ValueInt<uint8_t>(S_MINUTE, &alarm->minute, 1, 59, 1, DEC, empty);
+        b.Label(line);
+        b.Switch(S_MONDAY, &alarm->Monday);
+        b.Switch(S_TUESDAY, &alarm->Tuesday);
+        b.Switch(S_WEDNESDAY, &alarm->Wednesday);
+        b.Switch(S_THURSDAY, &alarm->Thursday);
+        b.Switch(S_FRIDAY, &alarm->Friday);
+        b.Switch(S_SATURDAY, &alarm->Saturday);
+        b.Switch(S_SUNDAY, &alarm->Sunday);
+        b.Label(line);
+        if (b.Select(S_RADIO, &alarm->mode, S_MODE)) b.refresh();
+        if (alarm->mode == 1) {
+            b.ValueInt<uint8_t>(S_VOLUME, &alarm->volume, 1, 15, 1, DEC, empty);
+            b.ValueInt<uint8_t>(S_STATION, &alarm->radio, 0, 30, 1, DEC, empty);
+        }
+        b.Label(line);
+    }    
 }
 
 void setup() {
@@ -1035,176 +1046,38 @@ void setup() {
     });
     menu.onBuild([](gm::Builder& b) {
         b.Button(S_EXIT, actionExit);  // "Выход"
-        b.Page(GM_NEXT, S_DATE, [](gm::Builder& b) {  // Дата
+        b.Page(GM_NEXT, S_DATE, [](gm::Builder& b) {  // "Дата"
             const __FlashStringHelper* S_EMPTY = F("");
             b.ValueInt<uint16_t>(S_YEAR, &setting.year, 2020, 2090, 1, DEC, S_EMPTY);
             b.ValueInt<uint8_t>(S_MONTH, &setting.month, 1, 12, 1, DEC, S_EMPTY);
             b.ValueInt<uint8_t>(S_DAY, &setting.day, 1, 31, 1, DEC, S_EMPTY);
             b.Button(S_SAVE, actionDateSave);  // "Сохранить"
         });
-        b.Page(GM_NEXT, S_TIME, [](gm::Builder& b) {     // Время
+        b.Page(GM_NEXT, S_TIME, [](gm::Builder& b) {     // "Время"
             const __FlashStringHelper* S_EMPTY = F("");
             b.ValueInt<uint8_t>(S_HOUR, &setting.hour, 1, 23, 1, DEC, S_EMPTY);
             b.ValueInt<uint8_t>(S_MINUTE, &setting.minute, 1, 59, 1, DEC, S_EMPTY);
             b.ValueInt<uint8_t>(S_SECOND, &setting.second, 1, 59, 1, DEC, S_EMPTY);
             b.Button(S_SAVE, actionTimeSave);  // "Сохранить"
         });
-        b.Page(GM_NEXT, S_ALARM, [](gm::Builder& b) {   // Будильник
+        b.Page(GM_NEXT, S_ALARM, [](gm::Builder& b) {   // "Будильник"
             b.Page(GM_NEXT, getAlarmTitle(alarm1), [](gm::Builder& b) {
-                const __FlashStringHelper* S_EMPTY = F("");
-                const __FlashStringHelper* S_LINE = S_SEPARATOR;
-                if (b.Switch(S_ON, &alarm1->state)) b.refresh();
-                b.Label(S_LINE);
-                if (alarm1->state) {
-                    MenuWeek(b, alarm1, S_EMPTY, S_LINE);
-                    // b.ValueInt<uint8_t>(S_HOUR, &alarm1->hour, 1, 23, 1, DEC, S_EMPTY);
-                    // b.ValueInt<uint8_t>(S_MINUTE, &alarm1->minute, 1, 59, 1, DEC, S_EMPTY);
-                    // b.Label(S_LINE);
-                    // b.Switch(S_MONDAY, &alarm1->Monday);
-                    // b.Switch(S_TUESDAY, &alarm1->Tuesday);
-                    // b.Switch(S_WEDNESDAY, &alarm1->Wednesday);
-                    // b.Switch(S_THURSDAY, &alarm1->Thursday);
-                    // b.Switch(S_FRIDAY, &alarm1->Friday);
-                    // b.Switch(S_SATURDAY, &alarm1->Saturday);
-                    // b.Switch(S_SUNDAY, &alarm1->Sunday);
-                    // b.Label(S_LINE);
-                    if (b.Select(S_RADIO, &alarm1->mode, S_MODE)) b.refresh();
-                    if (alarm1->mode == 1) {
-                        b.ValueInt<uint8_t>(S_VOLUME, &alarm1->volume, 1, 15, 1, DEC, S_EMPTY);
-                        b.ValueInt<uint8_t>(S_STATION, &alarm1->radio, 0, 30, 1, DEC, S_EMPTY);
-                    }
-                    b.Label(S_LINE);
-                }
+                MenuAlarm(b, alarm1);
             });
             b.Page(GM_NEXT, getAlarmTitle(alarm2), [](gm::Builder& b) {
-                const __FlashStringHelper* S_EMPTY = F("");
-                const __FlashStringHelper* S_LINE = S_SEPARATOR;
-                if (b.Switch(S_ON, &alarm2->state)) b.refresh();
-                b.Label(S_LINE);
-                if (alarm2->state) {
-                    MenuWeek(b, alarm2, S_EMPTY, S_LINE);
-                    // b.ValueInt<uint8_t>(S_HOUR, &alarm2->hour, 1, 23, 1, DEC, S_EMPTY);
-                    // b.ValueInt<uint8_t>(S_MINUTE, &alarm2->minute, 1, 59, 1, DEC, S_EMPTY);
-                    // b.Label(S_LINE);
-                    // b.Switch(S_MONDAY, &alarm2->Monday);
-                    // b.Switch(S_TUESDAY, &alarm2->Tuesday);
-                    // b.Switch(S_WEDNESDAY, &alarm2->Wednesday);
-                    // b.Switch(S_THURSDAY, &alarm2->Thursday);
-                    // b.Switch(S_FRIDAY, &alarm2->Friday);
-                    // b.Switch(S_SATURDAY, &alarm2->Saturday);
-                    // b.Switch(S_SUNDAY, &alarm2->Sunday);
-                    // b.Label(S_LINE);
-                    if (b.Select(S_RADIO, &alarm2->mode, S_MODE)) b.refresh();
-                    if (alarm2->mode == 1) {
-                        b.ValueInt<uint8_t>(S_VOLUME, &alarm2->volume, 1, 15, 1, DEC, S_EMPTY);
-                        b.ValueInt<uint8_t>(S_STATION, &alarm2->radio, 0, 30, 1, DEC, S_EMPTY);
-                    }
-                    b.Label(S_LINE);
-                }
+                MenuAlarm(b, alarm2);
             });
             b.Page(GM_NEXT, getAlarmTitle(alarm3), [](gm::Builder& b) {
-                const __FlashStringHelper* S_EMPTY = F("");
-                const __FlashStringHelper* S_LINE = S_SEPARATOR;
-                if (b.Switch(S_ON, &alarm3->state)) b.refresh();
-                b.Label(S_LINE);
-                if (alarm3->state) {
-                    MenuWeek(b, alarm3, S_EMPTY, S_LINE);
-                    // b.ValueInt<uint8_t>(S_HOUR, &alarm3->hour, 1, 23, 1, DEC, S_EMPTY);
-                    // b.ValueInt<uint8_t>(S_MINUTE, &alarm3->minute, 1, 59, 1, DEC, S_EMPTY);
-                    // b.Label(S_LINE);
-                    // b.Switch(S_MONDAY, &alarm3->Monday);
-                    // b.Switch(S_TUESDAY, &alarm3->Tuesday);
-                    // b.Switch(S_WEDNESDAY, &alarm3->Wednesday);
-                    // b.Switch(S_THURSDAY, &alarm3->Thursday);
-                    // b.Switch(S_FRIDAY, &alarm3->Friday);
-                    // b.Switch(S_SATURDAY, &alarm3->Saturday);
-                    // b.Switch(S_SUNDAY, &alarm3->Sunday);
-                    // b.Label(S_LINE);
-                    if (b.Select(S_RADIO, &alarm3->mode, S_MODE)) b.refresh();
-                    if (alarm3->mode == 1) {
-                        b.ValueInt<uint8_t>(S_VOLUME, &alarm3->volume, 1, 15, 1, DEC, S_EMPTY);
-                        b.ValueInt<uint8_t>(S_STATION, &alarm3->radio, 0, 30, 1, DEC, S_EMPTY);
-                    }
-                    b.Label(S_LINE);
-                }
+                MenuAlarm(b, alarm3);
             });
             b.Page(GM_NEXT, getAlarmTitle(alarm4), [](gm::Builder& b) {
-                const __FlashStringHelper* S_EMPTY = F("");
-                const __FlashStringHelper* S_LINE = S_SEPARATOR;
-                if (b.Switch(S_ON, &alarm4->state)) b.refresh();
-                b.Label(S_LINE);
-                if (alarm4->state) {
-                    MenuWeek(b, alarm4, S_EMPTY, S_LINE);
-                    // b.ValueInt<uint8_t>(S_HOUR, &alarm4->hour, 1, 23, 1, DEC, S_EMPTY);
-                    // b.ValueInt<uint8_t>(S_MINUTE, &alarm4->minute, 1, 59, 1, DEC, S_EMPTY);
-                    // b.Label(S_LINE);
-                    // b.Switch(S_MONDAY, &alarm4->Monday);
-                    // b.Switch(S_TUESDAY, &alarm4->Tuesday);
-                    // b.Switch(S_WEDNESDAY, &alarm4->Wednesday);
-                    // b.Switch(S_THURSDAY, &alarm4->Thursday);
-                    // b.Switch(S_FRIDAY, &alarm4->Friday);
-                    // b.Switch(S_SATURDAY, &alarm4->Saturday);
-                    // b.Switch(S_SUNDAY, &alarm4->Sunday);
-                    // b.Label(S_LINE);
-                    if (b.Select(S_RADIO, &alarm4->mode, S_MODE)) b.refresh();
-                    if (alarm4->mode == 1) {
-                        b.ValueInt<uint8_t>(S_VOLUME, &alarm4->volume, 1, 15, 1, DEC, S_EMPTY);
-                        b.ValueInt<uint8_t>(S_STATION, &alarm4->radio, 0, 30, 1, DEC, S_EMPTY);
-                    }
-                    b.Label(S_LINE);
-                }
+                MenuAlarm(b, alarm4);
             });
             b.Page(GM_NEXT, getAlarmTitle(alarm5), [](gm::Builder& b) {
-                const __FlashStringHelper* S_EMPTY = F("");
-                const __FlashStringHelper* S_LINE = S_SEPARATOR;
-                if (b.Switch(S_ON, &alarm5->state)) b.refresh();
-                b.Label(S_LINE);
-                if (alarm5->state) {
-                    MenuWeek(b, alarm5, S_EMPTY, S_LINE);
-                    // b.ValueInt<uint8_t>(S_HOUR, &alarm5->hour, 1, 23, 1, DEC, S_EMPTY);
-                    // b.ValueInt<uint8_t>(S_MINUTE, &alarm5->minute, 1, 59, 1, DEC, S_EMPTY);
-                    // b.Label(S_LINE);
-                    // b.Switch(S_MONDAY, &alarm5->Monday);
-                    // b.Switch(S_TUESDAY, &alarm5->Tuesday);
-                    // b.Switch(S_WEDNESDAY, &alarm5->Wednesday);
-                    // b.Switch(S_THURSDAY, &alarm5->Thursday);
-                    // b.Switch(S_FRIDAY, &alarm5->Friday);
-                    // b.Switch(S_SATURDAY, &alarm5->Saturday);
-                    // b.Switch(S_SUNDAY, &alarm5->Sunday);
-                    // b.Label(S_LINE);
-                    if (b.Select(S_RADIO, &alarm5->mode, S_MODE)) b.refresh();
-                    if (alarm5->mode == 1) {
-                        b.ValueInt<uint8_t>(S_VOLUME, &alarm5->volume, 1, 15, 1, DEC, S_EMPTY);
-                        b.ValueInt<uint8_t>(S_STATION, &alarm5->radio, 0, 30, 1, DEC, S_EMPTY);
-                    }
-                    b.Label(S_LINE);
-                }
+                MenuAlarm(b, alarm5);
             });
             b.Page(GM_NEXT, getAlarmTitle(alarm6), [](gm::Builder& b) {
-                const __FlashStringHelper* S_EMPTY = F("");
-                const __FlashStringHelper* S_LINE = S_SEPARATOR;
-                if (b.Switch(S_ON, &alarm6->state)) b.refresh();
-                b.Label(S_LINE);
-                if (alarm6->state) {
-                    MenuWeek(b, alarm6, S_EMPTY, S_LINE);
-                    // b.ValueInt<uint8_t>(S_HOUR, &alarm6->hour, 1, 23, 1, DEC, S_EMPTY);
-                    // b.ValueInt<uint8_t>(S_MINUTE, &alarm6->minute, 1, 59, 1, DEC, S_EMPTY);
-                    // b.Label(S_LINE);
-                    // b.Switch(S_MONDAY, &alarm6->Monday);
-                    // b.Switch(S_TUESDAY, &alarm6->Tuesday);
-                    // b.Switch(S_WEDNESDAY, &alarm6->Wednesday);
-                    // b.Switch(S_THURSDAY, &alarm6->Thursday);
-                    // b.Switch(S_FRIDAY, &alarm6->Friday);
-                    // b.Switch(S_SATURDAY, &alarm6->Saturday);
-                    // b.Switch(S_SUNDAY, &alarm6->Sunday);
-                    // b.Label(S_LINE);
-                    if (b.Select(S_RADIO, &alarm6->mode, S_MODE)) b.refresh();
-                    if (alarm6->mode == 1) {
-                        b.ValueInt<uint8_t>(S_VOLUME, &alarm6->volume, 1, 15, 1, DEC, S_EMPTY);
-                        b.ValueInt<uint8_t>(S_STATION, &alarm6->radio, 0, 30, 1, DEC, S_EMPTY);
-                    }
-                    b.Label(S_LINE);
-                }
+                MenuAlarm(b, alarm6);
             });
             b.Button(S_SAVE, actionAlarmSave);  // "Сохранить"
         });       

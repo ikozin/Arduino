@@ -41,7 +41,7 @@ typedef struct {
 	AlarmItem alarm[6];
 } Configuration;
 
-template<int MaxIndex, int MaxSong>
+template<int MaxIndex, int MaxSong, int MaxVolume>
 class Storage {
     private:
         const uint16_t StorageWindow = 1024;
@@ -147,14 +147,18 @@ class Storage {
         inline uint16_t GetAlarmSize() { return sizeof(data.alarm)/sizeof(data.alarm[0]); }
 
         bool SetIndex(uint8_t value) {
+            if (value == 0xFF) value = MaxIndex;
+            if (value > MaxIndex) value = 0;
             if (data.index == constrain(value, 0, MaxIndex)) return false;
             data.index = constrain(value, 0, MaxIndex);
             return true;
         }
         
         bool SetVolume(uint8_t value) {
-            if (data.volume == constrain(value, 0, 15)) return false;
-            data.volume = constrain(value, 0, 15);
+            if (value == 0xFF) value = MaxVolume;
+            if (value > MaxVolume) value = 0;
+            if (data.volume == constrain(value, 0, MaxVolume)) return false;
+            data.volume = constrain(value, 0, MaxVolume);
             return true;
         }
         
