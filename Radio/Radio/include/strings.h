@@ -1,4 +1,4 @@
-// Автосгенерировано gen_strings.py (2026-11-07 13:33 UTC)
+// Автосгенерировано gen_strings.py (2026-11-08 09:58 UTC)
 #pragma once
 
 #include <Arduino.h>

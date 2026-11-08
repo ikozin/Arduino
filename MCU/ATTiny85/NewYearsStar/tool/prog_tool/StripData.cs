@@ -1,6 +1,6 @@
 using System.Collections;
 
-namespace ProgrTool;
+namespace prog_tool;
 
 public class LedData(System.Drawing.Color color)
 {
@@ -177,12 +177,12 @@ public class StripCount : StripBase
     }
     public LedData Led { get; set; }
     public List<byte> Indexies { get; private set; }
-    public StripCount IndexiesAdd(IEnumerable<byte> list)
+    public StripCount IndicesAdd(IEnumerable<byte> list)
     {
         Indexies.AddRange(list);
         return this;
     }
-    public StripCount IndexiesClear()
+    public StripCount IndicesClear()
     {
         Indexies.Clear();
         return this;
@@ -273,12 +273,12 @@ public class StripFillCount : StripBase
         Back = new LedData(color);
         return this;
     }
-    public StripFillCount IndexiesAdd(IEnumerable<byte> list)
+    public StripFillCount IndicesAdd(IEnumerable<byte> list)
     {
         Indexies.AddRange(list);
         return this;
     }
-    public StripFillCount IndexiesClear()
+    public StripFillCount IndicesClear()
     {
         Indexies.Clear();
         return this;
