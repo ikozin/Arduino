@@ -331,6 +331,7 @@ const char *playList[] = {
     song22,
     song23,
     song24,
+    song25,
 };
 const int playListSize = sizeof(playList) / sizeof(char*);
 

@@ -18,19 +18,23 @@ FM-радиоприёмник на базе **Arduino Pro Mini** с модуле
 
 ## Структура проекта
 Radio/
-     ├── platformio.ini # Конфиг PlatformIO
-     ├── src/
-     │      └── main.cpp # Основной файл
-     ├── include/
-     │          ├── Radio.h # Заголовки радиомодуля
-     │          ├── Storage.h # Хранение настроек
-     │          ├── Melodies.h # Мелодии/звуки
-     │          ├── strings.h # Строковые ресурсы
-     │          └── menu_strings.h # Строки меню
-     ├── lib/ # Пользовательские библиотеки
-     ├── include/ # Инклуд-пути
-     └── scripts/
-                └── pre_build.py # Прескрипт сборки
+├── platformio.ini
+├── src/main.cpp              # Основная логика (1108 строк)
+├── include/
+│   ├── Radio.h               # Константы пинов, режимов
+│   ├── Storage.h             # EEPROM storage (шаблонный класс)
+│   ├── Melodies.h            # Частоты нот + 25 RTTTL мелодий
+│   ├── strings.h             # KOI-7 строки (автогенерация)
+│   └── menu_strings.h        # Маппинг строк меню
+├── lib/
+│   ├── GyverMenu/            # Библиотека меню
+│   ├── video/                # LiquidCrystal_I2C, MCP23008
+│   └── radio/                # MP1090S драйвер
+├── scripts/
+│   └── pre_build.py          # Генерация strings.h
+├── strings.ini               # Источники строк (UTF-8 → KOI-7)
+├── skill.md                  # Описание проекта
+└── readme.md                 # Распиновка
 
 ## Зависимости (PlatformIO)
 - `gyverlibs/StringN`
