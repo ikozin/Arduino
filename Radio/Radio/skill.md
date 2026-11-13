@@ -24,15 +24,15 @@ Radio/
 │   ├── Radio.h               # Константы пинов, режимов
 │   ├── Storage.h             # EEPROM storage (шаблонный класс)
 │   ├── Melodies.h            # Частоты нот + 25 RTTTL мелодий
-│   ├── strings.h             # KOI-7 строки (автогенерация)
+│   ├── strings.h             # строки в кодировке для диспея HD44780 (автогенерация)
 │   └── menu_strings.h        # Маппинг строк меню
 ├── lib/
 │   ├── GyverMenu/            # Библиотека меню
-│   ├── video/                # LiquidCrystal_I2C, MCP23008
+│   ├── video/                # LiquidCrystal_I2C, MCP23008 для дисплея HD44780
 │   └── radio/                # MP1090S драйвер
 ├── scripts/
 │   └── pre_build.py          # Генерация strings.h
-├── strings.ini               # Источники строк (UTF-8 → KOI-7)
+├── strings.ini               # Источники строк (UTF-8 → кодировка для дисплея HD44780)
 ├── skill.md                  # Описание проекта
 └── readme.md                 # Распиновка
 

@@ -1,4 +1,3 @@
-// Автосгенерировано gen_strings.py (2026-11-12 22:24 UTC)
 #pragma once
 
 #include <Arduino.h>

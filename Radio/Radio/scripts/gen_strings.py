@@ -5,14 +5,14 @@ from datetime import datetime, timezone
 from pathlib import Path
 import configparser
 
-from koi7 import koi7_map
+from hd44780  import hd44780_map
 
 
-def utf8_to_koi7_bytes(text: str) -> bytes:
+def utf8_to_hd44780_bytes(text: str) -> bytes:
     result = bytearray()
     for ch in text:
-        if ch in koi7_map:
-            result.append(koi7_map[ch])
+        if ch in hd44780_map:
+            result.append(hd44780_map[ch])
         else:
             result.append(ord(ch))
     return bytes(result)
@@ -52,13 +52,13 @@ def main():
     timestamp = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
 
     with open(out_file, "w", encoding="utf-8") as f:
-        f.write(f"// Автосгенерировано gen_strings.py ({timestamp})\n")
+        # f.write(f"// Автосгенерировано gen_strings.py ({timestamp})\n")
         f.write("#pragma once\n\n")
         f.write("#include <Arduino.h>\n\n")
         f.write("// Строковые константы в эмуляции КОИ-7 (SI/SO)\n\n")
 
         for key, text in strings.items():
-            koi7_data = utf8_to_koi7_bytes(text)
+            koi7_data = utf8_to_hd44780_bytes(text)
 
             hex_parts = [f"\\x{b:02X}" for b in koi7_data]
             f.write(f"#define\t{key} \"")
