@@ -341,14 +341,14 @@ GyverMenu menu(lcdRows, lcdLines);
 RTC_DS3231 rtc;
 Storage<listSize, playListSize, 15> storage; 
 
-// Маппинг: PB0=D8=Up, PB1=D9=Control, PB2=D10=Down, PB3=D11=Right, PB4=D12=Left
+// Маппинг: PB0=D8=Down, PB1=D9=Control, PB2=D10=Up, PB3=D11=Right, PB4=D12=Left
 
 enum ButtonPin : uint8_t {
-    BTN_UP = 0,		// PB0 (D8)
+    BTN_DOWN = 0,   // PB0 (D8)
     BTN_CONTROL,    // PB1 (D9)
-    BTN_DOWN,       // PB2 (D10)
-    BTN_RIGHT,      // PB3 (D11)
-    BTN_LEFT,    	// PB4 (D12)
+    BTN_UP,         // PB2 (D10)
+    BTN_LEFT,       // PB3 (D11)
+    BTN_RIGHT,      // PB4 (D12)
     BTN_COUNT
 };
 
