@@ -107,7 +107,7 @@ https://microsin.net/adminstuff/hardware/ds3231-extremely-accurate-rtc.html
                 switch (*str) {
                     case 'i': Serial.print(va_arg(args, int)); break;
                     case 'l': Serial.print(va_arg(args, long)); break;
-                    case 'x': Serial.print(va_arg(args, int), HEX); break;
+                    case 'x': Serial.print("0x");Serial.print(va_arg(args, int), HEX); break;
                 }
             } else {
                 Serial.print(*str);
@@ -975,14 +975,15 @@ void setup() {
     // storage.clear();
     // storage.save();
     storage.begin();
-    LOG("addr=$x", storage.address);
+    LOG("Addr=$x", storage.GetAddress());
     storage.load();
+    LOG("Addr=$x", storage.GetAddress());
     
     #ifdef DEBUG_CONSOLE
-    LOG("Addr=$i, Ind=$i Vol=$i Cor=$i Cur=$i", storage.GetAddress(), storage.GetIndex(), storage.GetVolume(), storage.GetCorrSec(), storage.GetCurrentPlay());
+    LOG("Addr=$x, Ind=$i Vol=$i Cor=$i Cur=$i", storage.GetAddress(), storage.GetIndex(), storage.GetVolume(), storage.GetCorrSec(), storage.GetCurrentPlay());
     for (uint16_t i = 0; i < storage.GetAlarmSize(); i++) {
         AlarmItem* alarm = storage.GetAlarm(i);
-        LOG("$i, $i:$i:$i, $x, $i, $i[$i]", 
+        LOG("$x, $i:$i:$i, $x, $i, $i[$i]", 
             (int)alarm->state, 
             (int)alarm->hour, 
             (int)alarm->minute, 

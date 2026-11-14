@@ -44,12 +44,11 @@ typedef struct {
 template<int MaxIndex, int MaxSong, int MaxVolume>
 class Storage {
     private:
-        const uint16_t StorageWindow = 1024;
+        const uint16_t StorageWindow = EEPROM.length();
     public:
         Storage() {};
 
     private:
-    public:
         uint16_t    address = 0;
         uint8_t     _maxIndex;
         Configuration data = {
