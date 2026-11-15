@@ -891,6 +891,21 @@ void actionAlarmSave() {
         dst->radio = src->mode ? src->radio : 0;
     }
     storage.save();
+    #ifdef DEBUG_CONSOLE
+    LOG("Addr=$x, Ind=$i Vol=$i Cor=$i Cur=$i", storage.GetAddress(), storage.GetIndex(), storage.GetVolume(), storage.GetCorrSec(), storage.GetCurrentPlay());
+    for (uint16_t i = 0; i < storage.GetAlarmSize(); i++) {
+        AlarmItem* alarm = storage.GetAlarm(i);
+        LOG("$x, $i:$i:$i, $x, $i, $i[$i]", 
+            (int)alarm->state, 
+            (int)alarm->hour, 
+            (int)alarm->minute, 
+            (int)alarm->second, 
+            (int)alarm->week, 
+            (int)alarm->mode,
+            (int)alarm->radio,
+            (int)alarm->volume);
+    }
+    #endif
     menu.back();
 }
 
@@ -900,7 +915,7 @@ char* getAlarmTitle(DEVICE_SETTING_ALARM* value) {
         text.add(F(menu_empty));
         return text.c_str();
     }
-    text.add(value->mode ? F("[B\xBA\xBB]  ") : F("[B\xC3\xBA\xBB] "));
+    text.add(value->mode ? F(menu_voice_on"  ") : F(menu_voice_off" "));
     if (value->hour < 10) text.add(' ');
     text.add(value->hour);
     text.add(':');
@@ -938,13 +953,13 @@ void loopMenu() {
 }
 
 void MenuAlarm (gm::Builder& b, DEVICE_SETTING_ALARM* alarm){
-    const __FlashStringHelper* empty = F("");
+    const __FlashStringHelper* empty = F("0");
     const __FlashStringHelper* line = S_SEPARATOR;
     if (b.Switch(S_ON, &alarm->state)) b.refresh();
     b.Label(line);
     if (alarm->state) {
-        b.ValueInt<uint8_t>(S_HOUR, &alarm->hour, 1, 23, 1, DEC, empty);
-        b.ValueInt<uint8_t>(S_MINUTE, &alarm->minute, 1, 59, 1, DEC, empty);
+        b.ValueInt<uint8_t>(S_HOUR, &alarm->hour, 0, 23, 1, DEC, empty);
+        b.ValueInt<uint8_t>(S_MINUTE, &alarm->minute, 0, 59, 1, DEC, empty);
         b.Label(line);
         b.Switch(S_MONDAY, &alarm->Monday);
         b.Switch(S_TUESDAY, &alarm->Tuesday);
@@ -956,7 +971,7 @@ void MenuAlarm (gm::Builder& b, DEVICE_SETTING_ALARM* alarm){
         b.Label(line);
         if (b.Select(S_RADIO, &alarm->mode, S_MODE)) b.refresh();
         if (alarm->mode == 1) {
-            b.ValueInt<uint8_t>(S_VOLUME, &alarm->volume, 1, 15, 1, DEC, empty);
+            b.ValueInt<uint8_t>(S_VOLUME, &alarm->volume, 0, 15, 1, DEC, empty);
             b.ValueInt<uint8_t>(S_STATION, &alarm->radio, 0, 30, 1, DEC, empty);
         }
         b.Label(line);
@@ -975,9 +990,8 @@ void setup() {
     // storage.clear();
     // storage.save();
     storage.begin();
-    LOG("Addr=$x", storage.GetAddress());
     storage.load();
-    LOG("Addr=$x", storage.GetAddress());
+
     
     #ifdef DEBUG_CONSOLE
     LOG("Addr=$x, Ind=$i Vol=$i Cor=$i Cur=$i", storage.GetAddress(), storage.GetIndex(), storage.GetVolume(), storage.GetCorrSec(), storage.GetCurrentPlay());
@@ -1049,7 +1063,7 @@ void setup() {
     menu.onBuild([](gm::Builder& b) {
         b.Button(S_EXIT, actionExit);  // "Выход"
         b.Page(GM_NEXT, S_DATE, [](gm::Builder& b) {  // "Дата"
-            const __FlashStringHelper* S_EMPTY = F("");
+            const __FlashStringHelper* S_EMPTY = F("0");
             b.ValueInt<uint16_t>(S_YEAR, &setting.year, 2020, 2090, 1, DEC, S_EMPTY);
             b.ValueInt<uint8_t>(S_MONTH, &setting.month, 1, 12, 1, DEC, S_EMPTY);
             b.ValueInt<uint8_t>(S_DAY, &setting.day, 1, 31, 1, DEC, S_EMPTY);
@@ -1057,9 +1071,9 @@ void setup() {
         });
         b.Page(GM_NEXT, S_TIME, [](gm::Builder& b) {     // "Время"
             const __FlashStringHelper* S_EMPTY = F("");
-            b.ValueInt<uint8_t>(S_HOUR, &setting.hour, 1, 23, 1, DEC, S_EMPTY);
-            b.ValueInt<uint8_t>(S_MINUTE, &setting.minute, 1, 59, 1, DEC, S_EMPTY);
-            b.ValueInt<uint8_t>(S_SECOND, &setting.second, 1, 59, 1, DEC, S_EMPTY);
+            b.ValueInt<uint8_t>(S_HOUR, &setting.hour, 0, 23, 1, DEC, S_EMPTY);
+            b.ValueInt<uint8_t>(S_MINUTE, &setting.minute, 0, 59, 1, DEC, S_EMPTY);
+            b.ValueInt<uint8_t>(S_SECOND, &setting.second, 0, 59, 1, DEC, S_EMPTY);
             b.Button(S_SAVE, actionTimeSave);  // "Сохранить"
         });
         b.Page(GM_NEXT, S_ALARM, [](gm::Builder& b) {   // "Будильник"
