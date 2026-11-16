@@ -181,6 +181,7 @@ internal class Program
 
         using (FileStream file = File.Create("AT24LC512.bin"))
         {
+            ms.Position = 0;
             ms.CopyTo(file);
         }
         Console.WriteLine("Finish");

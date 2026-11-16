@@ -1,41 +1,115 @@
-using System.Windows;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using System.Windows.Media;
 
 namespace LedStarSimulator.Models;
 
 /// <summary>
-/// Модель светодиодной звезды: вычисляет позиции 21 LED и управляет их цветом.
+/// Модель управления цветом светодиодной звезды.
+/// Не содержит геометрию — позиции управляются через LedStarModelProvider.
 /// </summary>
 public class LedStarModel
 {
-    public int Count => _leds.Count;
+    /// <summary>Количество LED-элементов.</summary>
+    public int Count => StarConfig.LedCount;
 
-    public IReadOnlyList<Point> Positions => _positionsCache ??= _leds.Select(l => l.Position).ToList();
+    /// <summary>
+    /// Индекс выбранного LED (0-20).
+    /// </summary>
+    public int SelectedLedIndex
+    {
+        get => _selectedLedIndex;
+        set
+        {
+            if (_selectedLedIndex != value)
+            {
+                _selectedLedIndex = ClampIndex(value);
+                SelectedLedIndexChanged?.Invoke(this, _selectedLedIndex);
+            }
+        }
+    }
 
-    public IReadOnlyList<Color> Colors => _colorsCache ??= _leds.Select(l => l.Color).ToList();
+    /// <summary>
+    /// true — изменения цвета применяются ко всем LED.
+    /// false — изменения цвета применяются только к выбранному LED.
+    /// </summary>
+    public bool AllLedsMode
+    {
+        get => _allLedsMode;
+        set
+        {
+            if (_allLedsMode != value)
+            {
+                _allLedsMode = value;
+                OnPropertyChanged(nameof(AllLedsMode));
+            }
+        }
+    }
 
+    private bool _allLedsMode = true;
+
+    /// <summary>
+    /// Текущий цвет, компонент R (0-255).
+    /// </summary>
     public int Red
     {
         get => _red;
-        set { if (_red != value) { _red = Clamp(value); UpdateColors(); } }
+        set => SetColorComponent(ref _red, value, (r, g, b) => _red = r);
     }
 
+    /// <summary>
+    /// Текущий цвет, компонент G (0-255).
+    /// </summary>
     public int Green
     {
         get => _green;
-        set { if (_green != value) { _green = Clamp(value); UpdateColors(); } }
+        set => SetColorComponent(ref _green, value, (r, g, b) => _green = g);
     }
 
+    /// <summary>
+    /// Текущий цвет, компонент B (0-255).
+    /// </summary>
     public int Blue
     {
         get => _blue;
-        set { if (_blue != value) { _blue = Clamp(value); UpdateColors(); } }
+        set => SetColorComponent(ref _blue, value, (r, g, b) => _blue = b);
     }
 
-    public double LedRadius { get; set; } = 14;
+    private void SetColorComponent(ref int field, int value, Action<int, int, int> setToFields)
+    {
+        if (field != value)
+        {
+            field = Clamp(value);
+            setToFields(_red, _green, _blue);
+            UpdateColors();
+        }
+    }
 
+    /// <summary>Событие изменения цветов LED.</summary>
     public event EventHandler? Changed;
 
+    /// <summary>Событие изменения индекса выбранного LED.</summary>
+    public event EventHandler<int>? SelectedLedIndexChanged;
+
+    /// <summary>Событие изменения свойства (для AllLedsMode).</summary>
+    public event PropertyChangedEventHandler? PropertyChanged;
+
+    private void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+    {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
+
+    /// <summary>
+    /// Текущий цвет в формате Color.
+    /// </summary>
+    public Color Color => Color.FromRgb((byte)Red, (byte)Green, (byte)Blue);
+
+    /// <summary>
+    /// Массив цветов для каждого LED.
+    /// </summary>
+    public Color[] LedColors => _ledColors;
+
+    private int _selectedLedIndex = 0;
     private int _red = 255;
     private int _green = 200;
     private int _blue = 50;
@@ -43,26 +117,41 @@ public class LedStarModel
     private int _prevGreen = 200;
     private int _prevBlue = 50;
 
-    private readonly List<LedItem> _leds = new(21);
-    private IReadOnlyList<Point>? _positionsCache;
-    private IReadOnlyList<Color>? _colorsCache;
+    /// <summary>
+    /// Цвета всех LED. Когда AllLedsMode = true, все цвета одинаковые.
+    /// </summary>
+    private readonly Color[] _ledColors;
 
     public LedStarModel()
     {
-        CalculateStarGeometry();
-        UpdateColors();
+        _ledColors = new Color[StarConfig.LedCount];
+        var defaultColor = Color.FromRgb((byte)_red, (byte)_green, (byte)_blue);
+        for (int i = 0; i < _ledColors.Length; i++)
+            _ledColors[i] = defaultColor;
     }
 
+    /// <summary>
+    /// Обновляет кэш цвета и генерирует событие Changed.
+    /// </summary>
     public void UpdateColors()
     {
         if (_red == _prevRed && _green == _prevGreen && _blue == _prevBlue)
             return;
 
-        var color = Color.FromRgb((byte)Red, (byte)Green, (byte)Blue);
-        foreach (var led in _leds)
-            led.Color = color;
+        var newColor = Color.FromRgb((byte)Red, (byte)Green, (byte)Blue);
 
-        _colorsCache = null;
+        if (_allLedsMode)
+        {
+            // Применить ко всем LED
+            for (int i = 0; i < _ledColors.Length; i++)
+                _ledColors[i] = newColor;
+        }
+        else
+        {
+            // Применить только к выбранному LED
+            _ledColors[_selectedLedIndex] = newColor;
+        }
+
         _prevRed = _red;
         _prevGreen = _green;
         _prevBlue = _blue;
@@ -70,68 +159,29 @@ public class LedStarModel
         Changed?.Invoke(this, EventArgs.Empty);
     }
 
-    private void CalculateStarGeometry()
+    /// <summary>
+    /// Устанавливает цвет для конкретного LED.
+    /// </summary>
+    public void SetLedColor(int index, Color color)
     {
-        var cx = 0.0;
-        var cy = 0.0;
-        var outerR = 150.0;
-        var innerR = outerR * 0.4;
-
-        // Предвычислим вершины
-        var outerPts = new Point[5];
-        var innerPts = new Point[5];
-
-        for (int i = 0; i < 5; i++)
+        if (index >= 0 && index < _ledColors.Length)
         {
-            double outerAngle = -Math.PI / 2 + i * 2 * Math.PI / 5;
-            double innerAngle = -Math.PI / 2 + Math.PI / 5 + i * 2 * Math.PI / 5;
-
-            outerPts[i] = new Point(
-                cx + outerR * Math.Cos(outerAngle),
-                cy + outerR * Math.Sin(outerAngle));
-
-            innerPts[i] = new Point(
-                cx + innerR * Math.Cos(innerAngle),
-                cy + innerR * Math.Sin(innerAngle));
-        }
-
-        _leds.Clear();
-
-        // Центральный LED
-        _leds.Add(new LedItem(new Point(cx, cy)));
-
-        // 5 лучей: начинаем с внутреннего кончика (нижний), идём по часовой стрелке
-        int start = 2;
-        for (int step = 0; step < 5; step++)
-        {
-            int i = (start + step) % 5;
-            int next = (i + 1) % 5;
-
-            var inner = innerPts[i];
-            var outer = outerPts[next];
-            var nextInner = innerPts[next];
-
-            // 1. Внутренний кончик
-            _leds.Add(new LedItem(new Point(inner.X, inner.Y)));
-            // 2. Ребро (внутренний → следующий внешний)
-            _leds.Add(new LedItem(new Point((inner.X + outer.X) / 2, (inner.Y + outer.Y) / 2)));
-            // 3. Внешний кончик
-            _leds.Add(new LedItem(new Point(outer.X, outer.Y)));
-            // 4. Ребро (внешний → внутренний следующего луча)
-            _leds.Add(new LedItem(new Point((outer.X + nextInner.X) / 2, (outer.Y + nextInner.Y) / 2)));
+            _ledColors[index] = color;
+            Changed?.Invoke(this, EventArgs.Empty);
         }
     }
 
+    /// <summary>
+    /// Получает цвет конкретного LED.
+    /// </summary>
+    public Color GetLedColor(int index)
+    {
+        if (index >= 0 && index < _ledColors.Length)
+            return _ledColors[index];
+        return Color.FromRgb((byte)_red, (byte)_green, (byte)_blue);
+    }
+
     private static int Clamp(int v) => v < 0 ? 0 : v > 255 ? 255 : v;
-}
 
-/// <summary>
-/// Отдельный светодиод.
-/// </summary>
-internal sealed class LedItem
-{
-    public Point Position { get; }
-    public Color Color { get; set; }
-
-    public LedItem(Point position) => Position = position;
+    private static int ClampIndex(int index) => index < 0 ? 0 : index >= StarConfig.LedCount ? StarConfig.LedCount - 1 : index;
 }
